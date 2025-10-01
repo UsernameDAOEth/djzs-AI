@@ -1,0 +1,531 @@
+import React, { useMemo, useState, useEffect } from "react";
+import { createConfig, http } from "wagmi";
+import { WagmiConfig, useAccount } from "wagmi";
+import { base, baseSepolia } from "wagmi/chains";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RainbowKitProvider, getDefaultConfig, ConnectButton, darkTheme } from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
+import { readContract, writeContract, getAccount } from "@wagmi/core";
+import { parseEther, isAddress } from "viem";
+
+// ---
+// DJZS Subscribe NFT — Minimal ABI (OpenZeppelin ERC721 + mintSubscribe())
+// Deploy this contract (provided below in the comments) and paste address in CONTRACT_ADDRESS.
+// ---
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_SUBSCRIBE_NFT_ADDRESS || "0x0000000000000000000000000000000000000000"; // TODO: replace after deploy
+const SUBSCRIBE_PRICE_ETH = process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE || "0"; // in ETH (e.g. "0.002")
+
+const SUBSCRIBE_ABI = [
+  { "type": "function", "name": "mintSubscribe", "stateMutability": "payable", "inputs": [], "outputs": [] },
+  { "type": "function", "name": "balanceOf", "stateMutability": "view", "inputs": [{ "name": "owner", "type": "address" }], "outputs": [{ "type": "uint256" }] },
+  { "type": "function", "name": "totalSupply", "stateMutability": "view", "inputs": [], "outputs": [{ "type": "uint256" }] },
+  { "type": "function", "name": "maxSupply", "stateMutability": "view", "inputs": [], "outputs": [{ "type": "uint256" }] },
+  { "type": "event", "name": "Subscribed", "inputs": [{ "name": "subscriber", "type": "address", "indexed": true }, { "name": "tokenId", "type": "uint256", "indexed": false }], "anonymous": false }
+];
+
+// --- Wagmi + RainbowKit config (Base Mainnet + Base Sepolia) ---
+const queryClient = new QueryClient();
+const wagmiConfig = getDefaultConfig({
+  appName: "DJZS Newsletter",
+  projectId: "djzs-newsletter-on-base", // for WalletConnect cloud; replace with your real id if you have one
+  chains: [base, baseSepolia],
+  transports: {
+    [base.id]: http(),
+    [baseSepolia.id]: http(),
+  },
+});
+
+function useIsSubscribed(address?: `0x${string}` | undefined) {
+  const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [supply, setSupply] = useState<null | { total: bigint; max: bigint }>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function run() {
+      if (!address || !isAddress(address)) { setSubscribed(false); return; }
+      try {
+        setLoading(true);
+        const [bal, total, max] = await Promise.all([
+          readContract(wagmiConfig, { address: CONTRACT_ADDRESS as `0x${string}`, abi: SUBSCRIBE_ABI, functionName: "balanceOf", args: [address] }) as Promise<bigint>,
+          readContract(wagmiConfig, { address: CONTRACT_ADDRESS as `0x${string}`, abi: SUBSCRIBE_ABI, functionName: "totalSupply" }) as Promise<bigint>,
+          readContract(wagmiConfig, { address: CONTRACT_ADDRESS as `0x${string}`, abi: SUBSCRIBE_ABI, functionName: "maxSupply" }) as Promise<bigint>,
+        ]);
+        if (!cancelled) {
+          setSubscribed(bal > 0n);
+          setSupply({ total, max });
+        }
+      } catch (e) {
+        console.error("Read error", e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    run();
+    return () => { cancelled = true; };
+  }, [address]);
+
+  return { subscribed, loading, supply };
+}
+
+function MintButton() {
+  const { address, chainId } = useAccount();
+  const [minting, setMinting] = useState(false);
+  const [tx, setTx] = useState<`0x${string}` | null>(null);
+  const price = useMemo(() => parseEther(SUBSCRIBE_PRICE_ETH as `${number}`), []);
+
+  async function onMint() {
+    try {
+      setMinting(true);
+      setTx(null);
+      const hash = await writeContract(wagmiConfig, {
+        address: CONTRACT_ADDRESS as `0x${string}`,
+        abi: SUBSCRIBE_ABI,
+        functionName: "mintSubscribe",
+        value: price,
+        chainId,
+      });
+      setTx(hash);
+    } catch (e) {
+      console.error(e);
+      alert((e as Error).message);
+    } finally {
+      setMinting(false);
+    }
+  }
+
+  return (
+    <div className="mt-4">
+      <button
+        onClick={onMint}
+        disabled={!address || minting || CONTRACT_ADDRESS === "0x0000000000000000000000000000000000000000"}
+        className="px-5 py-3 rounded-2xl shadow-lg bg-white/10 hover:bg-white/20 transition backdrop-blur border border-white/20 disabled:opacity-50"
+      >
+        {minting ? "Minting…" : `Mint Subscribe NFT ${Number(SUBSCRIBE_PRICE_ETH) > 0 ? `• ${SUBSCRIBE_PRICE_ETH} ETH` : "• Free"}`}
+      </button>
+      {tx && (
+        <p className="mt-2 text-sm opacity-80 break-all">Tx: {tx}</p>
+      )}
+    </div>
+  );
+}
+
+function Hero() {
+  return (
+    <header className="relative overflow-hidden">
+      {/* DJZS style: starfield + neon portal ring */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0a0a14] via-[#0e0b1f] to-[#0a0a14]" />
+      <div className="absolute inset-0 -z-10 opacity-40" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, rgba(120,120,255,.15) 0, transparent 40%), radial-gradient(circle at 80% 70%, rgba(255,120,220,.12) 0, transparent 40%)" }} />
+      <div className="mx-auto max-w-5xl px-6 py-20 text-center">
+        <div className="mx-auto h-40 w-40 rounded-full border border-white/25 backdrop-blur-sm shadow-2xl flex items-center justify-center"
+             style={{ boxShadow: "0 0 120px 20px rgba(120,120,255,0.25) inset, 0 0 60px rgba(255,120,220,0.2)" }}>
+          <div className="h-24 w-24 rounded-full border border-white/25 animate-pulse" />
+        </div>
+        <h1 className="mt-8 text-4xl md:text-6xl font-black tracking-tight text-white">
+          DJZS ✦ On‑Chain Newsletter
+        </h1>
+        <p className="mt-4 text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
+          Web3-native newsletter on <span className="font-semibold">Base</span>. Connect, mint your <span className="font-semibold">Subscribe NFT</span>, and unlock members-only drops, alpha, and agent-powered trade notes.
+        </p>
+      </div>
+    </header>
+  );
+}
+
+function Gate({ children }: { children: React.ReactNode }) {
+  const { address } = useAccount();
+  const { subscribed, loading, supply } = useIsSubscribed(address as `0x${string}` | undefined);
+
+  return (
+    <section className="mx-auto max-w-5xl px-6 pb-24 -mt-10">
+      <div className="rounded-3xl p-6 md:p-10 bg-white/5 border border-white/15 backdrop-blur-xl shadow-2xl">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white">Subscribe Access</h2>
+            <p className="text-white/70 mt-1">{supply ? `Supply: ${supply.total.toString()} / ${supply.max.toString()}` : "Checking supply…"}</p>
+          </div>
+          <ConnectButton chainStatus="icon" showBalance={false} />
+        </div>
+
+        <div className="mt-6">
+          {loading ? (
+            <p className="text-white/80">Checking your subscription…</p>
+          ) : subscribed ? (
+            <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-5">
+              <h3 className="text-xl font-semibold text-emerald-300">You’re subscribed ✅</h3>
+              <p className="text-white/80 mt-2">Enjoy members-only content below. Your agent will learn from your interactions.</p>
+              <div className="mt-6">{children}</div>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
+              <h3 className="text-xl font-semibold text-white">Mint your Subscribe NFT</h3>
+              <p className="text-white/70 mt-2">One per wallet. Holds your access on-chain. Transferable by you.</p>
+              <MintButton />
+              {CONTRACT_ADDRESS === "0x0000000000000000000000000000000000000000" && (
+                <p className="text-amber-300 mt-3 text-sm">⚠️ Add your deployed contract address to <code>NEXT_PUBLIC_SUBSCRIBE_NFT_ADDRESS</code> to enable minting.</p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MemberContent() {
+  return (
+    <div className="grid md:grid-cols-3 gap-6">
+      {/* Issue cards */}
+      {[1,2,3].map((i) => (
+        <article key={i} className="rounded-2xl border border-white/10 bg-white/[.04] p-5 hover:bg-white/[.06] transition">
+          <h4 className="text-white font-semibold">Issue #{i} — DJZS Alpha Drop</h4>
+          <p className="text-white/70 mt-2 text-sm">Agent‑curated perp setups, liquidity notes, and on‑chain flows. Download PDF or mint as a Journal NFI.</p>
+          <button className="mt-4 text-sm px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20">Open</button>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <WagmiConfig config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider coolMode theme={darkTheme({ accentColor: "#9b87f5", accentColorForeground: "#0a0a14", borderRadius: "large" })}>
+          <div className="min-h-screen text-white bg-[#0a0a14]">
+            <Hero />
+            <Gate>
+              <MemberContent />
+            </Gate>
+
+            <footer className="mx-auto max-w-5xl px-6 pb-12 text-white/60 text-sm">
+              Built for <span className="font-semibold text-white">DJZS</span> on <span className="font-semibold text-sky-300">Base</span>. Powered by wagmi + RainbowKit. ✦
+            </footer>
+          </div>
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiConfig>
+  );
+}
+
+/*
+========================================
+Smart Contract (Solidity, OpenZeppelin)
+========================================
+// Save as contracts/DJZSSubscribeNFT.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+
+contract DJZSSubscribeNFT is ERC721, Ownable {
+    using Strings for uint256;
+
+    uint256 public maxSupply = 7777; // change as needed
+    uint256 public totalSupply;
+    uint256 public price; // in wei
+    string private _base;
+    mapping(address => bool) public minted;
+
+    event Subscribed(address indexed subscriber, uint256 tokenId);
+
+    constructor(string memory name_, string memory symbol_, uint256 priceWei_, string memory baseURI_) ERC721(name_, symbol_) Ownable(msg.sender) {
+        price = priceWei_;
+        _base = baseURI_;
+    }
+
+    function setBaseURI(string calldata u) external onlyOwner { _base = u; }
+    function setPrice(uint256 p) external onlyOwner { price = p; }
+    function setMaxSupply(uint256 m) external onlyOwner { maxSupply = m; }
+
+    function _baseURI() internal view override returns (string memory) { return _base; }
+
+    function mintSubscribe() external payable {
+        require(!minted[msg.sender], "already minted");
+        require(totalSupply < maxSupply, "sold out");
+        require(msg.value >= price, "insufficient");
+        minted[msg.sender] = true;
+        uint256 id = ++totalSupply;
+        _safeMint(msg.sender, id);
+        emit Subscribed(msg.sender, id);
+    }
+}
+
+----------------------------------------
+Hardhat Quick Deploy (Base or Base Sepolia)
+----------------------------------------
+// package.json (scripts)
+// "scripts": { "deploy": "hardhat run scripts/deploy.ts --network base" }
+
+// hardhat.config.ts
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-ethers";
+
+const config: HardhatUserConfig = {
+  solidity: "0.8.24",
+  networks: {
+    base: {
+      url: process.env.RPC_BASE || "https://mainnet.base.org",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 8453,
+    },
+    baseSepolia: {
+      url: process.env.RPC_BASE_SEPOLIA || "https://sepolia.base.org",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 84532,
+    },
+  },
+};
+export default config;
+
+// scripts/deploy.ts
+import { ethers } from "hardhat";
+
+async function main() {
+  const PRICE_WEI = ethers.parseEther(process.env.SUBSCRIBE_PRICE_ETH || "0");
+  const BaseURI = process.env.BASE_URI || "ipfs://Qm.../"; // metadata folder
+  const DJZS = await ethers.getContractFactory("DJZSSubscribeNFT");
+  const c = await DJZS.deploy("DJZS Subscribe", "DJZSUB", PRICE_WEI, BaseURI);
+  await c.waitForDeployment();
+  console.log("Deployed:", await c.getAddress());
+}
+
+main().catch((e) => { console.error(e); process.exit(1); });
+
+----------------------------------------
+.env (Frontend)
+----------------------------------------
+NEXT_PUBLIC_SUBSCRIBE_NFT_ADDRESS=0xYourDeployedAddress
+NEXT_PUBLIC_SUBSCRIBE_PRICE=0.002
+
+----------------------------------------
+IPFS Integration — Lighthouse (Browser & Node)
+----------------------------------------
+// 1) Install deps (frontend or server):
+//    npm i @lighthouse-web3/sdk
+//    # or: pnpm add @lighthouse-web3/sdk
+//
+// 2) Add env (never commit private keys):
+//    VITE_LIGHTHOUSE_API_KEY=lhK_...        // from https://files.lighthouse.storage/ (Account → API Keys)
+//
+// 3) Create src/lib/lighthouse.ts
+// -------------------------------------------------
+// import lighthouse from '@lighthouse-web3/sdk'
+// import { signMessage } from '@wagmi/core'
+// import { getAccount } from '@wagmi/core'
+//
+// // Helper to sign Lighthouse auth message with the connected wallet
+// export async function lighthouseAuth() {
+//   const { address, chainId } = getAccount()
+//   if (!address) throw new Error('Connect wallet first')
+//   const { data: { message } } = await lighthouse.getAuthMessage(address)
+//   const signature = await signMessage({ message })
+//   return { publicKey: address, signature }
+// }
+//
+// // Upload a file (returns { data: { Hash, Name, Size } })
+// export async function lhUploadFile(file: File, progress?: (p:number)=>void) {
+//   const { publicKey, signature } = await lighthouseAuth()
+//   const apiKey = import.meta.env.VITE_LIGHTHOUSE_API_KEY
+//   const res = await lighthouse.upload(file, apiKey, false, undefined, progress)
+//   return res // res.data.Hash is the CID
+// }
+//
+// // Upload JSON metadata as a "file" (Blob)
+// export async function lhUploadJSON(obj: any) {
+//   const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' })
+//   const file = new File([blob], 'metadata.json', { type: 'application/json' })
+//   const res = await lhUploadFile(file)
+//   return { cid: res.data.Hash, uri: `ipfs://${res.data.Hash}` }
+// }
+//
+// // Optional: encrypted uploads (for private drafts)
+// // export async function lhUploadEncrypted(file: File) {
+// //   const { publicKey, signature } = await lighthouseAuth()
+// //   const res = await lighthouse.uploadEncrypted(file, import.meta.env.VITE_LIGHTHOUSE_API_KEY, publicKey, signature)
+// //   return res
+// // }
+// -------------------------------------------------
+//
+// 4) Update Metadata Studio to use Lighthouse
+//    Replace previous IPFS helpers with the Lighthouse ones above.
+//    Example flow:
+//      const img = imageFile ? await lhUploadFile(imageFile) : undefined
+//      const metaDraft = { name, description, attributes, image: img ? `ipfs://${img.data.Hash}` : undefined }
+//      const meta = await lhUploadJSON(metaDraft)   // returns { cid, uri }
+//      const base = meta.uri.endsWith('metadata.json') ? meta.uri.replace(/metadata\.json$/, '') : meta.uri + '/'
+//      await writeContract({ address: CONTRACT_ADDRESS, abi: ABI, functionName: 'setBaseURI', args: [base] })
+//
+// Notes
+// • Use ipfs:// URIs on-chain; for previews, Lighthouse gateway is https://gateway.lighthouse.storage/ipfs/<CID>
+// • No secret keys in the browser beyond Lighthouse API key; uploads are signed by the user wallet (auth message).
+// • For batch numbered JSON (1.json..N.json), see the script below.
+//
+// 5) Use the studio: Import and render <MetadataStudio /> under the <Gate> area so only connected users see it; it auto-hides unless you are the contract owner.
+//    Example in App():
+//      <Gate>
+//        <MemberContent />
+//        <MetadataStudio />
+//      </Gate>
+//
+// 6) Batch metadata (Lighthouse) — scripts/pin-metadata.ts
+// -------------------------------------------------
+// import fs from 'node:fs'
+// import path from 'node:path'
+// import lighthouse from '@lighthouse-web3/sdk'
+//
+// async function main() {
+//   const apiKey = process.env.LIGHTHOUSE_API_KEY!
+//   const dir = path.resolve('metadata') // put 1.json, 2.json, ...
+//   const files = fs.readdirSync(dir)
+//   const toUpload = files.map((f)=> ({ path: path.join(dir, f), name: f }))
+//   const res = await lighthouse.upload(toUpload as any, apiKey)
+//   console.log('Base URI: ipfs://' + res.data.Hash + '/')
+// }
+// main()
+// -------------------------------------------------
+// import { Web3Storage, File } from 'web3.storage'
+// import fs from 'node:fs'
+// import path from 'node:path'
+//
+// const client = new Web3Storage({ token: process.env.WEB3_STORAGE_TOKEN! })
+// async function main() {
+//   const dir = path.resolve('metadata') // put 1.json, 2.json, ...
+//   const files = fs.readdirSync(dir).map((f)=> new File([fs.readFileSync(path.join(dir,f))], f))
+//   const cid = await client.put(files, { wrapWithDirectory: true })
+//   console.log('Base URI: ipfs://'+cid+'/')
+// }
+// main()
+// -------------------------------------------------
+//
+// 7) Pinata alternative (optional)
+//    npm i @pinata/sdk
+//    Use Pinata JWT in .env (PINATA_JWT=...), call pinata.pinFileToIPFS / pinJSONToIPFS.
+//
+// 8) How tokenURI resolves
+//    This ERC721 relies on baseURI + tokenId.json convention if you later add tokenURI override.
+//    Current contract uses baseURI only; most marketplaces will still show the token via on-chain metadata if you implement tokenURI().
+//    If you want per-token JSONs, extend contract:
+//      function tokenURI(uint256 id) public view override returns (string memory) { return string.concat(_base, Strings.toString(id), ".json"); }
+//    Then upload numbered JSON files and setBaseURI to the folder (ipfs://CID/).
+*/
+
+/*
+========================================
+Pinata Authentication (Recommended now)
+========================================
+Goal: move uploads off the client and require a server-side token so your Pinata credentials never touch the browser.
+
+ENV (.env)
+----------------------------------------
+PINATA_JWT=eyJhbGciOi...            # From Pinata (JWT preferred)
+DEV_ADMIN_TOKEN=something-long-rand0m  # Simple shared secret for dev
+OWNER_ADDRESS=0xYourOwnerWallet         # Optional: soft allowlist
+
+Server (Express) — server/index.ts
+----------------------------------------
+import express from 'express'
+import multer from 'multer'
+import fetch from 'node-fetch'
+
+const app = express()
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }) // 5MB cap
+const PORT = process.env.PORT || 5174
+
+function assertAuth(req: any) {
+  const hdr = req.headers['x-admin-token']
+  if (!hdr || hdr !== process.env.DEV_ADMIN_TOKEN) throw new Error('unauthorized')
+}
+
+app.use(express.json({ limit: '2mb' }))
+
+// Pin JSON metadata
+app.post('/api/pinata/json', async (req, res) => {
+  try {
+    assertAuth(req)
+    const jwt = process.env.PINATA_JWT!
+    const body = {
+      pinataContent: req.body, // Already JSON
+      pinataOptions: { cidVersion: 1 },
+      pinataMetadata: { name: req.body.name || 'djzs-meta' },
+    }
+    const r = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+      body: JSON.stringify(body),
+    })
+    const j = await r.json()
+    if (!r.ok) return res.status(400).json(j)
+    return res.json({ cid: j.IpfsHash, uri: `ipfs://${j.IpfsHash}` })
+  } catch (e: any) {
+    res.status(401).json({ error: e.message })
+  }
+})
+
+// Pin a single file (image)
+app.post('/api/pinata/file', upload.single('file'), async (req: any, res) => {
+  try {
+    assertAuth(req)
+    const jwt = process.env.PINATA_JWT!
+    const form = new FormData()
+    form.append('file', new Blob([req.file.buffer]), req.file.originalname)
+    const meta = { name: req.file.originalname }
+    form.append('pinataMetadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }))
+    form.append('pinataOptions', new Blob([JSON.stringify({ cidVersion: 1 })], { type: 'application/json' }))
+
+    const r = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${jwt}` },
+      body: form as any,
+    })
+    const j = await r.json()
+    if (!r.ok) return res.status(400).json(j)
+    return res.json({ cid: j.IpfsHash, uri: `ipfs://${j.IpfsHash}` })
+  } catch (e: any) {
+    res.status(401).json({ error: e.message })
+  }
+})
+
+app.listen(PORT, () => console.log('Pinata dev server on', PORT))
+
+Client usage — src/lib/ipfsPinata.ts
+----------------------------------------
+export async function pinJson(meta: any) {
+  const r = await fetch('/api/pinata/json', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': import.meta.env.VITE_DEV_ADMIN_TOKEN },
+    body: JSON.stringify(meta),
+  })
+  if (!r.ok) throw new Error(await r.text())
+  return r.json() // { cid, uri }
+}
+
+export async function pinFile(file: File) {
+  const form = new FormData()
+  form.append('file', file)
+  const r = await fetch('/api/pinata/file', { method: 'POST', headers: { 'x-admin-token': import.meta.env.VITE_DEV_ADMIN_TOKEN }, body: form })
+  if (!r.ok) throw new Error(await r.text())
+  return r.json() // { cid, uri }
+}
+
+// Vite env example (.env)
+// VITE_DEV_ADMIN_TOKEN=something-long-rand0m
+
+Wire into Metadata Studio
+----------------------------------------
+// Replace web3.storage calls with:
+//   const img = imageFile ? await pinFile(imageFile) : undefined
+//   const metaDraft = { name, description, attributes, image: img?.uri }
+//   const meta = await pinJson(metaDraft)
+//   const baseUri = meta.uri.endsWith('metadata.json') ? meta.uri.replace(/metadata\.json$/, '') : meta.uri + '/'
+//   await writeContract(... setBaseURI(baseUri))
+
+Security notes
+----------------------------------------
+• Dev only: this uses a shared header secret (DEV_ADMIN_TOKEN). Do NOT expose PINATA_JWT in the browser.
+• For production, replace header secret with wallet‑signature auth (EIP-191) or a full admin dashboard with role checks.
+• Set proper CORS if you separate the server (allow only your app origin).
+• Prefer CIDv1 and gateways like https://gateway.pinata.cloud/ipfs/<CID> only for preview; use ipfs:// in metadata.
+*/
