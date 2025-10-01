@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(240, 20%, 4%);
+  --foreground: hsl(0, 0%, 100%);
+  --card: hsl(240, 15%, 8%);
+  --card-foreground: hsl(0, 0%, 95%);
+  --popover: hsl(240, 20%, 4%);
+  --popover-foreground: hsl(0, 0%, 100%);
+  --primary: hsl(258, 80%, 75%);
+  --primary-foreground: hsl(240, 20%, 4%);
+  --secondary: hsl(320, 85%, 70%);
+  --secondary-foreground: hsl(240, 20%, 4%);
+  --muted: hsl(240, 10%, 15%);
+  --muted-foreground: hsl(0, 0%, 70%);
+  --accent: hsl(258, 80%, 75%);
+  --accent-foreground: hsl(240, 20%, 4%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --border: hsl(0, 0%, 100%, 0.15);
+  --input: hsl(0, 0%, 100%, 0.1);
+  --ring: hsl(258, 80%, 75%);
+  --radius: 1rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+}
+
+@layer utilities {
+  @keyframes pulse-glow {
+    0%, 100% { 
+      opacity: 0.6; 
+      transform: scale(1); 
+    }
+    50% { 
+      opacity: 1; 
+      transform: scale(1.05); 
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { 
+      transform: translateY(0px); 
+    }
+    50% { 
+      transform: translateY(-20px); 
+    }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { 
+      opacity: 0.3; 
+    }
+    50% { 
+      opacity: 1; 
+    }
+  }
+
+  .portal-ring {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .float-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .starfield {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(2px 2px at 20% 30%, white, transparent),
+      radial-gradient(2px 2px at 60% 70%, white, transparent),
+      radial-gradient(1px 1px at 50% 50%, white, transparent),
+      radial-gradient(1px 1px at 80% 10%, white, transparent),
+      radial-gradient(2px 2px at 90% 60%, white, transparent),
+      radial-gradient(1px 1px at 33% 80%, white, transparent);
+    background-size: 200% 200%;
+    animation: twinkle 4s ease-in-out infinite;
+    opacity: 0.4;
+  }
+
+  .neon-glow {
+    box-shadow: 
+      0 0 60px rgba(155, 135, 245, 0.3),
+      0 0 100px rgba(255, 107, 214, 0.2),
+      inset 0 0 60px rgba(155, 135, 245, 0.1);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-card-strong {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .gradient-overlay {
+    background: linear-gradient(135deg, 
+      rgba(155, 135, 245, 0.15) 0%,
+      transparent 40%,
+      rgba(255, 120, 220, 0.12) 100%
+    );
+  }
+}
