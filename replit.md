@@ -35,9 +35,15 @@ Preferred communication style: Simple, everyday language.
 - Development: tsx for direct TypeScript execution with hot reload
 - Production: esbuild bundles the server into ESM format
 
-**API Design**: RESTful endpoints prefixed with `/api`. Currently minimal backend logic with placeholder routes.
+**API Design**: RESTful endpoints prefixed with `/api`. Includes newsletter CRUD operations and IPFS metadata upload endpoints.
 
-**Storage Interface**: Abstract storage layer (`IStorage`) with in-memory implementation (`MemStorage`). Designed for future database integration while maintaining separation of concerns.
+**Storage Interface**: Abstract storage layer (`IStorage`) with in-memory implementation (`MemStorage`). Stores newsletter issues with CRUD operations. Newsletter issues track title, description, issue number, publication status, PDF URLs, IPFS metadata URIs, and NFT contract addresses.
+
+**IPFS Integration**: Server-side service (`server/ipfs.ts`) handles NFT metadata uploads to IPFS via Pinata API. Supports both JWT and API key/secret authentication. Implements 30-second timeout, robust error handling, and automatic URI generation. Two endpoints available:
+- `POST /api/ipfs/upload-issue-metadata/:issueId` - Generates and uploads ERC-721 metadata for newsletter issues
+- `POST /api/ipfs/upload-subscribe-metadata` - Generates and uploads ERC-721 metadata for Subscribe NFTs
+
+Note: IPFS endpoints require authentication in production (to be added in admin dashboard).
 
 **Static File Serving**: Vite middleware in development, static file serving from `dist/public` in production.
 
@@ -119,6 +125,23 @@ Preferred communication style: Simple, everyday language.
 
 **Drizzle Kit**: CLI for managing database migrations and schema introspection.
 
+### IPFS & Pinata Integration
+
+**Pinata**: IPFS pinning service used for storing NFT metadata permanently on IPFS. The platform uses Pinata's REST API (no SDK) to avoid dependency conflicts.
+
+**Authentication Methods**: Supports two authentication methods:
+1. JWT token (`PINATA_JWT`) - Recommended
+2. API Key + Secret (`PINATA_API_KEY` and `PINATA_API_SECRET`) - Both required
+
+**Features**:
+- 30-second request timeout with AbortController
+- Robust error handling with detailed Pinata error messages
+- Zod validation for all inputs (URLs, Ethereum addresses, token IDs)
+- Automatic fallback for invalid dates
+- ERC-721 compliant metadata format
+
+**Gateway**: Configurable IPFS gateway via `PINATA_GATEWAY` (defaults to `gateway.pinata.cloud`)
+
 ### Environment Configuration
 
 Required environment variables:
@@ -130,3 +153,8 @@ Required environment variables:
 - `RPC_BASE`: Custom Base RPC URL (optional)
 - `RPC_BASE_SEPOLIA`: Custom Base Sepolia RPC URL (optional)
 - `BASE_URI`: IPFS base URI for NFT metadata
+
+IPFS/Pinata variables (choose one authentication method):
+- `PINATA_JWT`: Pinata JWT token (recommended)
+- `PINATA_API_KEY` + `PINATA_API_SECRET`: Pinata API credentials (both required if not using JWT)
+- `PINATA_GATEWAY`: Custom IPFS gateway (optional, defaults to gateway.pinata.cloud)
