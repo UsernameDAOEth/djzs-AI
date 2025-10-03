@@ -24,7 +24,7 @@ export function MintButton() {
       const hash = await writeContract(wagmiConfig, {
         address: CONTRACT_ADDRESS,
         abi: SUBSCRIBE_ABI,
-        functionName: "mintSubscribe",
+        functionName: "mint",
         value: price,
         chainId: chainId as 8453 | 84532 | undefined,
       });
