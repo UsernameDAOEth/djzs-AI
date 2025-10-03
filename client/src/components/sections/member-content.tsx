@@ -4,7 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 
 export function MemberContent() {
   const { data: issues = [], isLoading } = useQuery<NewsletterIssue[]>({
-    queryKey: ["/api/newsletter-issues"],
+    queryKey: ["/api/newsletter-issues?published=true"],
   });
 
   if (isLoading) {

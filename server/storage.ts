@@ -76,8 +76,13 @@ export class MemStorage implements IStorage {
     const id = randomUUID();
     const issue: NewsletterIssue = {
       id,
-      ...insertIssue,
+      issueNumber: insertIssue.issueNumber,
+      title: insertIssue.title,
+      description: insertIssue.description,
       publishedAt: new Date(),
+      pdfUrl: insertIssue.pdfUrl ?? null,
+      ipfsMetadataUri: insertIssue.ipfsMetadataUri ?? null,
+      nftContractAddress: insertIssue.nftContractAddress ?? null,
       isPublished: insertIssue.isPublished ?? false,
     };
     this.newsletterIssues.set(id, issue);

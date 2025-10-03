@@ -6,18 +6,21 @@ import { z } from "zod";
 import { ipfsService, type NFTMetadata } from "./ipfs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Newsletter Issues API
-  app.get("/api/newsletter-issues", async (req, res) => {
+  // Newsletter Issues API (with /api/newsletters alias)
+  const getNewsletterIssuesHandler = async (req: any, res: any) => {
     try {
-      const issues = await storage.getPublishedNewsletterIssues();
+      const publishedOnly = req.query.published === 'true';
+      const issues = publishedOnly 
+        ? await storage.getPublishedNewsletterIssues()
+        : await storage.getAllNewsletterIssues();
       res.json(issues);
     } catch (error) {
       console.error("Error fetching newsletter issues:", error);
       res.status(500).json({ error: "Failed to fetch newsletter issues" });
     }
-  });
+  };
 
-  app.get("/api/newsletter-issues/:id", async (req, res) => {
+  const getNewsletterIssueHandler = async (req: any, res: any) => {
     try {
       const issue = await storage.getNewsletterIssue(req.params.id);
       if (!issue) {
@@ -28,9 +31,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error fetching newsletter issue:", error);
       res.status(500).json({ error: "Failed to fetch newsletter issue" });
     }
-  });
+  };
 
-  app.post("/api/newsletter-issues", async (req, res) => {
+  const createNewsletterIssueHandler = async (req: any, res: any) => {
     try {
       const validatedData = insertNewsletterIssueSchema.parse(req.body);
       const issue = await storage.createNewsletterIssue(validatedData);
@@ -45,9 +48,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error creating newsletter issue:", error);
       res.status(500).json({ error: "Failed to create newsletter issue" });
     }
-  });
+  };
 
-  app.patch("/api/newsletter-issues/:id", async (req, res) => {
+  const updateNewsletterIssueHandler = async (req: any, res: any) => {
     try {
       const validatedData = updateNewsletterIssueSchema.parse(req.body);
       const updated = await storage.updateNewsletterIssue(req.params.id, validatedData);
@@ -62,9 +65,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error updating newsletter issue:", error);
       res.status(500).json({ error: "Failed to update newsletter issue" });
     }
-  });
+  };
 
-  app.delete("/api/newsletter-issues/:id", async (req, res) => {
+  const deleteNewsletterIssueHandler = async (req: any, res: any) => {
     try {
       const deleted = await storage.deleteNewsletterIssue(req.params.id);
       if (!deleted) {
@@ -75,7 +78,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error deleting newsletter issue:", error);
       res.status(500).json({ error: "Failed to delete newsletter issue" });
     }
-  });
+  };
+
+  // Register routes with both /api/newsletter-issues and /api/newsletters paths
+  app.get("/api/newsletter-issues", getNewsletterIssuesHandler);
+  app.get("/api/newsletters", getNewsletterIssuesHandler);
+  
+  app.get("/api/newsletter-issues/:id", getNewsletterIssueHandler);
+  app.get("/api/newsletters/:id", getNewsletterIssueHandler);
+  
+  app.post("/api/newsletter-issues", createNewsletterIssueHandler);
+  app.post("/api/newsletters", createNewsletterIssueHandler);
+  
+  app.patch("/api/newsletter-issues/:id", updateNewsletterIssueHandler);
+  app.patch("/api/newsletters/:id", updateNewsletterIssueHandler);
+  
+  app.delete("/api/newsletter-issues/:id", deleteNewsletterIssueHandler);
+  app.delete("/api/newsletters/:id", deleteNewsletterIssueHandler);
 
   // IPFS Metadata Upload API
   // NOTE: These endpoints should be protected with authentication in production
