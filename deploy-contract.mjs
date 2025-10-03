@@ -1,150 +1,97 @@
-// Pure ethers.js deployment script for SubscribeNFT
 import { ethers } from 'ethers';
 
-// Updated contract ABI for new SubscribeNFT
-const CONTRACT_ABI = [
-  {
-    "inputs": [
-      {"internalType": "string", "name": "_name", "type": "string"},
-      {"internalType": "string", "name": "_symbol", "type": "string"},
-      {"internalType": "uint256", "name": "_priceWei", "type": "uint256"},
-      {"internalType": "address payable", "name": "_treasury", "type": "address"},
-      {"internalType": "string", "name": "_baseTokenURI", "type": "string"},
-      {"internalType": "uint256", "name": "_maxSupply", "type": "uint256"}
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "inputs": [],
-    "name": "mint",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [{"internalType": "address", "name": "owner", "type": "address"}],
-    "name": "balanceOf",
-    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalSupply",
-    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxSupply",
-    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "price",
-    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
-  }
-];
+// --- Load env ---
+const {
+  RPC_URL = 'https://sepolia.base.org',
+  PRIVATE_KEY,
+  NAME = 'DJZS Subscribe',
+  SYMBOL = 'DJZSUB',
+  PRICE_WEI = '1000000000000000',
+  TREASURY,
+  BASE_TOKEN_URI = 'ipfs://temp/',
+  MAX_SUPPLY = '0'
+} = process.env;
 
-// Placeholder - needs compilation
-const CONTRACT_BYTECODE = "COMPILE_FIRST";
+// --- Paste your Remix ABI + Bytecode here ---
+const ABI = [
+  // ⬇️ Copy ABI JSON array from Remix → Compilation Details
+];
+const BYTECODE = "0x..."; // ⬅️ Copy full hex from Remix → Compilation Details (starts with 0x)
 
 async function main() {
-  console.log("🚀 DJZS SubscribeNFT Deployment Script\n");
-  
-  // Configuration
-  const PRICE_ETH = process.env.SUBSCRIBE_PRICE_ETH || "0.001";
-  const BASE_URI = process.env.BASE_URI || "ipfs://temp/";
-  const MAX_SUPPLY = BigInt(process.env.MAX_SUPPLY || "7777"); // 0 = unlimited
-  const RPC_URL = process.env.RPC_BASE_SEPOLIA || "https://sepolia.base.org";
-  const PRIVATE_KEY = process.env.PRIVATE_KEY;
-
   if (!PRIVATE_KEY) {
-    console.error("❌ PRIVATE_KEY environment variable is required!");
-    process.exit(1);
-  }
-
-  // Setup provider and get deployer address for treasury
-  const provider = new ethers.JsonRpcProvider(RPC_URL);
-  const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
-  const TREASURY = wallet.address; // Use deployer as treasury
-
-  if (CONTRACT_BYTECODE === "COMPILE_FIRST") {
-    console.log("⚠️  Contract needs to be compiled first!\n");
-    console.log("📋 Deployment Instructions:\n");
-    console.log("1️⃣  Compile using Remix IDE:");
-    console.log("   - Go to https://remix.ethereum.org");
-    console.log("   - Create SubscribeNFT.sol and paste the contract code");
-    console.log("   - Compile with Solidity 0.8.24\n");
-    console.log("2️⃣  Deploy in Remix (RECOMMENDED):");
-    console.log("   --------------------------------");
-    console.log("   1. Go to 'Deploy & Run Transactions' tab");
-    console.log("   2. Environment: 'Injected Provider - MetaMask'");
-    console.log("   3. Network: Base Sepolia (Chain ID 84532)");
-    console.log("   4. Constructor parameters:");
-    console.log(`      - _name: "DJZS Subscribe"`);
-    console.log(`      - _symbol: "DJZSUB"`);
-    console.log(`      - _priceWei: ${ethers.parseEther(PRICE_ETH).toString()} (${PRICE_ETH} ETH)`);
-    console.log(`      - _treasury: ${TREASURY} (your wallet address)`);
-    console.log(`      - _baseTokenURI: "${BASE_URI}"`);
-    console.log(`      - _maxSupply: ${MAX_SUPPLY} (0 for unlimited)`);
-    console.log("   5. Click 'Deploy' and confirm in MetaMask");
-    console.log("   6. Copy the deployed contract address\n");
-    console.log("3️⃣  After deployment:");
-    console.log("   - Add to Replit Secrets:");
-    console.log("     VITE_SUBSCRIBE_NFT_ADDRESS=<your_contract_address>");
-    console.log("     VITE_SUBSCRIBE_PRICE=" + PRICE_ETH);
-    console.log("\n✨ Your app will be fully functional!");
+    console.error("❌ Missing PRIVATE_KEY in Replit Secrets");
+    console.log("\n📋 Required Replit Secrets:");
+    console.log("  - PRIVATE_KEY (your wallet private key)");
+    console.log("  - TREASURY (your payout address)");
+    console.log("\n📋 Optional Replit Secrets (have defaults):");
+    console.log("  - RPC_URL (default: https://sepolia.base.org)");
+    console.log("  - NAME (default: DJZS Subscribe)");
+    console.log("  - SYMBOL (default: DJZSUB)");
+    console.log("  - PRICE_WEI (default: 1000000000000000 = 0.001 ETH)");
+    console.log("  - BASE_TOKEN_URI (default: ipfs://temp/)");
+    console.log("  - MAX_SUPPLY (default: 0 = unlimited)");
     return;
   }
 
-  // Deployment logic (if bytecode provided)
-  console.log("Configuration:");
-  console.log("  💰 Price:", PRICE_ETH, "ETH");
-  console.log("  👛 Treasury:", TREASURY);
-  console.log("  📦 Base URI:", BASE_URI);
-  console.log("  🎯 Max Supply:", MAX_SUPPLY === 0n ? "Unlimited" : MAX_SUPPLY.toString());
-  console.log("  🔗 RPC:", RPC_URL);
-  console.log("");
-
-  console.log("👛 Deployer:", wallet.address);
-  
-  const balance = await provider.getBalance(wallet.address);
-  console.log("💵 Balance:", ethers.formatEther(balance), "ETH");
-  
-  if (balance === 0n) {
-    console.error("\n❌ No ETH for gas fees!");
-    console.error("   Get testnet ETH: https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet");
-    process.exit(1);
+  if (!TREASURY) {
+    console.error("❌ Missing TREASURY in Replit Secrets");
+    console.log("Add your payout address as TREASURY in Replit Secrets");
+    return;
   }
 
-  const factory = new ethers.ContractFactory(CONTRACT_ABI, CONTRACT_BYTECODE, wallet);
-  const priceWei = ethers.parseEther(PRICE_ETH);
-  
-  console.log("\n⏳ Deploying...");
-  const contract = await factory.deploy(
-    "DJZS Subscribe",
-    "DJZSUB",
-    priceWei,
+  if (BYTECODE === "0x..." || !ABI.length) {
+    console.log("⚠️  Bytecode not configured!\n");
+    console.log("📋 Steps to deploy:");
+    console.log("1. Compile SubscribeNFT.sol in Remix IDE");
+    console.log("2. Copy the ABI and Bytecode from Compilation Details");
+    console.log("3. Paste them into deploy-contract.mjs (ABI and BYTECODE variables)");
+    console.log("4. Run: node deploy-contract.mjs");
+    console.log("\nAlternatively, deploy directly in Remix and copy the contract address.");
+    return;
+  }
+
+  const provider = new ethers.JsonRpcProvider(RPC_URL);
+  const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+
+  console.log("🚀 Deploying SubscribeNFT...\n");
+  console.log("Deployer:", await wallet.getAddress());
+  console.log("Network:", (await provider.getNetwork()).name || RPC_URL);
+  console.log("\nConstructor params:");
+  console.log("  NAME:", NAME);
+  console.log("  SYMBOL:", SYMBOL);
+  console.log("  PRICE:", PRICE_WEI, "wei (", Number(PRICE_WEI) / 1e18, "ETH)");
+  console.log("  TREASURY:", TREASURY);
+  console.log("  BASE_TOKEN_URI:", BASE_TOKEN_URI);
+  console.log("  MAX_SUPPLY:", MAX_SUPPLY, MAX_SUPPLY === '0' ? '(unlimited)' : '');
+  console.log("");
+
+  // Constructor args
+  const args = [
+    NAME,
+    SYMBOL,
+    BigInt(PRICE_WEI),
     TREASURY,
-    BASE_URI,
-    MAX_SUPPLY
-  );
-  
-  console.log("📝 TX:", contract.deploymentTransaction().hash);
-  await contract.waitForDeployment();
-  
-  const address = await contract.getAddress();
-  console.log("\n✅ Deployed to:", address);
-  console.log("\n📝 Add to Replit Secrets:");
-  console.log("   VITE_SUBSCRIBE_NFT_ADDRESS=" + address);
-  console.log("   VITE_SUBSCRIBE_PRICE=" + PRICE_ETH);
+    BASE_TOKEN_URI,
+    BigInt(MAX_SUPPLY)
+  ];
+
+  const factory = new ethers.ContractFactory(ABI, BYTECODE, wallet);
+
+  console.log("Deploying...");
+  const contract = await factory.deploy(...args);
+
+  console.log("Tx hash:", contract.deploymentTransaction().hash);
+  const deployed = await contract.waitForDeployment();
+  const address = await deployed.getAddress();
+
+  console.log("\n✅ Contract deployed at:", address);
+  console.log("\n📋 Next steps:");
+  console.log("1) Add to Replit Secrets:");
+  console.log("   VITE_SUBSCRIBE_NFT_ADDRESS =", address);
+  console.log("   VITE_SUBSCRIBE_PRICE =", (Number(PRICE_WEI) / 1e18).toString());
+  console.log("2) Restart the app");
+  console.log("3) Test minting!");
 }
 
 main().catch(console.error);
