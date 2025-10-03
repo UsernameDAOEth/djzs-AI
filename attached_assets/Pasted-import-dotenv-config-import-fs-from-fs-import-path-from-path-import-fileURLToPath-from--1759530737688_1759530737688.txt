@@ -1,0 +1,212 @@
+import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { ethers } from 'ethers';
+import solc from 'solc';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// --- Solidity source (OpenZeppelin v5 interfaces) ---
+const CONTRACT_PATH = 'contracts/SubscribeNFT.sol';
+const CONTRACT_SOURCE = `// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+
+contract SubscribeNFT is ERC721, Ownable, ReentrancyGuard {
+    using Strings for uint256;
+
+    uint256 public price;
+    uint256 public totalMinted;
+    uint256 public immutable maxSupply;
+    address payable public treasury;
+    string private baseTokenURI;
+
+    event PriceUpdated(uint256 newPrice);
+    event TreasuryUpdated(address treasury);
+    event BaseURIUpdated(string baseURI);
+
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        uint256 _priceWei,
+        address payable _treasury,
+        string memory _baseTokenURI,
+        uint256 _maxSupply
+    ) ERC721(_name, _symbol) Ownable(msg.sender) {
+        require(_treasury != address(0), "treasury required");
+        price = _priceWei;
+        treasury = _treasury;
+        baseTokenURI = _baseTokenURI;
+        maxSupply = _maxSupply;
+    }
+
+    function mint() external payable nonReentrant {
+        require(msg.value == price, "Incorrect ETH amount");
+        if (maxSupply != 0) {
+            require(totalMinted < maxSupply, "Sold out");
+        }
+        uint256 tokenId = ++totalMinted;
+        _safeMint(msg.sender, tokenId);
+        if (msg.value > 0) {
+            (bool ok, ) = treasury.call{ value: msg.value }("");
+            require(ok, "treasury transfer failed");
+        }
+    }
+
+    function setPrice(uint256 _priceWei) external onlyOwner {
+        price = _priceWei;
+        emit PriceUpdated(_priceWei);
+    }
+
+    function setTreasury(address payable _treasury) external onlyOwner {
+        require(_treasury != address(0), "zero addr");
+        treasury = _treasury;
+        emit TreasuryUpdated(_treasury);
+    }
+
+    function setBaseURI(string calldata _baseTokenURI) external onlyOwner {
+        baseTokenURI = _baseTokenURI;
+        emit BaseURIUpdated(_baseTokenURI);
+    }
+
+    function withdraw() external onlyOwner {
+        (bool ok, ) = treasury.call{ value: address(this).balance }("");
+        require(ok, "withdraw failed");
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return baseTokenURI;
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        _requireOwned(tokenId);
+        string memory base = _baseURI();
+        return bytes(base).length > 0
+            ? string(abi.encodePacked(base, tokenId.toString(), ".json"))
+            : "";
+    }
+}
+`;
+
+// --- Read env ---
+const {
+  RPC_URL,
+  PRIVATE_KEY,
+  NAME,
+  SYMBOL,
+  PRICE_WEI,
+  TREASURY,
+  BASE_TOKEN_URI,
+  MAX_SUPPLY
+} = process.env;
+
+// --- Basic checks ---
+if (!RPC_URL || !PRIVATE_KEY) {
+  console.error('Missing RPC_URL or PRIVATE_KEY in .env');
+  process.exit(1);
+}
+if (!TREASURY || !ethers.isAddress(TREASURY)) {
+  console.error('TREASURY missing or not a valid address');
+  process.exit(1);
+}
+
+// --- Standard JSON input for solc ---
+const input = {
+  language: 'Solidity',
+  sources: {
+    [CONTRACT_PATH]: { content: CONTRACT_SOURCE }
+  },
+  settings: {
+    optimizer: { enabled: true, runs: 200 },
+    outputSelection: {
+      '*': {
+        '*': ['abi', 'evm.bytecode.object', 'metadata']
+      }
+    }
+  }
+};
+
+// Resolve OZ imports from node_modules
+function findImport(importPath) {
+  try {
+    const tryPaths = [
+      path.resolve(importPath),
+      path.resolve(__dirname, 'node_modules', importPath),
+      path.resolve(__dirname, 'node_modules', '@openzeppelin', importPath),
+    ];
+    for (const p of tryPaths) {
+      if (fs.existsSync(p)) return { contents: fs.readFileSync(p, 'utf8') };
+    }
+    return { error: 'File not found: ' + importPath };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+function compile() {
+  const output = JSON.parse(solc.compile(JSON.stringify(input), { import: findImport }));
+  if (output.errors) {
+    const hard = output.errors.filter(e => e.severity === 'error');
+    if (hard.length) {
+      console.error(hard.map(e => e.formattedMessage).join('\n'));
+      process.exit(1);
+    } else {
+      console.warn(output.errors.map(e => e.formattedMessage).join('\n'));
+    }
+  }
+  const c = output.contracts[CONTRACT_PATH]['SubscribeNFT'];
+  return { abi: c.abi, bytecode: '0x' + c.evm.bytecode.object };
+}
+
+async function main() {
+  console.log('Compiling SubscribeNFT (0.8.24, optimizer 200)…');
+  const { abi, bytecode } = compile();
+
+  // Save artifacts (optional)
+  const outDir = path.resolve(__dirname, 'artifacts');
+  fs.mkdirSync(outDir, { recursive: true });
+  fs.writeFileSync(path.join(outDir, 'SubscribeNFT.abi.json'), JSON.stringify(abi, null, 2));
+  fs.writeFileSync(path.join(outDir, 'SubscribeNFT.bytecode.txt'), bytecode);
+
+  // Provider + wallet
+  const provider = new ethers.JsonRpcProvider(RPC_URL);
+  const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+
+  console.log('Deployer:', await wallet.getAddress());
+  console.log('Network:', await provider.getNetwork());
+
+  // Constructor args
+  const args = [
+    NAME || 'DJZS Subscribe',
+    SYMBOL || 'DJZSUB',
+    BigInt(PRICE_WEI || '1000000000000000'),
+    TREASURY,
+    BASE_TOKEN_URI || '',
+    BigInt(MAX_SUPPLY || '0')
+  ];
+
+  console.log('Deploying with args:', args);
+  const factory = new ethers.ContractFactory(abi, bytecode, wallet);
+  const contract = await factory.deploy(...args);
+
+  console.log('Tx hash:', contract.deploymentTransaction().hash);
+  const deployed = await contract.waitForDeployment();
+  const address = await deployed.getAddress();
+
+  console.log('✅ Deployed at:', address);
+  console.log('\nNext steps:');
+  console.log('1) Set Replit secret VITE_SUBSCRIBE_NFT_ADDRESS =', address);
+  console.log('2) Set Replit secret VITE_SUBSCRIBE_PRICE =', (Number(PRICE_WEI || '1000000000000000') / 1e18).toString());
+  console.log('3) Restart app and test mint.');
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
