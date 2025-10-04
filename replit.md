@@ -142,6 +142,36 @@ Note: IPFS endpoints require authentication in production (to be added in admin 
 
 **Gateway**: Configurable IPFS gateway via `PINATA_GATEWAY` (defaults to `gateway.pinata.cloud`)
 
+### Avantis Trading Integration
+
+**Service Architecture**: FastAPI-based microservice (`avantis_service/main.py`) provides REST API bridge to Avantis perpetual trading protocol on Base.
+
+**SDK Integration**: Uses `avantis-trader-sdk` (Python) for blockchain interactions. Supports market orders, limit orders, zero-fee trades, and position management.
+
+**API Endpoints**:
+- `GET /health` - Health check
+- `GET /markets` - List available trading pairs (BTC/USD, ETH/USD, etc.)
+- `GET /trader/{address}` - Get open positions for trader address
+- `POST /plan` - Calculate fees and loss protection for hypothetical trade
+- `POST /open` - Open new position (requires PRIVATE_KEY)
+- `POST /close` - Close existing position (requires PRIVATE_KEY)
+
+**Order Types**: Supports MARKET (with fees), LIMIT (trigger at specific price), and MARKET_ZERO_FEE (pay fees from profits only).
+
+**Security Considerations**:
+- CORS middleware configured (restrict origins in production)
+- Read-only mode recommended for production (no PRIVATE_KEY on server)
+- Client-side signing or KMS signer preferred for trade execution
+- Subscribe NFT gating should be enforced in Node.js API before proxying to Avantis service
+
+**Features**:
+- Real-time position tracking and PnL calculation
+- Dynamic fee and loss protection estimates
+- USDC collateral management with automatic approval handling
+- Support for leverage up to 500x (varies by asset)
+
+**Port**: Service runs on port 8088 (separate from main application on port 5000)
+
 ### Environment Configuration
 
 Required environment variables:
@@ -149,10 +179,11 @@ Required environment variables:
 - `VITE_SUBSCRIBE_NFT_ADDRESS`: Deployed contract address
 - `VITE_SUBSCRIBE_PRICE`: NFT mint price in ETH
 - `VITE_WALLETCONNECT_PROJECT_ID`: WalletConnect cloud project ID (optional)
-- `PRIVATE_KEY`: Wallet private key for contract deployment
+- `PRIVATE_KEY`: Wallet private key for contract deployment and Avantis trading (optional for read-only mode)
 - `RPC_BASE`: Custom Base RPC URL (optional)
 - `RPC_BASE_SEPOLIA`: Custom Base Sepolia RPC URL (optional)
 - `BASE_URI`: IPFS base URI for NFT metadata
+- `BASE_RPC_URL`: Base blockchain RPC URL for Avantis service (required)
 
 IPFS/Pinata variables (choose one authentication method):
 - `PINATA_JWT`: Pinata JWT token (recommended)
