@@ -6,8 +6,8 @@ import { z } from "zod";
 import { ipfsService, type NFTMetadata } from "./ipfs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Health check endpoint
-  app.get("/health", (_req, res) => {
+  // Health check endpoint (using /api/health to avoid Vite catch-all)
+  app.get("/api/health", (_req, res) => {
     res.json({ ok: true, timestamp: Date.now(), service: "DJZS Newsletter API" });
   });
 
