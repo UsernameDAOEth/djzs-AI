@@ -1,0 +1,175 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ethers } from "ethers";
+
+type AIReply = {
+  summary: string;
+  entry?: number;
+  stop?: number;
+  tps?: number[];
+  confidence?: number; // 0-1
+  rationale?: string[];
+  risk?: { maxLossPct: number; posSizeUsd: number };
+};
+
+const DAILY_LIMIT = 10; // mirror GoTrader-style limit
+
+export default function ChartChat() {
+  const [connected, setConnected] = useState(false);
+  const [address, setAddress] = useState<string>("");
+  const [prompt, setPrompt] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [count, setCount] = useState(0);
+  const [reply, setReply] = useState<AIReply | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Simple local limit (also enforce on server)
+  useEffect(() => {
+    const key = `djzs.ai.limit.${new Date().toISOString().slice(0,10)}`;
+    const n = Number(localStorage.getItem(key) || "0");
+    setCount(n);
+  }, []);
+
+  const saveCount = () => {
+    const key = `djzs.ai.limit.${new Date().toISOString().slice(0,10)}`;
+    const n = (Number(localStorage.getItem(key) || "0") + 1);
+    localStorage.setItem(key, String(n));
+    setCount(n);
+  };
+
+  async function connectEvm() {
+    try {
+      // Minimal EVM connect (you may already use wagmi)
+      // @ts-ignore
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const accounts = await provider.send("eth_requestAccounts", []);
+      setAddress(accounts[0]);
+      setConnected(true);
+    } catch (e:any) {
+      setError(e.message || "Wallet connect failed");
+    }
+  }
+
+  async function askAI() {
+    setError(null);
+    setReply(null);
+    if (count >= DAILY_LIMIT) {
+      setError("Daily AI limit reached. Join the community to unlock more.");
+      return;
+    }
+    if (!prompt.trim()) return;
+
+    setBusy(true);
+    try {
+      const res = await fetch("/api/ai/chart-chat", {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({
+          prompt,
+          // include lightweight context for better answers
+          context: {
+            address,
+            // Frontend may pass selected symbol/TF or chart range
+            symbol: "SOL-PERP", // replace from UI state
+            timeframe: "15m"
+          }
+        })
+      });
+      if (!res.ok) throw new Error(`AI error ${res.status}`);
+      const data = await res.json() as AIReply;
+      setReply(data);
+      saveCount();
+    } catch (e:any) {
+      setError(e.message || "AI request failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveJournalAndMint() {
+    if (!reply) return;
+    try {
+      const res = await fetch("/api/journal/create", {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({
+          address,
+          symbol: "SOL-PERP",
+          entry: reply.entry,
+          stop: reply.stop,
+          tps: reply.tps,
+          rationale: reply.rationale,
+          risk: reply.risk,
+          summary: reply.summary
+        })
+      });
+      if (!res.ok) throw new Error("Journal save failed");
+      const { journalId, ipfsCid } = await res.json();
+
+      // Optional: mint flow
+      const resMint = await fetch("/api/mint", {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({ journalId, ipfsCid })
+      });
+      if (!resMint.ok) throw new Error("Mint failed");
+      alert("Journal saved and NFT minted ✅");
+    } catch (e:any) {
+      setError(e.message);
+    }
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto p-4 space-y-4">
+      <div className="rounded-xl p-3 text-xs border">
+        <b>BETA:</b> Educational only — not financial advice. • Daily limit: {count}/{DAILY_LIMIT}
+      </div>
+
+      {!connected ? (
+        <button onClick={connectEvm} className="px-4 py-2 rounded-xl border">
+          Connect Wallet
+        </button>
+      ) : (
+        <div className="text-sm opacity-80">Connected: {address.slice(0,6)}…{address.slice(-4)}</div>
+      )}
+
+      <div className="space-y-2">
+        <textarea
+          value={prompt}
+          onChange={(e)=>setPrompt(e.target.value)}
+          placeholder="Ask: 'Plan a SOL-PERP long with 0.5% max loss, show entry/stop/3 TPs.'"
+          className="w-full border rounded-xl p-3 min-h-[100px]"
+        />
+        <div className="flex gap-2">
+          <button onClick={askAI} disabled={busy} className="px-4 py-2 rounded-xl border">
+            {busy ? "Thinking…" : "Ask AI"}
+          </button>
+          {reply && (
+            <button onClick={saveJournalAndMint} className="px-4 py-2 rounded-xl border">
+              Save & Mint
+            </button>
+          )}
+        </div>
+      </div>
+
+      {error && <div className="text-red-500 text-sm">{error}</div>}
+
+      {reply && (
+        <div className="border rounded-xl p-4 space-y-2">
+          <div className="text-sm">{reply.summary}</div>
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div>Entry: <b>{reply.entry ?? "—"}</b></div>
+            <div>Stop: <b>{reply.stop ?? "—"}</b></div>
+            <div>TPs: <b>{reply.tps?.join(" / ") ?? "—"}</b></div>
+            <div>Confidence: <b>{reply.confidence ? Math.round(reply.confidence*100)+"%" : "—"}</b></div>
+            <div>Risk: <b>{reply.risk ? `${reply.risk.posSizeUsd} USD @ ${reply.risk.maxLossPct}%` : "—"}</b></div>
+          </div>
+          {reply.rationale?.length ? (
+            <ul className="list-disc ml-6 text-sm opacity-80">
+              {reply.rationale.map((r,i)=><li key={i}>{r}</li>)}
+            </ul>
+          ) : null}
+        </div>
+      )}
+    </div>
+  );
+}

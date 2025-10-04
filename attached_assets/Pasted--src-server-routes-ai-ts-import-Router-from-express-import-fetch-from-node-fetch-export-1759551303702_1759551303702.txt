@@ -1,0 +1,69 @@
+// src/server/routes/ai.ts
+import { Router } from "express";
+import fetch from "node-fetch";
+
+export const ai = Router();
+
+ai.post("/chart-chat", async (req, res) => {
+  try {
+    const { prompt, context } = req.body || {};
+    // Fetch market context (symbol, OHLC, open interest, funding) from your HL service
+    const market = await getHyperliquidContext(context?.symbol || "SOL-PERP");
+
+    const system = [
+      "You are DJZS Trade AI. Return JSON ONLY.",
+      "Fields: summary, entry, stop, tps[], confidence(0-1), rationale[], risk{maxLossPct,posSizeUsd}"
+    ].join("\n");
+
+    const user = [
+      `User: ${prompt}`,
+      `Symbol: ${market.symbol}`,
+      `Price: ${market.price}`,
+      `ATR(14): ${market.atr}`,
+      `Volatility: ${market.volatility}`,
+      `Funding: ${market.funding}`,
+      `OI: ${market.oi}`,
+      `Timeframe: ${context?.timeframe || "15m"}`
+    ].join("\n");
+
+    // Call your LLM (Nous API / GPT-5 Thinking per your stack)
+    const json = await callLLM(system, user);
+
+    // Optional: enforce risk policy (position sizing caps, etc.)
+    const bounded = applyRiskGuard(json, market);
+
+    res.json(bounded);
+  } catch (e:any) {
+    console.error(e);
+    res.status(500).json({ error: "ai_failed" });
+  }
+});
+
+// --- Helpers (sketch) ---
+async function getHyperliquidContext(symbol:string) {
+  // Implement with HL API/MCP server of your choice
+  // return { symbol, price, atr, volatility, funding, oi }
+  return { symbol, price: 0, atr: 0, volatility: 0, funding: 0, oi: 0 };
+}
+
+async function callLLM(system:string, user:string) {
+  // Plug your preferred model: Nous API or OpenAI
+  // Return JSON matching AIReply
+  return {
+    summary: "Plan: long SOL-PERP on HL with tight risk.",
+    entry: 150.2,
+    stop: 148.9,
+    tps: [151.3, 152.4, 154.0],
+    confidence: 0.62,
+    rationale: ["Trend support reclaimed", "Positive funding flip", "OI uptick"],
+    risk: { maxLossPct: 0.5, posSizeUsd: 500 }
+  };
+}
+
+function applyRiskGuard(plan:any, mkt:any) {
+  const cap = 1.0; // max loss %
+  if (plan?.risk?.maxLossPct > cap) plan.risk.maxLossPct = cap;
+  return plan;
+}
+
+export default ai;
