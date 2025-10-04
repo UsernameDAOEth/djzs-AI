@@ -38,7 +38,6 @@ export function Footer() {
             <h4 className="font-semibold text-white">Resources</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/60">
               <li><a href="#" className="transition hover:text-white" data-testid="link-documentation">Documentation</a></li>
-              <li><a href="#" className="transition hover:text-white" data-testid="link-contract">Smart Contract</a></li>
               <li><a href="#" className="transition hover:text-white" data-testid="link-explorer">Base Explorer</a></li>
               <li><a href="#" className="transition hover:text-white" data-testid="link-opensea">OpenSea</a></li>
             </ul>
