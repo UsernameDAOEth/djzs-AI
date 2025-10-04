@@ -6,6 +6,11 @@ import { z } from "zod";
 import { ipfsService, type NFTMetadata } from "./ipfs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint
+  app.get("/health", (_req, res) => {
+    res.json({ ok: true, timestamp: Date.now(), service: "DJZS Newsletter API" });
+  });
+
   // Newsletter Issues API (with /api/newsletters alias)
   const getNewsletterIssuesHandler = async (req: any, res: any) => {
     try {
