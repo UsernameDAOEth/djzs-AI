@@ -2,7 +2,7 @@ export function Footer() {
   return (
     <footer className="relative border-t border-white/10 py-12">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-3">
           {/* Brand Column */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2">
@@ -31,16 +31,6 @@ export function Footer() {
                 </svg>
               </a>
             </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-semibold text-white">Resources</h4>
-            <ul className="mt-4 space-y-2 text-sm text-white/60">
-              <li><a href="#" className="transition hover:text-white" data-testid="link-documentation">Documentation</a></li>
-              <li><a href="#" className="transition hover:text-white" data-testid="link-explorer">Base Explorer</a></li>
-              <li><a href="#" className="transition hover:text-white" data-testid="link-opensea">OpenSea</a></li>
-            </ul>
           </div>
 
           {/* Community */}
