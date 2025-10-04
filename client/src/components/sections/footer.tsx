@@ -59,7 +59,7 @@ export function Footer() {
         <div className="mt-12 border-t border-white/10 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 text-sm text-white/50 md:flex-row">
             <p>
-              Built for <span className="font-semibold text-white">DJZS</span> on <span className="font-semibold text-primary">Base</span>. Powered by wagmi + RainbowKit. ✦
+              Built for <span className="font-semibold text-white">DJZS</span> on <span className="font-semibold text-primary">Base</span>. ✦
             </p>
             <div className="flex gap-6">
               <a href="#" className="transition hover:text-white" data-testid="link-privacy">Privacy</a>
