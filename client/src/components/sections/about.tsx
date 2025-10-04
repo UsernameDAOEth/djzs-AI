@@ -7,10 +7,17 @@ export function About() {
             <div>
               <h2 className="text-3xl font-bold text-white md:text-4xl">About DJZS</h2>
               <p className="mt-4 text-lg text-white/80">
-                DJZS is a Web3-native newsletter that brings institutional-grade research to on-chain natives. Founded by traders and developers who lived through multiple cycles.
+                <strong>DJZS (Decentralized Journaling Zone System)</strong> is your Web3 journaling platform where:
               </p>
-              <p className="mt-4 text-white/70">
-                Our AI agents scan thousands of wallets, monitor protocol changes, and surface opportunities before they hit CT. Every issue is crafted to be actionable, not just informative.
+              <div className="mt-6 space-y-3 text-white/70">
+                <p>✍️ You <strong className="text-white/90">journal</strong> your trades, ideas, and strategies</p>
+                <p>🪙 You <strong className="text-white/90">mint</strong> them as NFTs for provenance & ownership</p>
+                <p>🤖 Your <strong className="text-white/90">AI Agent evolves</strong> with your logs, learning your style</p>
+                <p>🌐 You <strong className="text-white/90">unlock access</strong> to gated content, proposals, and community drops</p>
+              </div>
+              <p className="mt-6 text-white/80">
+                Your journals become building blocks of identity.<br />
+                Your Subscribe NFT is your ticket to the inner circle.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <a href="#" className="inline-flex items-center gap-2 text-primary hover:text-primary/80" data-testid="link-twitter">
