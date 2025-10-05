@@ -30,7 +30,7 @@ export function useIsSubscribed(address?: `0x${string}` | undefined) {
           readContract(wagmiConfig, {
             address: CONTRACT_ADDRESS,
             abi: SUBSCRIBE_ABI,
-            functionName: "totalSupply",
+            functionName: "totalMinted",
           }) as Promise<bigint>,
           readContract(wagmiConfig, {
             address: CONTRACT_ADDRESS,

@@ -1,0 +1,15 @@
+{
+  "name": "djzs-subscribe-nft-starter",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "deploy": "node deploy.mjs"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.2",
+    "solc": "0.8.24-fixed"
+  }
+}
