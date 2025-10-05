@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,6 +10,14 @@ const __dirname = path.dirname(__filename);
 const CONTRACT_PATH = 'contracts/SubscribeNFT.sol';
 const CONTRACT_SOURCE = fs.readFileSync(CONTRACT_PATH, 'utf8');
 
+// Load env from .env.deploy file
+const envFile = fs.readFileSync('.env.deploy', 'utf8');
+const env = {};
+envFile.split('\n').forEach(line => {
+  const [key, ...values] = line.split('=');
+  if (key && values.length) env[key.trim()] = values.join('=').trim();
+});
+
 const {
   RPC_URL,
   PRIVATE_KEY,
@@ -20,7 +27,7 @@ const {
   TREASURY,
   BASE_TOKEN_URI,
   MAX_SUPPLY
-} = process.env;
+} = env;
 
 if (!RPC_URL || !PRIVATE_KEY) { console.error('Missing RPC_URL or PRIVATE_KEY'); process.exit(1); }
 if (!TREASURY || !ethers.isAddress(TREASURY)) { console.error('TREASURY invalid'); process.exit(1); }
