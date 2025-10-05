@@ -1,0 +1,81 @@
+Awesome—let’s deploy your SubscribeNFT to Base Mainnet right now using the script flow you already have. I’ll use your wallet 0x15b2…1876 as the treasury (you can change it if you want).
+
+1) Prep the environment
+
+In your Replit (or local terminal) inside the project folder that contains deploy.mjs:
+
+npm i
+cp .env.example .env
+
+Open .env and set these (Base Mainnet):
+
+RPC_URL=https://mainnet.base.org
+PRIVATE_KEY=0xYOUR_PRIVATE_KEY              # the deployer key (funded with a little ETH on Base)
+NAME=DJZS Subscribe
+SYMBOL=DJZSUB
+PRICE_WEI=1000000000000000                  # 0.001 ETH
+TREASURY=0x15b2aF4ACc464EA44fcfACcB6A50bD2388441876
+BASE_TOKEN_URI=ipfs://YOUR_FOLDER_CID/      # optional now, can set later
+MAX_SUPPLY=0                                # 0 = unlimited
+
+Never commit your PRIVATE_KEY. Replit Secrets are ideal for this if you prefer.
+
+2) Deploy
+
+Run:
+
+npm run deploy
+
+You’ll see output like:
+
+Deployer: 0x15b2...1876
+Network: 8453 (Base)
+Deploying with args: [...]
+Tx hash: 0x...
+✅ Deployed at: 0xABCD...EF01
+
+Copy the deployed address.
+
+3) Add Replit secrets (frontend)
+
+In Replit → 🔒 Secrets:
+
+VITE_SUBSCRIBE_NFT_ADDRESS = 0xABCD...EF01
+VITE_SUBSCRIBE_PRICE       = 0.001
+
+Save → Replit restarts.
+
+4) Test mint
+	1.	Open your app → Connect wallet (on Base Mainnet).
+	2.	Click Mint → confirm in wallet.
+	3.	Check your treasury (0x15b2…1876) received 0.001 ETH per mint.
+	4.	View tx on BaseScan (basescan.org).
+
+5) (Optional) After-deploy admin actions
+
+If you left BASE_TOKEN_URI blank, or want to tweak price/URI later:
+	•	Set price (owner only):
+
+setPrice(1000000000000000)
+
+
+	•	Set base URI (folder CID ending with /):
+
+setBaseURI("ipfs://QmYourFolderCid/")
+
+
+	•	Change treasury:
+
+setTreasury(0xNewTreasuryAddr)
+
+
+
+6) Quick “it didn’t work” checks
+	•	Wallet on Base Mainnet (8453), not Sepolia.
+	•	The value you send is parseEther("0.001") (contract expects 1e15 wei).
+	•	Right contract address in VITE_SUBSCRIBE_NFT_ADDRESS.
+	•	If you changed price on-chain, update VITE_SUBSCRIBE_PRICE to match UI.
+
+⸻
+
+If you want, paste back the “✅ Deployed at: 0x…” line and I’ll sanity-check it (chain, price, and a quick BaseScan link) and confirm the exact values to set in Secrets.
