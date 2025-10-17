@@ -1,12 +1,14 @@
 import { useAccount } from "wagmi";
 import { useIsSubscribed } from "@/hooks/use-subscription";
+import { useSupply } from "@/hooks/use-supply";
 import { WalletConnectButton } from "@/components/web3/connect-button";
 import { MintButton } from "@/components/web3/mint-button";
 import { MemberContent } from "./member-content";
 
 export function SubscriptionGate() {
   const { address } = useAccount();
-  const { subscribed, loading, supply } = useIsSubscribed(address as `0x${string}` | undefined);
+  const { subscribed, loading } = useIsSubscribed(address as `0x${string}` | undefined);
+  const { supply } = useSupply();
 
   return (
     <section className="relative">

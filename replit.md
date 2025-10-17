@@ -74,15 +74,21 @@ Note: IPFS endpoints require authentication in production (to be added in admin 
 
 ### Smart Contract Architecture
 
-**Contract Standard**: OpenZeppelin ERC-721 implementation provides battle-tested NFT functionality.
+**Contract Type**: Unlock Protocol TransparentUpgradeableProxy (deployed at 0xfeda5ad4559bba0c57e46bb4f165fd80cdc8dd61 on Base Mainnet)
 
-**Custom Functions**:
-- `mintSubscribe()`: Payable function for subscription NFT minting
-- Supply tracking with `totalSupply()` and `maxSupply()` view functions
+**Protocol**: [Unlock Protocol](https://unlock-protocol.com/) - A decentralized protocol for memberships and subscriptions using NFTs.
 
-**Deployment Strategy**: Hardhat deployment scripts with environment-based configuration for price and base URI. Supports both mainnet and testnet deployments.
+**Key Functions**:
+- `purchase(_values, _recipients, _referrers, _keyManagers, _data)`: Purchase membership keys (NFTs)
+- `totalSupply()`: View total number of keys minted
+- `maxNumberOfKeys()`: View maximum supply limit
+- `keyPrice()`: View price per key in wei
+- `balanceOf(_owner)`: Check NFT ownership
+- `getHasValidKey(_user)`: Verify active membership status
 
-**Metadata**: IPFS-based token metadata referenced via configurable base URI.
+**Integration**: Frontend uses wagmi/viem to interact with Unlock Protocol contract via custom ABI definition in `client/src/lib/wagmi-config.ts`.
+
+**Metadata**: IPFS-based token metadata (configurable)
 
 ## External Dependencies
 
