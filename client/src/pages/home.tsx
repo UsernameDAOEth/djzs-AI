@@ -4,6 +4,7 @@ import { Features } from "@/components/sections/features";
 import { About } from "@/components/sections/about";
 import { FAQ } from "@/components/sections/faq";
 import { Footer } from "@/components/sections/footer";
+import DebugWalletStatus from "@/components/DebugWalletStatus";
 
 export default function Home() {
   return (
@@ -15,6 +16,11 @@ export default function Home() {
 
       <Hero />
       <SubscriptionGate />
+      
+      <div className="container mx-auto px-4 py-8">
+        <DebugWalletStatus />
+      </div>
+      
       <Features />
       <About />
       <FAQ />
