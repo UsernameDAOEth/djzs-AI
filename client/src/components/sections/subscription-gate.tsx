@@ -22,7 +22,9 @@ export function SubscriptionGate() {
                 {supply ? (
                   <>
                     Supply: <span data-testid="text-total-supply">{supply.total.toString()}</span> /{" "}
-                    <span data-testid="text-max-supply">{supply.max.toString()}</span>
+                    <span data-testid="text-max-supply">
+                      {supply.max > BigInt(10 ** 15) ? "Unlimited" : supply.max.toString()}
+                    </span>
                   </>
                 ) : (
                   "Checking supply…"

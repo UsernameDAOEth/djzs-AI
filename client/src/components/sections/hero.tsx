@@ -31,7 +31,7 @@ export function Hero() {
               <div className="mt-1 text-sm text-white/70 md:text-base">Issues</div>
             </div>
             <div className="glass-card rounded-2xl p-4 md:p-6">
-              <div className="text-2xl font-bold text-white md:text-3xl" data-testid="text-max-supply">7,777</div>
+              <div className="text-2xl font-bold text-white md:text-3xl" data-testid="text-max-supply">∞</div>
               <div className="mt-1 text-sm text-white/70 md:text-base">Max Supply</div>
             </div>
           </div>
