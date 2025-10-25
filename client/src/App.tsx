@@ -8,12 +8,14 @@ import { wagmiConfig } from "./lib/wagmi-config";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
+import Journal from "@/pages/journal";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/journal" component={Journal} />
       <Route component={NotFound} />
     </Switch>
   );
