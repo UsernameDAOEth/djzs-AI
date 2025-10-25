@@ -24,6 +24,11 @@ export default function Journal() {
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
 
+  // Check if current user is admin
+  const adminAddress = import.meta.env.VITE_ADMIN_ADDRESS?.toLowerCase();
+  const isAdmin = address && adminAddress && address.toLowerCase() === adminAddress;
+  const hasAccess = subscribed || isAdmin;
+
   const chatMutation = useMutation({
     mutationFn: async (messages: Message[]) => {
       const res = await apiRequest('POST', '/api/ai/chat', { messages });
@@ -123,7 +128,7 @@ export default function Journal() {
     );
   }
 
-  if (!subscribed) {
+  if (!hasAccess) {
     return (
       <div className="min-h-screen relative overflow-hidden">
         <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a14] via-[#0e0b1f] to-[#0a0a14] -z-20"></div>
@@ -168,7 +173,14 @@ export default function Journal() {
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-white">DJZS Journal</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold text-white">DJZS Journal</h1>
+            {isAdmin && (
+              <span className="px-3 py-1 bg-primary/20 border border-primary/50 rounded-full text-xs text-primary font-semibold">
+                ADMIN
+              </span>
+            )}
+          </div>
           <WalletConnectButton />
         </div>
 
