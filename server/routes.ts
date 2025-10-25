@@ -246,6 +246,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Nous Research AI Chat API
+  const aiChatSchema = z.object({
+    messages: z.array(z.object({
+      role: z.enum(['system', 'user', 'assistant']),
+      content: z.string(),
+    })),
+    model: z.string().default('Hermes-4-70B'),
+    temperature: z.number().min(0).max(2).optional(),
+    max_tokens: z.number().int().positive().optional(),
+  });
+
+  app.post("/api/ai/chat", async (req, res) => {
+    try {
+      const validatedBody = aiChatSchema.parse(req.body);
+      const apiKey = process.env.NOUS_RESEARCH_API_KEY;
+
+      if (!apiKey) {
+        return res.status(500).json({ error: "AI service not configured" });
+      }
+
+      const response = await fetch('https://inference-api.nousresearch.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: validatedBody.model,
+          messages: validatedBody.messages,
+          temperature: validatedBody.temperature ?? 0.7,
+          max_tokens: validatedBody.max_tokens ?? 2000,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        console.error('Nous Research API error:', error);
+        return res.status(response.status).json({ 
+          error: 'AI service error',
+          details: error 
+        });
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request body", details: error.errors });
+      }
+      console.error("Error calling AI service:", error);
+      res.status(500).json({ 
+        error: "Failed to get AI response",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
