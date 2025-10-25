@@ -16,7 +16,10 @@ Preferred communication style: Simple, everyday language.
 
 **UI Framework**: Radix UI components with Tailwind CSS for styling. The design implements a dark theme with custom CSS variables, neon effects, and glassmorphism aesthetics consistent with the DJZS brand.
 
-**Routing**: Wouter library provides lightweight client-side routing. Currently implements a single-page application with a home route and 404 fallback.
+**Routing**: Wouter library provides lightweight client-side routing. Routes include:
+- `/` - Homepage with hero, subscription gate, features, and member content
+- `/journal` - AI-powered writing journal (NFT-gated, subscribers only)
+- `*` - 404 fallback
 
 **State Management**: React hooks for local state, with TanStack Query (React Query) managing server state and caching.
 
@@ -59,6 +62,42 @@ Note: IPFS endpoints require authentication in production (to be added in admin 
 **NFT Gating**: Subscription status verified by checking ERC-721 `balanceOf` for connected wallet. Users with balance > 0 gain access to premium content.
 
 **Contract Deployment**: Hardhat configured for deployment to Base networks with scripts in `scripts/deploy.ts`.
+
+### Journal & AI Assistant Integration
+
+**Purpose**: NFT-gated writing journal with AI-powered assistance for subscribers to create newsletter content.
+
+**Access Control**: Frontend-level NFT gating using `useIsSubscribed` hook. Users must hold Subscribe NFT to access journal features.
+
+**AI Integration**: 
+- **Provider**: Nous Research Hermes-4 models via OpenAI-compatible API
+- **Endpoint**: `POST /api/ai/chat` - Proxies chat completion requests to Nous Research
+- **Models**: Hermes-4-70B (default), with support for other Nous Research models
+- **Features**: Conversational AI assistance, suggestion insertion, context-aware writing help
+
+**Journal Interface**:
+- **Text Editor**: Large textarea for composing journal entries and newsletter content
+- **AI Chat**: Real-time chat interface for iterative writing assistance
+- **Workflow**: Users can ask AI for help, receive suggestions, and insert AI responses directly into their journal
+- **Character Count**: Live character count display for content tracking
+
+**Backend API** (`POST /api/ai/chat`):
+- Validates requests using Zod schema (messages, model, temperature, max_tokens)
+- Securely manages NOUS_RESEARCH_API_KEY server-side
+- Proxies to `https://inference-api.nousresearch.com/v1/chat/completions`
+- Returns OpenAI-compatible chat completion responses
+- Error handling for API failures and quota limits
+
+**Navigation**: 
+- Subscribers see "AI Writing Journal" link in member content section
+- Direct route: `/journal`
+- Prominently displayed with Sparkles icon and gradient background
+
+**Future Enhancements**:
+- Journal draft persistence to database
+- Backend-level subscription verification for enhanced security
+- Rate limiting and retry logic for AI API calls
+- Multiple journal entries management
 
 ### Database Strategy
 
@@ -182,9 +221,10 @@ Note: IPFS endpoints require authentication in production (to be added in admin 
 
 Required environment variables:
 - `DATABASE_URL`: PostgreSQL connection string
-- `VITE_SUBSCRIBE_NFT_ADDRESS`: Deployed contract address
-- `VITE_SUBSCRIBE_PRICE`: NFT mint price in ETH
-- `VITE_WALLETCONNECT_PROJECT_ID`: WalletConnect cloud project ID (optional)
+- `VITE_SUBSCRIBE_NFT_ADDRESS`: Deployed contract address (0xfeda5ad4559bba0c57e46bb4f165fd80cdc8dd61)
+- `VITE_SUBSCRIBE_PRICE`: NFT mint price in ETH (0.001)
+- `VITE_WALLETCONNECT_PROJECT_ID`: WalletConnect cloud project ID
+- `NOUS_RESEARCH_API_KEY`: API key for Nous Research AI assistant (get from https://portal.nousresearch.com/api-keys)
 - `PRIVATE_KEY`: Wallet private key for contract deployment and Avantis trading (optional for read-only mode)
 - `RPC_BASE`: Custom Base RPC URL (optional)
 - `RPC_BASE_SEPOLIA`: Custom Base Sepolia RPC URL (optional)
