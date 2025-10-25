@@ -10,6 +10,11 @@ export function SubscriptionGate() {
   const { subscribed, loading } = useIsSubscribed(address as `0x${string}` | undefined);
   const { supply } = useSupply();
 
+  // Check if current user is admin
+  const adminAddress = import.meta.env.VITE_ADMIN_ADDRESS?.toLowerCase();
+  const isAdmin = address && adminAddress && address.toLowerCase() === adminAddress;
+  const hasAccess = subscribed || isAdmin;
+
   return (
     <section className="relative">
       <div className="mx-auto max-w-5xl px-6 pb-24">
@@ -47,7 +52,7 @@ export function SubscriptionGate() {
             )}
 
             {/* Not Subscribed State */}
-            {!loading && !subscribed && (
+            {!loading && !hasAccess && (
               <div className="rounded-2xl border border-white/10 bg-black/30 p-6" data-testid="status-not-subscribed">
                 <h3 className="text-xl font-semibold text-white md:text-2xl">Mint your Subscribe NFT</h3>
                 <p className="mt-2 text-white/70">One per wallet. Holds your access on-chain. Transferable by you.</p>
@@ -85,7 +90,7 @@ export function SubscriptionGate() {
             )}
 
             {/* Subscribed State */}
-            {!loading && subscribed && (
+            {!loading && hasAccess && (
               <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-6" data-testid="status-subscribed">
                 <div className="flex items-start gap-4">
                   <div className="rounded-full bg-emerald-400/20 p-3">
@@ -94,7 +99,16 @@ export function SubscriptionGate() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-emerald-300 md:text-2xl">You're subscribed ✅</h3>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <h3 className="text-xl font-semibold text-emerald-300 md:text-2xl">
+                        {isAdmin ? "Admin Access ✅" : "You're subscribed ✅"}
+                      </h3>
+                      {isAdmin && (
+                        <span className="px-3 py-1 bg-primary/20 border border-primary/50 rounded-full text-xs text-primary font-semibold">
+                          ADMIN
+                        </span>
+                      )}
+                    </div>
                     <p className="mt-2 text-white/80">
                       Enjoy members-only content below. Your AI agent will learn from your interactions and provide personalized insights.
                     </p>
