@@ -17,7 +17,7 @@ export function Hero() {
             DJZS ✦ On‑Chain Newsletter
           </h1>
           <p className="mx-auto mt-6 max-w-3xl text-lg text-white/80 md:text-xl lg:text-2xl">
-            🚀 The DJZS Newsletter — Trade insights, protocol journals, and agent intelligence, all onchain.
+            🚀 Premium crypto insights with NFT subscription. AI-powered writing tools for creating market analysis and trading content.
           </p>
 
           {/* Quick Stats */}

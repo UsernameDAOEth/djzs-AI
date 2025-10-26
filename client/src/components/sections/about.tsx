@@ -7,17 +7,17 @@ export function About() {
             <div>
               <h2 className="text-3xl font-bold text-white md:text-4xl">About DJZS</h2>
               <p className="mt-4 text-lg text-white/80">
-                <strong>DJZS (Decentralized Journaling Zone System)</strong> is your Web3 journaling platform where:
+                <strong>DJZS Newsletter</strong> is a Web3-native platform for premium crypto content and AI-powered writing:
               </p>
               <div className="mt-6 space-y-3 text-white/70">
-                <p>✍️ You <strong className="text-white/90">journal</strong> your trades, ideas, and strategies</p>
-                <p>🪙 You <strong className="text-white/90">mint</strong> them as NFTs for provenance & ownership</p>
-                <p>🤖 Your <strong className="text-white/90">AI Agent evolves</strong> with your logs, learning your style</p>
-                <p>🌐 You <strong className="text-white/90">unlock access</strong> to gated content, proposals, and community drops</p>
+                <p>📰 <strong className="text-white/90">Premium newsletters</strong> with market analysis and trading insights</p>
+                <p>🤖 <strong className="text-white/90">AI writing assistant</strong> powered by Nous Research Hermes-4</p>
+                <p>✍️ <strong className="text-white/90">Writing journal</strong> to create and save your trading content</p>
+                <p>🔐 <strong className="text-white/90">NFT subscription</strong> - one mint, permanent access (0.001 ETH)</p>
               </div>
               <p className="mt-6 text-white/80">
-                Your journals become building blocks of identity.<br />
-                Your Subscribe NFT is your ticket to the inner circle.
+                Built on Unlock Protocol and Base chain.<br />
+                Your Subscribe NFT unlocks all features permanently.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <a href="#" className="inline-flex items-center gap-2 text-primary hover:text-primary/80" data-testid="link-twitter">
@@ -39,8 +39,8 @@ export function About() {
                 <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-primary to-secondary opacity-20 blur-2xl"></div>
                 <div className="relative flex h-64 w-64 items-center justify-center rounded-full border border-white/20 bg-gradient-to-br from-white/5 to-white/0">
                   <div className="text-center">
-                    <div className="text-5xl font-black text-white">7.7K</div>
-                    <div className="mt-2 text-sm text-white/60">Max NFTs</div>
+                    <div className="text-5xl font-black text-white">∞</div>
+                    <div className="mt-2 text-sm text-white/60">Unlimited Supply</div>
                   </div>
                 </div>
               </div>

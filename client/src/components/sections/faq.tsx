@@ -2,27 +2,27 @@ export function FAQ() {
   const faqs = [
     {
       question: "What is the Subscribe NFT?",
-      answer: "The Subscribe NFT is an ERC-721 token on Base that grants you access to all premium newsletter content. It's transferable, meaning you can trade or gift it. One NFT per wallet unlocks everything.",
+      answer: "The Subscribe NFT is an ERC-721 token on Base that grants permanent access to all platform features: premium newsletters, AI writing assistant, and the writing journal. It costs 0.001 ETH and provides lifetime access.",
     },
     {
-      question: "How do I mint the Subscribe NFT?",
-      answer: "Connect your wallet using the button above, then click \"Mint Subscribe NFT\". You'll need some ETH on Base to pay for the NFT price (if set) and gas fees. The transaction completes in seconds.",
+      question: "What is the AI Writing Assistant?",
+      answer: "Our AI assistant is powered by Nous Research Hermes-4 (70B model). It helps you write newsletter content, trading analysis, and market insights. You can chat with it in real-time and insert suggestions directly into your journal.",
     },
     {
-      question: "Can I transfer my subscription to someone else?",
-      answer: "Yes! The Subscribe NFT is a standard ERC-721, so you can send it to another wallet, list it on OpenSea, or trade it peer-to-peer. Whoever holds the NFT gets access.",
+      question: "How does the Writing Journal work?",
+      answer: "The journal is your personal space to create and save trading content. Write market analysis, document strategies, or draft newsletter issues with AI assistance. Future updates will include draft saving and multiple journal entries.",
     },
     {
-      question: "What are NFI (NFT Issues)?",
-      answer: "Each newsletter issue can be minted as a separate collectible NFT. These are optional and let you build a collection, prove you read certain issues, or trade insights with other collectors.",
+      question: "Can I transfer my subscription?",
+      answer: "Yes! The Subscribe NFT follows the ERC-721 standard, making it fully transferable. You can send it to another wallet, list it on OpenSea, or trade it. Whoever holds the NFT gets full platform access.",
     },
     {
-      question: "Which networks are supported?",
-      answer: "DJZS runs on Base (mainnet) and Base Sepolia (testnet). We chose Base for its low fees, fast finality, and growing ecosystem. Connect your wallet and it'll auto-detect the right network.",
+      question: "Which blockchain do you use?",
+      answer: "We use Base (Ethereum L2) for low fees and fast transactions. The Subscribe NFT contract is deployed via Unlock Protocol at address 0xfeda5ad4559bba0c57e46bb4f165fd80cdc8dd61.",
     },
     {
-      question: "How often are new issues published?",
-      answer: "We publish weekly issues every Monday morning (UTC). Subscribers get instant access when each issue drops. Special alpha reports and urgent market updates are published as needed.",
+      question: "Is there a supply limit?",
+      answer: "No, there's unlimited supply. Anyone can mint a Subscribe NFT for 0.001 ETH anytime. This ensures the platform remains accessible to all traders and writers interested in crypto content creation.",
     },
   ];
 
