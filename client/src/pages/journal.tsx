@@ -88,15 +88,15 @@ export default function Journal() {
     });
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
-    try {
-      // Convert file to base64
-      const reader = new FileReader();
-      reader.onload = async (event) => {
+    const reader = new FileReader();
+    
+    reader.onload = async (event) => {
+      try {
         const base64 = (event.target?.result as string).split(',')[1];
         
         const response = await fetch("/api/journal/upload", {
@@ -119,20 +119,27 @@ export default function Journal() {
           title: "File Uploaded! 📄",
           description: `${file.name} uploaded to IPFS`,
         });
+      } catch (error) {
+        toast({
+          title: "Upload Failed",
+          description: error instanceof Error ? error.message : "Failed to upload file",
+          variant: "destructive",
+        });
+      } finally {
         setIsUploading(false);
-      };
-      reader.onerror = () => {
-        throw new Error("Failed to read file");
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
+      }
+    };
+    
+    reader.onerror = () => {
       toast({
         title: "Upload Failed",
-        description: error instanceof Error ? error.message : "Failed to upload file",
+        description: "Failed to read file",
         variant: "destructive",
       });
       setIsUploading(false);
-    }
+    };
+    
+    reader.readAsDataURL(file);
   };
 
   // Not subscribed state
@@ -347,7 +354,7 @@ export default function Journal() {
                         <File className="h-3 w-3" /> File will be included
                       </p>
                     )}
-                    <MintButton />
+                    <MintButton uploadedFile={uploadedFile} />
                   </div>
                 </div>
               </CardContent>
