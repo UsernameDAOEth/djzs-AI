@@ -7,7 +7,7 @@ import { MintButton } from "@/components/web3/mint-button";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Sparkles, Lock, Globe } from "lucide-react";
+import { Loader2, Sparkles, Lock, Globe, Upload, File } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
@@ -23,6 +23,8 @@ export default function Journal() {
   const { toast } = useToast();
   
   const [journalContent, setJournalContent] = useState("");
+  const [uploadedFile, setUploadedFile] = useState<{ name: string; ipfsHash: string } | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
 
@@ -84,6 +86,41 @@ export default function Journal() {
       title: "Inserted!",
       description: "AI suggestion added to your journal",
     });
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/journal/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const data = await response.json();
+      setUploadedFile({ name: file.name, ipfsHash: data.ipfsHash });
+      toast({
+        title: "File Uploaded! 📄",
+        description: `${file.name} uploaded to IPFS`,
+      });
+    } catch (error) {
+      toast({
+        title: "Upload Failed",
+        description: error instanceof Error ? error.message : "Failed to upload file",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // Not subscribed state
@@ -217,6 +254,54 @@ export default function Journal() {
                   </Button>
                 </div>
 
+                {/* File Upload Section */}
+                <div className="mt-6 rounded-xl border border-white/20 bg-white/5 p-4">
+                  <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    Upload Journal File (Optional)
+                  </h4>
+                  <div className="flex gap-3 items-center">
+                    <label className="flex-1 cursor-pointer">
+                      <input
+                        type="file"
+                        onChange={handleFileUpload}
+                        disabled={isUploading}
+                        className="hidden"
+                        accept=".pdf,.doc,.docx,.txt,.md"
+                      />
+                      <div className="rounded-lg border border-dashed border-white/30 p-4 text-center hover:border-white/50 hover:bg-white/5 transition">
+                        {isUploading ? (
+                          <div className="flex items-center justify-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span className="text-sm text-white/70">Uploading...</span>
+                          </div>
+                        ) : uploadedFile ? (
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-left flex-1">
+                              <File className="h-4 w-4 text-green-400" />
+                              <div>
+                                <p className="text-sm font-semibold text-white">{uploadedFile.name}</p>
+                                <p className="text-xs text-white/50">Uploaded to IPFS</p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => setUploadedFile(null)}
+                              className="text-xs text-white/50 hover:text-white"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="text-sm text-white/70">Click to upload PDF, Doc, or Text file</p>
+                            <p className="text-xs text-white/50 mt-1">Max 10MB</p>
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
                 {/* Minting Options */}
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Aztec Privacy NFT */}
@@ -228,7 +313,12 @@ export default function Journal() {
                     <p className="text-sm text-white/70 mb-4">
                       Mint as a private NFT on Aztec testnet (content hash only on-chain)
                     </p>
-                    <PrivacyMintButton journalContent={journalContent} />
+                    {uploadedFile && (
+                      <p className="text-xs text-green-300 mb-3 flex items-center gap-1">
+                        <File className="h-3 w-3" /> File will be included
+                      </p>
+                    )}
+                    <PrivacyMintButton journalContent={journalContent} uploadedFile={uploadedFile} />
                   </div>
 
                   {/* Base Regular NFT */}
@@ -240,6 +330,11 @@ export default function Journal() {
                     <p className="text-sm text-white/70 mb-4">
                       Mint as a public NFT on Base mainnet (full visibility, transferable)
                     </p>
+                    {uploadedFile && (
+                      <p className="text-xs text-green-300 mb-3 flex items-center gap-1">
+                        <File className="h-3 w-3" /> File will be included
+                      </p>
+                    )}
                     <MintButton />
                   </div>
                 </div>
