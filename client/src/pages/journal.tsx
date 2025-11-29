@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useIsSubscribed } from "@/hooks/use-subscription";
 import { WalletConnectButton } from "@/components/web3/connect-button";
+import { PrivacyMintButton } from "@/components/web3/privacy-mint-button";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
@@ -188,20 +189,23 @@ export default function Journal() {
           {/* Journal Editor */}
           <Card className="bg-black/40 border-white/10">
             <CardHeader>
-              <CardTitle className="text-white">Write Your Journal</CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-white">Write Your Journal</CardTitle>
+                <Lock className="h-4 w-4 text-purple-400" />
+              </div>
               <CardDescription className="text-white/70">
-                Share your insights, trade ideas, and market analysis
+                Create content and mint as privacy NFTs on Aztec
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <Textarea
                 value={journalContent}
                 onChange={(e) => setJournalContent(e.target.value)}
-                placeholder="Start writing your journal entry..."
-                className="min-h-[500px] bg-black/30 border-white/10 text-white placeholder:text-white/40 resize-none"
+                placeholder="Write your research, article, music lyrics, or trading analysis..."
+                className="min-h-[400px] bg-black/30 border-white/10 text-white placeholder:text-white/40 resize-none"
                 data-testid="textarea-journal"
               />
-              <div className="flex justify-between items-center mt-4">
+              <div className="flex justify-between items-center">
                 <span className="text-sm text-white/50">
                   {journalContent.length} characters
                 </span>
@@ -213,6 +217,7 @@ export default function Journal() {
                   Save Draft
                 </Button>
               </div>
+              <PrivacyMintButton journalContent={journalContent} />
             </CardContent>
           </Card>
 
