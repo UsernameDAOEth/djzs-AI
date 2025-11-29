@@ -3,10 +3,11 @@ import { useAccount } from "wagmi";
 import { useIsSubscribed } from "@/hooks/use-subscription";
 import { WalletConnectButton } from "@/components/web3/connect-button";
 import { PrivacyMintButton } from "@/components/web3/privacy-mint-button";
+import { MintButton } from "@/components/web3/mint-button";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Sparkles, Lock } from "lucide-react";
+import { Loader2, Sparkles, Lock, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
@@ -185,42 +186,69 @@ export default function Journal() {
           <WalletConnectButton />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {/* Journal Editor */}
-          <Card className="bg-black/40 border-white/10">
-            <CardHeader>
-              <div className="flex items-center gap-2">
+          <div className="lg:col-span-2">
+            <Card className="bg-black/40 border-white/10">
+              <CardHeader>
                 <CardTitle className="text-white">Write Your Journal</CardTitle>
-                <Lock className="h-4 w-4 text-purple-400" />
-              </div>
-              <CardDescription className="text-white/70">
-                Create content and mint as privacy NFTs on Aztec
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Textarea
-                value={journalContent}
-                onChange={(e) => setJournalContent(e.target.value)}
-                placeholder="Write your research, article, music lyrics, or trading analysis..."
-                className="min-h-[400px] bg-black/30 border-white/10 text-white placeholder:text-white/40 resize-none"
-                data-testid="textarea-journal"
-              />
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-white/50">
-                  {journalContent.length} characters
-                </span>
-                <Button
-                  variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10"
-                  data-testid="button-save"
-                >
-                  Save Draft
-                </Button>
-              </div>
-              <PrivacyMintButton journalContent={journalContent} />
-            </CardContent>
-          </Card>
+                <CardDescription className="text-white/70">
+                  Create content and mint as NFTs on your choice of networks
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Textarea
+                  value={journalContent}
+                  onChange={(e) => setJournalContent(e.target.value)}
+                  placeholder="Write your research, article, music lyrics, or trading analysis..."
+                  className="min-h-[300px] bg-black/30 border-white/10 text-white placeholder:text-white/40 resize-none"
+                  data-testid="textarea-journal"
+                />
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-white/50">
+                    {journalContent.length} characters
+                  </span>
+                  <Button
+                    variant="outline"
+                    className="border-white/20 text-white hover:bg-white/10"
+                    data-testid="button-save"
+                  >
+                    Save Draft
+                  </Button>
+                </div>
 
+                {/* Minting Options */}
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Aztec Privacy NFT */}
+                  <div className="rounded-xl border border-purple-400/30 bg-purple-400/10 p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Lock className="h-4 w-4 text-purple-400" />
+                      <h3 className="font-semibold text-white">Aztec Privacy NFT</h3>
+                    </div>
+                    <p className="text-sm text-white/70 mb-4">
+                      Mint as a private NFT on Aztec testnet (content hash only on-chain)
+                    </p>
+                    <PrivacyMintButton journalContent={journalContent} />
+                  </div>
+
+                  {/* Base Regular NFT */}
+                  <div className="rounded-xl border border-blue-400/30 bg-blue-400/10 p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Globe className="h-4 w-4 text-blue-400" />
+                      <h3 className="font-semibold text-white">Base Public NFT</h3>
+                    </div>
+                    <p className="text-sm text-white/70 mb-4">
+                      Mint as a public NFT on Base mainnet (full visibility, transferable)
+                    </p>
+                    <MintButton />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Grid for AI and future content */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* AI Assistant */}
           <Card className="bg-black/40 border-white/10">
             <CardHeader>
@@ -314,6 +342,7 @@ export default function Journal() {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       </div>
     </div>

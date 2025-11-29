@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { NewsletterIssue } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "wouter";
-import { BookOpen, Sparkles } from "lucide-react";
+import { BookOpen, Sparkles, Lock, Globe } from "lucide-react";
 
 export function MemberContent() {
   const { data: issues = [], isLoading } = useQuery<NewsletterIssue[]>({
@@ -21,24 +21,38 @@ export function MemberContent() {
 
   return (
     <div className="mt-8">
-      {/* Journal Access Button */}
-      <Link href="/journal">
-        <a className="mb-6 flex items-center justify-between rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/20 to-secondary/20 p-6 transition hover:from-primary/30 hover:to-secondary/30" data-testid="link-journal">
-          <div className="flex items-center gap-4">
-            <div className="rounded-full bg-white/10 p-3">
-              <Sparkles className="h-6 w-6 text-primary" />
+      {/* Journal Access Buttons */}
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Link href="/journal">
+          <a className="flex items-center justify-between rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/20 to-secondary/20 p-6 transition hover:from-primary/30 hover:to-secondary/30" data-testid="link-journal">
+            <div className="flex items-center gap-4">
+              <div className="rounded-full bg-white/10 p-3">
+                <Sparkles className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-white">AI Journal</h4>
+                <p className="text-sm text-white/70">Write with AI</p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-lg font-bold text-white">AI Writing Journal</h4>
-              <p className="text-sm text-white/70">Write content with AI assistance</p>
+            <BookOpen className="h-5 w-5 text-white" />
+          </a>
+        </Link>
+
+        <Link href="/journal">
+          <a className="flex items-center justify-between rounded-2xl border border-purple-400/30 bg-gradient-to-r from-purple-400/20 to-pink-400/20 p-6 transition hover:from-purple-400/30 hover:to-pink-400/30" data-testid="link-mint-nfts">
+            <div className="flex items-center gap-4">
+              <div className="rounded-full bg-white/10 p-3">
+                <Lock className="h-6 w-6 text-purple-400" />
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-white">Mint NFTs</h4>
+                <p className="text-sm text-white/70">Aztec & Base</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2 text-white">
-            <BookOpen className="h-5 w-5" />
-            <span className="font-medium">Open Journal →</span>
-          </div>
-        </a>
-      </Link>
+            <Globe className="h-5 w-5 text-white" />
+          </a>
+        </Link>
+      </div>
 
       {/* Member Content Section Header */}
       <div className="mb-6 flex items-center justify-between">
