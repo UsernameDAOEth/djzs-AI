@@ -1,9 +1,13 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertNewsletterIssueSchema, updateNewsletterIssueSchema } from "@shared/schema";
 import { z } from "zod";
 import { ipfsService, type NFTMetadata } from "./ipfs";
+
+// Pinata setup
+const PINATA_API_KEY = process.env.PINATA_API_KEY;
+const PINATA_SECRET = process.env.PINATA_API_SECRET || process.env.PINATA_SECRET;
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint (using /api/health to avoid Vite catch-all)
@@ -242,6 +246,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         error: "Failed to upload to IPFS",
         message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Journal File Upload Endpoint (accepts base64 encoded file from frontend)
+  app.post("/api/journal/upload", async (req, res) => {
+    try {
+      const { filename, fileData, mimeType } = req.body;
+      
+      if (!filename || !fileData) {
+        return res.status(400).json({ success: false, error: "Missing filename or fileData" });
+      }
+
+      if (!PINATA_API_KEY || !PINATA_SECRET) {
+        return res.status(500).json({ success: false, error: "Pinata not configured" });
+      }
+
+      // Decode base64 to buffer
+      const buffer = Buffer.from(fileData, 'base64');
+
+      // Create form data for Pinata API
+      const formData = new FormData();
+      formData.append("file", new Blob([buffer], { type: mimeType || 'application/octet-stream' }), filename);
+      formData.append("pinataMetadata", JSON.stringify({ name: filename }));
+      formData.append("pinataOptions", JSON.stringify({ cidVersion: 1 }));
+
+      // Upload to Pinata
+      const pinataRes = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+        method: "POST",
+        headers: {
+          pinata_api_key: PINATA_API_KEY,
+          pinata_secret_api_key: PINATA_SECRET,
+        },
+        body: formData,
+      });
+
+      if (!pinataRes.ok) {
+        const error = await pinataRes.text();
+        throw new Error(`Pinata error: ${error}`);
+      }
+
+      const pinataData = await pinataRes.json();
+      const ipfsHash = (pinataData as any).IpfsHash;
+      const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+
+      res.json({
+        success: true,
+        ipfsHash,
+        ipfsUrl,
+      });
+    } catch (error) {
+      console.error("File upload error:", error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : "Upload failed",
+      });
+    }
+  });
+
+  // Journal Metadata Pin Endpoint
+  app.post("/api/journal/metadata", async (req, res) => {
+    try {
+      if (!PINATA_API_KEY || !PINATA_SECRET) {
+        return res.status(500).json({ success: false, error: "Pinata not configured" });
+      }
+
+      const metadata = req.body;
+
+      // Pin metadata JSON to IPFS
+      const pinataRes = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          pinata_api_key: PINATA_API_KEY,
+          pinata_secret_api_key: PINATA_SECRET,
+        },
+        body: JSON.stringify({
+          pinataContent: metadata,
+          pinataMetadata: { name: metadata.name || "journal-metadata" },
+        }),
+      });
+
+      if (!pinataRes.ok) {
+        const error = await pinataRes.text();
+        throw new Error(`Pinata error: ${error}`);
+      }
+
+      const pinataData = await pinataRes.json();
+      const metadataIpfsHash = (pinataData as any).IpfsHash;
+
+      res.json({
+        success: true,
+        metadataIpfsHash,
+      });
+    } catch (error) {
+      console.error("Metadata pin error:", error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : "Metadata pin failed",
       });
     }
   });

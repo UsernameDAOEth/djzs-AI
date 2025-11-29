@@ -5,7 +5,18 @@ import { parseEther } from "viem";
 import { CONTRACT_ADDRESS, SUBSCRIBE_ABI, SUBSCRIBE_PRICE_ETH, wagmiConfig } from "@/lib/wagmi-config";
 import { useToast } from "@/hooks/use-toast";
 
-export function MintButton() {
+export interface UploadedFile {
+  name: string;
+  ipfsHash?: string;
+  metadataIpfsHash?: string;
+  ipfsUrl?: string;
+}
+
+interface MintButtonProps {
+  uploadedFile?: UploadedFile | null;
+}
+
+export function MintButton({ uploadedFile }: MintButtonProps = {}) {
   const { address, chainId } = useAccount();
   const [minting, setMinting] = useState(false);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
@@ -65,7 +76,7 @@ export function MintButton() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
         <span>
-          {minting ? "Minting…" : `Mint Subscribe NFT ${Number(SUBSCRIBE_PRICE_ETH) > 0 ? `• ${SUBSCRIBE_PRICE_ETH} ETH` : "• Free"}`}
+          {minting ? "Minting…" : uploadedFile ? `Mint Journal NFT • ${Number(SUBSCRIBE_PRICE_ETH) > 0 ? `${SUBSCRIBE_PRICE_ETH} ETH` : "Free"}` : `Mint Subscribe NFT • ${Number(SUBSCRIBE_PRICE_ETH) > 0 ? `${SUBSCRIBE_PRICE_ETH} ETH` : "Free"}`}
         </span>
       </button>
 

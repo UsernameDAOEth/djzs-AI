@@ -7,12 +7,20 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Lock, Sparkles } from "lucide-react";
 
+export interface UploadedFile {
+  name: string;
+  ipfsHash?: string;
+  metadataIpfsHash?: string;
+  ipfsUrl?: string;
+}
+
 interface PrivacyMintButtonProps {
   journalContent: string;
+  uploadedFile?: UploadedFile | null;
   disabled?: boolean;
 }
 
-export function PrivacyMintButton({ journalContent, disabled = false }: PrivacyMintButtonProps) {
+export function PrivacyMintButton({ journalContent, uploadedFile, disabled = false }: PrivacyMintButtonProps) {
   const { address, chainId } = useAccount();
   const [minting, setMinting] = useState(false);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
@@ -29,6 +37,36 @@ export function PrivacyMintButton({ journalContent, disabled = false }: PrivacyM
       setMinting(true);
       setTxHash(null);
 
+      let metadataIpfsHash = uploadedFile?.metadataIpfsHash;
+
+      // If file is uploaded but metadata not pinned yet, pin the metadata
+      if (uploadedFile?.ipfsHash && !metadataIpfsHash) {
+        const metadataPayload = {
+          name: uploadedFile.name,
+          description: "Private journal entry on Aztec",
+          image: `ipfs://${uploadedFile.ipfsHash}`,
+          content: journalContent.substring(0, 100),
+          attributes: [
+            { trait_type: "Type", value: "Journal" },
+            { trait_type: "Visibility", value: "Private" },
+            { trait_type: "Timestamp", value: new Date().toISOString() },
+          ],
+        };
+
+        const metaRes = await fetch("/api/journal/metadata", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(metadataPayload),
+        });
+
+        if (!metaRes.ok) {
+          throw new Error("Failed to pin metadata");
+        }
+
+        const metaData = await metaRes.json();
+        metadataIpfsHash = metaData.metadataIpfsHash;
+      }
+
       // Create content hash for privacy NFT
       const contentHash = keccak256(stringToBytes(journalContent));
       const metadata = JSON.stringify({
@@ -36,6 +74,8 @@ export function PrivacyMintButton({ journalContent, disabled = false }: PrivacyM
         contentHash,
         timestamp: new Date().toISOString(),
         author: address,
+        fileHash: uploadedFile?.ipfsHash,
+        metadataHash: metadataIpfsHash,
       });
 
       const hash = await writeContract(wagmiConfig, {
@@ -73,7 +113,7 @@ export function PrivacyMintButton({ journalContent, disabled = false }: PrivacyM
       >
         <Lock className="h-4 w-4" />
         <Sparkles className="h-4 w-4" />
-        {minting ? "Minting Privacy NFT..." : "Mint as Privacy NFT 🔐"}
+        {minting ? "Minting Privacy NFT..." : uploadedFile ? "Mint Journal + File 🔐" : "Mint as Privacy NFT 🔐"}
       </Button>
 
       {!isAztecChain && (

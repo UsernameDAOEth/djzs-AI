@@ -94,31 +94,43 @@ export default function Journal() {
 
     setIsUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64 = (event.target?.result as string).split(',')[1];
+        
+        const response = await fetch("/api/journal/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filename: file.name,
+            fileData: base64,
+            mimeType: file.type,
+          }),
+        });
 
-      const response = await fetch("/api/journal/upload", {
-        method: "POST",
-        body: formData,
-      });
+        if (!response.ok) {
+          throw new Error("Upload failed");
+        }
 
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
-
-      const data = await response.json();
-      setUploadedFile({ name: file.name, ipfsHash: data.ipfsHash });
-      toast({
-        title: "File Uploaded! 📄",
-        description: `${file.name} uploaded to IPFS`,
-      });
+        const data = await response.json();
+        setUploadedFile({ name: file.name, ipfsHash: data.ipfsHash });
+        toast({
+          title: "File Uploaded! 📄",
+          description: `${file.name} uploaded to IPFS`,
+        });
+        setIsUploading(false);
+      };
+      reader.onerror = () => {
+        throw new Error("Failed to read file");
+      };
+      reader.readAsDataURL(file);
     } catch (error) {
       toast({
         title: "Upload Failed",
         description: error instanceof Error ? error.message : "Failed to upload file",
         variant: "destructive",
       });
-    } finally {
       setIsUploading(false);
     }
   };
