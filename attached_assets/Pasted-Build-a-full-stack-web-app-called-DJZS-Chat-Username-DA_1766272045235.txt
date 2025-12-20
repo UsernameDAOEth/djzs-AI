@@ -1,0 +1,120 @@
+Build a full-stack web app called “DJZS Chat” (Username DAO + DJZS) using XMTP as the end-to-end encrypted messaging layer. NO Anytype. The app is a token-gated member chat where users sign in via ENS (wallet) OR optionally link an x.com account for display. Core features inside chat: trading rooms, prediction markets threads, event coordination, and in-chat payments (tx receipts posted into chat).
+
+TECH STACK
+- Frontend: React + Vite + TypeScript + Tailwind
+- Wallet: wagmi + viem
+- Backend: Node.js + Express (TypeScript)
+- XMTP: @xmtp/browser-sdk (frontend) for user messaging; backend optional for “service agents”
+- Storage: simple Postgres (Replit DB ok for MVP) for app metadata ONLY (room registry, membership tier, linked x.com, cached ENS, message schema versions). Do NOT store plaintext chat messages (XMTP handles message transport/encryption).
+- Optional chain: Base + USDC for payments (via wallet tx). Keep payment execution in frontend; backend only verifies/records tx hashes.
+
+CORE REQUIREMENTS
+
+1) AUTH / IDENTITY
+- User connects wallet.
+- Resolve ENS primary name for address (reverse lookup + forward check). Display as username label.
+- Initialize XMTP client for the connected wallet (creates/loads Inbox).
+- Optional: “Link X.com” button uses OAuth to fetch x.com handle. Store handle in DB linked to wallet address. Also require user to sign a “link proof” message with wallet; store signature so handle binding is verifiable.
+
+2) MEMBERSHIP GATING
+- Build a gating module that checks eligibility:
+  - Option A (MVP): allowlist in DB.
+  - Option B: ERC-721 membership NFT contract address + chainId; check ownership via viem public client.
+- Only eligible users can join member rooms and see “Trade / Predictions / Events / Payments”.
+
+3) CHAT ROOMS (XMTP GROUPS)
+- Rooms are XMTP MLS group chats.
+- Default rooms:
+  - Members Lounge
+  - Trades
+  - Predictions
+  - Events
+  - Payments
+- Admin (DAO) can create rooms and invite members.
+- Use “optimistic group creation” UX: create room immediately, then add members async.
+- Provide room list sidebar + unread counts.
+
+4) IN-CHAT “APPS” (structured message templates)
+Implement message “cards” as JSON attachments (or typed messages) posted to XMTP:
+- TradeSignalCard:
+  { type:"trade_signal", asset, direction, entry, invalidation, tp:[...], timeframe, leverage?, notes, createdAt }
+- PredictionCard:
+  { type:"prediction", question, endsAt, outcomes:["YES","NO"], stakeToken?, notes, createdAt }
+- EventCard:
+  { type:"event", title, startsAt, locationOrLink, description, rsvp:{going:[], maybe:[], no:[]}, createdAt }
+- PaymentReceiptCard:
+  { type:"payment_receipt", chainId, tokenSymbol, amount, to, txHash, note, createdAt }
+
+UI: Message composer has tabs/buttons: “Text”, “Trade”, “Prediction”, “Event”, “Pay”.
+When user submits a card, post it into the XMTP room as a message containing the JSON payload. Render cards nicely in the message list.
+
+5) PAYMENTS
+- In a chat thread, user can click “Pay” to open a modal.
+- Modal builds a wallet transaction (ETH or ERC-20 transfer like USDC).
+- On success, post a PaymentReceiptCard to the same room with txHash.
+- Backend verifies txHash (optional) and stores a lightweight receipt record.
+
+6) PREDICTION MARKETS (MVP)
+- MVP = in-chat predictions (offchain) stored as messages + tallies computed client-side.
+- Each PredictionCard supports “Vote YES/NO” buttons that post a follow-up message:
+  { type:"prediction_vote", predictionId, choice, voterAddress, createdAt }
+- Tally votes client-side and display live totals in the PredictionCard.
+- Later upgrade path: integrate real markets (Polymarket/Kalshi/etc.) but keep MVP purely in-chat.
+
+7) EVENTS (MVP)
+- EventCard has RSVP buttons (Going/Maybe/No).
+- Clicking posts:
+  { type:"event_rsvp", eventId, status:"going|maybe|no", userAddress, createdAt }
+- Client aggregates RSVPs and displays counts + participant ENS labels.
+
+8) TRADING (MVP)
+- TradeSignalCard is posted and can be “tracked”.
+- Add a “Mark as Hit TP / Invalidated / Closed” action that posts:
+  { type:"trade_update", tradeId, status, note?, createdAt }
+- Client shows status.
+
+9) DAO / ADMIN
+- Admin screen (role-based) for:
+  - creating rooms
+  - inviting/removing members
+  - broadcasting announcements (posts into Members Lounge as AnnouncementCard)
+AnnouncementCard:
+  { type:"announcement", title, body, priority:"low|med|high", createdAt }
+
+10) PROJECT STRUCTURE
+Monorepo:
+- /apps/web (React Vite)
+- /apps/api (Express)
+Shared:
+- /packages/shared (zod schemas for cards + types)
+- /packages/chain (viem helpers for ENS + gating checks)
+Use pnpm workspaces.
+
+ENV VARS (.env)
+Frontend:
+- VITE_CHAIN_ID=8453 (or 84532 testnet)
+- VITE_RPC_URL=
+- VITE_XMTP_ENV=production|dev
+- VITE_MEMBERSHIP_NFT_ADDRESS= (optional)
+Backend:
+- DATABASE_URL=
+- SESSION_SECRET=
+- X_OAUTH_CLIENT_ID= (optional)
+- X_OAUTH_CLIENT_SECRET= (optional)
+- X_OAUTH_CALLBACK_URL=
+
+DELIVERABLES
+- Working app in Replit with “Run” button:
+  - Connect wallet -> resolves ENS -> initializes XMTP
+  - Membership gate -> access rooms
+  - Can send Text + Trade + Prediction + Event + Pay receipt cards
+  - Can RSVP + vote + update trades (as messages)
+  - Admin can create rooms + invite members (MVP: invite by wallet address)
+- Provide README with setup steps and how to test using XMTP dev env if needed.
+- Include strong TypeScript typing + zod validation for all card payloads.
+- Do not store plaintext message contents in DB; only store app metadata and optional receipts.
+
+BUILD NOTES
+- Keep the first version minimal but functional.
+- Make UI clean: left sidebar rooms, main chat view, right panel shows selected card details (optional).
+- Add error states: XMTP not enabled, wallet disconnected, not a member, etc.
