@@ -1,8 +1,8 @@
-# DJZS On-Chain Newsletter
+# DJZS Chat - E2E Encrypted Web3 Community Platform
 
 ## Overview
 
-DJZS is a Web3-native newsletter platform built on the Base blockchain that uses NFT-gated access control. Users mint a Subscribe NFT (ERC-721) to unlock premium newsletter content, trade setups, and AI-powered market insights. The platform features a React-based frontend with RainbowKit wallet integration, an Express backend, and Hardhat for smart contract deployment.
+DJZS Chat is a members-only, end-to-end encrypted chat application where ENS domains serve as user identities. Built on Base blockchain, it uses XMTP protocol for encrypted messaging and supports structured message cards for trade signals, prediction markets, event coordination, and payment receipts. Access is controlled via NFT ownership or allowlist membership.
 
 ## User Preferences
 
@@ -12,226 +12,142 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend Architecture
 
-**Technology Stack**: React 18 with TypeScript, built using Vite for fast development and optimized production builds.
+**Technology Stack**: React 18 with TypeScript, built using Vite for fast development.
 
-**UI Framework**: Radix UI components with Tailwind CSS for styling. The design implements a dark theme with custom CSS variables, neon effects, and glassmorphism aesthetics consistent with the DJZS brand.
+**UI Framework**: Radix UI components with Tailwind CSS. Dark theme with purple accent colors.
 
-**Routing**: Wouter library provides lightweight client-side routing. Routes include:
-- `/` - Homepage with hero, subscription gate, features, and member content
-- `/journal` - AI-powered writing journal (NFT-gated, subscribers only)
+**Routing**: Wouter provides client-side routing:
+- `/` - Landing page with feature overview and wallet connection
+- `/chat` - Main chat interface (members-only)
 - `*` - 404 fallback
 
-**State Management**: React hooks for local state, with TanStack Query (React Query) managing server state and caching.
+**State Management**: React hooks for local state, TanStack Query for server state.
 
 **Component Structure**:
-- **Sections**: Hero, SubscriptionGate, Features, About, FAQ, Footer, and MemberContent components organize page content
-- **Web3 Components**: ConnectButton and MintButton handle wallet interactions
-- **UI Components**: Comprehensive Radix UI-based component library located in `client/src/components/ui/`
-
-**Styling Approach**: Utility-first CSS with Tailwind, custom CSS animations for visual effects (starfield backgrounds, portal rings, neon glows), and CSS custom properties for theming.
+- **Pages**: Home (landing), Chat (main interface), NotFound
+- **Chat Components**: MessageCards (renders all card types), TradeComposer, PredictionComposer, EventComposer, PaymentComposer
+- **UI Components**: shadcn/Radix UI components in `client/src/components/ui/`
 
 ### Backend Architecture
 
-**Server Framework**: Express.js with TypeScript running on Node.js.
+**Server Framework**: Express.js with TypeScript.
 
-**Build Process**: 
-- Development: tsx for direct TypeScript execution with hot reload
-- Production: esbuild bundles the server into ESM format
+**API Design**: RESTful endpoints prefixed with `/api`:
+- `GET/POST /api/members` - Member management
+- `GET/POST /api/rooms` - Room CRUD
+- `POST /api/payments` - Payment receipt storage
 
-**API Design**: RESTful endpoints prefixed with `/api`. Includes newsletter CRUD operations and IPFS metadata upload endpoints.
+**Storage Interface**: In-memory storage with CRUD for members, rooms, and payment receipts. Default rooms seeded on startup: Members Lounge, Trades, Predictions, Events, Payments.
 
-**Storage Interface**: Abstract storage layer (`IStorage`) with in-memory implementation (`MemStorage`). Stores newsletter issues with CRUD operations. Newsletter issues track title, description, issue number, publication status, PDF URLs, IPFS metadata URIs, and NFT contract addresses.
+### Messaging Layer (XMTP)
 
-**IPFS Integration**: Server-side service (`server/ipfs.ts`) handles NFT metadata uploads to IPFS via Pinata API. Supports both JWT and API key/secret authentication. Implements 30-second timeout, robust error handling, and automatic URI generation. Two endpoints available:
-- `POST /api/ipfs/upload-issue-metadata/:issueId` - Generates and uploads ERC-721 metadata for newsletter issues
-- `POST /api/ipfs/upload-subscribe-metadata` - Generates and uploads ERC-721 metadata for Subscribe NFTs
+**Protocol**: XMTP browser-sdk for E2E encrypted messaging.
 
-Note: IPFS endpoints require authentication in production (to be added in admin dashboard).
+**Identity**: Wallet address serves as XMTP identity. ENS names displayed as usernames.
 
-**Static File Serving**: Vite middleware in development, static file serving from `dist/public` in production.
+**Message Types**: Structured JSON messages with Zod validation:
+- `text` - Plain text messages
+- `trade_signal` - Trade setups with entry, TP, invalidation
+- `prediction` - YES/NO voting questions with end dates
+- `event` - Calendar events with RSVP
+- `payment_receipt` - On-chain payment confirmations
+- `announcement` - Admin announcements with priority
 
 ### Web3 Integration
 
-**Wallet Connection**: RainbowKit provides wallet connection UI with support for multiple wallet providers. Configured for Base mainnet (chainId: 8453) and Base Sepolia testnet (chainId: 84532).
+**Wallet Connection**: RainbowKit for wallet UI. Configured for Base mainnet and Base Sepolia.
 
-**Smart Contract Interaction**: 
-- Wagmi library handles contract reads/writes with TypeScript type safety
-- Contract ABI defines interface for Subscribe NFT (ERC-721 standard with custom `mintSubscribe` function)
-- Custom `useIsSubscribed` hook checks NFT ownership and supply data
+**ENS Resolution**: Custom hook (`useDisplayName`) fetches ENS names from Ethereum mainnet via public RPC.
 
-**NFT Gating**: Subscription status verified by checking ERC-721 `balanceOf` for connected wallet. Users with balance > 0 gain access to premium content.
+**Payment Integration**: Direct ETH transfers via wagmi's `useSendTransaction`. USDC support planned.
 
-**Contract Deployment**: Hardhat configured for deployment to Base networks with scripts in `scripts/deploy.ts`.
+**Membership Gating**: Checks `isAllowlisted` or `isAdmin` flags on member records. Optional NFT ownership verification available.
 
-### Journal & AI Assistant Integration
+### Database Schema
 
-**Purpose**: NFT-gated writing journal with AI-powered assistance for subscribers to create newsletter content.
+**Members Table**:
+- `id`, `address` (unique), `ensName`, `xHandle`, `xLinkSignature`
+- `isAdmin`, `isAllowlisted`, `createdAt`
 
-**Access Control**: Frontend-level NFT gating using `useIsSubscribed` hook. Users must hold Subscribe NFT to access journal features.
+**Rooms Table**:
+- `id`, `name`, `description`, `xmtpGroupId`, `isDefault`, `createdAt`
 
-**AI Integration**: 
-- **Provider**: Nous Research Hermes-4 models via OpenAI-compatible API
-- **Endpoint**: `POST /api/ai/chat` - Proxies chat completion requests to Nous Research
-- **Models**: Hermes-4-70B (default), with support for other Nous Research models
-- **Features**: Conversational AI assistance, suggestion insertion, context-aware writing help
+**Payment Receipts Table**:
+- `id`, `chainId`, `tokenSymbol`, `amount`, `fromAddress`, `toAddress`
+- `txHash` (unique), `roomId`, `note`, `verified`, `createdAt`
 
-**Journal Interface**:
-- **Text Editor**: Large textarea for composing journal entries and newsletter content
-- **AI Chat**: Real-time chat interface for iterative writing assistance
-- **Workflow**: Users can ask AI for help, receive suggestions, and insert AI responses directly into their journal
-- **Character Count**: Live character count display for content tracking
+### Message Card Schemas (Zod)
 
-**Backend API** (`POST /api/ai/chat`):
-- Validates requests using Zod schema (messages, model, temperature, max_tokens)
-- Securely manages NOUS_RESEARCH_API_KEY server-side
-- Proxies to `https://inference-api.nousresearch.com/v1/chat/completions`
-- Returns OpenAI-compatible chat completion responses
-- Error handling for API failures and quota limits
+All message types validated with discriminated union schema:
 
-**Navigation**: 
-- Subscribers see "AI Writing Journal" link in member content section
-- Direct route: `/journal`
-- Prominently displayed with Sparkles icon and gradient background
+```typescript
+tradeSignalCardSchema // asset, direction, entry, tp[], invalidation
+predictionCardSchema  // question, endsAt, outcomes
+eventCardSchema       // title, startsAt, locationOrLink, description
+paymentReceiptCardSchema // chainId, tokenSymbol, amount, to, txHash
+announcementCardSchema // title, body, priority
+textMessageSchema     // content
+```
 
-**Future Enhancements**:
-- Journal draft persistence to database
-- Backend-level subscription verification for enhanced security
-- Rate limiting and retry logic for AI API calls
-- Multiple journal entries management
+## Key Features
 
-### Database Strategy
+### Trade Signals
+- Post long/short setups with entry, stop-loss, and multiple TP targets
+- Optional timeframe and leverage indicators
+- Status updates (hit_tp, invalidated, closed)
 
-**ORM**: Drizzle ORM configured for PostgreSQL with schema definition in `shared/schema.ts`.
+### Predictions
+- YES/NO voting with deadline
+- Member voting tracked per prediction
 
-**Migration Management**: Drizzle Kit handles schema migrations with output to `migrations/` directory.
+### Events
+- Date/time, location/link, description
+- RSVP functionality (going, maybe, can't)
 
-**Current Schema**: Minimal user table with id, username, and password fields. Designed as foundation for authentication system.
+### Payments
+- ETH transfers directly from chat
+- Automatic receipt generation with tx hash
+- Basescan link for verification
 
-**Database Provider**: Configured for Neon serverless Postgres (via `@neondatabase/serverless` package), though any PostgreSQL-compatible database can be used.
+### Membership
+- Wallet-based identity with ENS display
+- Admin and allowlist membership tiers
+- Self-registration flow
 
-**Rationale**: Drizzle chosen for type-safe SQL queries, lightweight footprint, and seamless TypeScript integration. PostgreSQL provides robust relational data storage with JSON support for flexible content structures.
-
-### Smart Contract Architecture
-
-**Contract Type**: Unlock Protocol TransparentUpgradeableProxy (deployed at 0xfeda5ad4559bba0c57e46bb4f165fd80cdc8dd61 on Base Mainnet)
-
-**Protocol**: [Unlock Protocol](https://unlock-protocol.com/) - A decentralized protocol for memberships and subscriptions using NFTs.
-
-**Key Functions**:
-- `purchase(_values, _recipients, _referrers, _keyManagers, _data)`: Purchase membership keys (NFTs)
-- `totalSupply()`: View total number of keys minted
-- `maxNumberOfKeys()`: View maximum supply limit
-- `keyPrice()`: View price per key in wei
-- `balanceOf(_owner)`: Check NFT ownership
-- `getHasValidKey(_user)`: Verify active membership status
-
-**Integration**: Frontend uses wagmi/viem to interact with Unlock Protocol contract via custom ABI definition in `client/src/lib/wagmi-config.ts`.
-
-**Metadata**: IPFS-based token metadata (configurable)
-
-## External Dependencies
-
-### Blockchain Infrastructure
-
-**RPC Providers**: 
-- Base mainnet: `https://mainnet.base.org`
-- Base Sepolia testnet: `https://sepolia.base.org`
-- Configurable via environment variables for custom RPC endpoints
-
-**Chain Support**: Base (EIP-1559 compatible L2) chosen for low transaction costs and fast finality. Base Sepolia for testing.
-
-### Web3 Libraries
-
-**RainbowKit**: Wallet connection UI with built-in support for MetaMask, WalletConnect, Coinbase Wallet, and other providers. Provides customizable theming.
-
-**Wagmi/Viem**: Type-safe Ethereum interaction library. Wagmi provides React hooks, Viem handles low-level blockchain operations.
-
-**WalletConnect**: Cloud relay for mobile wallet connections (requires project ID).
-
-### Database
-
-**Neon Serverless Postgres**: Serverless PostgreSQL platform with connection pooling and automatic scaling. Connection string via `DATABASE_URL` environment variable.
-
-### UI/Design Libraries
-
-**Radix UI**: Accessible, unstyled component primitives for building the design system. Includes dialogs, dropdowns, tooltips, and form components.
-
-**Tailwind CSS**: Utility-first CSS framework with JIT compilation. Extended with custom plugins for animations and typography.
-
-**Lucide React**: Icon library providing consistent SVG icons.
-
-### Development Tools
-
-**Vite**: Build tool providing fast HMR in development and optimized production builds. Configured with React plugin and Replit-specific plugins.
-
-**Hardhat**: Ethereum development environment for compiling, testing, and deploying smart contracts.
-
-**TypeScript**: Strict type checking across frontend, backend, and shared code. Path aliases configured for clean imports.
-
-**Drizzle Kit**: CLI for managing database migrations and schema introspection.
-
-### IPFS & Pinata Integration
-
-**Pinata**: IPFS pinning service used for storing NFT metadata permanently on IPFS. The platform uses Pinata's REST API (no SDK) to avoid dependency conflicts.
-
-**Authentication Methods**: Supports two authentication methods:
-1. JWT token (`PINATA_JWT`) - Recommended
-2. API Key + Secret (`PINATA_API_KEY` and `PINATA_API_SECRET`) - Both required
-
-**Features**:
-- 30-second request timeout with AbortController
-- Robust error handling with detailed Pinata error messages
-- Zod validation for all inputs (URLs, Ethereum addresses, token IDs)
-- Automatic fallback for invalid dates
-- ERC-721 compliant metadata format
-
-**Gateway**: Configurable IPFS gateway via `PINATA_GATEWAY` (defaults to `gateway.pinata.cloud`)
-
-### Avantis Trading Integration
-
-**Service Architecture**: FastAPI-based microservice (`avantis_service/main.py`) provides REST API bridge to Avantis perpetual trading protocol on Base.
-
-**SDK Integration**: Uses `avantis-trader-sdk` (Python) for blockchain interactions. Supports market orders, limit orders, zero-fee trades, and position management.
-
-**API Endpoints**:
-- `GET /health` - Health check
-- `GET /markets` - List available trading pairs (BTC/USD, ETH/USD, etc.)
-- `GET /trader/{address}` - Get open positions for trader address
-- `POST /plan` - Calculate fees and loss protection for hypothetical trade
-- `POST /open` - Open new position (requires PRIVATE_KEY)
-- `POST /close` - Close existing position (requires PRIVATE_KEY)
-
-**Order Types**: Supports MARKET (with fees), LIMIT (trigger at specific price), and MARKET_ZERO_FEE (pay fees from profits only).
-
-**Security Considerations**:
-- CORS middleware configured (restrict origins in production)
-- Read-only mode recommended for production (no PRIVATE_KEY on server)
-- Client-side signing or KMS signer preferred for trade execution
-- Subscribe NFT gating should be enforced in Node.js API before proxying to Avantis service
-
-**Features**:
-- Real-time position tracking and PnL calculation
-- Dynamic fee and loss protection estimates
-- USDC collateral management with automatic approval handling
-- Support for leverage up to 500x (varies by asset)
-
-**Port**: Service runs on port 8088 (separate from main application on port 5000)
-
-### Environment Configuration
+## Environment Configuration
 
 Required environment variables:
 - `DATABASE_URL`: PostgreSQL connection string
-- `VITE_SUBSCRIBE_NFT_ADDRESS`: Deployed contract address (0xfeda5ad4559bba0c57e46bb4f165fd80cdc8dd61)
-- `VITE_SUBSCRIBE_PRICE`: NFT mint price in ETH (0.001)
 - `VITE_WALLETCONNECT_PROJECT_ID`: WalletConnect cloud project ID
-- `NOUS_RESEARCH_API_KEY`: API key for Nous Research AI assistant (get from https://portal.nousresearch.com/api-keys)
-- `PRIVATE_KEY`: Wallet private key for contract deployment and Avantis trading (optional for read-only mode)
-- `RPC_BASE`: Custom Base RPC URL (optional)
-- `RPC_BASE_SEPOLIA`: Custom Base Sepolia RPC URL (optional)
-- `BASE_URI`: IPFS base URI for NFT metadata
-- `BASE_RPC_URL`: Base blockchain RPC URL for Avantis service (required)
+- `VITE_MEMBERSHIP_NFT_ADDRESS`: Optional NFT contract for gating
+- `VITE_CHAIN_ID`: Target chain ID (8453 for Base mainnet)
+- `VITE_RPC_URL`: Custom RPC URL (optional)
 
-IPFS/Pinata variables (choose one authentication method):
-- `PINATA_JWT`: Pinata JWT token (recommended)
-- `PINATA_API_KEY` + `PINATA_API_SECRET`: Pinata API credentials (both required if not using JWT)
-- `PINATA_GATEWAY`: Custom IPFS gateway (optional, defaults to gateway.pinata.cloud)
+## Development
+
+**Start Server**: `npm run dev` - Runs Express + Vite on port 5000
+
+**File Structure**:
+```
+client/src/
+  pages/           # Home, Chat, NotFound
+  components/
+    chat/          # Message cards, composers
+    ui/            # shadcn components
+  hooks/           # useEns, useXmtp
+  lib/             # wagmi-config, xmtp, queryClient
+server/
+  routes.ts        # API endpoints
+  storage.ts       # In-memory storage
+shared/
+  schema.ts        # Types, Zod schemas, Drizzle tables
+```
+
+## Recent Changes
+
+- **Dec 2024**: Complete rebuild from newsletter to chat platform
+- Implemented XMTP browser-sdk integration
+- Created structured message card system
+- Built trade, prediction, event, and payment composers
+- Added ENS resolution for user display names
+- Implemented member registration and gating

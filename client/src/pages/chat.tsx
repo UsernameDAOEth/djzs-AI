@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { nanoid } from "nanoid";
 import { 
   MessageSquare, 
   TrendingUp, 
@@ -11,16 +12,24 @@ import {
   Users,
   Settings,
   Send,
-  Plus,
   Loader2,
-  Shield
+  Shield,
+  Key
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import type { Room, Member } from "@shared/schema";
+import { useDisplayName, useMultipleEnsNames, formatAddress } from "@/hooks/use-ens";
+import { useXmtp } from "@/hooks/use-xmtp";
+import { MessageCard } from "@/components/chat/message-cards";
+import { TradeComposer } from "@/components/chat/trade-composer";
+import { PredictionComposer } from "@/components/chat/prediction-composer";
+import { EventComposer } from "@/components/chat/event-composer";
+import { PaymentComposer } from "@/components/chat/payment-composer";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import type { Room, Member, ChatMessage, StoredMessage } from "@shared/schema";
 
 const DEFAULT_ROOMS = [
   { id: "lounge", name: "Members Lounge", icon: Users, description: "General discussion" },
@@ -33,19 +42,83 @@ const DEFAULT_ROOMS = [
 export default function Chat() {
   const { address, isConnected } = useAccount();
   const { toast } = useToast();
+  const { displayName, ensName } = useDisplayName(address);
+  const { client: xmtpClient, isConnecting: xmtpConnecting, connect: connectXmtp, error: xmtpError } = useXmtp();
+  
   const [selectedRoom, setSelectedRoom] = useState("lounge");
   const [messageInput, setMessageInput] = useState("");
   const [composerTab, setComposerTab] = useState("text");
 
   const { data: member, isLoading: memberLoading } = useQuery<Member | null>({
     queryKey: ["/api/members", address],
+    queryFn: async () => {
+      if (!address) return null;
+      const res = await fetch(`/api/members/${address}`);
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error("Failed to fetch member");
+      return res.json();
+    },
     enabled: !!address,
   });
 
-  const { data: rooms } = useQuery<Room[]>({
-    queryKey: ["/api/rooms"],
-    enabled: !!address,
+  const registerMember = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/members", {
+        address,
+        ensName,
+        isAllowlisted: true,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/members", address] });
+    },
   });
+
+  const { data: messages = [], isLoading: messagesLoading } = useQuery<StoredMessage[]>({
+    queryKey: ["/api/messages", selectedRoom],
+    queryFn: async () => {
+      const res = await fetch(`/api/messages/${selectedRoom}`);
+      if (!res.ok) throw new Error("Failed to fetch messages");
+      return res.json();
+    },
+    enabled: !!member && (member.isAllowlisted || member.isAdmin),
+    refetchInterval: 5000,
+  });
+
+  const sendMessage = useMutation({
+    mutationFn: async (message: ChatMessage) => {
+      const res = await apiRequest("POST", "/api/messages", {
+        roomId: selectedRoom,
+        message,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/messages", selectedRoom] });
+      toast({
+        title: "Message sent",
+        description: "Your message has been posted to the room",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const authorAddresses = messages.map((m) => m.message.authorAddress);
+  if (address) authorAddresses.push(address);
+  const { data: ensNames = {} } = useMultipleEnsNames(authorAddresses);
+
+  useEffect(() => {
+    if (member && (member.isAllowlisted || member.isAdmin) && !xmtpClient && !xmtpConnecting && address) {
+      connectXmtp().catch(console.error);
+    }
+  }, [member, xmtpClient, xmtpConnecting, connectXmtp, address]);
 
   if (!isConnected) {
     return (
@@ -71,6 +144,34 @@ export default function Chat() {
     );
   }
 
+  if (!member) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <Shield className="w-16 h-16 text-purple-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Welcome to DJZS Chat</h2>
+          <p className="text-gray-400 mb-4">
+            {displayName}
+          </p>
+          <p className="text-gray-500 text-sm mb-6">
+            Click below to register as a member and start chatting.
+          </p>
+          <Button
+            onClick={() => registerMember.mutate()}
+            disabled={registerMember.isPending}
+            className="bg-purple-600 hover:bg-purple-700"
+            data-testid="button-register"
+          >
+            {registerMember.isPending ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : null}
+            Join DJZS Chat
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (!member?.isAllowlisted && !member?.isAdmin) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -81,7 +182,7 @@ export default function Chat() {
             This chat is restricted to members. You need to be on the allowlist or hold a membership NFT.
           </p>
           <p className="text-sm text-gray-500">
-            Connected: {address?.slice(0, 6)}...{address?.slice(-4)}
+            Connected: {displayName}
           </p>
         </div>
       </div>
@@ -90,14 +191,93 @@ export default function Chat() {
 
   const currentRoom = DEFAULT_ROOMS.find(r => r.id === selectedRoom);
 
+  const handleSendText = () => {
+    if (!messageInput.trim() || !address || sendMessage.isPending) return;
+    
+    const message: ChatMessage = {
+      type: "text",
+      content: messageInput,
+      createdAt: new Date().toISOString(),
+      authorAddress: address,
+    };
+    sendMessage.mutate(message);
+    setMessageInput("");
+  };
+
+  const handleTradeSubmit = (data: { asset: string; direction: "long" | "short"; entry: string; invalidation: string; tp: string[]; timeframe?: string; leverage?: string; notes?: string }) => {
+    if (!address || sendMessage.isPending) return;
+    const message: ChatMessage = {
+      type: "trade_signal",
+      id: nanoid(),
+      asset: data.asset,
+      direction: data.direction,
+      entry: data.entry,
+      invalidation: data.invalidation,
+      tp: data.tp,
+      timeframe: data.timeframe,
+      leverage: data.leverage,
+      notes: data.notes,
+      createdAt: new Date().toISOString(),
+      authorAddress: address,
+    };
+    sendMessage.mutate(message);
+  };
+
+  const handlePredictionSubmit = (data: { question: string; endsAt: string; notes?: string }) => {
+    if (!address || sendMessage.isPending) return;
+    const message: ChatMessage = {
+      type: "prediction",
+      id: nanoid(),
+      question: data.question,
+      endsAt: new Date(data.endsAt).toISOString(),
+      outcomes: ["YES", "NO"],
+      notes: data.notes,
+      createdAt: new Date().toISOString(),
+      authorAddress: address,
+    };
+    sendMessage.mutate(message);
+  };
+
+  const handleEventSubmit = (data: { title: string; startsAt: string; locationOrLink?: string; description?: string }) => {
+    if (!address || sendMessage.isPending) return;
+    const message: ChatMessage = {
+      type: "event",
+      id: nanoid(),
+      title: data.title,
+      startsAt: new Date(data.startsAt).toISOString(),
+      locationOrLink: data.locationOrLink,
+      description: data.description,
+      createdAt: new Date().toISOString(),
+      authorAddress: address,
+    };
+    sendMessage.mutate(message);
+  };
+
+  const handlePaymentSuccess = (txHash: string, data: { to: string; amount: string; token: string; note?: string }) => {
+    if (!address || sendMessage.isPending) return;
+    const message: ChatMessage = {
+      type: "payment_receipt",
+      chainId: 8453,
+      tokenSymbol: data.token,
+      amount: data.amount,
+      to: data.to,
+      txHash,
+      note: data.note,
+      createdAt: new Date().toISOString(),
+      authorAddress: address,
+    };
+    sendMessage.mutate(message);
+  };
+
   return (
     <div className="h-screen bg-gray-950 flex">
       <aside className="w-64 border-r border-gray-800 flex flex-col">
         <div className="p-4 border-b border-gray-800">
           <h1 className="text-xl font-bold text-white">DJZS Chat</h1>
-          <p className="text-xs text-gray-500 mt-1">
-            {member?.ensName || `${address?.slice(0, 6)}...${address?.slice(-4)}`}
-          </p>
+          <p className="text-xs text-gray-500 mt-1">{displayName}</p>
+          {member?.isAdmin && (
+            <span className="text-[10px] text-purple-400 bg-purple-400/20 px-2 py-0.5 rounded mt-1 inline-block">ADMIN</span>
+          )}
         </div>
 
         <ScrollArea className="flex-1">
@@ -124,7 +304,24 @@ export default function Chat() {
           </div>
         </ScrollArea>
 
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-gray-800 space-y-2">
+          {!xmtpClient && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={connectXmtp}
+              disabled={xmtpConnecting}
+              className="w-full text-xs border-gray-700 text-gray-400 hover:text-white"
+              data-testid="button-connect-xmtp"
+            >
+              {xmtpConnecting ? (
+                <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+              ) : (
+                <Key className="w-3 h-3 mr-2" />
+              )}
+              {xmtpConnecting ? "Connecting..." : "Enable E2E Encryption"}
+            </Button>
+          )}
           <ConnectButton accountStatus="avatar" chainStatus="icon" showBalance={false} />
         </div>
       </aside>
@@ -138,21 +335,41 @@ export default function Chat() {
               <p className="text-xs text-gray-500">{currentRoom?.description}</p>
             </div>
           </div>
-          {member?.isAdmin && (
-            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-              <Settings className="w-4 h-4" />
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {xmtpClient && (
+              <span className="text-xs text-green-400 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-400"></span>
+                Encrypted
+              </span>
+            )}
+            {member?.isAdmin && (
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                <Settings className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
         </header>
 
         <ScrollArea className="flex-1 p-4">
-          <div className="flex items-center justify-center h-full text-gray-500">
-            <div className="text-center">
-              <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>XMTP messaging coming soon...</p>
-              <p className="text-sm mt-2">Messages will be end-to-end encrypted</p>
+          {messagesLoading ? (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              <Loader2 className="w-8 h-8 animate-spin" />
             </div>
-          </div>
+          ) : messages.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              <div className="text-center">
+                <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>No messages yet</p>
+                <p className="text-sm mt-2">Be the first to post in #{currentRoom?.name}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {messages.map((stored) => (
+                <MessageCard key={stored.id} message={stored.message} ensNames={ensNames} />
+              ))}
+            </div>
+          )}
         </ScrollArea>
 
         <div className="border-t border-gray-800 p-4">
@@ -185,38 +402,31 @@ export default function Chat() {
                 <Input
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSendText()}
                   placeholder="Type a message..."
                   className="bg-gray-900 border-gray-700 text-white placeholder:text-gray-500"
                   data-testid="input-message"
                 />
-                <Button className="bg-purple-600 hover:bg-purple-700" data-testid="button-send">
+                <Button onClick={handleSendText} className="bg-purple-600 hover:bg-purple-700" data-testid="button-send">
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
             </TabsContent>
 
             <TabsContent value="trade" className="mt-0">
-              <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
-                <p className="text-gray-400 text-sm">Trade signal composer coming soon...</p>
-              </div>
+              <TradeComposer onSubmit={handleTradeSubmit} />
             </TabsContent>
 
             <TabsContent value="prediction" className="mt-0">
-              <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
-                <p className="text-gray-400 text-sm">Prediction market composer coming soon...</p>
-              </div>
+              <PredictionComposer onSubmit={handlePredictionSubmit} />
             </TabsContent>
 
             <TabsContent value="event" className="mt-0">
-              <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
-                <p className="text-gray-400 text-sm">Event composer coming soon...</p>
-              </div>
+              <EventComposer onSubmit={handleEventSubmit} />
             </TabsContent>
 
             <TabsContent value="pay" className="mt-0">
-              <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
-                <p className="text-gray-400 text-sm">Payment modal coming soon...</p>
-              </div>
+              <PaymentComposer onSuccess={handlePaymentSuccess} />
             </TabsContent>
           </Tabs>
         </div>

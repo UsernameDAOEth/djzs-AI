@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema } from "@shared/schema";
+import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -162,6 +162,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching payment receipt:", error);
       res.status(500).json({ error: "Failed to fetch payment receipt" });
+    }
+  });
+
+  app.get("/api/messages/:roomId", async (req, res) => {
+    try {
+      const messages = await storage.getMessagesByRoom(req.params.roomId);
+      res.json(messages);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      res.status(500).json({ error: "Failed to fetch messages" });
+    }
+  });
+
+  app.post("/api/messages", async (req, res) => {
+    try {
+      const validatedData = insertStoredMessageSchema.parse(req.body);
+      const message = await storage.createMessage(validatedData);
+      res.status(201).json(message);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid message data", details: error.errors });
+      }
+      console.error("Error creating message:", error);
+      res.status(500).json({ error: "Failed to create message" });
     }
   });
 

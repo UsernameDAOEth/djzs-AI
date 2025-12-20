@@ -176,3 +176,14 @@ export type PaymentReceiptCard = z.infer<typeof paymentReceiptCardSchema>;
 export type AnnouncementCard = z.infer<typeof announcementCardSchema>;
 export type TextMessage = z.infer<typeof textMessageSchema>;
 export type ChatMessage = z.infer<typeof chatMessageSchema>;
+
+export const storedMessageSchema = z.object({
+  id: z.string(),
+  roomId: z.string(),
+  message: chatMessageSchema,
+});
+
+export type StoredMessage = z.infer<typeof storedMessageSchema>;
+
+export const insertStoredMessageSchema = storedMessageSchema.omit({ id: true });
+export type InsertStoredMessage = z.infer<typeof insertStoredMessageSchema>;

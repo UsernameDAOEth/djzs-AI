@@ -1,4 +1,4 @@
-import { type Member, type InsertMember, type Room, type InsertRoom, type PaymentReceipt, type InsertPaymentReceipt } from "@shared/schema";
+import { type Member, type InsertMember, type Room, type InsertRoom, type PaymentReceipt, type InsertPaymentReceipt, type StoredMessage, type InsertStoredMessage } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -18,17 +18,22 @@ export interface IStorage {
   createPaymentReceipt(receipt: InsertPaymentReceipt): Promise<PaymentReceipt>;
   getPaymentReceiptByTxHash(txHash: string): Promise<PaymentReceipt | undefined>;
   getPaymentReceiptsByRoom(roomId: string): Promise<PaymentReceipt[]>;
+
+  createMessage(message: InsertStoredMessage): Promise<StoredMessage>;
+  getMessagesByRoom(roomId: string): Promise<StoredMessage[]>;
 }
 
 export class MemStorage implements IStorage {
   private members: Map<string, Member>;
   private rooms: Map<string, Room>;
   private paymentReceipts: Map<string, PaymentReceipt>;
+  private messages: Map<string, StoredMessage>;
 
   constructor() {
     this.members = new Map();
     this.rooms = new Map();
     this.paymentReceipts = new Map();
+    this.messages = new Map();
     this.seedDefaultRooms();
   }
 
@@ -170,6 +175,23 @@ export class MemStorage implements IStorage {
     return Array.from(this.paymentReceipts.values()).filter(
       (r) => r.roomId === roomId
     );
+  }
+
+  async createMessage(insertMessage: InsertStoredMessage): Promise<StoredMessage> {
+    const id = randomUUID();
+    const message: StoredMessage = {
+      id,
+      roomId: insertMessage.roomId,
+      message: insertMessage.message,
+    };
+    this.messages.set(id, message);
+    return message;
+  }
+
+  async getMessagesByRoom(roomId: string): Promise<StoredMessage[]> {
+    return Array.from(this.messages.values())
+      .filter((m) => m.roomId === roomId)
+      .sort((a, b) => new Date(a.message.createdAt).getTime() - new Date(b.message.createdAt).getTime());
   }
 }
 
