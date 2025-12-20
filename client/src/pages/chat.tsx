@@ -110,7 +110,12 @@ export default function Chat() {
     },
   });
 
-  const authorAddresses = messages.map((m) => m.message.authorAddress);
+  const authorAddresses = messages.map((m) => {
+    const msg = m.message;
+    if ('authorAddress' in msg) return msg.authorAddress;
+    if ('voterAddress' in msg) return msg.voterAddress;
+    return '';
+  }).filter(Boolean);
   if (address) authorAddresses.push(address);
   const { data: ensNames = {} } = useMultipleEnsNames(authorAddresses);
 
