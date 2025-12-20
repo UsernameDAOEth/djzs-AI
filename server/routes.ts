@@ -1,412 +1,170 @@
-import type { Express, Request } from "express";
+import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertNewsletterIssueSchema, updateNewsletterIssueSchema } from "@shared/schema";
+import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema } from "@shared/schema";
 import { z } from "zod";
-import { ipfsService, type NFTMetadata } from "./ipfs";
-
-// Pinata setup
-const PINATA_API_KEY = process.env.PINATA_API_KEY;
-const PINATA_SECRET = process.env.PINATA_API_SECRET || process.env.PINATA_SECRET;
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Health check endpoint (using /api/health to avoid Vite catch-all)
   app.get("/api/health", (_req, res) => {
-    res.json({ ok: true, timestamp: Date.now(), service: "DJZS Newsletter API" });
+    res.json({ ok: true, timestamp: Date.now(), service: "DJZS Chat API" });
   });
 
-  // Newsletter Issues API (with /api/newsletters alias)
-  const getNewsletterIssuesHandler = async (req: any, res: any) => {
+  app.get("/api/members", async (_req, res) => {
     try {
-      const publishedOnly = req.query.published === 'true';
-      const issues = publishedOnly 
-        ? await storage.getPublishedNewsletterIssues()
-        : await storage.getAllNewsletterIssues();
-      res.json(issues);
+      const members = await storage.getAllMembers();
+      res.json(members);
     } catch (error) {
-      console.error("Error fetching newsletter issues:", error);
-      res.status(500).json({ error: "Failed to fetch newsletter issues" });
+      console.error("Error fetching members:", error);
+      res.status(500).json({ error: "Failed to fetch members" });
     }
-  };
+  });
 
-  const getNewsletterIssueHandler = async (req: any, res: any) => {
+  app.get("/api/members/:address", async (req, res) => {
     try {
-      const issue = await storage.getNewsletterIssue(req.params.id);
-      if (!issue) {
-        return res.status(404).json({ error: "Newsletter issue not found" });
+      const member = await storage.getMember(req.params.address);
+      if (!member) {
+        return res.status(404).json({ error: "Member not found" });
       }
-      res.json(issue);
+      res.json(member);
     } catch (error) {
-      console.error("Error fetching newsletter issue:", error);
-      res.status(500).json({ error: "Failed to fetch newsletter issue" });
+      console.error("Error fetching member:", error);
+      res.status(500).json({ error: "Failed to fetch member" });
     }
-  };
+  });
 
-  const createNewsletterIssueHandler = async (req: any, res: any) => {
+  app.post("/api/members", async (req, res) => {
     try {
-      const validatedData = insertNewsletterIssueSchema.parse(req.body);
-      const issue = await storage.createNewsletterIssue(validatedData);
-      res.status(201).json(issue);
+      const validatedData = insertMemberSchema.parse(req.body);
+      const member = await storage.createMember(validatedData);
+      res.status(201).json(member);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid newsletter issue data", details: error.errors });
+        return res.status(400).json({ error: "Invalid member data", details: error.errors });
       }
-      if (error instanceof Error && error.message === "DUPLICATE_ISSUE_NUMBER") {
-        return res.status(409).json({ error: "Newsletter issue with this issue number already exists" });
+      if (error instanceof Error && error.message === "MEMBER_EXISTS") {
+        return res.status(409).json({ error: "Member already exists" });
       }
-      console.error("Error creating newsletter issue:", error);
-      res.status(500).json({ error: "Failed to create newsletter issue" });
+      console.error("Error creating member:", error);
+      res.status(500).json({ error: "Failed to create member" });
     }
-  };
+  });
 
-  const updateNewsletterIssueHandler = async (req: any, res: any) => {
+  app.patch("/api/members/:address", async (req, res) => {
     try {
-      const validatedData = updateNewsletterIssueSchema.parse(req.body);
-      const updated = await storage.updateNewsletterIssue(req.params.id, validatedData);
+      const updated = await storage.updateMember(req.params.address, req.body);
       if (!updated) {
-        return res.status(404).json({ error: "Newsletter issue not found" });
+        return res.status(404).json({ error: "Member not found" });
       }
       res.json(updated);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid update data", details: error.errors });
-      }
-      console.error("Error updating newsletter issue:", error);
-      res.status(500).json({ error: "Failed to update newsletter issue" });
+      console.error("Error updating member:", error);
+      res.status(500).json({ error: "Failed to update member" });
     }
-  };
+  });
 
-  const deleteNewsletterIssueHandler = async (req: any, res: any) => {
+  app.delete("/api/members/:address", async (req, res) => {
     try {
-      const deleted = await storage.deleteNewsletterIssue(req.params.id);
+      const deleted = await storage.deleteMember(req.params.address);
       if (!deleted) {
-        return res.status(404).json({ error: "Newsletter issue not found" });
+        return res.status(404).json({ error: "Member not found" });
       }
       res.status(204).send();
     } catch (error) {
-      console.error("Error deleting newsletter issue:", error);
-      res.status(500).json({ error: "Failed to delete newsletter issue" });
+      console.error("Error deleting member:", error);
+      res.status(500).json({ error: "Failed to delete member" });
     }
-  };
-
-  // Register routes with both /api/newsletter-issues and /api/newsletters paths
-  app.get("/api/newsletter-issues", getNewsletterIssuesHandler);
-  app.get("/api/newsletters", getNewsletterIssuesHandler);
-  
-  app.get("/api/newsletter-issues/:id", getNewsletterIssueHandler);
-  app.get("/api/newsletters/:id", getNewsletterIssueHandler);
-  
-  app.post("/api/newsletter-issues", createNewsletterIssueHandler);
-  app.post("/api/newsletters", createNewsletterIssueHandler);
-  
-  app.patch("/api/newsletter-issues/:id", updateNewsletterIssueHandler);
-  app.patch("/api/newsletters/:id", updateNewsletterIssueHandler);
-  
-  app.delete("/api/newsletter-issues/:id", deleteNewsletterIssueHandler);
-  app.delete("/api/newsletters/:id", deleteNewsletterIssueHandler);
-
-  // IPFS Metadata Upload API
-  // NOTE: These endpoints should be protected with authentication in production
-  // Authentication will be added in the admin dashboard implementation
-  const uploadIssueMetadataSchema = z.object({
-    image: z.string().url().optional(),
-    external_url: z.string().url().optional(),
   });
 
-  app.post("/api/ipfs/upload-issue-metadata/:issueId", async (req, res) => {
+  app.get("/api/rooms", async (_req, res) => {
     try {
-      const validatedBody = uploadIssueMetadataSchema.parse(req.body);
-      const issue = await storage.getNewsletterIssue(req.params.issueId);
-      
-      if (!issue) {
-        return res.status(404).json({ error: "Newsletter issue not found" });
+      const rooms = await storage.getAllRooms();
+      res.json(rooms);
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+      res.status(500).json({ error: "Failed to fetch rooms" });
+    }
+  });
+
+  app.get("/api/rooms/:id", async (req, res) => {
+    try {
+      const room = await storage.getRoom(req.params.id);
+      if (!room) {
+        return res.status(404).json({ error: "Room not found" });
       }
+      res.json(room);
+    } catch (error) {
+      console.error("Error fetching room:", error);
+      res.status(500).json({ error: "Failed to fetch room" });
+    }
+  });
 
-      let publishedDate: string;
-      try {
-        const date = issue.publishedAt instanceof Date 
-          ? issue.publishedAt 
-          : new Date(issue.publishedAt);
-        
-        if (!isNaN(date.getTime())) {
-          publishedDate = date.toISOString().split('T')[0];
-        } else {
-          publishedDate = new Date().toISOString().split('T')[0]; // fallback to today
-        }
-      } catch {
-        publishedDate = new Date().toISOString().split('T')[0]; // fallback to today
-      }
-
-      const metadata: NFTMetadata = {
-        name: issue.title,
-        description: issue.description,
-        external_url: validatedBody.external_url || `https://djzs.newsletter/issues/${issue.issueNumber}`,
-        attributes: [
-          {
-            trait_type: "Issue Number",
-            value: issue.issueNumber,
-          },
-          {
-            trait_type: "Published Date",
-            value: publishedDate,
-          },
-          {
-            trait_type: "Type",
-            value: "Newsletter Issue",
-          },
-        ],
-      };
-
-      if (validatedBody.image) {
-        metadata.image = validatedBody.image;
-      }
-
-      const ipfsHash = await ipfsService.pinJSONToIPFS(metadata);
-      const ipfsUri = ipfsService.getIPFSUri(ipfsHash);
-      const ipfsUrl = ipfsService.getIPFSUrl(ipfsHash);
-
-      await storage.updateNewsletterIssue(req.params.issueId, {
-        ipfsMetadataUri: ipfsUri,
-      });
-
-      res.json({
-        ipfsHash,
-        ipfsUri,
-        ipfsUrl,
-        metadata,
-      });
+  app.post("/api/rooms", async (req, res) => {
+    try {
+      const validatedData = insertRoomSchema.parse(req.body);
+      const room = await storage.createRoom(validatedData);
+      res.status(201).json(room);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid request body", details: error.errors });
+        return res.status(400).json({ error: "Invalid room data", details: error.errors });
       }
-      console.error("Error uploading to IPFS:", error);
-      res.status(500).json({ 
-        error: "Failed to upload to IPFS",
-        message: error instanceof Error ? error.message : "Unknown error"
-      });
+      console.error("Error creating room:", error);
+      res.status(500).json({ error: "Failed to create room" });
     }
   });
 
-  const uploadSubscribeMetadataSchema = z.object({
-    tokenId: z.coerce.number().int().nonnegative().refine((n) => Number.isFinite(n), "Invalid tokenId"),
-    subscriberAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address").optional(),
-    image: z.string().url().optional(),
+  app.patch("/api/rooms/:id", async (req, res) => {
+    try {
+      const updated = await storage.updateRoom(req.params.id, req.body);
+      if (!updated) {
+        return res.status(404).json({ error: "Room not found" });
+      }
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating room:", error);
+      res.status(500).json({ error: "Failed to update room" });
+    }
   });
 
-  app.post("/api/ipfs/upload-subscribe-metadata", async (req, res) => {
+  app.delete("/api/rooms/:id", async (req, res) => {
     try {
-      const validatedBody = uploadSubscribeMetadataSchema.parse(req.body);
-
-      const metadata: NFTMetadata = {
-        name: `DJZS Subscriber #${validatedBody.tokenId}`,
-        description: "Access pass to DJZS on-chain newsletter. Unlock premium content, alpha drops, and agent-powered trade analysis on Base.",
-        external_url: "https://djzs.newsletter",
-        attributes: [
-          {
-            trait_type: "Token ID",
-            value: validatedBody.tokenId,
-          },
-          {
-            trait_type: "Type",
-            value: "Subscribe NFT",
-          },
-          {
-            trait_type: "Platform",
-            value: "DJZS Newsletter",
-          },
-        ],
-      };
-
-      if (validatedBody.subscriberAddress) {
-        metadata.attributes?.push({
-          trait_type: "Subscriber",
-          value: validatedBody.subscriberAddress,
-        });
+      const deleted = await storage.deleteRoom(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Room not found" });
       }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting room:", error);
+      res.status(500).json({ error: "Failed to delete room" });
+    }
+  });
 
-      if (validatedBody.image) {
-        metadata.image = validatedBody.image;
-      }
-
-      const ipfsHash = await ipfsService.pinJSONToIPFS(metadata);
-      const ipfsUri = ipfsService.getIPFSUri(ipfsHash);
-      const ipfsUrl = ipfsService.getIPFSUrl(ipfsHash);
-
-      res.json({
-        ipfsHash,
-        ipfsUri,
-        ipfsUrl,
-        metadata,
-      });
+  app.post("/api/payments", async (req, res) => {
+    try {
+      const validatedData = insertPaymentReceiptSchema.parse(req.body);
+      const receipt = await storage.createPaymentReceipt(validatedData);
+      res.status(201).json(receipt);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid request body", details: error.errors });
+        return res.status(400).json({ error: "Invalid payment data", details: error.errors });
       }
-      console.error("Error uploading to IPFS:", error);
-      res.status(500).json({ 
-        error: "Failed to upload to IPFS",
-        message: error instanceof Error ? error.message : "Unknown error"
-      });
+      console.error("Error creating payment receipt:", error);
+      res.status(500).json({ error: "Failed to create payment receipt" });
     }
   });
 
-  // Journal File Upload Endpoint (accepts base64 encoded file from frontend)
-  app.post("/api/journal/upload", async (req, res) => {
+  app.get("/api/payments/:txHash", async (req, res) => {
     try {
-      const { filename, fileData, mimeType } = req.body;
-      
-      if (!filename || !fileData) {
-        return res.status(400).json({ success: false, error: "Missing filename or fileData" });
+      const receipt = await storage.getPaymentReceiptByTxHash(req.params.txHash);
+      if (!receipt) {
+        return res.status(404).json({ error: "Payment receipt not found" });
       }
-
-      if (!PINATA_API_KEY || !PINATA_SECRET) {
-        return res.status(500).json({ success: false, error: "Pinata not configured" });
-      }
-
-      // Decode base64 to buffer
-      const buffer = Buffer.from(fileData, 'base64');
-
-      // Create form data for Pinata API
-      const formData = new FormData();
-      formData.append("file", new Blob([buffer], { type: mimeType || 'application/octet-stream' }), filename);
-      formData.append("pinataMetadata", JSON.stringify({ name: filename }));
-      formData.append("pinataOptions", JSON.stringify({ cidVersion: 1 }));
-
-      // Upload to Pinata
-      const pinataRes = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-        method: "POST",
-        headers: {
-          pinata_api_key: PINATA_API_KEY,
-          pinata_secret_api_key: PINATA_SECRET,
-        },
-        body: formData,
-      });
-
-      if (!pinataRes.ok) {
-        const error = await pinataRes.text();
-        throw new Error(`Pinata error: ${error}`);
-      }
-
-      const pinataData = await pinataRes.json();
-      const ipfsHash = (pinataData as any).IpfsHash;
-      const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
-
-      res.json({
-        success: true,
-        ipfsHash,
-        ipfsUrl,
-      });
+      res.json(receipt);
     } catch (error) {
-      console.error("File upload error:", error);
-      res.status(500).json({
-        success: false,
-        error: error instanceof Error ? error.message : "Upload failed",
-      });
-    }
-  });
-
-  // Journal Metadata Pin Endpoint
-  app.post("/api/journal/metadata", async (req, res) => {
-    try {
-      if (!PINATA_API_KEY || !PINATA_SECRET) {
-        return res.status(500).json({ success: false, error: "Pinata not configured" });
-      }
-
-      const metadata = req.body;
-
-      // Pin metadata JSON to IPFS
-      const pinataRes = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          pinata_api_key: PINATA_API_KEY,
-          pinata_secret_api_key: PINATA_SECRET,
-        },
-        body: JSON.stringify({
-          pinataContent: metadata,
-          pinataMetadata: { name: metadata.name || "journal-metadata" },
-        }),
-      });
-
-      if (!pinataRes.ok) {
-        const error = await pinataRes.text();
-        throw new Error(`Pinata error: ${error}`);
-      }
-
-      const pinataData = await pinataRes.json();
-      const metadataIpfsHash = (pinataData as any).IpfsHash;
-
-      res.json({
-        success: true,
-        metadataIpfsHash,
-      });
-    } catch (error) {
-      console.error("Metadata pin error:", error);
-      res.status(500).json({
-        success: false,
-        error: error instanceof Error ? error.message : "Metadata pin failed",
-      });
-    }
-  });
-
-  // Nous Research AI Chat API
-  const aiChatSchema = z.object({
-    messages: z.array(z.object({
-      role: z.enum(['system', 'user', 'assistant']),
-      content: z.string(),
-    })),
-    model: z.string().default('Hermes-4-70B'),
-    temperature: z.number().min(0).max(2).optional(),
-    max_tokens: z.number().int().positive().optional(),
-  });
-
-  app.post("/api/ai/chat", async (req, res) => {
-    try {
-      const validatedBody = aiChatSchema.parse(req.body);
-      const apiKey = process.env.NOUS_RESEARCH_API_KEY;
-
-      if (!apiKey) {
-        return res.status(500).json({ error: "AI service not configured" });
-      }
-
-      const response = await fetch('https://inference-api.nousresearch.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: validatedBody.model,
-          messages: validatedBody.messages,
-          temperature: validatedBody.temperature ?? 0.7,
-          max_tokens: validatedBody.max_tokens ?? 2000,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        console.error('Nous Research API error:', error);
-        return res.status(response.status).json({ 
-          error: 'AI service error',
-          details: error 
-        });
-      }
-
-      const data = await response.json();
-      res.json(data);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid request body", details: error.errors });
-      }
-      console.error("Error calling AI service:", error);
-      res.status(500).json({ 
-        error: "Failed to get AI response",
-        message: error instanceof Error ? error.message : "Unknown error"
-      });
+      console.error("Error fetching payment receipt:", error);
+      res.status(500).json({ error: "Failed to fetch payment receipt" });
     }
   });
 
   const httpServer = createServer(app);
-
   return httpServer;
 }

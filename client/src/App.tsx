@@ -8,14 +8,14 @@ import { wagmiConfig } from "./lib/wagmi-config";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
-import Journal from "@/pages/journal";
+import Chat from "@/pages/chat";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/journal" component={Journal} />
+      <Route path="/chat" component={Chat} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -28,9 +28,9 @@ function App() {
         <RainbowKitProvider
           coolMode
           theme={darkTheme({
-            accentColor: "hsl(258, 80%, 75%)",
-            accentColorForeground: "hsl(240, 20%, 4%)",
-            borderRadius: "large",
+            accentColor: "hsl(270, 80%, 60%)",
+            accentColorForeground: "white",
+            borderRadius: "medium",
           })}
         >
           <TooltipProvider>
