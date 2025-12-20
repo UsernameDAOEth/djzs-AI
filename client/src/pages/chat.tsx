@@ -372,27 +372,47 @@ export default function Chat() {
           )}
         </ScrollArea>
 
-        <div className="border-t border-gray-800 p-4">
+        <div className="border-t border-gray-700 p-4 bg-gray-900/50">
           <Tabs value={composerTab} onValueChange={setComposerTab}>
-            <TabsList className="bg-gray-900 mb-3">
-              <TabsTrigger value="text" className="text-xs" data-testid="tab-text">
-                <MessageSquare className="w-3 h-3 mr-1" />
+            <TabsList className="bg-gray-800 border border-gray-700 p-1 mb-3 w-full justify-start gap-1">
+              <TabsTrigger 
+                value="text" 
+                className="text-sm text-gray-400 data-[state=active]:bg-purple-600 data-[state=active]:text-white px-3 py-2" 
+                data-testid="tab-text"
+              >
+                <MessageSquare className="w-4 h-4 mr-1.5" />
                 Text
               </TabsTrigger>
-              <TabsTrigger value="trade" className="text-xs" data-testid="tab-trade">
-                <TrendingUp className="w-3 h-3 mr-1" />
+              <TabsTrigger 
+                value="trade" 
+                className="text-sm text-gray-400 data-[state=active]:bg-purple-600 data-[state=active]:text-white px-3 py-2" 
+                data-testid="tab-trade"
+              >
+                <TrendingUp className="w-4 h-4 mr-1.5" />
                 Trade
               </TabsTrigger>
-              <TabsTrigger value="prediction" className="text-xs" data-testid="tab-prediction">
-                <BarChart3 className="w-3 h-3 mr-1" />
+              <TabsTrigger 
+                value="prediction" 
+                className="text-sm text-gray-400 data-[state=active]:bg-purple-600 data-[state=active]:text-white px-3 py-2" 
+                data-testid="tab-prediction"
+              >
+                <BarChart3 className="w-4 h-4 mr-1.5" />
                 Prediction
               </TabsTrigger>
-              <TabsTrigger value="event" className="text-xs" data-testid="tab-event">
-                <Calendar className="w-3 h-3 mr-1" />
+              <TabsTrigger 
+                value="event" 
+                className="text-sm text-gray-400 data-[state=active]:bg-purple-600 data-[state=active]:text-white px-3 py-2" 
+                data-testid="tab-event"
+              >
+                <Calendar className="w-4 h-4 mr-1.5" />
                 Event
               </TabsTrigger>
-              <TabsTrigger value="pay" className="text-xs" data-testid="tab-pay">
-                <DollarSign className="w-3 h-3 mr-1" />
+              <TabsTrigger 
+                value="pay" 
+                className="text-sm text-gray-400 data-[state=active]:bg-purple-600 data-[state=active]:text-white px-3 py-2" 
+                data-testid="tab-pay"
+              >
+                <DollarSign className="w-4 h-4 mr-1.5" />
                 Pay
               </TabsTrigger>
             </TabsList>
