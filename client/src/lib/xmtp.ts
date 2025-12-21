@@ -1,4 +1,4 @@
-import { Client, type Conversation } from "@xmtp/browser-sdk";
+import { Client, type Conversation, type Signer } from "@xmtp/browser-sdk";
 
 export type XmtpClientState = {
   client: Client | null;
@@ -8,7 +8,16 @@ export type XmtpClientState = {
 
 let cachedClient: Client | null = null;
 
-export async function createXmtpClient(signer: {
+function hexToBytes(hex: string): Uint8Array {
+  const cleanHex = hex.startsWith("0x") ? hex.slice(2) : hex;
+  const bytes = new Uint8Array(cleanHex.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(cleanHex.substr(i * 2, 2), 16);
+  }
+  return bytes;
+}
+
+export async function createXmtpClient(walletSigner: {
   getAddress: () => string;
   signMessage: (message: string) => Promise<string>;
 }): Promise<Client> {
@@ -16,7 +25,21 @@ export async function createXmtpClient(signer: {
     return cachedClient;
   }
 
-  const client = await Client.create(signer as any, {
+  const address = walletSigner.getAddress();
+  
+  const signer: Signer = {
+    type: "EOA",
+    getIdentifier: () => ({
+      identifier: address,
+      identifierKind: "Ethereum" as const,
+    }),
+    signMessage: async (message: string): Promise<Uint8Array> => {
+      const signature = await walletSigner.signMessage(message);
+      return hexToBytes(signature);
+    },
+  };
+
+  const client = await Client.create(signer, {
     env: "production",
   });
   

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
+import { normalize } from "viem/ens";
 
 const mainnetClient = createPublicClient({
   chain: mainnet,
@@ -27,6 +28,26 @@ export function useEnsName(address: string | undefined) {
   });
 }
 
+export function useEnsAddress(name: string | undefined) {
+  return useQuery({
+    queryKey: ["ens", "address", name],
+    queryFn: async () => {
+      if (!name) return null;
+      try {
+        const address = await mainnetClient.getEnsAddress({
+          name: normalize(name),
+        });
+        return address;
+      } catch {
+        return null;
+      }
+    },
+    enabled: !!name,
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 60 * 24,
+  });
+}
+
 export function useEnsAvatar(ensName: string | null | undefined) {
   return useQuery({
     queryKey: ["ens", "avatar", ensName],
@@ -34,9 +55,30 @@ export function useEnsAvatar(ensName: string | null | undefined) {
       if (!ensName) return null;
       try {
         const avatar = await mainnetClient.getEnsAvatar({
-          name: ensName,
+          name: normalize(ensName),
         });
         return avatar;
+      } catch {
+        return null;
+      }
+    },
+    enabled: !!ensName,
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 60 * 24,
+  });
+}
+
+export function useEnsText(ensName: string | null | undefined, key: string) {
+  return useQuery({
+    queryKey: ["ens", "text", ensName, key],
+    queryFn: async () => {
+      if (!ensName) return null;
+      try {
+        const text = await mainnetClient.getEnsText({
+          name: normalize(ensName),
+          key,
+        });
+        return text;
       } catch {
         return null;
       }
