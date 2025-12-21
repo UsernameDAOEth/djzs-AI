@@ -3,6 +3,50 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema } from "@shared/schema";
 import { z } from "zod";
+import { verifyMessage } from "viem";
+
+// Track used signatures to prevent replay attacks
+const usedSignatures = new Set<string>();
+
+// Helper to validate timestamp
+function isValidTimestamp(timestamp: string): boolean {
+  const ts = Number(timestamp);
+  if (!Number.isFinite(ts) || ts <= 0) return false;
+  const age = Date.now() - ts;
+  return age >= 0 && age <= 5 * 60 * 1000; // Must be within last 5 minutes
+}
+
+// Helper to verify admin signature
+async function verifyAdminAction(adminAddress: string, signature: string, message: string): Promise<boolean> {
+  try {
+    // Check if signature has been used before
+    if (usedSignatures.has(signature)) {
+      return false;
+    }
+    
+    const valid = await verifyMessage({
+      address: adminAddress as `0x${string}`,
+      message,
+      signature: signature as `0x${string}`,
+    });
+    if (!valid) return false;
+    
+    const admin = await storage.getMember(adminAddress);
+    if (!admin?.isAdmin) return false;
+    
+    // Mark signature as used
+    usedSignatures.add(signature);
+    
+    // Clean up old signatures periodically (keep set from growing unbounded)
+    if (usedSignatures.size > 10000) {
+      usedSignatures.clear();
+    }
+    
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/health", (_req, res) => {
@@ -178,6 +222,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/messages", async (req, res) => {
     try {
       const validatedData = insertStoredMessageSchema.parse(req.body);
+      
+      // Extract author address from message
+      const authorAddress = 
+        'authorAddress' in validatedData.message ? validatedData.message.authorAddress :
+        'voterAddress' in validatedData.message ? validatedData.message.voterAddress : null;
+      
+      if (!authorAddress) {
+        return res.status(400).json({ error: "Message must include author address" });
+      }
+      
+      // Verify author is a valid, non-muted member
+      const member = await storage.getMember(authorAddress);
+      if (!member) {
+        return res.status(403).json({ error: "Not a registered member" });
+      }
+      if (!member.isAllowlisted && !member.isAdmin) {
+        return res.status(403).json({ error: "Not on allowlist" });
+      }
+      if (member.isMuted) {
+        return res.status(403).json({ error: "You are muted and cannot send messages" });
+      }
+      
       const message = await storage.createMessage(validatedData);
       res.status(201).json(message);
     } catch (error) {
@@ -186,6 +252,166 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error creating message:", error);
       res.status(500).json({ error: "Failed to create message" });
+    }
+  });
+
+  // Admin controls - mute member (requires signature)
+  app.post("/api/admin/mute/:address", async (req, res) => {
+    try {
+      const { adminAddress, signature, timestamp } = req.body;
+      if (!adminAddress || !signature || !timestamp) {
+        return res.status(400).json({ error: "Admin address, signature, and timestamp required" });
+      }
+      
+      // Validate timestamp format and freshness
+      if (!isValidTimestamp(timestamp)) {
+        return res.status(401).json({ error: "Invalid or expired timestamp" });
+      }
+      
+      const message = `DJZS Admin: Mute ${req.params.address} at ${timestamp}`;
+      const isValid = await verifyAdminAction(adminAddress, signature, message);
+      if (!isValid) {
+        return res.status(403).json({ error: "Invalid admin signature or signature already used" });
+      }
+      
+      const updated = await storage.updateMember(req.params.address, { isMuted: true });
+      if (!updated) {
+        return res.status(404).json({ error: "Member not found" });
+      }
+      res.json(updated);
+    } catch (error) {
+      console.error("Error muting member:", error);
+      res.status(500).json({ error: "Failed to mute member" });
+    }
+  });
+
+  // Admin controls - unmute member (requires signature)
+  app.post("/api/admin/unmute/:address", async (req, res) => {
+    try {
+      const { adminAddress, signature, timestamp } = req.body;
+      if (!adminAddress || !signature || !timestamp) {
+        return res.status(400).json({ error: "Admin address, signature, and timestamp required" });
+      }
+      
+      if (!isValidTimestamp(timestamp)) {
+        return res.status(401).json({ error: "Invalid or expired timestamp" });
+      }
+      
+      const message = `DJZS Admin: Unmute ${req.params.address} at ${timestamp}`;
+      const isValid = await verifyAdminAction(adminAddress, signature, message);
+      if (!isValid) {
+        return res.status(403).json({ error: "Invalid admin signature or signature already used" });
+      }
+      
+      const updated = await storage.updateMember(req.params.address, { isMuted: false });
+      if (!updated) {
+        return res.status(404).json({ error: "Member not found" });
+      }
+      res.json(updated);
+    } catch (error) {
+      console.error("Error unmuting member:", error);
+      res.status(500).json({ error: "Failed to unmute member" });
+    }
+  });
+
+  // Admin controls - remove member (requires signature)
+  app.post("/api/admin/remove/:address", async (req, res) => {
+    try {
+      const { adminAddress, signature, timestamp } = req.body;
+      if (!adminAddress || !signature || !timestamp) {
+        return res.status(400).json({ error: "Admin address, signature, and timestamp required" });
+      }
+      
+      if (!isValidTimestamp(timestamp)) {
+        return res.status(401).json({ error: "Invalid or expired timestamp" });
+      }
+      
+      const message = `DJZS Admin: Remove ${req.params.address} at ${timestamp}`;
+      const isValid = await verifyAdminAction(adminAddress, signature, message);
+      if (!isValid) {
+        return res.status(403).json({ error: "Invalid admin signature or signature already used" });
+      }
+      
+      const deleted = await storage.deleteMember(req.params.address);
+      if (!deleted) {
+        return res.status(404).json({ error: "Member not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error removing member:", error);
+      res.status(500).json({ error: "Failed to remove member" });
+    }
+  });
+
+  // NFT verification endpoint (requires signature to verify caller identity)
+  app.post("/api/verify-nft", async (req, res) => {
+    try {
+      const { address, nftContractAddress, chainId, signature, timestamp } = req.body;
+      if (!address || !nftContractAddress || !signature || !timestamp) {
+        return res.status(400).json({ error: "Address, NFT contract, signature, and timestamp required" });
+      }
+      
+      // Verify timestamp format and freshness
+      if (!isValidTimestamp(timestamp)) {
+        return res.status(401).json({ error: "Invalid or expired timestamp" });
+      }
+      
+      // Check if signature was already used
+      if (usedSignatures.has(signature)) {
+        return res.status(403).json({ error: "Signature already used" });
+      }
+      
+      // Verify the caller is the address they claim to be
+      const message = `DJZS: Verify NFT ownership at ${timestamp}`;
+      try {
+        const valid = await verifyMessage({
+          address: address as `0x${string}`,
+          message,
+          signature: signature as `0x${string}`,
+        });
+        if (!valid) {
+          return res.status(403).json({ error: "Invalid signature" });
+        }
+        usedSignatures.add(signature);
+      } catch {
+        return res.status(403).json({ error: "Invalid signature" });
+      }
+      
+      // Call Base RPC to check NFT balance
+      const rpcUrl = chainId === 8453 
+        ? "https://mainnet.base.org" 
+        : "https://sepolia.base.org";
+      
+      // ERC721 balanceOf call
+      const data = `0x70a08231000000000000000000000000${address.slice(2).toLowerCase()}`;
+      
+      const response = await fetch(rpcUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "eth_call",
+          params: [{ to: nftContractAddress, data }, "latest"],
+        }),
+      });
+      
+      const result = await response.json();
+      const balance = parseInt(result.result || "0x0", 16);
+      const hasNft = balance > 0;
+      
+      // Update member's NFT status
+      await storage.updateMember(address, { hasNft });
+      
+      // If they have the NFT, allowlist them
+      if (hasNft) {
+        await storage.updateMember(address, { isAllowlisted: true });
+      }
+      
+      res.json({ hasNft, balance });
+    } catch (error) {
+      console.error("Error verifying NFT:", error);
+      res.status(500).json({ error: "Failed to verify NFT ownership" });
     }
   });
 

@@ -88,6 +88,8 @@ export class MemStorage implements IStorage {
       xLinkSignature: insertMember.xLinkSignature ?? null,
       isAdmin: insertMember.isAdmin ?? false,
       isAllowlisted: insertMember.isAllowlisted ?? false,
+      isMuted: insertMember.isMuted ?? false,
+      hasNft: insertMember.hasNft ?? false,
       createdAt: new Date(),
     };
     this.members.set(id, member);

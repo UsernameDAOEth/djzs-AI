@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useSignMessage } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
@@ -14,12 +14,19 @@ import {
   Send,
   Loader2,
   Shield,
-  Key
+  Key,
+  VolumeX,
+  Volume2,
+  UserX,
+  Crown,
+  Ban
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useDisplayName, useMultipleEnsNames, formatAddress } from "@/hooks/use-ens";
 import { useXmtp } from "@/hooks/use-xmtp";
@@ -44,10 +51,12 @@ export default function Chat() {
   const { toast } = useToast();
   const { displayName, ensName } = useDisplayName(address);
   const { client: xmtpClient, isConnecting: xmtpConnecting, connect: connectXmtp, error: xmtpError } = useXmtp();
+  const { signMessageAsync } = useSignMessage();
   
   const [selectedRoom, setSelectedRoom] = useState("lounge");
   const [messageInput, setMessageInput] = useState("");
   const [composerTab, setComposerTab] = useState("text");
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   const { data: member, isLoading: memberLoading } = useQuery<Member | null>({
     queryKey: ["/api/members", address],
@@ -72,6 +81,77 @@ export default function Chat() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/members", address] });
+    },
+  });
+
+  // Admin: fetch all members
+  const { data: allMembers = [] } = useQuery<Member[]>({
+    queryKey: ["/api/members"],
+    enabled: !!member?.isAdmin,
+  });
+
+  // Admin: mute member (with signature verification)
+  const muteMember = useMutation({
+    mutationFn: async (targetAddress: string) => {
+      const timestamp = Date.now().toString();
+      const message = `DJZS Admin: Mute ${targetAddress} at ${timestamp}`;
+      const signature = await signMessageAsync({ message });
+      const res = await apiRequest("POST", `/api/admin/mute/${targetAddress}`, { 
+        adminAddress: address, 
+        signature, 
+        timestamp 
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/members"] });
+      toast({ title: "Member muted", description: "The member can no longer send messages" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to mute member", variant: "destructive" });
+    },
+  });
+
+  // Admin: unmute member (with signature verification)
+  const unmuteMember = useMutation({
+    mutationFn: async (targetAddress: string) => {
+      const timestamp = Date.now().toString();
+      const message = `DJZS Admin: Unmute ${targetAddress} at ${timestamp}`;
+      const signature = await signMessageAsync({ message });
+      const res = await apiRequest("POST", `/api/admin/unmute/${targetAddress}`, { 
+        adminAddress: address, 
+        signature, 
+        timestamp 
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/members"] });
+      toast({ title: "Member unmuted", description: "The member can now send messages again" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to unmute member", variant: "destructive" });
+    },
+  });
+
+  // Admin: remove member (with signature verification)
+  const removeMember = useMutation({
+    mutationFn: async (targetAddress: string) => {
+      const timestamp = Date.now().toString();
+      const message = `DJZS Admin: Remove ${targetAddress} at ${timestamp}`;
+      const signature = await signMessageAsync({ message });
+      await apiRequest("POST", `/api/admin/remove/${targetAddress}`, { 
+        adminAddress: address, 
+        signature, 
+        timestamp 
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/members"] });
+      toast({ title: "Member removed", description: "The member has been removed from the chat" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to remove member", variant: "destructive" });
     },
   });
 
@@ -198,6 +278,10 @@ export default function Chat() {
 
   const handleSendText = () => {
     if (!messageInput.trim() || !address || sendMessage.isPending) return;
+    if (member?.isMuted) {
+      toast({ title: "Muted", description: "You are muted and cannot send messages", variant: "destructive" });
+      return;
+    }
     
     const message: ChatMessage = {
       type: "text",
@@ -210,7 +294,7 @@ export default function Chat() {
   };
 
   const handleTradeSubmit = (data: { asset: string; direction: "long" | "short"; entry: string; invalidation: string; tp: string[]; timeframe?: string; leverage?: string; notes?: string }) => {
-    if (!address || sendMessage.isPending) return;
+    if (!address || sendMessage.isPending || member?.isMuted) return;
     const message: ChatMessage = {
       type: "trade_signal",
       id: nanoid(),
@@ -229,7 +313,7 @@ export default function Chat() {
   };
 
   const handlePredictionSubmit = (data: { question: string; endsAt: string; notes?: string }) => {
-    if (!address || sendMessage.isPending) return;
+    if (!address || sendMessage.isPending || member?.isMuted) return;
     const message: ChatMessage = {
       type: "prediction",
       id: nanoid(),
@@ -244,7 +328,7 @@ export default function Chat() {
   };
 
   const handleEventSubmit = (data: { title: string; startsAt: string; locationOrLink?: string; description?: string }) => {
-    if (!address || sendMessage.isPending) return;
+    if (!address || sendMessage.isPending || member?.isMuted) return;
     const message: ChatMessage = {
       type: "event",
       id: nanoid(),
@@ -259,7 +343,7 @@ export default function Chat() {
   };
 
   const handlePaymentSuccess = (txHash: string, data: { to: string; amount: string; token: string; note?: string }) => {
-    if (!address || sendMessage.isPending) return;
+    if (!address || sendMessage.isPending || member?.isMuted) return;
     const message: ChatMessage = {
       type: "payment_receipt",
       chainId: 8453,
@@ -348,9 +432,101 @@ export default function Chat() {
               </span>
             )}
             {member?.isAdmin && (
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                <Settings className="w-4 h-4" />
-              </Button>
+              <Dialog open={adminPanelOpen} onOpenChange={setAdminPanelOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" data-testid="button-admin-panel">
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-lg max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Crown className="w-5 h-5 text-purple-400" />
+                      Admin Panel
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 mt-4">
+                    <h3 className="text-sm font-medium text-gray-400">Members ({allMembers.length})</h3>
+                    <div className="space-y-2">
+                      {allMembers.map((m) => (
+                        <div 
+                          key={m.id} 
+                          className="flex items-center justify-between p-3 bg-gray-800 rounded-lg"
+                          data-testid={`member-row-${m.id}`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-purple-600/30 flex items-center justify-center text-sm text-purple-400">
+                              {(m.ensName || m.address).charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-white">
+                                {m.ensName || formatAddress(m.address)}
+                              </p>
+                              <div className="flex items-center gap-1 mt-0.5">
+                                {m.isAdmin && (
+                                  <Badge variant="outline" className="text-[10px] border-purple-400 text-purple-400 px-1">
+                                    Admin
+                                  </Badge>
+                                )}
+                                {m.isMuted && (
+                                  <Badge variant="outline" className="text-[10px] border-red-400 text-red-400 px-1">
+                                    Muted
+                                  </Badge>
+                                )}
+                                {m.hasNft && (
+                                  <Badge variant="outline" className="text-[10px] border-green-400 text-green-400 px-1">
+                                    NFT
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          {!m.isAdmin && m.address.toLowerCase() !== address?.toLowerCase() && (
+                            <div className="flex items-center gap-1">
+                              {m.isMuted ? (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-green-400 hover:text-green-300 hover:bg-green-400/10"
+                                  onClick={() => unmuteMember.mutate(m.address)}
+                                  disabled={unmuteMember.isPending}
+                                  data-testid={`button-unmute-${m.id}`}
+                                >
+                                  <Volume2 className="w-4 h-4" />
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-400/10"
+                                  onClick={() => muteMember.mutate(m.address)}
+                                  disabled={muteMember.isPending}
+                                  data-testid={`button-mute-${m.id}`}
+                                >
+                                  <VolumeX className="w-4 h-4" />
+                                </Button>
+                              )}
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-400/10"
+                                onClick={() => removeMember.mutate(m.address)}
+                                disabled={removeMember.isPending}
+                                data-testid={`button-remove-${m.id}`}
+                              >
+                                <UserX className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      {allMembers.length === 0 && (
+                        <p className="text-sm text-gray-500 text-center py-4">No members yet</p>
+                      )}
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             )}
           </div>
         </header>

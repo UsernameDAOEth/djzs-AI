@@ -11,6 +11,8 @@ export const members = pgTable("members", {
   xLinkSignature: text("x_link_signature"),
   isAdmin: boolean("is_admin").notNull().default(false),
   isAllowlisted: boolean("is_allowlisted").notNull().default(false),
+  isMuted: boolean("is_muted").notNull().default(false),
+  hasNft: boolean("has_nft").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
