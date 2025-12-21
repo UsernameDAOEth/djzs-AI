@@ -7,8 +7,8 @@ import { queryClient } from "./lib/queryClient";
 import { wagmiConfig } from "./lib/wagmi-config";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Home from "@/pages/home-new";
-import Chat from "@/pages/chat-new";
+import Home from "@/pages/home";
+import Chat from "@/pages/chat";
 import NotFound from "@/pages/not-found";
 
 function Router() {
