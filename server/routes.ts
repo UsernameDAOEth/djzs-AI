@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema } from "@shared/schema";
 import { z } from "zod";
 import { verifyMessage } from "viem";
+import { ParagraphAPI } from "@paragraph-com/sdk";
 
 // Track used signatures to prevent replay attacks
 const usedSignatures = new Set<string>();
@@ -412,6 +413,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error verifying NFT:", error);
       res.status(500).json({ error: "Failed to verify NFT ownership" });
+    }
+  });
+
+  // Initialize Paragraph API (with optional API key for draft/private posts)
+  const paragraphApi = process.env.PARAGRAPH_API_KEY 
+    ? new ParagraphAPI({ apiKey: process.env.PARAGRAPH_API_KEY })
+    : new ParagraphAPI();
+
+  // Get publication info by slug
+  app.get("/api/paragraph/publications/:slug", async (req, res) => {
+    try {
+      const publication = await paragraphApi.publications.get({ slug: `@${req.params.slug.replace('@', '')}` }).single();
+      res.json(publication);
+    } catch (error) {
+      console.error("Error fetching publication:", error);
+      res.status(500).json({ error: "Failed to fetch publication" });
+    }
+  });
+
+  // Get posts from a publication
+  app.get("/api/paragraph/publications/:slug/posts", async (req, res) => {
+    try {
+      const slug = `@${req.params.slug.replace('@', '')}`;
+      let publication;
+      try {
+        publication = await paragraphApi.publications.get({ slug }).single();
+      } catch {
+        return res.status(404).json({ error: "Publication not found" });
+      }
+      
+      const cursor = req.query.cursor as string | undefined;
+      const options = { cursor, includeContent: true };
+      const result = await paragraphApi.posts.get({ publicationId: publication.id }, options);
+      
+      res.json({ posts: result.items, pagination: result.pagination, publication });
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      res.status(500).json({ error: "Failed to fetch posts" });
+    }
+  });
+
+  // Get a single post by publication slug and post slug
+  app.get("/api/paragraph/publications/:pubSlug/posts/:postSlug", async (req, res) => {
+    try {
+      const pubSlug = `@${req.params.pubSlug.replace('@', '')}`;
+      const postSlug = req.params.postSlug;
+      
+      const post = await paragraphApi.posts.get({ 
+        publicationSlug: pubSlug, 
+        postSlug 
+      }).single();
+      
+      res.json(post);
+    } catch (error) {
+      console.error("Error fetching post:", error);
+      res.status(500).json({ error: "Failed to fetch post" });
     }
   });
 

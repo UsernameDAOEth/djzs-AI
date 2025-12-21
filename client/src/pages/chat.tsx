@@ -19,7 +19,8 @@ import {
   Volume2,
   UserX,
   Crown,
-  Ban
+  Ban,
+  Newspaper
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,7 @@ import { TradeComposer } from "@/components/chat/trade-composer";
 import { PredictionComposer } from "@/components/chat/prediction-composer";
 import { EventComposer } from "@/components/chat/event-composer";
 import { PaymentComposer } from "@/components/chat/payment-composer";
+import { NewsletterComposer } from "@/components/chat/newsletter-composer";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Room, Member, ChatMessage, StoredMessage } from "@shared/schema";
 
@@ -358,6 +360,25 @@ export default function Chat() {
     sendMessage.mutate(message);
   };
 
+  const handleNewsletterSubmit = (data: { postId: string; title: string; subtitle?: string; imageUrl?: string; publishedAt?: string; slug: string; publicationSlug: string; excerpt?: string }) => {
+    if (!address || sendMessage.isPending || member?.isMuted) return;
+    const message: ChatMessage = {
+      type: "newsletter",
+      id: nanoid(),
+      postId: data.postId,
+      title: data.title,
+      subtitle: data.subtitle,
+      imageUrl: data.imageUrl,
+      publishedAt: data.publishedAt,
+      slug: data.slug,
+      publicationSlug: data.publicationSlug,
+      excerpt: data.excerpt,
+      createdAt: new Date().toISOString(),
+      authorAddress: address,
+    };
+    sendMessage.mutate(message);
+  };
+
   return (
     <div className="h-screen bg-gray-950 flex">
       <aside className="w-64 border-r border-gray-800 flex flex-col">
@@ -596,6 +617,14 @@ export default function Chat() {
                 <DollarSign className="w-4 h-4 mr-1.5" />
                 Pay
               </TabsTrigger>
+              <TabsTrigger 
+                value="newsletter" 
+                className="text-sm text-gray-400 data-[state=active]:bg-blue-600 data-[state=active]:text-white px-3 py-2" 
+                data-testid="tab-newsletter"
+              >
+                <Newspaper className="w-4 h-4 mr-1.5" />
+                Article
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="text" className="mt-0">
@@ -628,6 +657,10 @@ export default function Chat() {
 
             <TabsContent value="pay" className="mt-0">
               <PaymentComposer onSuccess={handlePaymentSuccess} />
+            </TabsContent>
+
+            <TabsContent value="newsletter" className="mt-0">
+              <NewsletterComposer onSubmit={handleNewsletterSubmit} isSubmitting={sendMessage.isPending} />
             </TabsContent>
           </Tabs>
         </div>

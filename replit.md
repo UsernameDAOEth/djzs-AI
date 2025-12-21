@@ -25,7 +25,7 @@ Preferred communication style: Simple, everyday language.
 
 **Component Structure**:
 - **Pages**: Home (landing), Chat (main interface), NotFound
-- **Chat Components**: MessageCards (renders all card types), TradeComposer, PredictionComposer, EventComposer, PaymentComposer
+- **Chat Components**: MessageCards (renders all card types), TradeComposer, PredictionComposer, EventComposer, PaymentComposer, NewsletterComposer
 - **UI Components**: shadcn/Radix UI components in `client/src/components/ui/`
 
 ### Backend Architecture
@@ -52,6 +52,7 @@ Preferred communication style: Simple, everyday language.
 - `event` - Calendar events with RSVP
 - `payment_receipt` - On-chain payment confirmations
 - `announcement` - Admin announcements with priority
+- `newsletter` - Paragraph newsletter article shares
 
 ### Web3 Integration
 
@@ -86,8 +87,23 @@ predictionCardSchema  // question, endsAt, outcomes
 eventCardSchema       // title, startsAt, locationOrLink, description
 paymentReceiptCardSchema // chainId, tokenSymbol, amount, to, txHash
 announcementCardSchema // title, body, priority
+newsletterArticleSchema // postId, title, slug, publicationSlug, excerpt
 textMessageSchema     // content
 ```
+
+### Paragraph Newsletter Integration
+
+**SDK**: `@paragraph-com/sdk` for fetching publication data.
+
+**API Endpoints**:
+- `GET /api/paragraph/publications/:slug` - Get publication info
+- `GET /api/paragraph/publications/:slug/posts` - List posts with content
+- `GET /api/paragraph/publications/:pubSlug/posts/:postSlug` - Get single post
+
+**Features**:
+- Search publications by slug (e.g., @djzs)
+- Browse and select articles to share
+- Rich article cards with image, title, excerpt, and direct link
 
 ## Key Features
 
@@ -122,6 +138,7 @@ Required environment variables:
 - `VITE_MEMBERSHIP_NFT_ADDRESS`: Optional NFT contract for gating
 - `VITE_CHAIN_ID`: Target chain ID (8453 for Base mainnet)
 - `VITE_RPC_URL`: Custom RPC URL (optional)
+- `PARAGRAPH_API_KEY`: Optional Paragraph API key for accessing draft/private posts
 
 ## Development
 
@@ -145,6 +162,11 @@ shared/
 
 ## Recent Changes
 
+- **Dec 21, 2024**: Added Paragraph newsletter integration
+  - New `newsletter` message type for sharing articles in chat
+  - Backend API endpoints to fetch publications and posts
+  - NewsletterComposer component for searching and selecting articles
+  - Rich article cards with images, excerpts, and direct links
 - **Dec 2024**: Complete rebuild from newsletter to chat platform
 - Implemented XMTP browser-sdk integration
 - Created structured message card system
