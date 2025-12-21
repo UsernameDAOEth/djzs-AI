@@ -1,11 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
 import { useWalletClient } from "wagmi";
-import { createXmtpClient, disconnectXmtpClient, getXmtpClient } from "@/lib/xmtp";
-import type { Client } from "@xmtp/browser-sdk";
+import { createXmtpClient, disconnectXmtpClient, getXmtpClient, type XmtpClient } from "@/lib/xmtp";
 
 export function useXmtp() {
   const { data: walletClient } = useWalletClient();
-  const [client, setClient] = useState<Client | null>(null);
+  const [client, setClient] = useState<XmtpClient | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

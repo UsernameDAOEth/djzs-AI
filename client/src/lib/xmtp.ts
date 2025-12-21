@@ -1,12 +1,22 @@
-import { Client, type Conversation, type Signer } from "@xmtp/browser-sdk";
+export interface XmtpClient {
+  inboxId: string;
+  conversations: {
+    list: () => Promise<XmtpConversation[]>;
+    newDm: (peerAddress: string) => Promise<XmtpConversation>;
+  };
+}
+
+export interface XmtpConversation {
+  send: (content: string) => Promise<void>;
+}
 
 export type XmtpClientState = {
-  client: Client | null;
+  client: XmtpClient | null;
   isConnecting: boolean;
   error: string | null;
 };
 
-let cachedClient: Client | null = null;
+let cachedClient: XmtpClient | null = null;
 
 function hexToBytes(hex: string): Uint8Array {
   const cleanHex = hex.startsWith("0x") ? hex.slice(2) : hex;
@@ -20,15 +30,18 @@ function hexToBytes(hex: string): Uint8Array {
 export async function createXmtpClient(walletSigner: {
   getAddress: () => string;
   signMessage: (message: string) => Promise<string>;
-}): Promise<Client> {
+}): Promise<XmtpClient> {
   if (cachedClient) {
     return cachedClient;
   }
 
   const address = walletSigner.getAddress();
   
-  const signer: Signer = {
-    type: "EOA",
+  // Dynamically import XMTP to avoid Vite optimization issues with web workers
+  const { Client } = await import("@xmtp/browser-sdk");
+  
+  const signer = {
+    type: "EOA" as const,
     getIdentifier: () => ({
       identifier: address,
       identifierKind: "Ethereum" as const,
@@ -43,26 +56,26 @@ export async function createXmtpClient(walletSigner: {
     env: "production",
   });
   
-  cachedClient = client;
-  return client;
+  cachedClient = client as unknown as XmtpClient;
+  return cachedClient;
 }
 
 export async function disconnectXmtpClient(): Promise<void> {
   cachedClient = null;
 }
 
-export function getXmtpClient(): Client | null {
+export function getXmtpClient(): XmtpClient | null {
   return cachedClient;
 }
 
-export async function listConversations(client: Client): Promise<Conversation[]> {
+export async function listConversations(client: XmtpClient): Promise<XmtpConversation[]> {
   return client.conversations.list();
 }
 
 export async function getOrCreateConversation(
-  client: Client,
+  client: XmtpClient,
   peerAddress: string
-): Promise<Conversation | null> {
+): Promise<XmtpConversation | null> {
   try {
     const conversation = await client.conversations.newDm(peerAddress);
     return conversation;
@@ -73,7 +86,7 @@ export async function getOrCreateConversation(
 }
 
 export async function sendMessage(
-  conversation: Conversation,
+  conversation: XmtpConversation,
   content: string
 ): Promise<void> {
   await conversation.send(content);
