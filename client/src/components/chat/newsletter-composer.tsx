@@ -13,6 +13,7 @@ interface ParagraphPost {
   imageUrl?: string;
   publishedAt?: string;
   markdown?: string;
+  staticHtml?: string;
 }
 
 interface ParagraphPublication {
@@ -81,6 +82,9 @@ export function NewsletterComposer({ onSubmit, isSubmitting }: NewsletterCompose
     let excerpt: string | undefined;
     if (selectedPost.markdown) {
       excerpt = selectedPost.markdown.slice(0, 200).replace(/[#*_\[\]\n]+/g, ' ').trim() + '...';
+    } else if (selectedPost.staticHtml) {
+      const textContent = selectedPost.staticHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      excerpt = textContent.slice(0, 200).trim() + '...';
     } else if (selectedPost.subtitle) {
       excerpt = selectedPost.subtitle;
     }
