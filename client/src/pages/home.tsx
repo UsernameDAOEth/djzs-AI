@@ -121,6 +121,7 @@ export default function Home() {
             <div
               style={{
                 flex: 1,
+                overflow: "hidden",
               }}
             >
               <div
@@ -135,19 +136,34 @@ export default function Home() {
                 WELCOME TO
               </div>
 
-              <h1
-                style={{
-                  margin: 0,
-                  fontSize: "clamp(24px, 3.5vw, 44px)",
-                  fontWeight: 900,
-                  lineHeight: 1.05,
-                  color: "rgba(255,255,255,.95)",
-                  textShadow:
-                    "0 0 18px rgba(140,80,255,.35), 0 0 28px rgba(80,210,255,.25)",
-                }}
-              >
-                Decentralized Journaling Zone System
-              </h1>
+              <div className="marquee-banner">
+                <div className="marquee-content">
+                  <span
+                    style={{
+                      fontSize: "clamp(24px, 3.5vw, 44px)",
+                      fontWeight: 900,
+                      lineHeight: 1.05,
+                      color: "rgba(255,255,255,.95)",
+                      textShadow:
+                        "0 0 18px rgba(140,80,255,.35), 0 0 28px rgba(80,210,255,.25)",
+                    }}
+                  >
+                    Decentralized Journaling Zone System
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "clamp(24px, 3.5vw, 44px)",
+                      fontWeight: 900,
+                      lineHeight: 1.05,
+                      color: "rgba(255,255,255,.95)",
+                      textShadow:
+                        "0 0 18px rgba(140,80,255,.35), 0 0 28px rgba(80,210,255,.25)",
+                    }}
+                  >
+                    Decentralized Journaling Zone System
+                  </span>
+                </div>
+              </div>
             </div>
 
             <div

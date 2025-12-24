@@ -115,4 +115,38 @@
       rgba(255, 120, 220, 0.12) 100%
     );
   }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes marquee-seamless {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .marquee-banner {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .marquee-content {
+    display: inline-flex;
+    animation: marquee-seamless 20s linear infinite;
+  }
+
+  .marquee-content span {
+    display: inline-block;
+    padding-right: 4rem;
+  }
 }
