@@ -91,6 +91,29 @@ newsletterArticleSchema // postId, title, slug, publicationSlug, excerpt
 textMessageSchema     // content
 ```
 
+### XMTP Agent Integration
+
+**SDK**: `@xmtp/agent-sdk` for building autonomous zone agents.
+
+**Agent File**: `server/agent.ts` - Listens to XMTP messages and responds with commands.
+
+**Available Commands**:
+- `/help` — List available commands
+- `/zones` — Display all DJZS zones
+- `/format signal` — Show signal format template
+- `/summarize` — Trigger zone activity summary (in progress)
+
+**Running the Agent**:
+```bash
+npm run agent
+```
+
+**Features**:
+- Responds to text messages with helpful info
+- Validates and formats user inputs
+- Extensible for custom automation
+- Runs separately from main app
+
 ### Paragraph Newsletter Integration
 
 **SDK**: `@paragraph-com/sdk` for fetching publication data.
@@ -162,6 +185,16 @@ shared/
 
 ## Recent Changes
 
+- **Dec 24, 2024**: Added XMTP Agent SDK
+  - New autonomous agent in `server/agent.ts`
+  - Agent responds to commands: /help, /zones, /format, /summarize
+  - Extensible for future zone automation
+  - Run with `npm run agent`
+- **Dec 24, 2024**: Updated UI terminology and styling
+  - Changed "Rooms" → "Zones", "Messages" → "Zone Feed", "Composer" → "Zone Actions"
+  - Added "Your Zones" section to landing page after wallet connection
+  - Improved visual consistency between landing page and chat interface
+  - Added vertical zone flow diagram on landing page
 - **Dec 21, 2024**: Added Paragraph newsletter integration
   - New `newsletter` message type for sharing articles in chat
   - Backend API endpoints to fetch publications and posts
