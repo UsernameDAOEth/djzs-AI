@@ -386,8 +386,9 @@ export default function Chat() {
       <aside className="w-64 border-r border-gray-800 flex flex-col">
         <Link href="/">
           <div className="p-4 border-b border-gray-800 cursor-pointer hover:bg-gray-900/50 transition-colors">
-            <h1 className="text-lg font-bold text-white hover:text-purple-400 transition-colors leading-tight">Decentralized Journaling Zone System</h1>
-            <p className="text-xs text-gray-500 mt-1">{displayName}</p>
+            <p className="text-[10px] text-gray-500 tracking-widest uppercase mb-1">DJZS - BETA</p>
+            <h1 className="text-sm font-bold text-white hover:text-purple-400 transition-colors leading-tight">Decentralized Journaling Zone System</h1>
+            <p className="text-xs text-gray-500 mt-2">{displayName}</p>
             {member?.isAdmin && (
               <span className="text-[10px] text-purple-400 bg-purple-400/20 px-2 py-0.5 rounded mt-1 inline-block">ADMIN</span>
             )}
@@ -395,8 +396,8 @@ export default function Chat() {
         </Link>
 
         <ScrollArea className="flex-1">
-          <div className="p-2">
-            <p className="text-xs text-gray-500 px-2 py-2 uppercase tracking-wider">Zones</p>
+          <div className="p-3">
+            <p className="text-xs text-gray-500 px-2 py-3 uppercase tracking-widest font-semibold">Zones</p>
             {DEFAULT_ROOMS.map((room) => {
               const Icon = room.icon;
               return (
@@ -561,8 +562,8 @@ export default function Chat() {
           </div>
         </header>
 
-        <div className="px-4 py-2 border-b border-gray-800">
-          <p className="text-xs text-gray-500 uppercase tracking-wider">Zone Feed</p>
+        <div className="px-4 py-3 border-b border-gray-800 bg-gray-900/30">
+          <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold">Zone Feed</p>
         </div>
         <ScrollArea className="flex-1 p-4">
           {messagesLoading ? (
@@ -587,7 +588,7 @@ export default function Chat() {
         </ScrollArea>
 
         <div className="border-t border-gray-700 p-4 bg-gray-900/50">
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Zone Actions</p>
+          <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-3">Zone Actions</p>
           <Tabs value={composerTab} onValueChange={setComposerTab}>
             <TabsList className="bg-gray-800 border border-gray-700 p-1 mb-3 w-full justify-start gap-1">
               <TabsTrigger 
