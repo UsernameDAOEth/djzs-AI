@@ -3,6 +3,7 @@ import { useAccount, useSignMessage } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
+import { Link } from "wouter";
 import { 
   MessageSquare, 
   TrendingUp, 
@@ -20,7 +21,8 @@ import {
   UserX,
   Crown,
   Ban,
-  Newspaper
+  Newspaper,
+  Home
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -382,13 +384,15 @@ export default function Chat() {
   return (
     <div className="h-screen bg-gray-950 flex">
       <aside className="w-64 border-r border-gray-800 flex flex-col">
-        <div className="p-4 border-b border-gray-800">
-          <h1 className="text-xl font-bold text-white">DJZS Chat</h1>
-          <p className="text-xs text-gray-500 mt-1">{displayName}</p>
-          {member?.isAdmin && (
-            <span className="text-[10px] text-purple-400 bg-purple-400/20 px-2 py-0.5 rounded mt-1 inline-block">ADMIN</span>
-          )}
-        </div>
+        <Link href="/">
+          <div className="p-4 border-b border-gray-800 cursor-pointer hover:bg-gray-900/50 transition-colors">
+            <h1 className="text-xl font-bold text-white hover:text-purple-400 transition-colors">DJZS Chat</h1>
+            <p className="text-xs text-gray-500 mt-1">{displayName}</p>
+            {member?.isAdmin && (
+              <span className="text-[10px] text-purple-400 bg-purple-400/20 px-2 py-0.5 rounded mt-1 inline-block">ADMIN</span>
+            )}
+          </div>
+        </Link>
 
         <ScrollArea className="flex-1">
           <div className="p-2">
@@ -439,6 +443,11 @@ export default function Chat() {
       <main className="flex-1 flex flex-col">
         <header className="h-14 border-b border-gray-800 flex items-center justify-between px-4">
           <div className="flex items-center gap-3">
+            <Link href="/">
+              <button className="p-1.5 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-white" data-testid="button-home" title="Back to home">
+                <Home className="w-5 h-5" />
+              </button>
+            </Link>
             {currentRoom && <currentRoom.icon className="w-5 h-5 text-purple-400" />}
             <div>
               <h2 className="text-white font-semibold">{currentRoom?.name}</h2>
