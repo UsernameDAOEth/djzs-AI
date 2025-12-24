@@ -235,6 +235,86 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Your Zones Section - Only when connected */}
+      {isConnected && (
+        <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
+          {/* Animated Background */}
+          <div
+            style={{
+              position: "absolute",
+              inset: "-30%",
+              background: `
+                radial-gradient(900px 380px at 25% 50%, rgba(140,80,255,.2), transparent 60%),
+                radial-gradient(900px 420px at 75% 50%, rgba(80,210,255,.15), transparent 60%)
+              `,
+              filter: "blur(10px)",
+              animation: "djzsDrift 16s ease-in-out infinite",
+              pointerEvents: "none",
+            }}
+          />
+          <div className="relative z-10 max-w-6xl mx-auto px-6">
+            {/* Header */}
+            <div className="mb-12">
+              <p className="text-xs text-gray-500 tracking-widest uppercase mb-3">DJZS SYSTEM</p>
+              <h2 className="text-5xl font-black mb-4">Your Zones</h2>
+              <p className="text-gray-400 text-lg max-w-2xl">
+                DJZS organizes everything you do into Zones — private, encrypted spaces that accumulate knowledge, decisions, and history over time.
+              </p>
+            </div>
+
+            {/* System Diagram */}
+            <div className="flex gap-3 items-center flex-wrap mb-12 text-gray-400 text-sm">
+              <span>Wallet / ENS Identity</span>
+              <span>→</span>
+              <strong className="text-purple-400">Zones</strong>
+              <span>→</span>
+              <span>Journals · Signals · Predictions · Events</span>
+            </div>
+
+            {/* Zones Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
+              {[
+                { name: "User Zone", desc: "General coordination & updates" },
+                { name: "Trades", desc: "Trade ideas & execution notes" },
+                { name: "Predictions", desc: "Markets, votes, and outcomes" },
+                { name: "Events", desc: "Calls, launches, milestones" },
+                { name: "Payments", desc: "Payments, proofs, records" },
+              ].map((zone) => (
+                <div
+                  key={zone.name}
+                  className="p-4 rounded-lg border border-gray-700 bg-gray-900/30 hover:bg-gray-800/50 transition-colors"
+                >
+                  <div className="font-semibold text-white">{zone.name}</div>
+                  <div className="text-sm text-gray-400 mt-1">{zone.desc}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 items-center flex-wrap">
+              <Link href="/chat">
+                <Button 
+                  size="lg" 
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold"
+                  data-testid="button-enter-user-zone"
+                >
+                  Enter User Zone
+                </Button>
+              </Link>
+              <Button 
+                variant="outline"
+                size="lg"
+                className="border-gray-700 text-gray-300 hover:text-white"
+                data-testid="button-create-entry"
+              >
+                Create New Entry
+              </Button>
+              <p className="text-sm text-gray-500">Your Zone Agent will summarize activity automatically</p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Features Section */}
       <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
         {/* Animated Background */}
