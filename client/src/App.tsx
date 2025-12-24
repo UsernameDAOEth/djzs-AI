@@ -11,6 +11,11 @@ import Home from "@/pages/home";
 import Chat from "@/pages/chat";
 import NotFound from "@/pages/not-found";
 
+// Ensure window.ethereum exists to prevent property redefinition errors
+if (typeof window !== "undefined" && !("ethereum" in window)) {
+  (window as any).ethereum = undefined;
+}
+
 function Router() {
   return (
     <Switch>
