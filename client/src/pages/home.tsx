@@ -286,7 +286,6 @@ export default function Home() {
             />
           </div>
         </div>
-        </div>
       </section>
 
       {/* Message Types Section */}
@@ -346,8 +345,38 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="py-24 bg-gradient-to-b from-black via-purple-950/10 to-black border-t border-gray-800">
-        <div className="max-w-5xl mx-auto px-6">
+      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
+        {/* Animated Background */}
+        <div
+          style={{
+            position: "absolute",
+            inset: "-30%",
+            background: `
+              radial-gradient(900px 380px at 20% 60%, rgba(140,80,255,.15), transparent 60%),
+              radial-gradient(900px 420px at 80% 40%, rgba(80,210,255,.1), transparent 60%)
+            `,
+            filter: "blur(10px)",
+            animation: "djzsDrift 16s ease-in-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+        {/* Stars */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `
+              radial-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+              radial-gradient(rgba(255,255,255,.25) 1px, transparent 1px)
+            `,
+            backgroundSize: "90px 90px, 140px 140px",
+            backgroundPosition: "0 0, 40px 60px",
+            opacity: 0.1,
+            animation: "djzsStars 40s linear infinite",
+            pointerEvents: "none",
+          }}
+        />
+        <div className="relative z-10 max-w-5xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-16 text-center">
             How It <span className="text-purple-400">Works</span>
           </h2>
@@ -378,8 +407,34 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 border-t border-gray-800">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
+        {/* Animated Background */}
+        <div
+          style={{
+            position: "absolute",
+            inset: "-30%",
+            background: `
+              radial-gradient(900px 380px at 50% 50%, rgba(140,80,255,.25), transparent 60%),
+              radial-gradient(900px 420px at 50% 50%, rgba(80,210,255,.15), transparent 60%)
+            `,
+            filter: "blur(10px)",
+            animation: "djzsDrift 16s ease-in-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+        {/* Shimmer */}
+        <div
+          style={{
+            position: "absolute",
+            inset: "-40%",
+            background:
+              "linear-gradient(110deg, transparent 0%, rgba(255,255,255,.08) 45%, transparent 60%)",
+            filter: "blur(16px)",
+            animation: "djzsShimmer 10s ease-in-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-black mb-8">
             Ready to Experience <span className="text-purple-400">Private</span> Communication?
           </h2>
@@ -403,8 +458,20 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 bg-black/50 py-8">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <footer className="relative border-t border-gray-800 bg-black py-8 overflow-hidden">
+        {/* Subtle Glow */}
+        <div
+          style={{
+            position: "absolute",
+            inset: "-30%",
+            background: `
+              radial-gradient(600px 200px at 50% 100%, rgba(140,80,255,.1), transparent 60%)
+            `,
+            filter: "blur(10px)",
+            pointerEvents: "none",
+          }}
+        />
+        <div className="relative z-10 max-w-7xl mx-auto px-6 flex items-center justify-between">
           <p className="text-gray-500 text-sm">© 2025 DJZS Chat. Powered by XMTP. Built on Base.</p>
           <div className="flex items-center gap-6 text-sm text-gray-500">
             <a href="#" className="hover:text-purple-400 transition-colors">Privacy</a>
