@@ -9,13 +9,20 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-black/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
-          <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
-            DJZS Chat
+      {/* Header Banner */}
+      <header className="border-b border-purple-600/30 bg-gradient-to-r from-purple-950/80 to-black/80 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-8">
+          <div className="flex-1">
+            <p className="text-xs md:text-sm font-semibold text-purple-300 uppercase tracking-widest mb-1">
+              Welcome To
+            </p>
+            <h1 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-purple-300 via-purple-400 to-purple-500 bg-clip-text text-transparent">
+              Decentralized Journaling Zone System
+            </h1>
           </div>
-          <ConnectButton />
+          <div className="flex-shrink-0">
+            <ConnectButton />
+          </div>
         </div>
       </header>
 
