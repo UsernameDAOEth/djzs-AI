@@ -150,18 +150,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Wallet Connect Button */}
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              right: "20px",
-              transform: "translateY(-50%)",
-              zIndex: 10,
-            }}
-          >
-            <ConnectButton showBalance={false} />
-          </div>
         </div>
       </header>
 
@@ -213,7 +201,7 @@ export default function Home() {
             A zone-based system for private journaling, signals, predictions, and coordination — owned by your wallet.
           </p>
 
-          {isConnected && (
+          {isConnected ? (
             <Link href="/chat">
               <Button 
                 size="lg" 
@@ -224,6 +212,8 @@ export default function Home() {
                 <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
+          ) : (
+            <ConnectButton showBalance={false} />
           )}
 
           {isConnected && (
