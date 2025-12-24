@@ -1,0 +1,157 @@
+<div style={{ padding: "32px", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+  <div
+    style={{
+      maxWidth: 720,
+      width: "100%",
+      borderRadius: 18,
+      border: "1px solid rgba(255,255,255,0.10)",
+      background: "linear-gradient(180deg, rgba(20,16,40,.75), rgba(10,8,20,.85))",
+      boxShadow: "0 0 0 1px rgba(255,255,255,.03), 0 30px 80px rgba(0,0,0,.65)",
+      padding: 24,
+      position: "relative",
+      overflow: "hidden",
+    }}
+  >
+    {/* subtle glow */}
+    <div
+      style={{
+        position: "absolute",
+        inset: "-30%",
+        background:
+          "radial-gradient(600px 260px at 20% 30%, rgba(160,110,255,.25), transparent 60%)," +
+          "radial-gradient(600px 300px at 80% 60%, rgba(80,200,255,.18), transparent 60%)",
+        filter: "blur(18px)",
+        opacity: 0.9,
+        pointerEvents: "none",
+      }}
+    />
+
+    {/* content */}
+    <div style={{ position: "relative", zIndex: 2 }}>
+      {/* header */}
+      <div style={{ marginBottom: 16 }}>
+        <div
+          style={{
+            fontSize: 12,
+            letterSpacing: "0.28em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,.65)",
+            marginBottom: 6,
+          }}
+        >
+          User Zone
+        </div>
+        <div style={{ fontSize: 22, fontWeight: 800, color: "rgba(255,255,255,.95)" }}>
+          Zone Brief
+        </div>
+        <div style={{ fontSize: 14, color: "rgba(255,255,255,.65)", marginTop: 6 }}>
+          This Zone is for general member coordination, updates, and shared context.
+        </div>
+      </div>
+
+      {/* status pills */}
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 18 }}>
+        {["Encrypted", "Wallet-Gated", "Members-Only"].map((t) => (
+          <div
+            key={t}
+            style={{
+              fontSize: 12,
+              padding: "6px 10px",
+              borderRadius: 999,
+              border: "1px solid rgba(255,255,255,.12)",
+              background: "rgba(0,0,0,.35)",
+              color: "rgba(255,255,255,.8)",
+            }}
+          >
+            {t}
+          </div>
+        ))}
+      </div>
+
+      {/* actions */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,.55)", marginBottom: 10 }}>
+          Start here
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px,1fr))", gap: 10 }}>
+          {[
+            { label: "Post Update", hint: "General note or context" },
+            { label: "Create Signal", hint: "Trade / action signal" },
+            { label: "Start Prediction", hint: "Yes/No or multi-outcome" },
+            { label: "Log Receipt", hint: "Payment or proof" },
+          ].map((a) => (
+            <button
+              key={a.label}
+              style={{
+                textAlign: "left",
+                padding: 12,
+                borderRadius: 14,
+                border: "1px solid rgba(255,255,255,.12)",
+                background: "rgba(255,255,255,.03)",
+                color: "rgba(255,255,255,.9)",
+                cursor: "pointer",
+              }}
+            >
+              <div style={{ fontWeight: 700, fontSize: 14 }}>{a.label}</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,.55)", marginTop: 2 }}>
+                {a.hint}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* agent panel */}
+      <div
+        style={{
+          borderTop: "1px solid rgba(255,255,255,.10)",
+          paddingTop: 14,
+          display: "flex",
+          gap: 14,
+          alignItems: "flex-start",
+        }}
+      >
+        <div
+          style={{
+            width: 42,
+            height: 42,
+            borderRadius: 12,
+            background: "linear-gradient(135deg, rgba(160,110,255,.8), rgba(80,200,255,.6))",
+            display: "grid",
+            placeItems: "center",
+            fontWeight: 900,
+            color: "#0a0814",
+          }}
+        >
+          AI
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <div style={{ fontWeight: 700, color: "rgba(255,255,255,.9)" }}>
+            User Zone Agent
+          </div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,.65)", marginTop: 2 }}>
+            Summarizes weekly activity, tags action items, and maintains Zone memory.
+          </div>
+
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+            {["Auto-summarize", "Extract tasks", "Auto-tag", "Zone memory"].map((c) => (
+              <div
+                key={c}
+                style={{
+                  fontSize: 11,
+                  padding: "4px 8px",
+                  borderRadius: 999,
+                  border: "1px solid rgba(255,255,255,.10)",
+                  color: "rgba(255,255,255,.7)",
+                }}
+              >
+                {c}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
