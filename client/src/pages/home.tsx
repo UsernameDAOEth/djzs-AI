@@ -160,7 +160,7 @@ export default function Home() {
               zIndex: 10,
             }}
           >
-            <ConnectButton />
+            <ConnectButton showBalance={false} />
           </div>
         </div>
       </header>
@@ -227,7 +227,7 @@ export default function Home() {
           ) : (
             <div className="flex flex-col items-center gap-6">
               <p className="text-gray-400 text-lg">Connect your wallet to access your Zones</p>
-              <ConnectButton />
+              <ConnectButton showBalance={false} />
             </div>
           )}
 
@@ -549,7 +549,7 @@ export default function Home() {
               </Button>
             </Link>
           ) : (
-            <ConnectButton />
+            <ConnectButton showBalance={false} />
           )}
         </div>
       </section>
