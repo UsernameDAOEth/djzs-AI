@@ -213,7 +213,7 @@ export default function Home() {
             A zone-based system for private journaling, signals, predictions, and coordination — owned by your wallet.
           </p>
 
-          {isConnected ? (
+          {isConnected && (
             <Link href="/chat">
               <Button 
                 size="lg" 
@@ -224,11 +224,6 @@ export default function Home() {
                 <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-          ) : (
-            <div className="flex flex-col items-center gap-6">
-              <p className="text-gray-400 text-lg">Connect your wallet to access your Zones</p>
-              <ConnectButton showBalance={false} />
-            </div>
           )}
 
           {isConnected && (
