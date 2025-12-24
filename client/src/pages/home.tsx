@@ -206,7 +206,7 @@ export default function Home() {
           </div>
 
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
-            A members-only encrypted chat platform where your ENS is your identity. Trade signals, predictions, events—all end-to-end encrypted on Base blockchain.
+            A zone-based system for private journaling, signals, predictions, and coordination — owned by your wallet.
           </p>
 
           {isConnected ? (
@@ -216,21 +216,34 @@ export default function Home() {
                 className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-10 py-7 text-lg font-semibold group"
                 data-testid="button-enter-chat"
               >
-                Enter Chat
+                Enter Your Zones
                 <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
           ) : (
             <div className="flex flex-col items-center gap-6">
-              <p className="text-gray-400 text-lg">Connect your wallet to access the chat</p>
+              <p className="text-gray-400 text-lg">Connect your wallet to access your Zones</p>
               <ConnectButton />
             </div>
           )}
 
-          <div className="mt-20 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
-            <StatCard label="Members" value="∞" />
-            <StatCard label="Encrypted" value="✓" />
-            <StatCard label="Decentralized" value="✓" />
+          {isConnected && (
+            <div className="mt-12 border-t border-gray-700 pt-12">
+              <p className="text-gray-500 text-sm mb-6 tracking-widest uppercase">Your Zone Flow</p>
+              <div className="flex gap-3 items-center justify-center flex-wrap text-gray-400 text-sm">
+                <span>Wallet / ENS Identity</span>
+                <span>→</span>
+                <strong className="text-purple-400">Zones</strong>
+                <span>→</span>
+                <span>Journals · Signals · Predictions · Events</span>
+              </div>
+            </div>
+          )}
+          
+          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+            <StatCard label="Journal in Zones" value="Private notes, research, and reflections" />
+            <StatCard label="Signals & Predictions" value="Structured trade signals and markets" />
+            <StatCard label="Coordinate Securely" value="Events, payments, and receipts" />
           </div>
         </div>
       </section>
