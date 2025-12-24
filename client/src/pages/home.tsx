@@ -229,12 +229,12 @@ export default function Home() {
 
           {isConnected && (
             <div className="mt-12 border-t border-gray-700 pt-12">
-              <p className="text-gray-500 text-sm mb-6 tracking-widest uppercase">Your Zone Flow</p>
-              <div className="flex gap-3 items-center justify-center flex-wrap text-gray-400 text-sm">
+              <p className="text-gray-500 text-sm mb-8 tracking-widest uppercase text-center">Your Zone Flow</p>
+              <div className="flex flex-col items-center justify-center gap-2 text-gray-400 text-sm">
                 <span>Wallet / ENS Identity</span>
-                <span>→</span>
-                <strong className="text-purple-400">Zones</strong>
-                <span>→</span>
+                <span className="text-purple-400">↓</span>
+                <strong className="text-purple-400 text-base">Zones</strong>
+                <span className="text-purple-400">↓</span>
                 <span>Journals · Signals · Predictions · Events</span>
               </div>
             </div>
