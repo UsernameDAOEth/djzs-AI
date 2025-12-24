@@ -43,7 +43,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Room, Member, ChatMessage, StoredMessage } from "@shared/schema";
 
 const DEFAULT_ROOMS = [
-  { id: "lounge", name: "Members Lounge", icon: Users, description: "General discussion" },
+  { id: "lounge", name: "User Zone", icon: Users, description: "General discussion" },
   { id: "trades", name: "Trades", icon: TrendingUp, description: "Trade signals and setups" },
   { id: "predictions", name: "Predictions", icon: BarChart3, description: "Market predictions" },
   { id: "events", name: "Events", icon: Calendar, description: "Community events" },
