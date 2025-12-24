@@ -10,18 +10,153 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
       {/* Header Banner */}
-      <header className="border-b border-purple-600/30 bg-gradient-to-r from-purple-950/80 to-black/80 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-8">
-          <div className="flex-1">
-            <p className="text-xs md:text-sm font-semibold text-purple-300 uppercase tracking-widest mb-1">
-              Welcome To
-            </p>
-            <h1 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-purple-300 via-purple-400 to-purple-500 bg-clip-text text-transparent">
-              Decentralized Journaling Zone System
-            </h1>
-          </div>
-          <div className="flex-shrink-0">
-            <ConnectButton />
+      <header className="sticky top-0 z-50">
+        <div style={{ position: "relative", overflow: "hidden", borderRadius: 0 }}>
+          <style>{`
+            @keyframes djzsDrift {
+              0% { transform: translate3d(0,0,0) scale(1); }
+              50% { transform: translate3d(-2%,1.5%,0) scale(1.03); }
+              100% { transform: translate3d(0,0,0) scale(1); }
+            }
+            @keyframes djzsStars {
+              0% { background-position: 0 0, 40px 60px; }
+              100% { background-position: 800px 600px, 900px 720px; }
+            }
+            @keyframes djzsShimmer {
+              0% { transform: translateX(-12%) rotate(0deg); opacity:0; }
+              20% { opacity:.18; }
+              50% { transform: translateX(12%) rotate(8deg); opacity:.10; }
+              100% { transform: translateX(-12%) rotate(0deg); opacity:0; }
+            }
+            @keyframes djzsPulse {
+              0%,100% { opacity:.45; transform: scale(1); }
+              50% { opacity:.7; transform: scale(1.03); }
+            }
+          `}</style>
+
+          {/* Background */}
+          <div
+            style={{
+              position: "absolute",
+              inset: "-30%",
+              background: `
+                radial-gradient(900px 380px at 15% 35%, rgba(140,80,255,.35), transparent 60%),
+                radial-gradient(900px 420px at 85% 55%, rgba(80,210,255,.28), transparent 60%),
+                radial-gradient(1100px 520px at 50% -10%, rgba(255,255,255,.14), transparent 60%)
+              `,
+              filter: "blur(10px)",
+              animation: "djzsDrift 16s ease-in-out infinite",
+            }}
+          />
+
+          {/* Stars */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `
+                radial-gradient(rgba(255,255,255,.8) 1px, transparent 1px),
+                radial-gradient(rgba(255,255,255,.45) 1px, transparent 1px)
+              `,
+              backgroundSize: "90px 90px, 140px 140px",
+              backgroundPosition: "0 0, 40px 60px",
+              opacity: 0.25,
+              animation: "djzsStars 40s linear infinite",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Shimmer */}
+          <div
+            style={{
+              position: "absolute",
+              inset: "-40%",
+              background:
+                "linear-gradient(110deg, transparent 0%, rgba(255,255,255,.12) 45%, transparent 60%)",
+              filter: "blur(16px)",
+              animation: "djzsShimmer 10s ease-in-out infinite",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Glow */}
+          <div
+            style={{
+              position: "absolute",
+              left: "10%",
+              top: "20%",
+              width: "80%",
+              height: "70%",
+              background:
+                "radial-gradient(circle at 30% 40%, rgba(160,110,255,.45), transparent 60%)",
+              filter: "blur(20px)",
+              animation: "djzsPulse 6s ease-in-out infinite",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Vignette */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.65))",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Content */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 2,
+              padding: "28px 20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "20px",
+            }}
+          >
+            <div
+              style={{
+                flex: 1,
+              }}
+            >
+              <div
+                style={{
+                  letterSpacing: "0.32em",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "rgba(255,255,255,.75)",
+                  marginBottom: 8,
+                }}
+              >
+                WELCOME TO
+              </div>
+
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: "clamp(24px, 3.5vw, 44px)",
+                  fontWeight: 900,
+                  lineHeight: 1.05,
+                  color: "rgba(255,255,255,.95)",
+                  textShadow:
+                    "0 0 18px rgba(140,80,255,.35), 0 0 28px rgba(80,210,255,.25)",
+                }}
+              >
+                Decentralized Journaling Zone System
+              </h1>
+            </div>
+
+            <div
+              style={{
+                flexShrink: 0,
+              }}
+            >
+              <ConnectButton />
+            </div>
           </div>
         </div>
       </header>
