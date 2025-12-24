@@ -106,73 +106,61 @@ export default function Home() {
             }}
           />
 
-          {/* Content */}
+          {/* Full-width Marquee Banner */}
           <div
             style={{
               position: "relative",
               zIndex: 2,
-              padding: "28px 20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "20px",
+              width: "100%",
+              overflow: "hidden",
+              padding: "20px 0",
             }}
           >
-            <div
-              style={{
-                flex: 1,
-                overflow: "hidden",
-              }}
-            >
-              <div
-                style={{
-                  letterSpacing: "0.32em",
-                  fontSize: 12,
-                  fontWeight: 700,
-                  color: "rgba(255,255,255,.75)",
-                  marginBottom: 8,
-                }}
-              >
-                WELCOME TO
-              </div>
-
-              <div className="marquee-banner">
-                <div className="marquee-content">
-                  <span
-                    style={{
-                      fontSize: "clamp(24px, 3.5vw, 44px)",
-                      fontWeight: 900,
-                      lineHeight: 1.05,
-                      color: "rgba(255,255,255,.95)",
-                      textShadow:
-                        "0 0 18px rgba(140,80,255,.35), 0 0 28px rgba(80,210,255,.25)",
-                    }}
-                  >
-                    Decentralized Journaling Zone System
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "clamp(24px, 3.5vw, 44px)",
-                      fontWeight: 900,
-                      lineHeight: 1.05,
-                      color: "rgba(255,255,255,.95)",
-                      textShadow:
-                        "0 0 18px rgba(140,80,255,.35), 0 0 28px rgba(80,210,255,.25)",
-                    }}
-                  >
-                    Decentralized Journaling Zone System
-                  </span>
-                </div>
+            <div className="marquee-banner" style={{ width: "100%" }}>
+              <div className="marquee-content">
+                <span
+                  style={{
+                    fontSize: "clamp(48px, 8vw, 120px)",
+                    fontWeight: 900,
+                    lineHeight: 1,
+                    color: "rgba(255,255,255,.95)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    textShadow:
+                      "0 0 30px rgba(140,80,255,.5), 0 0 60px rgba(80,210,255,.3)",
+                  }}
+                >
+                  DECENTRALIZED JOURNALING ZONE SYSTEM
+                </span>
+                <span
+                  style={{
+                    fontSize: "clamp(48px, 8vw, 120px)",
+                    fontWeight: 900,
+                    lineHeight: 1,
+                    color: "rgba(255,255,255,.95)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    textShadow:
+                      "0 0 30px rgba(140,80,255,.5), 0 0 60px rgba(80,210,255,.3)",
+                  }}
+                >
+                  DECENTRALIZED JOURNALING ZONE SYSTEM
+                </span>
               </div>
             </div>
+          </div>
 
-            <div
-              style={{
-                flexShrink: 0,
-              }}
-            >
-              <ConnectButton />
-            </div>
+          {/* Wallet Connect Button */}
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "20px",
+              transform: "translateY(-50%)",
+              zIndex: 10,
+            }}
+          >
+            <ConnectButton />
           </div>
         </div>
       </header>
