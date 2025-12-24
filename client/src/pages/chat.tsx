@@ -386,7 +386,7 @@ export default function Chat() {
       <aside className="w-64 border-r border-gray-800 flex flex-col">
         <Link href="/">
           <div className="p-4 border-b border-gray-800 cursor-pointer hover:bg-gray-900/50 transition-colors">
-            <h1 className="text-xl font-bold text-white hover:text-purple-400 transition-colors">DJZS Chat</h1>
+            <h1 className="text-lg font-bold text-white hover:text-purple-400 transition-colors leading-tight">Decentralized Journaling Zone System</h1>
             <p className="text-xs text-gray-500 mt-1">{displayName}</p>
             {member?.isAdmin && (
               <span className="text-[10px] text-purple-400 bg-purple-400/20 px-2 py-0.5 rounded mt-1 inline-block">ADMIN</span>
