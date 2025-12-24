@@ -396,7 +396,7 @@ export default function Chat() {
 
         <ScrollArea className="flex-1">
           <div className="p-2">
-            <p className="text-xs text-gray-500 px-2 py-2 uppercase tracking-wider">Rooms</p>
+            <p className="text-xs text-gray-500 px-2 py-2 uppercase tracking-wider">Zones</p>
             {DEFAULT_ROOMS.map((room) => {
               const Icon = room.icon;
               return (
@@ -561,6 +561,9 @@ export default function Chat() {
           </div>
         </header>
 
+        <div className="px-4 py-2 border-b border-gray-800">
+          <p className="text-xs text-gray-500 uppercase tracking-wider">Zone Feed</p>
+        </div>
         <ScrollArea className="flex-1 p-4">
           {messagesLoading ? (
             <div className="flex items-center justify-center h-full text-gray-500">
@@ -584,6 +587,7 @@ export default function Chat() {
         </ScrollArea>
 
         <div className="border-t border-gray-700 p-4 bg-gray-900/50">
+          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Zone Actions</p>
           <Tabs value={composerTab} onValueChange={setComposerTab}>
             <TabsList className="bg-gray-800 border border-gray-700 p-1 mb-3 w-full justify-start gap-1">
               <TabsTrigger 
