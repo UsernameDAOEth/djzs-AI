@@ -162,11 +162,39 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 right-20 w-96 h-96 bg-purple-600 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-purple-800 rounded-full blur-3xl"></div>
-        </div>
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
+        {/* Animated Background */}
+        <div
+          style={{
+            position: "absolute",
+            inset: "-30%",
+            background: `
+              radial-gradient(900px 380px at 20% 40%, rgba(140,80,255,.25), transparent 60%),
+              radial-gradient(900px 420px at 80% 60%, rgba(80,210,255,.2), transparent 60%),
+              radial-gradient(1100px 520px at 50% 10%, rgba(255,255,255,.08), transparent 60%)
+            `,
+            filter: "blur(10px)",
+            animation: "djzsDrift 16s ease-in-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Stars */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `
+              radial-gradient(rgba(255,255,255,.6) 1px, transparent 1px),
+              radial-gradient(rgba(255,255,255,.3) 1px, transparent 1px)
+            `,
+            backgroundSize: "90px 90px, 140px 140px",
+            backgroundPosition: "0 0, 40px 60px",
+            opacity: 0.15,
+            animation: "djzsStars 40s linear infinite",
+            pointerEvents: "none",
+          }}
+        />
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <div className="mb-8 space-y-4">
@@ -208,8 +236,22 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-gradient-to-b from-black via-purple-950/20 to-black border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
+        {/* Animated Background */}
+        <div
+          style={{
+            position: "absolute",
+            inset: "-30%",
+            background: `
+              radial-gradient(900px 380px at 25% 50%, rgba(140,80,255,.2), transparent 60%),
+              radial-gradient(900px 420px at 75% 50%, rgba(80,210,255,.15), transparent 60%)
+            `,
+            filter: "blur(10px)",
+            animation: "djzsDrift 16s ease-in-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black mb-4">
               Built For <span className="text-purple-400">Privacy</span>
@@ -244,11 +286,26 @@ export default function Home() {
             />
           </div>
         </div>
+        </div>
       </section>
 
       {/* Message Types Section */}
-      <section className="py-24 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
+        {/* Animated Background */}
+        <div
+          style={{
+            position: "absolute",
+            inset: "-30%",
+            background: `
+              radial-gradient(900px 380px at 30% 30%, rgba(140,80,255,.18), transparent 60%),
+              radial-gradient(900px 420px at 70% 70%, rgba(80,210,255,.12), transparent 60%)
+            `,
+            filter: "blur(10px)",
+            animation: "djzsDrift 16s ease-in-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-16 text-center">
             Structured <span className="text-purple-400">Messaging</span>
           </h2>
