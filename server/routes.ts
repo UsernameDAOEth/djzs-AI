@@ -4,7 +4,23 @@ import { storage } from "./storage";
 import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema } from "@shared/schema";
 import { z } from "zod";
 import { verifyMessage } from "viem";
-import { ParagraphAPI } from "@paragraph-com/sdk";
+
+// Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
+const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
+
+async function paragraphFetch(endpoint: string) {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (process.env.PARAGRAPH_API_KEY) {
+    headers["Authorization"] = `Bearer ${process.env.PARAGRAPH_API_KEY}`;
+  }
+  const response = await fetch(`${PARAGRAPH_API_BASE}${endpoint}`, { headers });
+  if (!response.ok) {
+    throw new Error(`Paragraph API error: ${response.status}`);
+  }
+  return response.json();
+}
 
 // Track used signatures to prevent replay attacks
 const usedSignatures = new Set<string>();
@@ -416,15 +432,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Initialize Paragraph API (with optional API key for draft/private posts)
-  const paragraphApi = process.env.PARAGRAPH_API_KEY 
-    ? new ParagraphAPI({ apiKey: process.env.PARAGRAPH_API_KEY })
-    : new ParagraphAPI();
-
-  // Get publication info by slug
+  // Get publication info by slug (using direct fetch)
   app.get("/api/paragraph/publications/:slug", async (req, res) => {
     try {
-      const publication = await paragraphApi.publications.get({ slug: `@${req.params.slug.replace('@', '')}` }).single();
+      const slug = req.params.slug.replace('@', '');
+      const publication = await paragraphFetch(`/@${slug}`);
       res.json(publication);
     } catch (error) {
       console.error("Error fetching publication:", error);
@@ -435,19 +447,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get posts from a publication
   app.get("/api/paragraph/publications/:slug/posts", async (req, res) => {
     try {
-      const slug = `@${req.params.slug.replace('@', '')}`;
+      const slug = req.params.slug.replace('@', '');
       let publication;
       try {
-        publication = await paragraphApi.publications.get({ slug }).single();
+        publication = await paragraphFetch(`/@${slug}`);
       } catch {
         return res.status(404).json({ error: "Publication not found" });
       }
       
       const cursor = req.query.cursor as string | undefined;
-      const options = { cursor, includeContent: true };
-      const result = await paragraphApi.posts.get({ publicationId: publication.id }, options);
+      const cursorParam = cursor ? `?cursor=${cursor}` : '';
+      const posts = await paragraphFetch(`/@${slug}/posts${cursorParam}`);
       
-      res.json({ posts: result.items, pagination: result.pagination, publication });
+      res.json({ posts: posts.posts || posts, pagination: posts.pagination, publication });
     } catch (error) {
       console.error("Error fetching posts:", error);
       res.status(500).json({ error: "Failed to fetch posts" });
@@ -457,13 +469,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get a single post by publication slug and post slug
   app.get("/api/paragraph/publications/:pubSlug/posts/:postSlug", async (req, res) => {
     try {
-      const pubSlug = `@${req.params.pubSlug.replace('@', '')}`;
+      const pubSlug = req.params.pubSlug.replace('@', '');
       const postSlug = req.params.postSlug;
       
-      const post = await paragraphApi.posts.get({ 
-        publicationSlug: pubSlug, 
-        postSlug 
-      }).single();
+      const post = await paragraphFetch(`/@${pubSlug}/posts/${postSlug}`);
       
       res.json(post);
     } catch (error) {
