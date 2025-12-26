@@ -213,7 +213,9 @@ export default function Home() {
               </Button>
             </Link>
           ) : (
-            <ConnectButton showBalance={false} />
+            <div className="flex justify-center">
+              <ConnectButton showBalance={false} />
+            </div>
           )}
 
           {isConnected && (
