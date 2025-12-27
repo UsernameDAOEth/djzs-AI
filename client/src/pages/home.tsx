@@ -1,14 +1,15 @@
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { MessageSquare, Shield, Users, Zap, ArrowRight, Lock, Network, Sparkles } from "lucide-react";
+import { Shield, ArrowRight, Lock, Network, Sparkles, BookOpen, Search as SearchIcon, ChevronDown, Home as HomeIcon, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const { isConnected } = useAccount();
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-black text-white overflow-hidden selection:bg-purple-500/30">
       {/* Header Banner */}
       <header className="sticky top-0 z-50">
         <div style={{ position: "relative", overflow: "hidden", borderRadius: 0 }}>
@@ -31,6 +32,11 @@ export default function Home() {
             @keyframes djzsPulse {
               0%,100% { opacity:.45; transform: scale(1); }
               50% { opacity:.7; transform: scale(1.03); }
+            }
+            @keyframes pulse-ring {
+              0% { transform: scale(.8); opacity: 0.5; }
+              50% { transform: scale(1); opacity: 0.3; }
+              100% { transform: scale(1.2); opacity: 0; }
             }
           `}</style>
 
@@ -149,13 +155,11 @@ export default function Home() {
               </div>
             </div>
           </div>
-
         </div>
       </header>
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
-        {/* Animated Background */}
         <div
           style={{
             position: "absolute",
@@ -171,429 +175,192 @@ export default function Home() {
           }}
         />
 
-        {/* Stars */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `
-              radial-gradient(rgba(255,255,255,.6) 1px, transparent 1px),
-              radial-gradient(rgba(255,255,255,.3) 1px, transparent 1px)
-            `,
-            backgroundSize: "90px 90px, 140px 140px",
-            backgroundPosition: "0 0, 40px 60px",
-            opacity: 0.15,
-            animation: "djzsStars 40s linear infinite",
-            pointerEvents: "none",
-          }}
-        />
-
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-          <div className="mb-8 space-y-4">
-            <h1 className="text-6xl md:text-8xl font-black leading-tight">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-10"
+          >
+            <h1 className="text-7xl md:text-9xl font-black leading-[0.9] tracking-tighter mb-8">
               <span className="block">Pri<span className="text-purple-500">vate.</span></span>
               <span className="block">Struc<span className="text-purple-400">tured.</span></span>
               <span className="block"><span className="text-purple-600">Yours.</span></span>
             </h1>
-          </div>
+            <p className="text-2xl md:text-3xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium">
+              Your private space to think, reflect, and extract insight.
+            </p>
+          </motion.div>
 
-          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
-            A zone-based system for journaling, signals, predictions, and coordination — encrypted and owned by your wallet.
-          </p>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+          >
+            {isConnected ? (
+              <div className="flex flex-col items-center gap-6">
+                <Link href="/chat">
+                  <div className="relative group">
+                    <div className="absolute -inset-1 bg-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                    <Button 
+                      size="lg" 
+                      className="relative bg-purple-600 hover:bg-purple-700 text-white h-20 px-12 text-2xl font-black rounded-2xl shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 group overflow-hidden"
+                      style={{ animation: "djzsPulse 4s infinite" }}
+                      data-testid="button-start-writing"
+                    >
+                      <Sparkles className="mr-3 w-6 h-6 group-hover:rotate-12 transition-transform" />
+                      Start Writing
+                      <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                    </Button>
+                  </div>
+                </Link>
+                <Link href="/chat">
+                  <button className="text-gray-500 hover:text-gray-300 text-sm font-bold uppercase tracking-widest transition-colors flex items-center gap-2">
+                    Open Existing Journals
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                </Link>
+              </div>
+            ) : (
+              <div className="flex justify-center scale-125">
+                <ConnectButton showBalance={false} />
+              </div>
+            )}
+          </motion.div>
 
-          {isConnected ? (
-            <Link href="/chat">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-10 py-7 text-lg font-semibold group"
-                data-testid="button-enter-chat"
-              >
-                Enter Your Zones
-                <span className="ml-2 group-hover:translate-x-1 transition-transform inline-block">→</span>
-              </Button>
-            </Link>
-          ) : (
-            <div className="flex justify-center">
-              <ConnectButton showBalance={false} />
-            </div>
-          )}
-
-          {isConnected && (
-            <div className="mt-12 border-t border-gray-700 pt-12">
-              <p className="text-gray-500 text-sm mb-8 tracking-widest uppercase text-center">Your Zone Flow</p>
-              <div className="flex flex-col items-center justify-center gap-2 text-gray-400 text-sm">
-                <span>Wallet / ENS Identity</span>
-                <span className="text-purple-400">↓</span>
-                <strong className="text-purple-400 text-base">Zones</strong>
-                <span className="text-purple-400">↓</span>
-                <span>Journals · Signals · Predictions · Events</span>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="mt-20"
+          >
+            <div className="max-w-md mx-auto">
+              <p className="text-[10px] text-gray-500 font-black tracking-[0.4em] uppercase mb-8 text-center opacity-40">The Zone Flow</p>
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <FlowStep label="Wallet Identity" index={0} />
+                <FlowArrow index={0} />
+                <FlowStep label="Zones" index={1} highlight />
+                <FlowArrow index={1} />
+                <FlowStep label="Insights & Intelligence" index={2} />
               </div>
             </div>
-          )}
-          
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            <StatCard label="Journal in Zones" value="Private notes, research, and reflections" />
-            <StatCard label="Signals & Predictions" value="Structured trade signals and markets" />
-            <StatCard label="Coordinate Securely" value="Events, payments, and receipts" />
-          </div>
+          </motion.div>
+        </div>
+
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-20 hover:opacity-100 transition-opacity cursor-pointer">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Scroll to Explore</p>
+          <motion.div 
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <ChevronDown className="w-6 h-6 text-purple-400" />
+          </motion.div>
         </div>
       </section>
 
-      {/* Your Zones Section - Only when connected */}
       {isConnected && (
-        <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
-          {/* Animated Background */}
-          <div
-            style={{
-              position: "absolute",
-              inset: "-30%",
-              background: `
-                radial-gradient(900px 380px at 25% 50%, rgba(140,80,255,.2), transparent 60%),
-                radial-gradient(900px 420px at 75% 50%, rgba(80,210,255,.15), transparent 60%)
-              `,
-              filter: "blur(10px)",
-              animation: "djzsDrift 16s ease-in-out infinite",
-              pointerEvents: "none",
-            }}
-          />
-          <div className="relative z-10 max-w-6xl mx-auto px-6">
-            {/* Header */}
-            <div className="mb-12">
-              <p className="text-xs text-gray-500 tracking-widest uppercase mb-3">DJZS SYSTEM</p>
-              <h2 className="text-5xl font-black mb-4">Your Zones</h2>
-              <p className="text-gray-400 text-lg max-w-2xl">
-                DJZS organizes everything you do into Zones — private, encrypted spaces that accumulate knowledge, decisions, and history over time.
+        <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
+          <div className="relative z-10 max-w-6xl mx-auto px-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="mb-20"
+            >
+              <h2 className="text-6xl font-black mb-6 tracking-tighter">Your Zones</h2>
+              <p className="text-2xl text-gray-500 max-w-3xl leading-relaxed font-medium">
+                Everything you think and track lives here. Private, structured, and accumulating value over time.
               </p>
-            </div>
+            </motion.div>
 
-            {/* System Diagram */}
-            <div className="flex gap-3 items-center flex-wrap mb-12 text-gray-400 text-sm">
-              <span>Wallet / ENS Identity</span>
-              <span>→</span>
-              <strong className="text-purple-400">Zones</strong>
-              <span>→</span>
-              <span>Journals · Signals · Predictions · Events</span>
-            </div>
-
-            {/* Zones Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
-              {[
-                { name: "User Zone", desc: "General coordination & updates" },
-                { name: "Trades", desc: "Trade ideas & execution notes" },
-                { name: "Predictions", desc: "Markets, votes, and outcomes" },
-                { name: "Events", desc: "Calls, launches, milestones" },
-                { name: "Payments", desc: "Payments, proofs, records" },
-              ].map((zone) => (
-                <div
-                  key={zone.name}
-                  className="p-4 rounded-lg border border-gray-700 bg-gray-900/30 hover:bg-gray-800/50 transition-colors"
-                >
-                  <div className="font-semibold text-white">{zone.name}</div>
-                  <div className="text-sm text-gray-400 mt-1">{zone.desc}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3 items-center flex-wrap">
-              <Link href="/chat">
-                <Button 
-                  size="lg" 
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold"
-                  data-testid="button-enter-user-zone"
-                >
-                  Enter User Zone
-                </Button>
-              </Link>
-              <Button 
-                variant="outline"
-                size="lg"
-                className="border-gray-700 text-gray-300 hover:text-white"
-                data-testid="button-create-entry"
-              >
-                Create New Entry
-              </Button>
-              <p className="text-sm text-gray-500">Your Zone Agent will summarize activity automatically</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ZoneCard 
+                name="Journal" 
+                desc="Write daily thoughts & reflections" 
+                icon={<BookOpen className="w-8 h-8" />} 
+                highlight
+                delay={0.1}
+              />
+              <ZoneCard 
+                name="Research" 
+                desc="Log facts & extract intelligence" 
+                icon={<SearchIcon className="w-8 h-8" />} 
+                delay={0.2}
+              />
             </div>
           </div>
         </section>
       )}
 
-      {/* Features Section */}
-      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
-        {/* Animated Background */}
-        <div
-          style={{
-            position: "absolute",
-            inset: "-30%",
-            background: `
-              radial-gradient(900px 380px at 25% 50%, rgba(140,80,255,.2), transparent 60%),
-              radial-gradient(900px 420px at 75% 50%, rgba(80,210,255,.15), transparent 60%)
-            `,
-            filter: "blur(10px)",
-            animation: "djzsDrift 16s ease-in-out infinite",
-            pointerEvents: "none",
-          }}
-        />
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-4">
-              Built For <span className="text-purple-400">Privacy</span>
-            </h2>
-            <p className="text-gray-400 text-lg">End-to-end encryption meets Web3 identity</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <FeatureItem
-              number="01"
-              title="Private Notes & Research"
-              description="Journal inside Zones that are encrypted end-to-end and owned by your wallet."
-              icon={<Lock className="w-8 h-8 text-purple-400" />}
-            />
-            <FeatureItem
-              number="02"
-              title="Signals & Predictions"
-              description="Create signals and predictions with clear structure, resolution, and history."
-              icon={<Zap className="w-8 h-8 text-yellow-400" />}
-            />
-            <FeatureItem
-              number="03"
-              title="Events & Coordination"
-              description="Coordinate activity, payments, and records securely in one system."
-              icon={<Network className="w-8 h-8 text-green-400" />}
-            />
+      <section className="relative py-32 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
+        <div className="relative z-10 max-w-7xl mx-auto px-10">
+          <div className="grid md:grid-cols-2 gap-20 items-center">
+            <div>
+              <h2 className="text-6xl font-black mb-8 tracking-tighter">
+                Built For <span className="text-purple-500">Clarity.</span>
+              </h2>
+              <p className="text-xl text-gray-500 leading-relaxed font-medium mb-12">
+                DJZS isn't a social network. It's a personal operating system for your mind. End-to-end encrypted, wallet-owned, and AI-assisted.
+              </p>
+              <div className="space-y-10">
+                <FeatureRow 
+                  icon={<Lock className="w-6 h-6 text-purple-400" />}
+                  title="Zero-Knowledge Privacy"
+                  desc="Your entries are encrypted locally. No one, not even us, can read your mind."
+                />
+                <FeatureRow 
+                  icon={<Zap className="w-6 h-6 text-yellow-400" />}
+                  title="Insight Extraction"
+                  desc="The Zone Agent monitors your entries to surface patterns and answer questions."
+                />
+                <FeatureRow 
+                  icon={<Network className="w-6 h-6 text-green-400" />}
+                  title="Knowledge Compounding"
+                  desc="Turn raw notes into a structured knowledge base that lives on-chain."
+                />
+              </div>
+            </div>
+            <div className="relative">
+              <div className="aspect-square rounded-[3rem] bg-gradient-to-br from-purple-600/10 to-blue-600/10 border border-white/[0.05] p-10 flex items-center justify-center overflow-hidden group">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.1),transparent_70%)]"></div>
+                <BookOpen className="w-40 h-40 text-purple-500/20 group-hover:text-purple-500/40 transition-all duration-700 transform group-hover:scale-110" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Message Types Section */}
-      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
-        {/* Animated Background */}
-        <div
-          style={{
-            position: "absolute",
-            inset: "-30%",
-            background: `
-              radial-gradient(900px 380px at 30% 30%, rgba(140,80,255,.18), transparent 60%),
-              radial-gradient(900px 420px at 70% 70%, rgba(80,210,255,.12), transparent 60%)
-            `,
-            filter: "blur(10px)",
-            animation: "djzsDrift 16s ease-in-out infinite",
-            pointerEvents: "none",
-          }}
-        />
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl md:text-5xl font-black mb-16 text-center">
-            Structured <span className="text-purple-400">Messaging</span>
-          </h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <MessageTypeCard
-              title="Trade Signals"
-              description="Post entry, TP levels, and invalidation with leverage indicators"
-              badge="📊"
-            />
-            <MessageTypeCard
-              title="Predictions"
-              description="YES/NO voting with deadlines. Track the community's consensus"
-              badge="🎯"
-            />
-            <MessageTypeCard
-              title="Events"
-              description="Coordinate meetups with RSVP tracking and calendar integration"
-              badge="📅"
-            />
-            <MessageTypeCard
-              title="Payments"
-              description="Send ETH directly from chat with automatic receipt generation"
-              badge="💰"
-            />
-            <MessageTypeCard
-              title="Newsletter"
-              description="Share articles from Paragraph publications in real-time"
-              badge="📰"
-            />
-            <MessageTypeCard
-              title="Text Chat"
-              description="Traditional encrypted messages for anything else"
-              badge="💬"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
-        {/* Animated Background */}
-        <div
-          style={{
-            position: "absolute",
-            inset: "-30%",
-            background: `
-              radial-gradient(900px 380px at 20% 60%, rgba(140,80,255,.15), transparent 60%),
-              radial-gradient(900px 420px at 80% 40%, rgba(80,210,255,.1), transparent 60%)
-            `,
-            filter: "blur(10px)",
-            animation: "djzsDrift 16s ease-in-out infinite",
-            pointerEvents: "none",
-          }}
-        />
-        {/* Stars */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `
-              radial-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
-              radial-gradient(rgba(255,255,255,.25) 1px, transparent 1px)
-            `,
-            backgroundSize: "90px 90px, 140px 140px",
-            backgroundPosition: "0 0, 40px 60px",
-            opacity: 0.1,
-            animation: "djzsStars 40s linear infinite",
-            pointerEvents: "none",
-          }}
-        />
-        <div className="relative z-10 max-w-5xl mx-auto px-6">
-          <h2 className="text-4xl md:text-5xl font-black mb-16 text-center">
-            How It <span className="text-purple-400">Works</span>
-          </h2>
-
-          <div className="space-y-8">
-            <StepCard
-              step="1"
-              title="Connect Your Wallet"
-              description="Your wallet and ENS establish your identity across all Zones."
-            />
-            <StepCard
-              step="2"
-              title="Enter or Create Zones"
-              description="Zones are purpose-built spaces for journaling, signals, predictions, and coordination."
-            />
-            <StepCard
-              step="3"
-              title="Let the Zone Agent Assist"
-              description="Each Zone can summarize activity, extract action items, and keep long-term memory."
-            />
-            <StepCard
-              step="4"
-              title="Compose Structured Entries"
-              description="Post notes, signals, predictions, events, or receipts. Everything is encrypted and verifiable."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
-        <div
-          style={{
-            position: "absolute",
-            inset: "-30%",
-            background: `
-              radial-gradient(900px 380px at 40% 50%, rgba(140,80,255,.12), transparent 60%),
-              radial-gradient(900px 420px at 60% 50%, rgba(80,210,255,.08), transparent 60%)
-            `,
-            filter: "blur(10px)",
-            animation: "djzsDrift 16s ease-in-out infinite",
-            pointerEvents: "none",
-          }}
-        />
-        <div className="relative z-10 max-w-3xl mx-auto px-6">
-          <h2 className="text-4xl md:text-5xl font-black mb-16 text-center">
-            Frequently <span className="text-purple-400">Asked</span>
-          </h2>
-          <div className="space-y-6">
+      <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
+        <div className="relative z-10 max-w-3xl mx-auto px-10">
+          <h2 className="text-5xl font-black mb-20 text-center tracking-tighter">Frequently Asked</h2>
+          <div className="space-y-4">
             <FAQItem
               question="Is my data really private?"
-              answer="All Zone entries are encrypted with XMTP. Only participants can read them – not servers, not platforms."
+              answer="Every entry is encrypted with XMTP before leaving your browser. Only you hold the keys."
             />
             <FAQItem
-              question="Can I use DJZS on mobile?"
-              answer="The interface is fully responsive and works on any device with a web3-enabled browser."
+              question="How does the Agent work?"
+              answer="The Zone Agent runs in a secure environment, extracting insights only from the content you've committed to a Zone."
             />
             <FAQItem
-              question="How much does it cost?"
-              answer="Free tier includes unlimited personal Zones. Paid Pass adds cross-Zone linking, AI assistance, and on-chain proof minting."
+              question="What is a 'Zone'?"
+              answer="A Zone is a dedicated encrypted thread for a specific type of thinking or coordination."
             />
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
-        {/* Animated Background */}
-        <div
-          style={{
-            position: "absolute",
-            inset: "-30%",
-            background: `
-              radial-gradient(900px 380px at 50% 50%, rgba(140,80,255,.25), transparent 60%),
-              radial-gradient(900px 420px at 50% 50%, rgba(80,210,255,.15), transparent 60%)
-            `,
-            filter: "blur(10px)",
-            animation: "djzsDrift 16s ease-in-out infinite",
-            pointerEvents: "none",
-          }}
-        />
-        {/* Shimmer */}
-        <div
-          style={{
-            position: "absolute",
-            inset: "-40%",
-            background:
-              "linear-gradient(110deg, transparent 0%, rgba(255,255,255,.08) 45%, transparent 60%)",
-            filter: "blur(16px)",
-            animation: "djzsShimmer 10s ease-in-out infinite",
-            pointerEvents: "none",
-          }}
-        />
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-black mb-8">
-            Ready to Enter Your <span className="text-purple-400">Zones</span>?
-          </h2>
-          <p className="text-gray-400 text-lg mb-12">
-            Join a growing community of privacy-first Web3 builders and traders.
-          </p>
-          {isConnected ? (
-            <Link href="/chat">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-10 py-7 text-lg font-semibold"
-                data-testid="button-cta-chat"
-              >
-                Enter Your Zones
-              </Button>
-            </Link>
-          ) : (
-            <div className="flex justify-center">
-              <ConnectButton showBalance={false} />
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="relative border-t border-gray-800 bg-black py-8 overflow-hidden">
-        {/* Subtle Glow */}
-        <div
-          style={{
-            position: "absolute",
-            inset: "-30%",
-            background: `
-              radial-gradient(600px 200px at 50% 100%, rgba(140,80,255,.1), transparent 60%)
-            `,
-            filter: "blur(10px)",
-            pointerEvents: "none",
-          }}
-        />
-        <div className="relative z-10 max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <p className="text-gray-500 text-sm">© 2025 DJZS. All rights reserved.</p>
-          <div className="flex items-center gap-6 text-sm text-gray-500">
-            <a href="#" className="hover:text-purple-400 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-purple-400 transition-colors">Terms of Service</a>
+      <footer className="relative border-t border-white/[0.03] bg-[#050505] py-20 px-10 overflow-hidden">
+        <div className="relative z-10 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
+          <div>
+            <h2 className="text-2xl font-black text-white tracking-widest mb-2 uppercase">DJZS</h2>
+            <p className="text-gray-600 text-sm font-medium uppercase tracking-widest">Decentralized Journaling Zone System</p>
+          </div>
+          <div className="flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">
+            <a href="#" className="hover:text-purple-400 transition-colors">Privacy</a>
+            <a href="#" className="hover:text-purple-400 transition-colors">Terms</a>
             <a href="#" className="hover:text-purple-400 transition-colors">Roadmap</a>
-            <a href="#" className="hover:text-purple-400 transition-colors">Community</a>
+            <a href="#" className="hover:text-purple-400 transition-colors">Journal</a>
           </div>
         </div>
       </footer>
@@ -601,65 +368,101 @@ export default function Home() {
   );
 }
 
-function FeatureItem({ number, title, description, icon }: { number: string; title: string; description: string; icon: React.ReactNode }) {
+function FlowStep({ label, index, highlight }: { label: string; index: number; highlight?: boolean }) {
   return (
-    <div className="group p-8 rounded-2xl border border-gray-800 hover:border-purple-600/50 transition-all hover:bg-purple-950/10">
-      <div className="flex items-start gap-6">
-        <div className="flex-shrink-0">
-          <span className="text-4xl font-black text-purple-600/40 group-hover:text-purple-500/60 transition-colors">{number}</span>
-        </div>
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-3">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ 
+        delay: 1.5 + (index * 0.4),
+        duration: 0.5
+      }}
+      className={`px-6 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${
+        highlight 
+          ? "bg-purple-600 border-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)]" 
+          : "bg-white/5 border-white/10 text-gray-300" 
+      }`}
+    >
+      {label}
+    </motion.div>
+  );
+}
+
+function FlowArrow({ index }: { index: number }) {
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: [0, 1, 0.3] }}
+      transition={{ 
+        delay: 1.7 + (index * 0.4),
+        duration: 0.5,
+        times: [0, 0.5, 1]
+      }}
+      className="text-gray-800 font-bold"
+    >
+      ↓
+    </motion.div>
+  );
+}
+
+function ZoneCard({ name, desc, icon, highlight, delay }: { name: string; desc: string; icon: React.ReactNode; highlight?: boolean; delay: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.5 }}
+    >
+      <Link href="/chat">
+        <div className={`p-10 rounded-[2.5rem] border transition-all duration-500 group cursor-pointer relative overflow-hidden h-full ${
+          highlight 
+            ? "bg-white/[0.03] border-purple-500/30 hover:border-purple-500 hover:bg-white/[0.05] hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(168,85,247,0.1)]" 
+            : "bg-white/[0.01] border-white/[0.05] hover:border-white/20 hover:bg-white/[0.02] hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(255,255,255,0.05)]"
+        }`}>
+          <div className={`w-16 h-16 rounded-2xl mb-8 flex items-center justify-center transition-all duration-500 group-hover:scale-110 ${
+            highlight ? "bg-purple-600/20 text-purple-400" : "bg-white/5 text-gray-500"
+          }`}>
             {icon}
-            <h3 className="text-xl font-bold text-white">{title}</h3>
           </div>
-          <p className="text-gray-400 leading-relaxed">{description}</p>
+          <h3 className="text-3xl font-black text-white mb-3 tracking-tight group-hover:translate-x-1 transition-transform">{name}</h3>
+          <p className="text-lg text-gray-500 font-medium group-hover:text-gray-400 transition-colors">{desc}</p>
+          
+          {highlight && (
+            <div className="absolute top-8 right-8 w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
+          )}
         </div>
-      </div>
-    </div>
+      </Link>
+    </motion.div>
   );
 }
 
-function MessageTypeCard({ title, description, badge }: { title: string; description: string; badge: string }) {
+function FeatureRow({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="p-6 rounded-xl border border-gray-800 hover:border-purple-600/50 hover:bg-purple-950/10 transition-all group cursor-pointer">
-      <div className="text-4xl mb-4">{badge}</div>
-      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">{title}</h3>
-      <p className="text-gray-400 text-sm">{description}</p>
-    </div>
-  );
-}
-
-function StepCard({ step, title, description }: { step: string; title: string; description: string }) {
-  return (
-    <div className="flex gap-6 items-start">
-      <div className="flex-shrink-0">
-        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 font-black text-white text-xl">
-          {step}
-        </div>
+    <div className="flex gap-6 items-start group">
+      <div className="mt-1 w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center shrink-0 group-hover:border-purple-500/30 transition-all">
+        {icon}
       </div>
-      <div className="flex-1 pt-2">
-        <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
-        <p className="text-gray-400 text-lg">{description}</p>
+      <div>
+        <h4 className="text-xl font-black text-white mb-2 tracking-tight group-hover:text-purple-200 transition-colors">{title}</h4>
+        <p className="text-gray-500 font-medium leading-relaxed">{desc}</p>
       </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="p-6 rounded-xl border border-gray-800 bg-gray-900/50">
-      <div className="text-sm font-black text-purple-400 mb-2">{value}</div>
-      <p className="text-gray-400 text-xs font-semibold">{label}</p>
     </div>
   );
 }
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   return (
-    <div className="p-6 rounded-xl border border-gray-800 hover:border-purple-600/30 transition-colors bg-gray-900/30">
-      <h3 className="text-lg font-bold text-white mb-3">{question}</h3>
-      <p className="text-gray-400 leading-relaxed">{answer}</p>
+    <div className="p-8 rounded-3xl bg-white/[0.01] border border-white/[0.03] hover:border-white/[0.1] hover:bg-white/[0.02] transition-all group">
+      <h3 className="text-lg font-bold text-white mb-4 group-hover:text-purple-300 transition-colors">{question}</h3>
+      <p className="text-gray-500 leading-relaxed font-medium">{answer}</p>
+    </div>
+  );
+}
+
+function StatCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.03] hover:border-white/[0.1] transition-all">
+      <p className="text-xs font-black text-purple-400 uppercase tracking-widest mb-4 opacity-50">{label}</p>
+      <p className="text-sm text-gray-400 font-bold leading-relaxed">{value}</p>
     </div>
   );
 }

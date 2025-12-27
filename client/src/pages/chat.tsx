@@ -285,8 +285,8 @@ export default function Chat() {
             <div className="max-w-3xl mx-auto px-6 py-20">
               {messages.length === 0 && !isWriting ? (
                 <div className="text-center py-20 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                  <h3 className="text-5xl font-black text-white mb-6 tracking-tighter">What's on your mind right now?</h3>
-                  <p className="text-xl text-gray-500 mb-12 font-medium">Write freely. I'll summarize and surface insights for you.</p>
+                  <h3 className="text-5xl font-black text-white mb-6 tracking-tighter">Start with one thought.</h3>
+                  <p className="text-xl text-gray-500 mb-12 font-medium">DJZS will help you make sense of it.</p>
                   <Button 
                     onClick={() => setIsWriting(true)}
                     className="bg-purple-600 hover:bg-purple-700 h-16 px-12 rounded-2xl font-black text-xl shadow-2xl shadow-purple-900/40 group transition-all"
