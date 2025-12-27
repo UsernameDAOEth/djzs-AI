@@ -1,18 +1,16 @@
+/* src/pages/Landing.tsx */
 import { useState } from "react";
-import { useAccount } from "wagmi";
-import { Link } from "wouter";
-import ConnectDrawer from "@/components/connect-drawer";
+import ConnectDrawer from "../components/ConnectDrawer";
 
-export default function Home() {
+export default function Landing() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { isConnected } = useAccount();
 
   return (
     <main className="font-sans text-gray-900 bg-white">
 
       {/* ==================== HERO ==================== */}
       <section className="relative bg-gradient-to-br from-indigo-700 via-purple-700 to-indigo-900 text-white py-28 px-6 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-5" data-testid="heading-hero">
+        <h1 className="text-4xl md:text-5xl font-bold mb-5">
           Private. Structured. Yours.
         </h1>
 
@@ -22,29 +20,16 @@ export default function Home() {
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          {isConnected ? (
-            <Link href="/chat">
-              <button
-                className="bg-white text-indigo-700 font-semibold py-3 px-7 rounded-md hover:bg-gray-100 transition"
-                data-testid="button-enter-zones"
-              >
-                Enter Your Zones →
-              </button>
-            </Link>
-          ) : (
-            <button
-              onClick={() => setDrawerOpen(true)}
-              className="bg-white text-indigo-700 font-semibold py-3 px-7 rounded-md hover:bg-gray-100 transition"
-              data-testid="button-connect-wallet"
-            >
-              Enter Your Zones →
-            </button>
-          )}
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="bg-white text-indigo-700 font-semibold py-3 px-7 rounded-md hover:bg-gray-100 transition"
+          >
+            Enter Your Zones →
+          </button>
 
           <button
             onClick={() => alert("Demo video placeholder")}
             className="border border-white/80 py-3 px-7 rounded-md hover:bg-white hover:text-indigo-700 transition"
-            data-testid="button-watch-demo"
           >
             Watch 60s Overview
           </button>
@@ -61,7 +46,7 @@ export default function Home() {
           <p className="text-sm tracking-widest uppercase text-gray-500 mb-3">
             DJZS System
           </p>
-          <h2 className="text-3xl font-bold mb-4" data-testid="heading-system">Your Zones</h2>
+          <h2 className="text-3xl font-bold mb-4">Your Zones</h2>
           <p className="text-gray-700">
             Zones are private, encrypted workspaces that accumulate decisions,
             research, and outcomes. Each Zone has structure, memory, and optional
@@ -74,7 +59,7 @@ export default function Home() {
           Predictions · Events · Receipts
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto px-6">
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           <ZoneCard
             title="User Zone"
             desc="General coordination, notes, and shared context"
@@ -98,22 +83,10 @@ export default function Home() {
         </div>
 
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          {isConnected ? (
-            <Link href="/chat">
-              <button className="bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-700" data-testid="button-enter-user-zone">
-                Enter User Zone
-              </button>
-            </Link>
-          ) : (
-            <button 
-              onClick={() => setDrawerOpen(true)}
-              className="bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-700"
-              data-testid="button-enter-user-zone"
-            >
-              Enter User Zone
-            </button>
-          )}
-          <button className="bg-gray-200 py-3 px-6 rounded-md hover:bg-gray-300" data-testid="button-create-entry">
+          <button className="bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-700">
+            Enter User Zone
+          </button>
+          <button className="bg-gray-200 py-3 px-6 rounded-md hover:bg-gray-300">
             Create New Entry
           </button>
         </div>
@@ -125,7 +98,7 @@ export default function Home() {
 
       {/* ==================== WHAT YOU DO IN DJZS ==================== */}
       <section className="py-16 bg-white">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-10 text-center px-6">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-10 text-center">
           <Feature
             title="Journal & Research Privately"
             desc="Write notes and research inside encrypted Zones owned by your wallet."
@@ -143,15 +116,15 @@ export default function Home() {
 
       {/* ==================== PRIVACY & OWNERSHIP ==================== */}
       <section className="py-20 bg-gray-50">
-        <div className="text-center mb-12 px-6">
-          <h2 className="text-3xl font-bold mb-4" data-testid="heading-privacy">Privacy by Design</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">Privacy by Design</h2>
           <p className="text-gray-600">
             Encryption, identity, and ownership are built into the system — not
             bolted on.
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 px-6">
+        <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6">
           <PrivacyCard
             title="End-to-End Encrypted"
             desc="All Zone entries are encrypted with XMTP. Only participants can read them."
@@ -169,11 +142,11 @@ export default function Home() {
 
       {/* ==================== HOW IT WORKS ==================== */}
       <section className="py-20 bg-white">
-        <h2 className="text-3xl font-bold text-center mb-12" data-testid="heading-how-it-works">
+        <h2 className="text-3xl font-bold text-center mb-12">
           How DJZS Works
         </h2>
 
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 px-6">
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
           <Step
             title="1 · Connect Your Wallet"
             desc="Your wallet and ENS establish your identity across the system."
@@ -195,37 +168,20 @@ export default function Home() {
 
       {/* ==================== FINAL CTA ==================== */}
       <section className="py-24 bg-indigo-700 text-white text-center">
-        <h2 className="text-3xl font-bold mb-5" data-testid="heading-cta">
+        <h2 className="text-3xl font-bold mb-5">
           Ready to Enter Your Zones?
         </h2>
-        <p className="mb-8 max-w-2xl mx-auto opacity-95 px-6">
+        <p className="mb-8 max-w-2xl mx-auto opacity-95">
           DJZS is used by traders, builders, researchers, and DAOs who need
           privacy, structure, and long-term clarity.
         </p>
-        {isConnected ? (
-          <Link href="/chat">
-            <button
-              className="bg-white text-indigo-700 font-semibold py-3 px-8 rounded-md hover:bg-gray-100"
-              data-testid="button-final-cta"
-            >
-              Enter Your Zones →
-            </button>
-          </Link>
-        ) : (
-          <button
-            onClick={() => setDrawerOpen(true)}
-            className="bg-white text-indigo-700 font-semibold py-3 px-8 rounded-md hover:bg-gray-100"
-            data-testid="button-final-cta"
-          >
-            Enter Your Zones →
-          </button>
-        )}
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="bg-white text-indigo-700 font-semibold py-3 px-8 rounded-md hover:bg-gray-100"
+        >
+          Enter Your Zones →
+        </button>
       </section>
-
-      {/* ==================== FOOTER ==================== */}
-      <footer className="py-8 bg-gray-900 text-center">
-        <p className="text-gray-500 text-sm">© 2025 DJZS. Powered by XMTP. Built on Base.</p>
-      </footer>
 
       {drawerOpen && <ConnectDrawer onClose={() => setDrawerOpen(false)} />}
     </main>
@@ -236,7 +192,7 @@ export default function Home() {
 
 function ZoneCard({ title, desc }: { title: string; desc: string }) {
   return (
-    <div className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition bg-white" data-testid={`card-zone-${title.toLowerCase().replace(/\s+/g, '-')}`}>
+    <div className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition bg-white">
       <h4 className="font-semibold text-xl mb-2">{title}</h4>
       <p className="text-gray-600">{desc}</p>
     </div>
