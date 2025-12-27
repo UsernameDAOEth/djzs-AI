@@ -183,19 +183,18 @@ export default function Home() {
             className="mb-10"
           >
             <h1 className="text-7xl md:text-9xl font-black leading-[0.9] tracking-tighter mb-8">
-              <span className="block">Pri<span className="text-purple-500">vate.</span></span>
-              <span className="block">Struc<span className="text-purple-400">tured.</span></span>
-              <span className="block"><span className="text-purple-600">Yours.</span></span>
+              <span className="block">Think <span className="text-purple-500">clearly.</span></span>
+              <span className="block">Every <span className="text-purple-400">day.</span></span>
             </h1>
             <p className="text-2xl md:text-3xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium">
-              Your private space to think, reflect, and extract insight.
+              DJZS is a private AI journal that summarizes your thinking and surfaces insight over time.
             </p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.2, duration: 0.8, type: "spring", stiffness: 100 }}
           >
             {isConnected ? (
               <div className="flex flex-col items-center gap-6">
@@ -214,12 +213,13 @@ export default function Home() {
                     </Button>
                   </div>
                 </Link>
-                <Link href="/chat">
-                  <button className="text-gray-500 hover:text-gray-300 text-sm font-bold uppercase tracking-widest transition-colors flex items-center gap-2">
-                    Open Existing Journals
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                </Link>
+                <div className="flex items-center gap-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest opacity-60">
+                  <span>Local-first</span>
+                  <span>•</span>
+                  <span>Your data stays yours</span>
+                  <span>•</span>
+                  <span>No feed</span>
+                </div>
               </div>
             ) : (
               <div className="flex justify-center scale-125">
@@ -280,6 +280,7 @@ export default function Home() {
                 icon={<BookOpen className="w-8 h-8" />} 
                 highlight
                 delay={0.1}
+                tag="Start here"
               />
               <ZoneCard 
                 name="Research" 
@@ -300,13 +301,13 @@ export default function Home() {
                 Built For <span className="text-purple-500">Clarity.</span>
               </h2>
               <p className="text-xl text-gray-500 leading-relaxed font-medium mb-12">
-                DJZS isn't a social network. It's a personal operating system for your mind. End-to-end encrypted, wallet-owned, and AI-assisted.
+                DJZS isn't a social network. It's a personal operating system for your mind. Private, owned, and AI-assisted.
               </p>
               <div className="space-y-10">
                 <FeatureRow 
                   icon={<Lock className="w-6 h-6 text-purple-400" />}
-                  title="Zero-Knowledge Privacy"
-                  desc="Your entries are encrypted locally. No one, not even us, can read your mind."
+                  title="Private by Design"
+                  desc="Your entries are encrypted locally. Only you hold the keys to your thoughts."
                 />
                 <FeatureRow 
                   icon={<Zap className="w-6 h-6 text-yellow-400" />}
@@ -316,7 +317,7 @@ export default function Home() {
                 <FeatureRow 
                   icon={<Network className="w-6 h-6 text-green-400" />}
                   title="Knowledge Compounding"
-                  desc="Turn raw notes into a structured knowledge base that lives on-chain."
+                  desc="Turn raw notes into a structured knowledge base that accumulates value over time."
                 />
               </div>
             </div>
@@ -524,7 +525,7 @@ function FlowArrow({ index }: { index: number }) {
   );
 }
 
-function ZoneCard({ name, desc, icon, highlight, delay }: { name: string; desc: string; icon: React.ReactNode; highlight?: boolean; delay: number }) {
+function ZoneCard({ name, desc, icon, highlight, delay, tag }: { name: string; desc: string; icon: React.ReactNode; highlight?: boolean; delay: number; tag?: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -542,7 +543,14 @@ function ZoneCard({ name, desc, icon, highlight, delay }: { name: string; desc: 
           }`}>
             {icon}
           </div>
-          <h3 className="text-3xl font-black text-white mb-3 tracking-tight group-hover:translate-x-1 transition-transform">{name}</h3>
+          <div className="flex items-center gap-3 mb-3">
+            <h3 className="text-3xl font-black text-white tracking-tight group-hover:translate-x-1 transition-transform">{name}</h3>
+            {tag && (
+              <span className="px-2 py-1 bg-purple-600/20 border border-purple-500/30 rounded-md text-[8px] font-black uppercase tracking-widest text-purple-400">
+                {tag}
+              </span>
+            )}
+          </div>
           <p className="text-lg text-gray-500 font-medium group-hover:text-gray-400 transition-colors">{desc}</p>
           
           {highlight && (
