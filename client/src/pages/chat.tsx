@@ -204,7 +204,12 @@ export default function Chat() {
         {/* Minimal Left Sidebar */}
         <aside className="w-64 border-r border-white/[0.03] flex flex-col bg-black/20">
           <div className="p-8 pb-4">
-            <h1 className="text-sm font-black text-white tracking-[0.2em] uppercase opacity-40">DJZS v1</h1>
+            <Link href="/">
+              <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-purple-400 transition-all group">
+                <Home className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                <span>DJZS v1</span>
+              </button>
+            </Link>
           </div>
 
           <nav className="flex-1 px-4 space-y-1">
