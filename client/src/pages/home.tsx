@@ -350,45 +350,122 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="relative border-t border-white/[0.03] bg-[#050505] pt-0 pb-20 overflow-hidden">
-        {/* Footer Marquee Banner */}
-        <div
-          style={{
-            position: "relative",
-            zIndex: 2,
-            width: "100%",
-            overflow: "hidden",
-            padding: "40px 0",
-            borderBottom: "1px solid rgba(255,255,255,0.03)",
-            marginBottom: "60px"
-          }}
-        >
-          <div className="marquee-banner" style={{ width: "100%" }}>
-            <div className="marquee-content">
-              <span
-                style={{
-                  fontSize: "clamp(32px, 5vw, 80px)",
-                  fontWeight: 900,
-                  lineHeight: 1,
-                  color: "rgba(255,255,255,0.15)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                DECENTRALIZED JOURNALING ZONE SYSTEM &nbsp; • &nbsp;
-              </span>
-              <span
-                style={{
-                  fontSize: "clamp(32px, 5vw, 80px)",
-                  fontWeight: 900,
-                  lineHeight: 1,
-                  color: "rgba(255,255,255,0.15)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                DECENTRALIZED JOURNALING ZONE SYSTEM &nbsp; • &nbsp;
-              </span>
+      <footer className="relative border-t border-white/[0.03] pt-0 pb-20 overflow-hidden">
+        <div style={{ position: "relative", overflow: "hidden", borderRadius: 0 }}>
+          {/* Background */}
+          <div
+            style={{
+              position: "absolute",
+              inset: "-30%",
+              background: `
+                radial-gradient(900px 380px at 15% 35%, rgba(140,80,255,.35), transparent 60%),
+                radial-gradient(900px 420px at 85% 55%, rgba(80,210,255,.28), transparent 60%),
+                radial-gradient(1100px 520px at 50% -10%, rgba(255,255,255,.14), transparent 60%)
+              `,
+              filter: "blur(10px)",
+              animation: "djzsDrift 16s ease-in-out infinite",
+            }}
+          />
+
+          {/* Stars */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `
+                radial-gradient(rgba(255,255,255,.8) 1px, transparent 1px),
+                radial-gradient(rgba(255,255,255,.45) 1px, transparent 1px)
+              `,
+              backgroundSize: "90px 90px, 140px 140px",
+              backgroundPosition: "0 0, 40px 60px",
+              opacity: 0.25,
+              animation: "djzsStars 40s linear infinite",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Shimmer */}
+          <div
+            style={{
+              position: "absolute",
+              inset: "-40%",
+              background:
+                "linear-gradient(110deg, transparent 0%, rgba(255,255,255,.12) 45%, transparent 60%)",
+              filter: "blur(16px)",
+              animation: "djzsShimmer 10s ease-in-out infinite",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Glow */}
+          <div
+            style={{
+              position: "absolute",
+              left: "10%",
+              top: "20%",
+              width: "80%",
+              height: "70%",
+              background:
+                "radial-gradient(circle at 30% 40%, rgba(160,110,255,.45), transparent 60%)",
+              filter: "blur(20px)",
+              animation: "djzsPulse 6s ease-in-out infinite",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Vignette */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.65))",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Footer Marquee Banner */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 2,
+              width: "100%",
+              overflow: "hidden",
+              padding: "20px 0",
+              marginBottom: "40px"
+            }}
+          >
+            <div className="marquee-banner" style={{ width: "100%" }}>
+              <div className="marquee-content">
+                <span
+                  style={{
+                    fontSize: "clamp(48px, 8vw, 120px)",
+                    fontWeight: 900,
+                    lineHeight: 1,
+                    color: "rgba(255,255,255,.95)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    textShadow:
+                      "0 0 30px rgba(140,80,255,.5), 0 0 60px rgba(80,210,255,.3)",
+                  }}
+                >
+                  DECENTRALIZED JOURNALING ZONE SYSTEM
+                </span>
+                <span
+                  style={{
+                    fontSize: "clamp(48px, 8vw, 120px)",
+                    fontWeight: 900,
+                    lineHeight: 1,
+                    color: "rgba(255,255,255,.95)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    textShadow:
+                      "0 0 30px rgba(140,80,255,.5), 0 0 60px rgba(80,210,255,.3)",
+                  }}
+                >
+                  DECENTRALIZED JOURNALING ZONE SYSTEM
+                </span>
+              </div>
             </div>
           </div>
         </div>
