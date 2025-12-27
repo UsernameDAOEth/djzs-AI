@@ -47,7 +47,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useDisplayName, useMultipleEnsNames, formatAddress } from "@/hooks/use-ens";
 import { useXmtp } from "@/hooks/use-xmtp";
 import { MessageCard } from "@/components/chat/message-cards";
-import { SkeletonCardList } from "@/components/ui/skeleton-card";
 import { TradeComposer } from "@/components/chat/trade-composer";
 import { PredictionComposer } from "@/components/chat/prediction-composer";
 import { EventComposer } from "@/components/chat/event-composer";
@@ -57,11 +56,11 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Room, Member, ChatMessage, StoredMessage } from "@shared/schema";
 
 const DEFAULT_ZONES = [
-  { id: "lounge", name: "User Zone", icon: Users, description: "General discussion", purpose: "Share notes and updates with the community", shortcut: "1" },
-  { id: "trades", name: "Signals", icon: TrendingUp, description: "Trade signals and setups", purpose: "Post and track trading signals", shortcut: "2" },
-  { id: "predictions", name: "Predictions", icon: BarChart3, description: "Market predictions", purpose: "Make and vote on market predictions", shortcut: "3" },
-  { id: "events", name: "Events", icon: Calendar, description: "Community events", purpose: "Coordinate meetings and events", shortcut: "4" },
-  { id: "payments", name: "Receipts", icon: DollarSign, description: "Payment receipts", purpose: "Track on-chain payments", shortcut: "5" },
+  { id: "lounge", name: "User Zone", icon: Users, description: "General discussion", purpose: "Share notes and updates with the community" },
+  { id: "trades", name: "Trades", icon: TrendingUp, description: "Trade signals and setups", purpose: "Post and track trading signals" },
+  { id: "predictions", name: "Predictions", icon: BarChart3, description: "Market predictions", purpose: "Make and vote on market predictions" },
+  { id: "events", name: "Events", icon: Calendar, description: "Community events", purpose: "Coordinate meetings and events" },
+  { id: "payments", name: "Payments", icon: DollarSign, description: "Payment receipts", purpose: "Track on-chain payments" },
 ];
 
 const SYSTEM_ITEMS = [
@@ -188,18 +187,6 @@ export default function Chat() {
     refetchInterval: 5000,
   });
 
-  const getEntryTypeLabel = (type: string) => {
-    const labels: Record<string, { title: string; desc: string; icon: string }> = {
-      text: { title: "Note committed", desc: "Your note is now in the Zone Feed", icon: "📝" },
-      trade_signal: { title: "Signal posted", desc: "Your trade signal is live", icon: "📊" },
-      prediction: { title: "Prediction created", desc: "Members can now vote", icon: "🎯" },
-      event: { title: "Event scheduled", desc: "Members can RSVP", icon: "📅" },
-      payment_receipt: { title: "Receipt logged", desc: "Payment confirmed on-chain", icon: "✅" },
-      newsletter: { title: "Article shared", desc: "Article added to Zone Feed", icon: "📰" },
-    };
-    return labels[type] || { title: "Entry committed", desc: "Added to Zone Feed", icon: "✓" };
-  };
-
   const sendMessage = useMutation({
     mutationFn: async (message: ChatMessage) => {
       const res = await apiRequest("POST", "/api/messages", {
@@ -208,18 +195,17 @@ export default function Chat() {
       });
       return res.json();
     },
-    onSuccess: (_, message) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/messages", selectedZone] });
-      const label = getEntryTypeLabel(message.type);
       toast({
-        title: `${label.icon} ${label.title}`,
-        description: label.desc,
+        title: "Committed to Zone",
+        description: "Your entry has been added to the Zone Feed",
       });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to commit entry",
+        description: "Failed to commit to zone",
         variant: "destructive",
       });
     },
@@ -239,25 +225,6 @@ export default function Chat() {
       connectXmtp().catch(console.error);
     }
   }, [member, xmtpClient, xmtpConnecting, connectXmtp, address]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      
-      if (e.key === '1') setSelectedZone('lounge');
-      if (e.key === '2') setSelectedZone('trades');
-      if (e.key === '3') setSelectedZone('predictions');
-      if (e.key === '4') setSelectedZone('events');
-      if (e.key === '5') setSelectedZone('payments');
-      if (e.key === 'm') setMemoryDrawerOpen(prev => !prev);
-      if (e.key === 'n') setComposerTab('note');
-      if (e.key === 's') setComposerTab('signal');
-      if (e.key === 'p') setComposerTab('prediction');
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
 
   if (!isConnected) {
     return (
@@ -483,7 +450,7 @@ export default function Chat() {
                     <TooltipTrigger asChild>
                       <button
                         onClick={() => setSelectedZone(zone.id)}
-                        className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all ${
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all ${
                           isActive
                             ? "bg-purple-600/20 text-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.15)]"
                             : "text-gray-400 hover:bg-gray-800/50 hover:text-white"
@@ -493,10 +460,9 @@ export default function Chat() {
                         <div className={`w-7 h-7 rounded-md flex items-center justify-center ${isActive ? 'bg-purple-600/30' : 'bg-gray-800'}`}>
                           <Icon className="w-4 h-4" />
                         </div>
-                        <span className="text-sm font-medium flex-1">{zone.name}</span>
-                        <span className="text-[10px] text-gray-600 font-mono hidden group-hover:inline">{zone.shortcut}</span>
+                        <span className="text-sm font-medium">{zone.name}</span>
                         {isActive && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-purple-400"></div>
+                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-400"></div>
                         )}
                       </button>
                     </TooltipTrigger>
@@ -748,9 +714,11 @@ export default function Chat() {
           </div>
 
           {/* Messages Area */}
-          <ScrollArea className="flex-1 px-4 py-3 custom-scrollbar">
+          <ScrollArea className="flex-1 px-4 py-3">
             {messagesLoading ? (
-              <SkeletonCardList count={4} />
+              <div className="flex items-center justify-center h-full text-gray-500">
+                <Loader2 className="w-8 h-8 animate-spin" />
+              </div>
             ) : messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center max-w-sm">
@@ -769,7 +737,7 @@ export default function Chat() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-2 stagger-children">
+              <div className="space-y-2">
                 {messages.map((stored) => (
                   <MessageCard key={stored.id} message={stored.message} ensNames={ensNames} />
                 ))}
