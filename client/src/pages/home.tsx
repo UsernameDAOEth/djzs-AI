@@ -258,6 +258,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Scrolling Marquee Banner */}
+      <div className="relative border-y border-white/[0.03] bg-black/50 overflow-hidden py-4">
+        <div className="marquee-banner marquee-fast">
+          <div className="marquee-content">
+            <span className="text-sm font-black uppercase tracking-[0.3em] text-gray-600 flex items-center gap-8">
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Think Clearly</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Every Day</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Private</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Yours</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Think Clearly</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Every Day</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Private</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Yours</span>
+            </span>
+            <span className="text-sm font-black uppercase tracking-[0.3em] text-gray-600 flex items-center gap-8">
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Think Clearly</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Every Day</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Private</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Yours</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Think Clearly</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Every Day</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Private</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Yours</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
       {isConnected && (
         <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-6xl mx-auto px-10">
@@ -330,6 +358,48 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Second Scrolling Marquee - Reverse Direction */}
+      <div className="relative border-y border-white/[0.03] bg-black/30 overflow-hidden py-3">
+        <div className="marquee-banner marquee-slow marquee-reverse">
+          <div className="marquee-content">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-700 flex items-center gap-6">
+              <span>Journal</span>
+              <span className="text-purple-500">•</span>
+              <span>Research</span>
+              <span className="text-purple-500">•</span>
+              <span>Insights</span>
+              <span className="text-purple-500">•</span>
+              <span>Intelligence</span>
+              <span className="text-purple-500">•</span>
+              <span>Journal</span>
+              <span className="text-purple-500">•</span>
+              <span>Research</span>
+              <span className="text-purple-500">•</span>
+              <span>Insights</span>
+              <span className="text-purple-500">•</span>
+              <span>Intelligence</span>
+            </span>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-700 flex items-center gap-6">
+              <span>Journal</span>
+              <span className="text-purple-500">•</span>
+              <span>Research</span>
+              <span className="text-purple-500">•</span>
+              <span>Insights</span>
+              <span className="text-purple-500">•</span>
+              <span>Intelligence</span>
+              <span className="text-purple-500">•</span>
+              <span>Journal</span>
+              <span className="text-purple-500">•</span>
+              <span>Research</span>
+              <span className="text-purple-500">•</span>
+              <span>Insights</span>
+              <span className="text-purple-500">•</span>
+              <span>Intelligence</span>
+            </span>
+          </div>
+        </div>
+      </div>
 
       <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
         <div className="relative z-10 max-w-3xl mx-auto px-10">

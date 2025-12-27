@@ -134,6 +134,15 @@
     }
   }
 
+  @keyframes marquee-seamless-fast {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
   .marquee-banner {
     overflow: hidden;
     white-space: nowrap;
@@ -148,5 +157,17 @@
   .marquee-content span {
     display: inline-block;
     padding-right: 4rem;
+  }
+
+  .marquee-fast .marquee-content {
+    animation: marquee-seamless-fast 12s linear infinite;
+  }
+
+  .marquee-slow .marquee-content {
+    animation: marquee-seamless 30s linear infinite;
+  }
+
+  .marquee-reverse .marquee-content {
+    animation-direction: reverse;
   }
 }
