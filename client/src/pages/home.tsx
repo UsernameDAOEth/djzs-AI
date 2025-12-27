@@ -1,6 +1,6 @@
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { MessageSquare, Shield, Users, Zap, ArrowRight, Lock, Network, Sparkles } from "lucide-react";
+import { Shield, Users, Zap, ArrowRight, Lock, Network, FileText, TrendingUp, BarChart3, Calendar, Receipt, Newspaper, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 
@@ -192,13 +192,13 @@ export default function Home() {
           <div className="mb-8 space-y-4">
             <h1 className="text-6xl md:text-8xl font-black leading-tight">
               <span className="block">Pri<span className="text-purple-500">vate.</span></span>
-              <span className="block">On-<span className="text-purple-400">Chain.</span></span>
-              <span className="block"><span className="text-purple-600">Encrypted.</span></span>
+              <span className="block">Struc<span className="text-purple-400">tured.</span></span>
+              <span className="block"><span className="text-purple-600">Yours.</span></span>
             </h1>
           </div>
 
-          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
-            A zone-based system for private journaling, signals, predictions, and coordination — owned by your wallet.
+          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 leading-relaxed">
+            A zone-based system for private journaling, signals, predictions, and coordination — encrypted and owned by your wallet.
           </p>
 
           {isConnected ? (
@@ -206,7 +206,7 @@ export default function Home() {
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-10 py-7 text-lg font-semibold group"
-                data-testid="button-enter-chat"
+                data-testid="button-enter-zones"
               >
                 Enter Your Zones
                 <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
@@ -217,6 +217,8 @@ export default function Home() {
               <ConnectButton showBalance={false} />
             </div>
           )}
+
+          <p className="text-sm text-gray-500 mt-4">Your ENS is your identity. Your Zones compound over time.</p>
 
           {isConnected && (
             <div className="mt-12 border-t border-gray-700 pt-12">
@@ -233,8 +235,8 @@ export default function Home() {
           
           <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
             <StatCard label="Journal in Zones" value="Private notes, research, and reflections" />
-            <StatCard label="Signals & Predictions" value="Structured trade signals and markets" />
-            <StatCard label="Coordinate Securely" value="Events, payments, and receipts" />
+            <StatCard label="Signals & Predictions" value="Structured signals and prediction markets" />
+            <StatCard label="Coordinate Securely" value="Events, receipts, and coordination" />
           </div>
         </div>
       </section>
@@ -262,7 +264,7 @@ export default function Home() {
               <p className="text-xs text-gray-500 tracking-widest uppercase mb-3">DJZS SYSTEM</p>
               <h2 className="text-5xl font-black mb-4">Your Zones</h2>
               <p className="text-gray-400 text-lg max-w-2xl">
-                DJZS organizes everything you do into Zones — private, encrypted spaces that accumulate knowledge, decisions, and history over time.
+                DJZS organizes everything you do into Zones — private, encrypted spaces that accumulate knowledge, decisions, and history over time. Each Zone has structure, memory, and optional AI assistance.
               </p>
             </div>
 
@@ -278,11 +280,11 @@ export default function Home() {
             {/* Zones Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
               {[
-                { name: "User Zone", desc: "General coordination & updates" },
-                { name: "Trades", desc: "Trade ideas & execution notes" },
-                { name: "Predictions", desc: "Markets, votes, and outcomes" },
-                { name: "Events", desc: "Calls, launches, milestones" },
-                { name: "Payments", desc: "Payments, proofs, records" },
+                { name: "User Zone", desc: "General coordination, notes, and shared context" },
+                { name: "Signals", desc: "Structured trade ideas, execution notes, and outcomes" },
+                { name: "Predictions", desc: "Markets, votes, and resolved outcomes" },
+                { name: "Events", desc: "Calls, launches, milestones, and timelines" },
+                { name: "Receipts", desc: "Payments, proofs, and on-chain records" },
               ].map((zone) => (
                 <div
                   key={zone.name}
@@ -313,7 +315,7 @@ export default function Home() {
               >
                 Create New Entry
               </Button>
-              <p className="text-sm text-gray-500">Your Zone Agent will summarize activity automatically</p>
+              <p className="text-sm text-gray-500">Your Zone Agent summarizes activity and maintains Zone memory automatically.</p>
             </div>
           </div>
         </section>
@@ -338,41 +340,41 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              Built For <span className="text-purple-400">Privacy</span>
+              Built for <span className="text-purple-400">Privacy</span> by Design
             </h2>
-            <p className="text-gray-400 text-lg">End-to-end encryption meets Web3 identity</p>
+            <p className="text-gray-400 text-lg">End-to-end encryption meets Web3 identity and local-first thinking</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             <FeatureItem
               number="01"
-              title="E2E Encrypted"
-              description="Messages encrypted with XMTP. No one reads them except participants. Your secrets stay secrets."
+              title="End-to-End Encrypted"
+              description="All Zone entries are encrypted with XMTP. Only participants can read them — not servers, not platforms."
               icon={<Lock className="w-8 h-8 text-purple-400" />}
             />
             <FeatureItem
               number="02"
               title="ENS Identity"
-              description="Your ENS name is your username. No accounts, no passwords, no middlemen. Pure blockchain identity."
+              description="Your ENS name is your identity. No accounts, no passwords, no intermediaries. Pure blockchain identity."
               icon={<Users className="w-8 h-8 text-blue-400" />}
             />
             <FeatureItem
               number="03"
-              title="In-Chat Actions"
-              description="Trade signals, predictions, events, and payments. Everything happens inside the chat. No context switching."
-              icon={<Zap className="w-8 h-8 text-yellow-400" />}
+              title="Wallet-Owned Data"
+              description="Your data belongs to you. Zones are portable, exportable, and verifiable. No vendor lock-in."
+              icon={<Shield className="w-8 h-8 text-green-400" />}
             />
             <FeatureItem
               number="04"
-              title="Token Gated"
+              title="NFT or Allowlist Gated"
               description="Members-only access via NFT or allowlist. Your community, your rules, your complete control."
-              icon={<Network className="w-8 h-8 text-green-400" />}
+              icon={<Network className="w-8 h-8 text-yellow-400" />}
             />
           </div>
         </div>
       </section>
 
-      {/* Message Types Section */}
+      {/* Entry Types Section */}
       <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
         {/* Animated Background */}
         <div
@@ -390,39 +392,39 @@ export default function Home() {
         />
         <div className="relative z-10 max-w-7xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-16 text-center">
-            Structured <span className="text-purple-400">Messaging</span>
+            Structured <span className="text-purple-400">Zone Entries</span>
           </h2>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <MessageTypeCard
-              title="Trade Signals"
-              description="Post entry, TP levels, and invalidation with leverage indicators"
-              badge="📊"
+            <EntryTypeCard
+              title="Notes"
+              description="Private notes, research, and reflections — encrypted and searchable"
+              icon={<FileText className="w-6 h-6 text-gray-400" />}
             />
-            <MessageTypeCard
+            <EntryTypeCard
+              title="Signals"
+              description="Structured trade setups with entry, TP levels, and invalidation"
+              icon={<TrendingUp className="w-6 h-6 text-green-400" />}
+            />
+            <EntryTypeCard
               title="Predictions"
-              description="YES/NO voting with deadlines. Track the community's consensus"
-              badge="🎯"
+              description="YES/NO voting with deadlines. Track outcomes and resolution"
+              icon={<BarChart3 className="w-6 h-6 text-blue-400" />}
             />
-            <MessageTypeCard
+            <EntryTypeCard
               title="Events"
-              description="Coordinate meetups with RSVP tracking and calendar integration"
-              badge="📅"
+              description="Coordinate meetups, calls, and milestones with RSVP tracking"
+              icon={<Calendar className="w-6 h-6 text-orange-400" />}
             />
-            <MessageTypeCard
-              title="Payments"
-              description="Send ETH directly from chat with automatic receipt generation"
-              badge="💰"
+            <EntryTypeCard
+              title="Receipts"
+              description="On-chain payment confirmations with automatic verification"
+              icon={<Receipt className="w-6 h-6 text-emerald-400" />}
             />
-            <MessageTypeCard
-              title="Newsletter"
-              description="Share articles from Paragraph publications in real-time"
-              badge="📰"
-            />
-            <MessageTypeCard
-              title="Text Chat"
-              description="Traditional encrypted messages for anything else"
-              badge="💬"
+            <EntryTypeCard
+              title="Articles"
+              description="Share and discuss newsletter articles from Paragraph"
+              icon={<Newspaper className="w-6 h-6 text-indigo-400" />}
             />
           </div>
         </div>
@@ -462,29 +464,29 @@ export default function Home() {
         />
         <div className="relative z-10 max-w-5xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-16 text-center">
-            How It <span className="text-purple-400">Works</span>
+            How <span className="text-purple-400">DJZS</span> Works
           </h2>
 
           <div className="space-y-8">
             <StepCard
               step="1"
               title="Connect Your Wallet"
-              description="Link your Web3 wallet and resolve your ENS name. That's your identity."
+              description="Your wallet and ENS establish your identity across all Zones."
             />
             <StepCard
               step="2"
-              title="Join or Create a Room"
-              description="Access members-only chat rooms. Trade, predict, coordinate, and communicate."
+              title="Enter or Create Zones"
+              description="Zones are purpose-built spaces for journaling, signals, predictions, and coordination."
             />
             <StepCard
               step="3"
-              title="Chat End-to-End Encrypted"
-              description="All messages are encrypted with XMTP. Only you and recipients can read them."
+              title="Commit Structured Entries"
+              description="Notes, signals, predictions, events, and receipts are stored as structured Zone entries — not loose messages."
             />
             <StepCard
               step="4"
-              title="Compose Rich Messages"
-              description="Send text, trades, predictions, events, or payments. Everything is structured and verifiable."
+              title="Let the Zone Agent Assist"
+              description="Each Zone can summarize activity, extract action items, and maintain long-term memory."
             />
           </div>
         </div>
@@ -520,19 +522,19 @@ export default function Home() {
         />
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-black mb-8">
-            Ready to Experience <span className="text-purple-400">Private</span> Communication?
+            Ready to Enter <span className="text-purple-400">Your Zones</span>?
           </h2>
           <p className="text-gray-400 text-lg mb-12">
-            Join a growing community of privacy-first Web3 builders and traders.
+            Join a growing network of traders, builders, researchers, and DAOs using DJZS as their private operating system.
           </p>
           {isConnected ? (
             <Link href="/chat">
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-10 py-7 text-lg font-semibold"
-                data-testid="button-cta-chat"
+                data-testid="button-cta-zones"
               >
-                Enter Chat Now
+                Enter Your Zones Now
               </Button>
             </Link>
           ) : (
@@ -558,7 +560,7 @@ export default function Home() {
           }}
         />
         <div className="relative z-10 max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <p className="text-gray-500 text-sm">© 2025 DJZS Chat. Powered by XMTP. Built on Base.</p>
+          <p className="text-gray-500 text-sm">© 2025 DJZS. Powered by XMTP. Built on Base.</p>
           <div className="flex items-center gap-6 text-sm text-gray-500">
             <a href="#" className="hover:text-purple-400 transition-colors">Privacy</a>
             <a href="#" className="hover:text-purple-400 transition-colors">Terms</a>
@@ -575,26 +577,16 @@ function FeatureItem({ number, title, description, icon }: { number: string; tit
     <div className="group p-8 rounded-2xl border border-gray-800 hover:border-purple-600/50 transition-all hover:bg-purple-950/10">
       <div className="flex items-start gap-6">
         <div className="flex-shrink-0">
-          <span className="text-4xl font-black text-purple-600/40 group-hover:text-purple-500/60 transition-colors">{number}</span>
+          <div className="text-3xl font-black text-purple-500">{number}</div>
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-3">
             {icon}
-            <h3 className="text-xl font-bold text-white">{title}</h3>
+            <h3 className="text-xl font-bold">{title}</h3>
           </div>
-          <p className="text-gray-400 leading-relaxed">{description}</p>
+          <p className="text-gray-400">{description}</p>
         </div>
       </div>
-    </div>
-  );
-}
-
-function MessageTypeCard({ title, description, badge }: { title: string; description: string; badge: string }) {
-  return (
-    <div className="p-6 rounded-xl border border-gray-800 hover:border-purple-600/50 hover:bg-purple-950/10 transition-all group cursor-pointer">
-      <div className="text-4xl mb-4">{badge}</div>
-      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">{title}</h3>
-      <p className="text-gray-400 text-sm">{description}</p>
     </div>
   );
 }
@@ -603,13 +595,13 @@ function StepCard({ step, title, description }: { step: string; title: string; d
   return (
     <div className="flex gap-6 items-start">
       <div className="flex-shrink-0">
-        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 font-black text-white text-xl">
+        <div className="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-xl font-bold">
           {step}
         </div>
       </div>
-      <div className="flex-1 pt-2">
-        <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
-        <p className="text-gray-400 text-lg">{description}</p>
+      <div className="pt-2">
+        <h3 className="text-xl font-bold mb-2">{title}</h3>
+        <p className="text-gray-400">{description}</p>
       </div>
     </div>
   );
@@ -617,9 +609,23 @@ function StepCard({ step, title, description }: { step: string; title: string; d
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="p-6 rounded-xl border border-gray-800 bg-gray-900/50">
-      <div className="text-3xl font-black text-purple-400 mb-2">{value}</div>
-      <p className="text-gray-400 text-sm font-semibold">{label}</p>
+    <div className="p-6 rounded-xl border border-gray-800 bg-gray-900/30 text-center hover:border-purple-600/30 transition-colors">
+      <div className="text-purple-400 font-semibold text-lg mb-2">{label}</div>
+      <div className="text-gray-400 text-sm">{value}</div>
+    </div>
+  );
+}
+
+function EntryTypeCard({ title, description, icon }: { title: string; description: string; icon: React.ReactNode }) {
+  return (
+    <div className="p-6 rounded-xl border border-gray-800 bg-gray-900/30 hover:border-purple-600/30 transition-all group">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-purple-600/20 transition-colors">
+          {icon}
+        </div>
+        <h3 className="font-bold text-lg">{title}</h3>
+      </div>
+      <p className="text-gray-400 text-sm">{description}</p>
     </div>
   );
 }
