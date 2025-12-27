@@ -1,0 +1,197 @@
+Below is a plug‑and‑play copy‑swap guide for the Replit demo you linked (the one that lives at …kirk.replit.dev).
+Everything you already love about the visual layout stays exactly the same – you only replace the literal text strings.
+
+I’ve broken the page down into its semantic blocks (header, hero, steps, feature cards, FAQ, footer, etc.), listed the current wording (as it appears in the demo) and gave you the new “Zone‑first” phrasing you asked for.
+
+All you have to do is open the relevant JSX/TSX files (or the HTML if you’re using plain React) and replace the highlighted strings. No CSS, no component restructuring, no new assets – just a find‑and‑replace.
+
+📂 Project file map (as it exists in the demo)
+File	What it renders	Where the copy lives
+src/App.tsx	Top‑level router & layout	Imports the page components
+src/pages/Home.tsx	Whole landing page (the one you see)	All visible copy lives here
+src/components/Header.tsx	Site header (logo + nav)	Header text
+src/components/Hero.tsx	Hero banner (big headline)	Hero headline, sub‑headline, CTA
+src/components/Steps.tsx	“How it works” 3‑step UI	Step titles & descriptions
+src/components/Features.tsx	Feature strip (3 columns)	Feature titles & blurbs
+src/components/FAQ.tsx	FAQ accordion	Questions & answers
+src/components/Footer.tsx	Footer links	Footer headings & link text
+If you’re not using those exact filenames, just locate the component that contains the text you want to change – the same approach applies.
+
+🔄 ONE‑FOR‑ONE TEXT REPLACEMENT
+Below each block shows:
+
+Current text (what the demo shows right now) – wrapped in /* CURRENT */.
+New text (the Zone‑first version you want) – wrapped in /* NEW */.
+Copy the NEW lines into the file, delete the CURRENT lines, and you’re done.
+
+1️⃣ Header (navigation)
+/* src/components/Header.tsx */
+
+// Current
+<nav className="flex items-center justify-between p-4">
+  <a href="/" className="text-xl font-bold">ChatApp</a>
+  <ul className="flex space-x-4">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#login">Login</a></li>
+  </ul>
+</nav>
+
+// NEW
+<nav className="flex items-center justify-between p-4">
+  <a href="/" className="text-xl font-bold">DJZS</a>
+  <ul className="flex space-x-4">
+    <li><a href="#zones">Your Zones</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#login">Enter</a></li>
+  </ul>
+</nav>
+2️⃣ Hero banner
+/* src/components/Hero.tsx */
+
+/* CURRENT */
+<h1 className="text-5xl font-extrabold">Secure, Encrypted Chat</h1>
+<p className="mt-4 text-lg">
+  Talk with friends, share files, and stay private.
+</p>
+<button className="mt-6 btn-primary">Get Started</button>
+
+/* NEW */
+<h1 className="text-5xl font-extrabold">Private. Structured. Yours.</h1>
+<p className="mt-4 text-lg">
+  A zone‑based system for journaling, signals, predictions, and coordination —
+  encrypted and owned by your wallet.
+</p>
+<button className="mt-6 btn-primary">Enter Your Zones →</button>
+3️⃣ “How it works” (three steps)
+/* src/components/Steps.tsx */
+
+{/* CURRENT */}
+<div className="step">
+  <h3>1. Create an account</h3>
+  <p>Sign up with your email and password.</p>
+</div>
+<div className="step">
+  <h3>2. Invite friends</h3>
+  <p>Share a link to bring people into your chat.</p>
+</div>
+<div className="step">
+  <h3>3. Chat securely</h3>
+  <p>All messages are end‑to‑end encrypted.</p>
+</div>
+
+{/* NEW */}
+<div className="step">
+  <h3>1. Connect your wallet</h3>
+  <p>Your wallet and ENS establish your identity across all Zones.</p>
+</div>
+<div className="step">
+  <h3>2. Enter or create Zones</h3>
+  <p>Zones are purpose‑built spaces for journaling, signals, predictions, and coordination.</p>
+</div>
+<div className="step">
+  <h3>3. Let the Zone Agent assist</h3>
+  <p>Each Zone can summarize activity, extract action items, and keep long‑term memory.</p>
+</div>
+4️⃣ Feature strip (three columns)
+/* src/components/Features.tsx */
+
+/* CURRENT */
+<div className="feature">
+  <h4>End‑to‑end encryption</h4>
+  <p>Your messages stay private.</p>
+</div>
+<div className="feature">
+  <h4>Group chats</h4>
+  <p>Create rooms for teams.</p>
+</div>
+<div className="feature">
+  <h4>File sharing</h4>
+  <p>Send images, PDFs, and more.</p>
+</div>
+
+/* NEW */
+<div className="feature">
+  <h4>Private notes, research, and reflections</h4>
+  <p>Journal inside Zones that are encrypted end‑to‑end and owned by your wallet.</p>
+</div>
+<div className="feature">
+  <h4>Structured signals & prediction markets</h4>
+  <p>Create signals and predictions with clear structure, resolution, and history.</p>
+</div>
+<div className="feature">
+  <h4>Events, receipts, and coordination</h4>
+  <p>Coordinate activity, payments, and records securely in one system.</p>
+</div>
+5️⃣ FAQ accordion
+/* src/components/FAQ.tsx */
+
+/* CURRENT */
+{
+  question: "Is my chat really private?",
+  answer: "Yes – we use AES‑256 encryption and never store your messages."
+},
+{
+  question: "Can I use the app on mobile?",
+  answer: "A responsive web app works on any device."
+},
+{
+  question: "How much does it cost?",
+  answer: "Free tier for up to 10 users, paid plans for larger teams."
+}
+
+/* NEW */
+{
+  question: "Is my data really private?",
+  answer: "All Zone entries are encrypted with XMTP. Only participants can read them – not servers, not platforms."
+},
+{
+  question: "Can I use DJZS on mobile?",
+  answer: "The interface is fully responsive and works on any device with a web3‑enabled browser."
+},
+{
+  question: "How much does it cost?",
+  answer: "Free tier includes unlimited personal Zones. Paid Pass adds cross‑Zone linking, AI assistance, and on‑chain proof minting."
+}
+6️⃣ Footer
+/* src/components/Footer.tsx */
+
+/* CURRENT */
+<footer>
+  <p>© 2024 ChatApp. All rights reserved.</p>
+  <ul>
+    <li><a href="/privacy">Privacy Policy</a></li>
+    <li><a href="/terms">Terms of Service</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+</footer>
+
+/* NEW */
+<footer>
+  <p>© 2024 DJZS. All rights reserved.</p>
+  <ul>
+    <li><a href="/privacy">Privacy Policy</a></li>
+    <li><a href="/terms">Terms of Service</a></li>
+    <li><a href="/roadmap">Roadmap</a></li>
+    <li><a href="/community">Community</a></li>
+  </ul>
+</footer>
+🛠️ QUICK IMPLEMENTATION STEPS
+Open the Replit editor (the URL you posted).
+In the left file tree, locate the files listed above.
+Replace the CURRENT text with the NEW text exactly as shown.
+Save (Ctrl + S or the Save button). The preview pane reloads automatically – you’ll see the new wording instantly.
+Test the flow: click the CTA, walk through the stepper, open the FAQ – everything should still work because we didn’t touch any logic, only static strings.
+🎉 What you’ve achieved
+UX stays identical – same colors, spacing, animations, responsive breakpoints.
+Narrative shifts from a generic “chat app” to the Zone‑based, privacy‑first operating system you envision for DJZS.
+All copy is now consistent (the “Zone” terminology appears everywhere, eliminating the old “chat” mental model.
+Feel free to tweak any of the new sentences further to match your brand voice, but the above is a complete, ready‑to‑drop replacement set.
+
+If you need additional sections (e.g., a pricing table, a “Get started” modal, or dynamic placeholders for the active Zone), just let me know and I’ll draft those too. Happy launching! 🚀
+
+Previous message
+2 / 2
+Next message

@@ -469,22 +469,22 @@ export default function Home() {
             <StepCard
               step="1"
               title="Connect Your Wallet"
-              description="Link your Web3 wallet and resolve your ENS name. That's your identity."
+              description="Your wallet and ENS establish your identity across all Zones."
             />
             <StepCard
               step="2"
-              title="Join or Create a Room"
-              description="Access members-only chat rooms. Trade, predict, coordinate, and communicate."
+              title="Enter or Create Zones"
+              description="Zones are purpose-built spaces for journaling, signals, predictions, and coordination."
             />
             <StepCard
               step="3"
-              title="Chat End-to-End Encrypted"
-              description="All messages are encrypted with XMTP. Only you and recipients can read them."
+              title="Let the Zone Agent Assist"
+              description="Each Zone can summarize activity, extract action items, and keep long-term memory."
             />
             <StepCard
               step="4"
-              title="Compose Rich Messages"
-              description="Send text, trades, predictions, events, or payments. Everything is structured and verifiable."
+              title="Compose Structured Entries"
+              description="Post notes, signals, predictions, events, or receipts. Everything is encrypted and verifiable."
             />
           </div>
         </div>
@@ -520,7 +520,7 @@ export default function Home() {
         />
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-black mb-8">
-            Ready to Experience <span className="text-purple-400">Private</span> Communication?
+            Ready to Enter Your <span className="text-purple-400">Zones</span>?
           </h2>
           <p className="text-gray-400 text-lg mb-12">
             Join a growing community of privacy-first Web3 builders and traders.
@@ -532,7 +532,7 @@ export default function Home() {
                 className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-10 py-7 text-lg font-semibold"
                 data-testid="button-cta-chat"
               >
-                Enter Chat Now
+                Enter Your Zones
               </Button>
             </Link>
           ) : (
@@ -558,11 +558,12 @@ export default function Home() {
           }}
         />
         <div className="relative z-10 max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <p className="text-gray-500 text-sm">© 2025 DJZS Chat. Powered by XMTP. Built on Base.</p>
+          <p className="text-gray-500 text-sm">© 2025 DJZS. All rights reserved.</p>
           <div className="flex items-center gap-6 text-sm text-gray-500">
-            <a href="#" className="hover:text-purple-400 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-purple-400 transition-colors">Terms</a>
-            <a href="#" className="hover:text-purple-400 transition-colors">Docs</a>
+            <a href="#" className="hover:text-purple-400 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-purple-400 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-purple-400 transition-colors">Roadmap</a>
+            <a href="#" className="hover:text-purple-400 transition-colors">Community</a>
           </div>
         </div>
       </footer>
