@@ -92,7 +92,7 @@ function NoteCard({ message, ensNames }: { message: TextMessage; ensNames?: Reco
   const displayName = ensNames?.[message.authorAddress] || formatAddress(message.authorAddress);
   
   return (
-    <div className="bg-gray-900/80 rounded-xl border border-gray-800 p-4 my-2 hover:border-gray-700 transition-colors">
+    <div className="zone-card bg-gray-900/80 rounded-xl border border-gray-800 p-4 my-2 hover:border-gray-700">
       <CardHeader 
         type="note"
         typeLabel="Note"
@@ -111,7 +111,7 @@ function SignalCard({ message, ensNames }: { message: TradeSignalCard; ensNames?
   const isLong = message.direction === "long";
   
   return (
-    <div className={`bg-gray-900/80 rounded-xl border p-4 my-2 ${isLong ? 'border-green-600/30' : 'border-red-600/30'}`}>
+    <div className={`zone-card bg-gray-900/80 rounded-xl border p-4 my-2 ${isLong ? 'border-green-600/30 hover:border-green-500/50' : 'border-red-600/30 hover:border-red-500/50'}`}>
       <CardHeader 
         type="signal"
         typeLabel="Signal"
@@ -176,7 +176,7 @@ function PredictionCardComponent({ message, ensNames }: { message: PredictionCar
   const isEnded = endsAt < new Date();
   
   return (
-    <div className="bg-gray-900/80 rounded-xl border border-blue-600/30 p-4 my-2">
+    <div className="zone-card bg-gray-900/80 rounded-xl border border-blue-600/30 hover:border-blue-500/50 p-4 my-2">
       <CardHeader 
         type="prediction"
         typeLabel="Prediction"
@@ -227,7 +227,7 @@ function EventCardComponent({ message, ensNames }: { message: EventCard; ensName
   const isPast = startsAt < new Date();
   
   return (
-    <div className="bg-gray-900/80 rounded-xl border border-orange-600/30 p-4 my-2">
+    <div className="zone-card bg-gray-900/80 rounded-xl border border-orange-600/30 hover:border-orange-500/50 p-4 my-2">
       <CardHeader 
         type="event"
         typeLabel="Event"
@@ -284,7 +284,7 @@ function ReceiptCard({ message, ensNames }: { message: PaymentReceiptCard; ensNa
   const toName = ensNames?.[message.to] || formatAddress(message.to);
   
   return (
-    <div className="bg-gray-900/80 rounded-xl border border-emerald-600/30 p-4 my-2">
+    <div className="zone-card bg-gray-900/80 rounded-xl border border-emerald-600/30 hover:border-emerald-500/50 p-4 my-2">
       <CardHeader 
         type="receipt"
         typeLabel="Receipt"
@@ -359,7 +359,7 @@ function ArticleCard({ message, ensNames }: { message: NewsletterArticle; ensNam
   const articleUrl = `https://paragraph.com/${pubSlug}/${message.slug}`;
   
   return (
-    <div className="bg-gray-900/80 rounded-xl border border-indigo-600/30 p-4 my-2 overflow-hidden" data-testid={`card-article-${message.id}`}>
+    <div className="zone-card bg-gray-900/80 rounded-xl border border-indigo-600/30 hover:border-indigo-500/50 p-4 my-2 overflow-hidden" data-testid={`card-article-${message.id}`}>
       <CardHeader 
         type="article"
         typeLabel="Article"

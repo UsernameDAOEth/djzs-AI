@@ -149,4 +149,108 @@
     display: inline-block;
     padding-right: 4rem;
   }
+
+  /* Zone Card Improvements */
+  .zone-card {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  .zone-card:hover {
+    @apply transform -translate-y-0.5;
+    box-shadow: 0 8px 25px -5px rgba(168, 85, 247, 0.15);
+  }
+
+  /* Skeleton Loading Animation */
+  @keyframes skeleton-shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 25%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.04) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
+
+  /* Smooth Fade In */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.3s ease-out forwards;
+  }
+
+  /* Staggered children animation */
+  .stagger-children > * {
+    opacity: 0;
+    animation: fade-in-up 0.3s ease-out forwards;
+  }
+
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+
+  /* Focus visible improvements */
+  .focus-ring:focus-visible {
+    @apply outline-none ring-2 ring-purple-500 ring-offset-2 ring-offset-gray-950;
+  }
+
+  /* Improved scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(168, 85, 247, 0.3);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.5);
+  }
+
+  /* Action Dock Tab Indicator */
+  .tab-indicator {
+    @apply relative;
+  }
+
+  .tab-indicator::after {
+    content: '';
+    @apply absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-purple-500 transition-all duration-200;
+  }
+
+  .tab-indicator[data-state="active"]::after {
+    @apply w-full;
+  }
+
+  /* Mobile bottom nav */
+  @media (max-width: 768px) {
+    .mobile-nav-item {
+      @apply flex flex-col items-center gap-1 py-2 px-4;
+    }
+  }
 }

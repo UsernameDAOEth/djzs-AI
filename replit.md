@@ -204,6 +204,14 @@ shared/
 
 ## Recent Changes
 
+- **Dec 27, 2024**: UX Polish and Productivity Features
+  - Added skeleton loading states for Zone Feed (replaces spinner)
+  - Added staggered fade-in animations for Zone entries
+  - Implemented contextual toast messages with type-specific emojis (📝📊🎯📅✅📰)
+  - Added keyboard shortcuts: 1-5 for zones, m for memory drawer, n/s/p for entry types
+  - Added keyboard shortcut hints to sidebar (visible on hover)
+  - Zone cards now have consistent hover effects with type-specific border colors
+  - Renamed zones for consistency: "Trades"→"Signals", "Payments"→"Receipts"
 - **Dec 27, 2024**: Comprehensive Zone-centric UI overhaul
   - Updated landing page with Zone-first terminology: "Private. Structured. Yours."
   - Renamed all UI elements: Rooms→Zones, Messages→Zone Feed, Composer→Zone Actions
