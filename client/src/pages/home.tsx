@@ -350,8 +350,50 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="relative border-t border-white/[0.03] bg-[#050505] py-20 px-10 overflow-hidden">
-        <div className="relative z-10 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
+      <footer className="relative border-t border-white/[0.03] bg-[#050505] pt-0 pb-20 overflow-hidden">
+        {/* Footer Marquee Banner */}
+        <div
+          style={{
+            position: "relative",
+            zIndex: 2,
+            width: "100%",
+            overflow: "hidden",
+            padding: "40px 0",
+            borderBottom: "1px solid rgba(255,255,255,0.03)",
+            marginBottom: "60px"
+          }}
+        >
+          <div className="marquee-banner" style={{ width: "100%" }}>
+            <div className="marquee-content">
+              <span
+                style={{
+                  fontSize: "clamp(32px, 5vw, 80px)",
+                  fontWeight: 900,
+                  lineHeight: 1,
+                  color: "rgba(255,255,255,0.15)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                DECENTRALIZED JOURNALING ZONE SYSTEM &nbsp; • &nbsp;
+              </span>
+              <span
+                style={{
+                  fontSize: "clamp(32px, 5vw, 80px)",
+                  fontWeight: 900,
+                  lineHeight: 1,
+                  color: "rgba(255,255,255,0.15)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                DECENTRALIZED JOURNALING ZONE SYSTEM &nbsp; • &nbsp;
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-10 flex flex-col md:flex-row items-center justify-between gap-10">
           <div>
             <h2 className="text-2xl font-black text-white tracking-widest mb-2 uppercase">DJZS</h2>
             <p className="text-gray-600 text-sm font-medium uppercase tracking-widest">Decentralized Journaling Zone System</p>
