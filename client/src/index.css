@@ -116,33 +116,56 @@
     );
   }
 
+  /* ===== Marquee ===== */
+  .marquee {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(8px);
+  }
+
+  .marquee__track {
+    display: flex;
+    gap: 48px;
+    width: max-content;
+    animation: marquee 26s linear infinite;
+    padding: 14px 0;
+    will-change: transform;
+  }
+
+  .marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    white-space: nowrap;
+  }
+
+  .marquee__dash {
+    width: 44px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(168,85,247,0.8);
+    box-shadow: 0 0 20px rgba(168,85,247,0.15);
+  }
+
   @keyframes marquee {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
 
-  @keyframes marquee-seamless {
-    0% {
-      transform: translateX(0%);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track { animation: none; transform: translateX(0); }
   }
 
-  @keyframes marquee-seamless-fast {
-    0% {
-      transform: translateX(0%);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
-  }
-
+  /* Legacy marquee styles */
   .marquee-banner {
     overflow: hidden;
     white-space: nowrap;
@@ -154,13 +177,18 @@
     animation: marquee-seamless 20s linear infinite;
   }
 
+  @keyframes marquee-seamless {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+
   .marquee-content span {
     display: inline-block;
     padding-right: 4rem;
   }
 
   .marquee-fast .marquee-content {
-    animation: marquee-seamless-fast 12s linear infinite;
+    animation: marquee-seamless 12s linear infinite;
   }
 
   .marquee-slow .marquee-content {
