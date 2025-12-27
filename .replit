@@ -42,3 +42,4 @@ waitForPort = 5000
 
 [userenv.production]
 REPLIT_KEEP_DEV_DEPENDENCIES = "1"
+REPLIT_SKIP_PACKAGE_CACHE = "1"
