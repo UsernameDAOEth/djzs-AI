@@ -1,0 +1,58 @@
+Copy-paste this into Replit (or your dev chat) as one prompt:
+
+⸻
+
+PROMPT: DJZS Chat UX Upgrade (Zones OS)
+
+I’m building a React + Vite frontend with an Express backend. I have a chat UI like a Discord clone, but it must feel like a DJZS Zone Operating System (not “rooms + messages”). Update the UI/wording and add the key UX components below while keeping the existing structure.
+
+Core renames (everywhere)
+	•	“Rooms” → Zones
+	•	“Messages” → Zone Feed
+	•	“Composer” → Zone Actions
+	•	“Text” → Note
+	•	“Trade” → Signal
+	•	“Pay/Payments” → Receipt
+	•	“Send” → Commit
+	•	“No messages yet” → No entries yet
+
+1) Replace the empty state in the center feed
+
+Replace “No messages yet…” with a Zone Onboarding Card:
+	•	Title: “Welcome to the {ZoneName}”
+	•	Description: “This Zone is a private, encrypted workspace for coordination, notes, and shared context. Everything committed here becomes part of this Zone’s long-term memory.”
+	•	Action buttons (horizontal): Create Note, Create Signal, Start Prediction, Schedule Event
+	•	Footer microcopy: “The Zone Agent will summarize activity automatically once entries exist.”
+
+2) Add a sticky Zone Header bar above the feed
+
+At the top of the center panel (sticky):
+	•	Left: Zone name + short purpose line
+	•	Status pills: Encrypted, Gated, Verified, Zone Agent Active
+	•	Right buttons: Search, Export
+	•	Keep it minimal, glassy, and consistent with the current dark theme.
+
+3) Upgrade the bottom composer into a true “Zone Actions” dock
+	•	Rename the tabs to: Note / Signal / Prediction / Event / Receipt / Article
+	•	Add a one-line helper text above the input that changes based on selected action:
+	•	Note: “Commit a private note to this Zone”
+	•	Signal: “Create a structured signal with entry/targets/stop”
+	•	Prediction: “Start a prediction with a clear outcome and resolution”
+	•	Event: “Schedule or log a milestone”
+	•	Receipt: “Record a payment or proof”
+	•	Change the send icon tooltip/label to “Commit to Zone”
+	•	On submit show a toast: “Entry committed to {ZoneName}”
+
+4) Sidebar improvements
+	•	Keep the Zone list, but make Zones feel active:
+	•	Optional: unread badge / activity dot
+	•	Optional: small counts (e.g., active predictions/signals)
+
+Output required
+	•	Give me the exact code changes (copy-paste ready).
+	•	If you need new files, create them under src/components/ (e.g., ZoneHeaderBar.tsx, ZoneEmptyState.tsx).
+	•	Update my chat page to use these components.
+	•	Don’t change routing libraries or backend APIs.
+	•	Keep styling inline or Tailwind (match my existing approach).
+
+⸻

@@ -31,10 +31,10 @@ import {
   Sparkles,
   Receipt,
   Bell,
-  User,
-  ChevronRight,
   X,
-  Info
+  Info,
+  CheckCircle,
+  ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -198,8 +198,8 @@ export default function Chat() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/messages", selectedZone] });
       toast({
-        title: "Committed to Zone",
-        description: "Your entry has been added to the Zone Feed",
+        title: "Entry committed",
+        description: `Your entry has been committed to ${currentZone?.name}`,
       });
     },
     onError: () => {
@@ -399,14 +399,15 @@ export default function Chat() {
     sendMessage.mutate(message);
   };
 
-  const getEmptyStateAction = () => {
-    switch (selectedZone) {
-      case "lounge": return { action: "Post a Note", desc: "Share your first update with the community" };
-      case "trades": return { action: "Create a Signal", desc: "Post your first trade setup" };
-      case "predictions": return { action: "Make a Prediction", desc: "Start a new prediction market" };
-      case "events": return { action: "Schedule an Event", desc: "Create your first community event" };
-      case "payments": return { action: "Send a Payment", desc: "Make your first on-chain payment" };
-      default: return { action: "Post a Note", desc: "Be the first to contribute" };
+  const getComposerHelper = () => {
+    switch (composerTab) {
+      case "note": return "Commit a private note to this Zone";
+      case "signal": return "Create a structured signal with entry/targets/stop";
+      case "prediction": return "Start a prediction with a clear outcome and resolution";
+      case "event": return "Schedule or log a milestone";
+      case "receipt": return "Record a payment or proof";
+      case "article": return "Share a newsletter article from Paragraph";
+      default: return "";
     }
   };
 
@@ -415,9 +416,9 @@ export default function Chat() {
 
   return (
     <TooltipProvider>
-      <div className="h-screen bg-gray-950 flex">
+      <div className="h-screen bg-gray-950 flex overflow-hidden">
         {/* Left Sidebar - Zones + System */}
-        <aside className="w-64 border-r border-gray-800 flex flex-col">
+        <aside className="w-64 border-r border-gray-800 flex flex-col bg-black/40">
           <Link href="/">
             <div className="p-4 border-b border-gray-800 cursor-pointer hover:bg-gray-900/50 transition-colors">
               <p className="text-[10px] text-gray-500 tracking-widest uppercase mb-1">DJZS - BETA</p>
@@ -601,7 +602,7 @@ export default function Chat() {
           </ScrollArea>
 
           {/* Bottom: User + Connect */}
-          <div className="p-4 border-t border-gray-800 space-y-3">
+          <div className="p-4 border-t border-gray-800 space-y-3 bg-black/60">
             <div className="flex items-center gap-3 px-1">
               <div className="w-8 h-8 rounded-full bg-purple-600/30 flex items-center justify-center text-sm text-purple-400">
                 {displayName.charAt(0).toUpperCase()}
@@ -635,60 +636,64 @@ export default function Chat() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col">
+        <main className="flex-1 flex flex-col bg-black/20">
           {/* Zone Header Bar */}
-          <header className="h-12 border-b border-gray-800 flex items-center justify-between px-4 bg-gray-900/50 sticky top-0 z-10">
-            <div className="flex items-center gap-3">
+          <header className="h-14 border-b border-gray-800 flex items-center justify-between px-4 bg-gray-900/60 backdrop-blur-md sticky top-0 z-20">
+            <div className="flex items-center gap-4">
               <Link href="/">
-                <button className="p-1.5 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-white" data-testid="button-home" title="Back to home">
-                  <Home className="w-4 h-4" />
+                <button className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-white" data-testid="button-home" title="Back to home">
+                  <Home className="w-4.5 h-4.5" />
                 </button>
               </Link>
-              {currentZone && (
-                <div className="w-7 h-7 rounded-md bg-purple-600/30 flex items-center justify-center">
-                  <currentZone.icon className="w-4 h-4 text-purple-400" />
-                </div>
-              )}
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-white font-semibold text-sm">{currentZone?.name}</h2>
-                  <span className="text-[10px] text-gray-500">•</span>
-                  <span className="text-xs text-gray-500">{currentZone?.purpose}</span>
+              <div className="flex items-center gap-3">
+                {currentZone && (
+                  <div className="w-8 h-8 rounded-lg bg-purple-600/30 flex items-center justify-center">
+                    <currentZone.icon className="w-4.5 h-4.5 text-purple-400" />
+                  </div>
+                )}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-white font-bold text-base tracking-tight">{currentZone?.name}</h2>
+                    <span className="text-xs text-gray-600">/</span>
+                    <span className="text-xs text-gray-400 font-medium">{currentZone?.purpose}</span>
+                  </div>
                 </div>
               </div>
             </div>
             
             {/* Status indicators */}
-            <div className="flex items-center gap-3">
-              {xmtpClient && (
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-green-500/10 border border-green-500/20">
-                  <Lock className="w-3 h-3 text-green-400" />
-                  <span className="text-[10px] text-green-400 font-medium">Encrypted</span>
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-black/40 border border-gray-800 shadow-sm">
+                <div className="flex items-center gap-1.5 border-r border-gray-800 pr-2.5">
+                  <div className={`w-1.5 h-1.5 rounded-full ${xmtpClient ? 'bg-green-500 animate-pulse' : 'bg-gray-600'}`}></div>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider ${xmtpClient ? 'text-green-500' : 'text-gray-500'}`}>
+                    {xmtpClient ? 'Encrypted' : 'Standard'}
+                  </span>
                 </div>
-              )}
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-purple-500/10 border border-purple-500/20">
-                <Shield className="w-3 h-3 text-purple-400" />
-                <span className="text-[10px] text-purple-400 font-medium">Gated</span>
-              </div>
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20">
-                <Bot className="w-3 h-3 text-blue-400" />
-                <span className="text-[10px] text-blue-400 font-medium">Agent Active</span>
+                <div className="flex items-center gap-1.5 border-r border-gray-800 pr-2.5 pl-1">
+                  <Shield className="w-3 h-3 text-purple-500" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-purple-500">Gated</span>
+                </div>
+                <div className="flex items-center gap-1.5 pl-1">
+                  <Bot className="w-3 h-3 text-blue-500" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-500">Agent Active</span>
+                </div>
               </div>
               
               {/* Quick Actions */}
-              <div className="flex items-center gap-1 ml-2 border-l border-gray-700 pl-3">
+              <div className="flex items-center gap-1 ml-1">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="p-1.5 hover:bg-gray-800 rounded-md text-gray-500 hover:text-white transition-colors">
-                      <Pin className="w-4 h-4" />
+                    <button className="p-2 hover:bg-gray-800 rounded-lg text-gray-500 hover:text-white transition-colors">
+                      <Search className="w-4.5 h-4.5" />
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent>Pin item</TooltipContent>
+                  <TooltipContent>Search entries</TooltipContent>
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="p-1.5 hover:bg-gray-800 rounded-md text-gray-500 hover:text-white transition-colors">
-                      <Download className="w-4 h-4" />
+                    <button className="p-2 hover:bg-gray-800 rounded-lg text-gray-500 hover:text-white transition-colors">
+                      <Download className="w-4.5 h-4.5" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>Export Zone</TooltipContent>
@@ -696,10 +701,10 @@ export default function Chat() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button 
-                      className="p-1.5 hover:bg-gray-800 rounded-md text-gray-500 hover:text-white transition-colors"
+                      className={`p-2 rounded-lg transition-colors ${memoryDrawerOpen ? 'bg-purple-600/20 text-purple-400' : 'text-gray-500 hover:text-white hover:bg-gray-800'}`}
                       onClick={() => setMemoryDrawerOpen(!memoryDrawerOpen)}
                     >
-                      <Search className="w-4 h-4" />
+                      <Info className="w-4.5 h-4.5" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>Zone Memory</TooltipContent>
@@ -709,35 +714,76 @@ export default function Chat() {
           </header>
 
           {/* Zone Feed Label */}
-          <div className="px-4 py-2 border-b border-gray-800/50 bg-gray-900/20">
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Zone Feed</p>
+          <div className="px-4 py-2 border-b border-gray-800/40 bg-black/20 flex items-center justify-between">
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Zone Feed</p>
+            <div className="flex items-center gap-4 text-[10px] text-gray-600 font-medium">
+              <span>{messages.length} Entries</span>
+              <span className="w-1 h-1 rounded-full bg-gray-800"></span>
+              <span>Live Updates Active</span>
+            </div>
           </div>
 
           {/* Messages Area */}
-          <ScrollArea className="flex-1 px-4 py-3">
+          <ScrollArea className="flex-1 px-4 py-6">
             {messagesLoading ? (
               <div className="flex items-center justify-center h-full text-gray-500">
                 <Loader2 className="w-8 h-8 animate-spin" />
               </div>
             ) : messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
-                <div className="text-center max-w-sm">
-                  <div className="w-16 h-16 rounded-2xl bg-purple-600/20 flex items-center justify-center mx-auto mb-4">
-                    {currentZone && <currentZone.icon className="w-8 h-8 text-purple-400" />}
+                <div className="text-center max-w-lg p-10 rounded-3xl bg-gray-900/40 border border-gray-800/50 backdrop-blur-sm">
+                  <div className="w-20 h-20 rounded-3xl bg-purple-600/20 flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                    {currentZone && <currentZone.icon className="w-10 h-10 text-purple-400" />}
                   </div>
-                  <h3 className="text-white font-semibold mb-2">No entries yet</h3>
-                  <p className="text-gray-500 text-sm mb-4">{getEmptyStateAction().desc}</p>
-                  <Button 
-                    className="bg-purple-600 hover:bg-purple-700"
-                    onClick={() => setComposerTab("note")}
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    {getEmptyStateAction().action}
-                  </Button>
+                  <h3 className="text-2xl font-black text-white mb-3 tracking-tight">Welcome to the {currentZone?.name}</h3>
+                  <p className="text-gray-400 text-base mb-8 leading-relaxed">
+                    This Zone is a private, encrypted workspace for coordination, notes, and shared context. 
+                    Everything committed here becomes part of this Zone's long-term memory.
+                  </p>
+                  
+                  <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+                    <Button 
+                      variant="outline"
+                      className="border-gray-700 bg-gray-800/50 hover:bg-purple-600 hover:border-purple-600 text-gray-300 hover:text-white"
+                      onClick={() => setComposerTab("note")}
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      Create Note
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="border-gray-700 bg-gray-800/50 hover:bg-green-600 hover:border-green-600 text-gray-300 hover:text-white"
+                      onClick={() => setComposerTab("signal")}
+                    >
+                      <TrendingUp className="w-4 h-4 mr-2" />
+                      Create Signal
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="border-gray-700 bg-gray-800/50 hover:bg-blue-600 hover:border-blue-600 text-gray-300 hover:text-white"
+                      onClick={() => setComposerTab("prediction")}
+                    >
+                      <BarChart3 className="w-4 h-4 mr-2" />
+                      Start Prediction
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="border-gray-700 bg-gray-800/50 hover:bg-orange-600 hover:border-orange-600 text-gray-300 hover:text-white"
+                      onClick={() => setComposerTab("event")}
+                    >
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Schedule Event
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-2 text-xs text-gray-600 font-medium">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <p>The Zone Agent will summarize activity automatically once entries exist.</p>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-4 max-w-5xl mx-auto pb-10">
                 {messages.map((stored) => (
                   <MessageCard key={stored.id} message={stored.message} ensNames={ensNames} />
                 ))}
@@ -746,109 +792,123 @@ export default function Chat() {
           </ScrollArea>
 
           {/* Action Dock */}
-          <div className="border-t border-gray-700 p-4 bg-gray-900/80 backdrop-blur-sm">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Zone Actions</p>
-              <div className="flex items-center gap-4 text-[10px] text-gray-600">
-                <span>Create: Note · Signal · Prediction</span>
-                <span>|</span>
-                <span>Coordinate: Event · Receipt</span>
+          <div className="border-t border-gray-800 p-4 bg-gray-900/95 backdrop-blur-xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] z-20">
+            <div className="flex items-center justify-between mb-3 px-1">
+              <div className="flex items-center gap-2">
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black">Zone Actions</p>
+                <span className="text-gray-800 text-xs">/</span>
+                <p className="text-[10px] text-purple-400 font-bold tracking-wide">{getComposerHelper()}</p>
+              </div>
+              <div className="flex items-center gap-4 text-[10px] text-gray-700 font-bold uppercase tracking-tighter">
+                <span>Notes</span>
+                <span className="w-1 h-1 rounded-full bg-gray-800"></span>
+                <span>Signals</span>
+                <span className="w-1 h-1 rounded-full bg-gray-800"></span>
+                <span>Markets</span>
+                <span className="w-1 h-1 rounded-full bg-gray-800"></span>
+                <span>Records</span>
               </div>
             </div>
             <Tabs value={composerTab} onValueChange={setComposerTab}>
-              <TabsList className="bg-gray-800/80 border border-gray-700/50 p-1 mb-3 w-full justify-start gap-0.5 h-auto flex-wrap">
+              <TabsList className="bg-black/40 border border-gray-800/50 p-1 mb-4 w-full justify-start gap-1 h-auto flex-wrap backdrop-blur-sm">
                 <TabsTrigger 
                   value="note" 
-                  className="text-xs text-gray-400 data-[state=active]:bg-purple-600 data-[state=active]:text-white px-3 py-1.5 rounded-md" 
+                  className="text-xs font-bold uppercase tracking-wider text-gray-500 data-[state=active]:bg-purple-600 data-[state=active]:text-white px-4 py-2 rounded-lg transition-all" 
                   data-testid="tab-note"
                 >
-                  <FileText className="w-3.5 h-3.5 mr-1.5" />
+                  <FileText className="w-3.5 h-3.5 mr-2" />
                   Note
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signal" 
-                  className="text-xs text-gray-400 data-[state=active]:bg-green-600 data-[state=active]:text-white px-3 py-1.5 rounded-md" 
+                  className="text-xs font-bold uppercase tracking-wider text-gray-500 data-[state=active]:bg-green-600 data-[state=active]:text-white px-4 py-2 rounded-lg transition-all" 
                   data-testid="tab-signal"
                 >
-                  <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
+                  <TrendingUp className="w-3.5 h-3.5 mr-2" />
                   Signal
                 </TabsTrigger>
                 <TabsTrigger 
                   value="prediction" 
-                  className="text-xs text-gray-400 data-[state=active]:bg-blue-600 data-[state=active]:text-white px-3 py-1.5 rounded-md" 
+                  className="text-xs font-bold uppercase tracking-wider text-gray-500 data-[state=active]:bg-blue-600 data-[state=active]:text-white px-4 py-2 rounded-lg transition-all" 
                   data-testid="tab-prediction"
                 >
-                  <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
+                  <BarChart3 className="w-3.5 h-3.5 mr-2" />
                   Prediction
                 </TabsTrigger>
                 <TabsTrigger 
                   value="event" 
-                  className="text-xs text-gray-400 data-[state=active]:bg-orange-600 data-[state=active]:text-white px-3 py-1.5 rounded-md" 
+                  className="text-xs font-bold uppercase tracking-wider text-gray-500 data-[state=active]:bg-orange-600 data-[state=active]:text-white px-4 py-2 rounded-lg transition-all" 
                   data-testid="tab-event"
                 >
-                  <Calendar className="w-3.5 h-3.5 mr-1.5" />
+                  <Calendar className="w-3.5 h-3.5 mr-2" />
                   Event
                 </TabsTrigger>
                 <TabsTrigger 
                   value="receipt" 
-                  className="text-xs text-gray-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white px-3 py-1.5 rounded-md" 
+                  className="text-xs font-bold uppercase tracking-wider text-gray-500 data-[state=active]:bg-emerald-600 data-[state=active]:text-white px-4 py-2 rounded-lg transition-all" 
                   data-testid="tab-receipt"
                 >
-                  <Receipt className="w-3.5 h-3.5 mr-1.5" />
+                  <Receipt className="w-3.5 h-3.5 mr-2" />
                   Receipt
                 </TabsTrigger>
                 <TabsTrigger 
                   value="article" 
-                  className="text-xs text-gray-400 data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-3 py-1.5 rounded-md" 
+                  className="text-xs font-bold uppercase tracking-wider text-gray-500 data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 py-2 rounded-lg transition-all" 
                   data-testid="tab-article"
                 >
-                  <Newspaper className="w-3.5 h-3.5 mr-1.5" />
+                  <Newspaper className="w-3.5 h-3.5 mr-2" />
                   Article
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="note" className="mt-0">
-                <div className="space-y-2">
-                  <p className="text-[10px] text-gray-500">Share a note with the Zone. It will appear as a Note Card in the feed.</p>
-                  <div className="flex gap-2">
+              <TabsContent value="note" className="mt-0 outline-none">
+                <div className="flex gap-2">
+                  <div className="flex-1 relative">
                     <Input
                       value={messageInput}
                       onChange={(e) => setMessageInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleSendText()}
-                      placeholder="Write a note..."
-                      className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-500"
+                      placeholder="Commit a note to this Zone..."
+                      className="bg-black/40 border-gray-800 h-12 text-white placeholder:text-gray-600 focus:ring-purple-600/20 focus:border-purple-600/50 transition-all rounded-xl"
                       data-testid="input-message"
                     />
-                    <Button onClick={handleSendText} className="bg-purple-600 hover:bg-purple-700 px-4" data-testid="button-commit">
-                      <Send className="w-4 h-4 mr-2" />
-                      Commit
-                    </Button>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                      <span className="text-[10px] text-gray-700 font-black border border-gray-800 px-1.5 py-0.5 rounded uppercase">Enter to Commit</span>
+                    </div>
                   </div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        onClick={handleSendText} 
+                        className="bg-purple-600 hover:bg-purple-700 h-12 px-6 rounded-xl shadow-lg shadow-purple-900/20 group transition-all" 
+                        data-testid="button-commit"
+                      >
+                        <Send className="w-4.5 h-4.5 mr-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        <span className="font-bold uppercase tracking-wider text-xs">Commit</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Commit to Zone</TooltipContent>
+                  </Tooltip>
                 </div>
               </TabsContent>
 
-              <TabsContent value="signal" className="mt-0">
-                <p className="text-[10px] text-gray-500 mb-2">Post a trade signal. It will appear as a Signal Card with entry, targets, and invalidation.</p>
+              <TabsContent value="signal" className="mt-0 outline-none">
                 <TradeComposer onSubmit={handleTradeSubmit} />
               </TabsContent>
 
-              <TabsContent value="prediction" className="mt-0">
-                <p className="text-[10px] text-gray-500 mb-2">Create a prediction market. Members can vote YES or NO until the deadline.</p>
+              <TabsContent value="prediction" className="mt-0 outline-none">
                 <PredictionComposer onSubmit={handlePredictionSubmit} />
               </TabsContent>
 
-              <TabsContent value="event" className="mt-0">
-                <p className="text-[10px] text-gray-500 mb-2">Schedule a community event. Members can RSVP.</p>
+              <TabsContent value="event" className="mt-0 outline-none">
                 <EventComposer onSubmit={handleEventSubmit} />
               </TabsContent>
 
-              <TabsContent value="receipt" className="mt-0">
-                <p className="text-[10px] text-gray-500 mb-2">Send an on-chain payment and log the receipt.</p>
+              <TabsContent value="receipt" className="mt-0 outline-none">
                 <PaymentComposer onSuccess={handlePaymentSuccess} />
               </TabsContent>
 
-              <TabsContent value="article" className="mt-0">
-                <p className="text-[10px] text-gray-500 mb-2">Share a newsletter article from Paragraph.</p>
+              <TabsContent value="article" className="mt-0 outline-none">
                 <NewsletterComposer onSubmit={handleNewsletterSubmit} isSubmitting={sendMessage.isPending} />
               </TabsContent>
             </Tabs>
@@ -857,81 +917,99 @@ export default function Chat() {
 
         {/* Right Sidebar - Zone Memory Drawer */}
         {memoryDrawerOpen && (
-          <aside className="w-72 border-l border-gray-800 flex flex-col bg-gray-900/50">
-            <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-white">Zone Memory</h3>
+          <aside className="w-80 border-l border-gray-800 flex flex-col bg-black/40 backdrop-blur-sm z-30">
+            <div className="h-14 p-4 border-b border-gray-800 flex items-center justify-between bg-gray-900/60">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Zone Memory</h3>
+              </div>
               <button 
                 onClick={() => setMemoryDrawerOpen(false)}
-                className="p-1 hover:bg-gray-800 rounded-md text-gray-400 hover:text-white"
+                className="p-1.5 hover:bg-gray-800 rounded-lg text-gray-500 hover:text-white transition-colors"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4.5 h-4.5" />
               </button>
             </div>
 
             <ScrollArea className="flex-1">
-              <div className="p-4 space-y-6">
+              <div className="p-5 space-y-8">
                 {/* Search */}
                 <div>
-                  <div className="relative">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <div className="relative group">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-purple-400 transition-colors" />
                     <Input 
                       placeholder="Search in Zone..."
-                      className="bg-gray-800/80 border-gray-700 text-white pl-9 text-sm"
+                      className="bg-black/40 border-gray-800 text-white pl-10 text-sm h-10 rounded-xl focus:border-purple-600/50 transition-all"
                     />
                   </div>
                 </div>
 
                 {/* Pinned Items */}
                 <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <Pin className="w-4 h-4 text-purple-400" />
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pinned</h4>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Pin className="w-3.5 h-3.5 text-purple-400" />
+                      <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Pinned Items</h4>
+                    </div>
+                    <span className="text-[10px] text-gray-700 font-bold">0 Items</span>
                   </div>
-                  <div className="text-sm text-gray-500 text-center py-4 bg-gray-800/30 rounded-lg border border-dashed border-gray-700">
-                    No pinned items yet
-                  </div>
-                </div>
-
-                {/* Active Signals/Predictions */}
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <TrendingUp className="w-4 h-4 text-green-400" />
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Active Signals</h4>
-                  </div>
-                  <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50">
-                    <p className="text-2xl font-bold text-white">{signalsCount}</p>
-                    <p className="text-xs text-gray-500">Trade signals in this Zone</p>
+                  <div className="text-xs text-gray-600 text-center py-8 bg-black/20 rounded-2xl border border-dashed border-gray-800 flex flex-col items-center gap-2">
+                    <Pin className="w-6 h-6 opacity-10" />
+                    <p>No pinned context entries</p>
                   </div>
                 </div>
 
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <BarChart3 className="w-4 h-4 text-blue-400" />
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Active Predictions</h4>
+                {/* Real-time Analytics */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-3.5 h-3.5 text-blue-400" />
+                    <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Zone Analytics</h4>
                   </div>
-                  <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50">
-                    <p className="text-2xl font-bold text-white">{predictionsCount}</p>
-                    <p className="text-xs text-gray-500">Open predictions</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-gray-900/40 rounded-2xl p-4 border border-gray-800/50">
+                      <p className="text-2xl font-black text-white">{signalsCount}</p>
+                      <p className="text-[10px] text-gray-600 uppercase font-bold tracking-tighter">Active Signals</p>
+                    </div>
+                    <div className="bg-gray-900/40 rounded-2xl p-4 border border-gray-800/50">
+                      <p className="text-2xl font-black text-white">{predictionsCount}</p>
+                      <p className="text-[10px] text-gray-600 uppercase font-bold tracking-tighter">Predictions</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Agent Activity */}
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Bot className="w-3.5 h-3.5 text-blue-400" />
+                    <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Agent Activity</h4>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3 p-3 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                      <p className="text-xs text-gray-400 leading-relaxed">Agent is monitoring Zone entries for summary extraction.</p>
+                    </div>
                   </div>
                 </div>
 
                 {/* Weekly Summary */}
                 <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <FileText className="w-4 h-4 text-gray-400" />
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Weekly Summary</h4>
+                  <div className="flex items-center gap-2 mb-4">
+                    <FileText className="w-3.5 h-3.5 text-orange-400" />
+                    <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Knowledge Base</h4>
                   </div>
-                  <div className="text-sm text-gray-500 text-center py-4 bg-gray-800/30 rounded-lg border border-dashed border-gray-700">
-                    Coming soon
+                  <div className="text-xs text-gray-600 text-center py-8 bg-black/20 rounded-2xl border border-dashed border-gray-800 flex flex-col items-center gap-2 cursor-not-allowed opacity-50">
+                    <CheckCircle className="w-6 h-6 opacity-10" />
+                    <p>Knowledge extraction pending</p>
                   </div>
                 </div>
 
                 {/* Export */}
-                <div className="pt-4 border-t border-gray-800">
-                  <Button variant="outline" className="w-full border-gray-700 text-gray-400 hover:text-white text-sm">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export Zone (MD/JSON)
+                <div className="pt-6 border-t border-gray-800">
+                  <Button variant="outline" className="w-full border-gray-800 bg-black/40 text-gray-400 hover:text-white text-xs font-bold uppercase tracking-widest py-6 rounded-2xl group transition-all">
+                    <Download className="w-4 h-4 mr-2 group-hover:-translate-y-0.5 transition-transform" />
+                    Export Zone Data
                   </Button>
+                  <p className="text-[10px] text-gray-700 text-center mt-3 font-medium italic">Available in Markdown & JSON</p>
                 </div>
               </div>
             </ScrollArea>
