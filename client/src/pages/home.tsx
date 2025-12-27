@@ -236,7 +236,7 @@ export default function Home() {
           >
             <div className="max-w-md mx-auto">
               <p className="text-[10px] text-gray-500 font-black tracking-[0.4em] uppercase mb-8 text-center opacity-40">The Zone Flow</p>
-              <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="flex flex-row items-center justify-center space-x-6">
                 <FlowStep label="Wallet Identity" index={0} />
                 <FlowArrow index={0} />
                 <FlowStep label="Zones" index={1} highlight />
@@ -520,7 +520,7 @@ function FlowArrow({ index }: { index: number }) {
       }}
       className="text-gray-800 font-bold"
     >
-      ↓
+      →
     </motion.div>
   );
 }
