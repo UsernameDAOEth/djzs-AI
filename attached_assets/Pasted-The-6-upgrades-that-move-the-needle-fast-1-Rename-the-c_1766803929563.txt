@@ -1,0 +1,72 @@
+The 6 upgrades that move the needle fast
+
+1) Rename the core UI objects everywhere
+
+This is the “DJZS switch.”
+	•	Rooms → Zones
+	•	Messages → Zone Feed
+	•	Composer → Zone Actions
+	•	Send → Commit to Zone
+
+This changes perceived product category instantly.
+
+2) Add a Zone Header bar at the top of the feed
+
+A thin sticky bar that always shows:
+	•	Zone name + purpose
+	•	Security status: Encrypted • Gated • Verified
+	•	Agent status: “Zone Agent Active”
+	•	Quick actions: Pin • Export • Search
+
+Users should feel the system state, not guess it.
+
+3) Change message bubbles into “Zone Cards”
+
+Even normal text should render as a Note Card (not a bubble).
+Every post gets a consistent header:
+	•	Type badge: Note / Signal / Prediction / Event / Receipt
+	•	Author: ENS (bold) + address (muted)
+	•	Timestamp + status
+
+This makes the feed look like a ledger of structured knowledge.
+
+4) Upgrade the bottom area into an “Action Dock”
+
+Instead of tabs that look like forms, make it a dock:
+
+Zone Actions
+	•	Create: Note · Signal · Prediction
+	•	Coordinate: Event · Receipt
+	•	Assistant: Summarize · Tag · Extract tasks
+
+When a user picks an action, show:
+	•	1-line purpose
+	•	what will appear in the feed
+	•	required fields only
+
+5) Add a right-side “Zone Memory” drawer
+
+This is the DJZS secret sauce.
+	•	Pinned items
+	•	Latest weekly summary
+	•	Active predictions/signals
+	•	Search in this Zone
+	•	“Export Zone” (md/json)
+
+Even if it’s read-only at first, it makes DJZS feel like an OS.
+
+6) Sidebar becomes “Zones + System”
+
+Left sidebar should be:
+	•	Zones list (with unread + glow + mini cube icon)
+	•	System section: Members • DMs • Notifications • Settings • Security
+
+Also: show Online count and Access rule (“NFT-gated”) at the top.
+
+⸻
+
+Quick “make it feel premium” touches
+	•	Replace center-aligned layouts with slight left bias (OS feel)
+	•	Add hover tooltips for every Zone (“what goes here”)
+	•	Add empty state per Zone that teaches the first action (“Post a Note / Create a Signal”)
+	•	Make ENS names first-class (bold ENS, muted address, inboxId on hover) in line with XMTP identity model.  ￼
