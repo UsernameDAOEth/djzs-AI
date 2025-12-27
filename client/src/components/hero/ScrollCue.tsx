@@ -8,7 +8,7 @@ export function ScrollCue() {
   return (
     <button
       onClick={handleClick}
-      className="flex flex-col items-center gap-2 text-white/40 hover:text-white/60 transition-colors cursor-pointer"
+      className="mx-auto flex flex-col items-center gap-2 text-white/40 hover:text-white/60 transition-colors cursor-pointer"
       data-testid="button-scroll-explore"
     >
       <span className="text-[10px] tracking-[0.25em] uppercase">Scroll to explore</span>
