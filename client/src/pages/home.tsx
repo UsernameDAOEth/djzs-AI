@@ -192,13 +192,13 @@ export default function Home() {
           <div className="mb-8 space-y-4">
             <h1 className="text-6xl md:text-8xl font-black leading-tight">
               <span className="block">Pri<span className="text-purple-500">vate.</span></span>
-              <span className="block">On-<span className="text-purple-400">Chain.</span></span>
-              <span className="block"><span className="text-purple-600">Encrypted.</span></span>
+              <span className="block">Struc<span className="text-purple-400">tured.</span></span>
+              <span className="block"><span className="text-purple-600">Yours.</span></span>
             </h1>
           </div>
 
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
-            A zone-based system for private journaling, signals, predictions, and coordination — owned by your wallet.
+            A zone-based system for journaling, signals, predictions, and coordination — encrypted and owned by your wallet.
           </p>
 
           {isConnected ? (
@@ -209,7 +209,7 @@ export default function Home() {
                 data-testid="button-enter-chat"
               >
                 Enter Your Zones
-                <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
+                <span className="ml-2 group-hover:translate-x-1 transition-transform inline-block">→</span>
               </Button>
             </Link>
           ) : (
@@ -343,29 +343,23 @@ export default function Home() {
             <p className="text-gray-400 text-lg">End-to-end encryption meets Web3 identity</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             <FeatureItem
               number="01"
-              title="E2E Encrypted"
-              description="Messages encrypted with XMTP. No one reads them except participants. Your secrets stay secrets."
+              title="Private Notes & Research"
+              description="Journal inside Zones that are encrypted end-to-end and owned by your wallet."
               icon={<Lock className="w-8 h-8 text-purple-400" />}
             />
             <FeatureItem
               number="02"
-              title="ENS Identity"
-              description="Your ENS name is your username. No accounts, no passwords, no middlemen. Pure blockchain identity."
-              icon={<Users className="w-8 h-8 text-blue-400" />}
-            />
-            <FeatureItem
-              number="03"
-              title="In-Chat Actions"
-              description="Trade signals, predictions, events, and payments. Everything happens inside the chat. No context switching."
+              title="Signals & Predictions"
+              description="Create signals and predictions with clear structure, resolution, and history."
               icon={<Zap className="w-8 h-8 text-yellow-400" />}
             />
             <FeatureItem
-              number="04"
-              title="Token Gated"
-              description="Members-only access via NFT or allowlist. Your community, your rules, your complete control."
+              number="03"
+              title="Events & Coordination"
+              description="Coordinate activity, payments, and records securely in one system."
               icon={<Network className="w-8 h-8 text-green-400" />}
             />
           </div>
@@ -485,6 +479,42 @@ export default function Home() {
               step="4"
               title="Compose Structured Entries"
               description="Post notes, signals, predictions, events, or receipts. Everything is encrypted and verifiable."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="relative py-24 bg-black border-t border-gray-800 overflow-hidden">
+        <div
+          style={{
+            position: "absolute",
+            inset: "-30%",
+            background: `
+              radial-gradient(900px 380px at 40% 50%, rgba(140,80,255,.12), transparent 60%),
+              radial-gradient(900px 420px at 60% 50%, rgba(80,210,255,.08), transparent 60%)
+            `,
+            filter: "blur(10px)",
+            animation: "djzsDrift 16s ease-in-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+        <div className="relative z-10 max-w-3xl mx-auto px-6">
+          <h2 className="text-4xl md:text-5xl font-black mb-16 text-center">
+            Frequently <span className="text-purple-400">Asked</span>
+          </h2>
+          <div className="space-y-6">
+            <FAQItem
+              question="Is my data really private?"
+              answer="All Zone entries are encrypted with XMTP. Only participants can read them – not servers, not platforms."
+            />
+            <FAQItem
+              question="Can I use DJZS on mobile?"
+              answer="The interface is fully responsive and works on any device with a web3-enabled browser."
+            />
+            <FAQItem
+              question="How much does it cost?"
+              answer="Free tier includes unlimited personal Zones. Paid Pass adds cross-Zone linking, AI assistance, and on-chain proof minting."
             />
           </div>
         </div>
@@ -619,8 +649,17 @@ function StepCard({ step, title, description }: { step: string; title: string; d
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="p-6 rounded-xl border border-gray-800 bg-gray-900/50">
-      <div className="text-3xl font-black text-purple-400 mb-2">{value}</div>
-      <p className="text-gray-400 text-sm font-semibold">{label}</p>
+      <div className="text-sm font-black text-purple-400 mb-2">{value}</div>
+      <p className="text-gray-400 text-xs font-semibold">{label}</p>
+    </div>
+  );
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  return (
+    <div className="p-6 rounded-xl border border-gray-800 hover:border-purple-600/30 transition-colors bg-gray-900/30">
+      <h3 className="text-lg font-bold text-white mb-3">{question}</h3>
+      <p className="text-gray-400 leading-relaxed">{answer}</p>
     </div>
   );
 }
