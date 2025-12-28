@@ -44,7 +44,7 @@ class VaultDatabase extends Dexie {
     this.version(1).stores({
       entries: '++id, type, createdAt, updatedAt',
       insights: '++id, entryId, type, createdAt',
-      memoryPins: '++id, kind, isActive, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
     });
   }
 }

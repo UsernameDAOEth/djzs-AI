@@ -243,8 +243,16 @@ Rules:
 - shouldSuggest = true only for repeated personal patterns or core values. Almost never.
 - Prefer short sentences. When in doubt, say less.`;
 
+  const researchInstructions = input.mode === "research" 
+    ? `\n\nRESEARCH MODE ACTIVE: 
+- Prioritize extracting verified facts, data points, and technical details.
+- Be extremely specific. Name numbers, dates, people, and specific entities.
+- Look for evidence and counter-evidence.
+- The 'matters' field should explain the evidentiary weight or logical implication of the facts found.`
+    : "";
+
   try {
-    const result = await callVenice(SYSTEM_PROMPT + schemaInstruction, userPrompt);
+    const result = await callVenice(SYSTEM_PROMPT + researchInstructions + schemaInstruction, userPrompt);
     return validateOutput(result);
   } catch (error) {
     console.log("First attempt failed, retrying with stricter prompt...");

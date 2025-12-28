@@ -346,12 +346,21 @@ export default function Chat() {
   const handlePinSuggestion = async () => {
     if (!agentResponse?.memorySuggestion.shouldSuggest) return;
     const { content, kind } = agentResponse.memorySuggestion;
-    await pinLocalMemory(kind as any, content, lastEntryId || undefined);
-    toast({
-      title: "Memory pinned",
-      description: "This pattern will be remembered.",
-    });
-    setAgentResponse(prev => prev ? { ...prev, memorySuggestion: { ...prev.memorySuggestion, shouldSuggest: false } } : null);
+    try {
+      await pinLocalMemory(kind as any, content, lastEntryId || undefined);
+      toast({
+        title: "Memory pinned",
+        description: "This pattern will be remembered.",
+      });
+      setAgentResponse(prev => prev ? { ...prev, memorySuggestion: { ...prev.memorySuggestion, shouldSuggest: false } } : null);
+    } catch (err) {
+      console.error("Failed to pin memory:", err);
+      toast({
+        title: "Pin failed",
+        description: "Check console for details",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleSkipSuggestion = () => {
