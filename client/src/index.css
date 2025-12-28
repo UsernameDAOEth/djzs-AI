@@ -129,30 +129,32 @@
 
   .marquee__track {
     display: flex;
-    gap: 48px;
+    gap: 4rem;
     width: max-content;
-    animation: marquee 26s linear infinite;
-    padding: 14px 0;
+    animation: marquee 20s linear infinite;
+    padding: 20px 0;
     will-change: transform;
   }
 
   .marquee__item {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    font-size: 11px;
-    letter-spacing: 0.28em;
+    gap: 2rem;
+    font-size: clamp(48px, 8vw, 120px);
+    font-weight: 900;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.55);
+    color: rgba(255,255,255,0.95);
     white-space: nowrap;
+    text-shadow: 0 0 30px rgba(140,80,255,.5), 0 0 60px rgba(80,210,255,.3);
   }
 
   .marquee__dash {
-    width: 44px;
-    height: 3px;
+    width: 60px;
+    height: 6px;
     border-radius: 999px;
-    background: rgba(168,85,247,0.8);
-    box-shadow: 0 0 20px rgba(168,85,247,0.15);
+    background: rgba(168,85,247,0.9);
+    box-shadow: 0 0 30px rgba(168,85,247,0.4);
   }
 
   @keyframes marquee {
