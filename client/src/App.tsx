@@ -10,6 +10,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import Chat from "@/pages/chat";
 import NotFound from "@/pages/not-found";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
 // Ensure window.ethereum exists to prevent property redefinition errors
 if (typeof window !== "undefined" && !("ethereum" in window)) {
@@ -41,6 +42,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
+            <InstallPrompt />
           </TooltipProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
