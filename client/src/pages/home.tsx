@@ -5,7 +5,7 @@ import { Lock, Network, Zap, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel } from "@/components/hero";
+import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, FAQFlywheel } from "@/components/hero";
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -286,7 +286,7 @@ export default function Home() {
           <div className="relative z-10 max-w-4xl mx-auto px-10">
             <div className="text-center mb-16">
               <p className="text-[10px] font-black text-purple-400 uppercase tracking-[0.4em] mb-4">Questions</p>
-              <h2 className="text-6xl md:text-7xl font-black tracking-tighter">Frequently <span className="text-purple-500">Asked</span></h2>
+              <FAQFlywheel />
             </div>
             <div className="divide-y divide-white/[0.05]">
               <FAQItem
