@@ -1,6 +1,6 @@
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Lock, Network, Zap, BookOpen, Search as SearchIcon } from "lucide-react";
+import { Lock, Network, Zap, Search as SearchIcon, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -280,9 +280,44 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative">
-                <div className="aspect-square rounded-[3rem] bg-gradient-to-br from-purple-600/10 to-blue-600/10 border border-white/[0.05] p-10 flex items-center justify-center overflow-hidden group">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.1),transparent_70%)]"></div>
-                  <BookOpen className="w-40 h-40 text-purple-500/20 group-hover:text-purple-500/40 transition-all duration-700 transform group-hover:scale-110" />
+                <div className="rounded-[2rem] bg-gradient-to-br from-purple-500/[0.05] to-blue-500/[0.03] border border-purple-500/20 p-6 overflow-hidden">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[9px] font-black text-purple-400 uppercase tracking-widest mb-3">Zone Agent Insight</p>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">Summary</p>
+                          <p className="text-white text-sm font-medium leading-relaxed">You're exploring a structured framework for organizing thoughts across multiple domains.</p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">Insight</p>
+                          <p className="text-gray-400 text-sm italic leading-relaxed">"This framework could become your personal operating system for structured thinking."</p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">Reflection Question</p>
+                          <p className="text-purple-300 text-sm font-medium">Which zone would benefit most from daily attention?</p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-2">Worth Remembering</p>
+                          <div className="space-y-2">
+                            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                              <p className="text-xs text-gray-400">Zones reduce context-switching overhead</p>
+                            </div>
+                            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                              <p className="text-xs text-gray-400">Daily entries compound into insight</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
