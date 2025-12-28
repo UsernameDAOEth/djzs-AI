@@ -186,6 +186,12 @@ shared/
 
 ## Recent Changes
 
+- **Dec 28, 2024**: Refined thinking partner to be calm, precise, minimal
+  - Updated agent prompt to match "calm, precise thinking partner" philosophy
+  - Expanded forbidden phrases (no "I think you should", "as an AI", etc.)
+  - Conservative memory suggestions (almost never suggest unless repeated pattern)
+  - Changed header from "Username DJZS" to "Thinking Partner"
+  - No first-person references, no advice unless asked
 - **Dec 28, 2024**: Implemented local-first "Think with me" flow
   - New Dexie IndexedDB vault module (`client/src/lib/vault.ts`) with entries, insights, and memoryPins stores
   - `/api/agent/analyze` endpoint with Venice AI structured JSON responses
