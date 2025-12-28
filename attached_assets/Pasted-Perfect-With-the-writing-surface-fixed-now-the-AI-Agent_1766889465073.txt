@@ -1,0 +1,174 @@
+Perfect. With the writing surface fixed, now the AI Agent can actually do its job. Here’s exactly how to use AI agents in DJZS without overcomplicating v1.
+
+⸻
+
+The DJZS AI Agent, clearly defined
+
+You are not adding “AI features.”
+You are adding one Thinking Partner that runs after the user writes.
+
+Agent name: Username DJZS
+Role: Reflect → Synthesize → Ask one good question
+Personality: Calm, precise, non-preachy, says less than it could
+
+⸻
+
+When the agent should run (this matters)
+
+✅ Trigger the agent only on explicit intent
+	•	User clicks Analyze
+	•	(Optional later) User finishes writing and pauses 3–5s
+
+❌ Do NOT run:
+	•	on every keystroke
+	•	automatically on open
+	•	in the background without user intent
+
+This preserves trust and calm.
+
+⸻
+
+The core agent loop (v1)
+
+Every time the agent runs, it does one pass:
+	1.	Read
+	•	Current entry text
+	•	Up to 3 pinned memories
+	•	(Optional) 1–2 recent entries
+	2.	Think
+	•	What is the actual tension here?
+	•	Is there a recurring theme?
+	•	What’s unsaid but implied?
+	3.	Respond (strict format)
+	•	Summary (what the user said)
+	•	Insight (what it means)
+	•	Question (what to think about next)
+
+Nothing else.
+
+⸻
+
+Exact outputs (UX contract)
+
+Keep this unchanged across the app.
+
+Journal response card
+
+Summary
+A concise restatement of the thought.
+
+Insight
+A single sentence that reframes or clarifies.
+
+Question
+One question worth sitting with.
+
+If the agent can’t add value:
+	•	It should say nothing
+	•	Or return only a Summary
+
+Silence > weak insight.
+
+⸻
+
+How memory fits (without getting creepy)
+
+Memory is NOT automatic
+
+The agent may suggest memory, but the user decides.
+
+After the response, optionally show:
+
+“Save to memory?”
+
+Examples of memory-worthy items:
+	•	goals
+	•	recurring blockers
+	•	repeated themes
+	•	explicit preferences
+
+If the user doesn’t pin it → it’s forgotten.
+
+⸻
+
+How Research uses the same agent (important)
+
+You don’t need a second agent.
+
+Same Thinking Partner, different mode.
+
+Research mode output
+
+Key Claims
+• …
+• …
+
+Evidence
+• …
+
+Unknowns
+• …
+
+Next Question
+What would actually reduce uncertainty?
+
+Same philosophy: clarity over completeness.
+
+⸻
+
+The daily habit loop (this is the product)
+
+The agent exists to reinforce this loop:
+	1.	Open DJZS
+	2.	Write one thought
+	3.	Get one insight
+	4.	Leave clearer
+
+If the agent ever interrupts this loop, it’s wrong.
+
+⸻
+
+What NOT to do with the agent (for now)
+
+❌ Don’t let it:
+	•	chat endlessly
+	•	give advice unless asked
+	•	summarize everything
+	•	act like a coach or therapist
+	•	generate action plans automatically
+
+DJZS is a mirror, not a manager.
+
+⸻
+
+How you should test it (important)
+
+For the next 7 days:
+	•	Write once per day
+	•	Click Analyze
+	•	Ask yourself:
+	•	Did this insight feel accurate?
+	•	Did it say too much?
+	•	Did I want to come back tomorrow?
+
+If not → tighten the prompt, reduce output.
+
+⸻
+
+One simple rule to keep you honest
+
+If the agent disappeared tomorrow, would the writing still feel valuable?
+
+If yes → you’re doing it right.
+If no → the agent is compensating for UX problems.
+
+⸻
+
+If you want next steps
+
+I can:
+	•	write the exact Venice prompt for Journal mode
+	•	define the agent personality spec (1 page)
+	•	help you tune insight quality with real examples
+
+Just tell me which one you want next.
