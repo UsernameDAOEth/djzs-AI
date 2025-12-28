@@ -8,3 +8,4 @@ export { AnimatedBackground } from "./AnimatedBackground";
 export { CursorSpotlight } from "./CursorSpotlight";
 export { ThinkFlywheel } from "./ThinkFlywheel";
 export { ZoneFlywheel } from "./ZoneFlywheel";
+export { ClarityFlywheel } from "./ClarityFlywheel";

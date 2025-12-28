@@ -5,7 +5,7 @@ import { Lock, Network, Zap, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel } from "@/components/hero";
+import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel } from "@/components/hero";
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -253,9 +253,7 @@ export default function Home() {
       <RevealSection>
         <section className="relative py-32 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-5xl mx-auto px-10 text-center">
-            <h2 className="text-7xl md:text-8xl font-black mb-8 tracking-tighter">
-              Built For <span className="text-purple-500">Clarity.</span>
-            </h2>
+            <ClarityFlywheel />
             <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-16 max-w-3xl mx-auto">
               DJZS isn't a social network. It's a personal operating system for your mind. Private, owned, and AI-assisted.
             </p>
