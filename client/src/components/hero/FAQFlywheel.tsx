@@ -22,9 +22,9 @@ export function FAQFlywheel() {
                 filter: ["blur(4px)", "blur(0px)", "blur(4px)"],
               }}
               transition={{
-                duration: 3,
+                duration: 2.2,
                 repeat: Infinity,
-                delay: i * 1,
+                delay: i * 0.7,
                 ease: "easeInOut",
               }}
               className="absolute text-5xl md:text-7xl font-black tracking-tighter uppercase pointer-events-none select-none text-white whitespace-nowrap"

@@ -163,7 +163,7 @@ export default function Home() {
         variants={pageContainer}
         initial="hidden"
         animate="show"
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black pb-24"
       >
         <div
           style={{
@@ -180,7 +180,7 @@ export default function Home() {
           }}
         />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-20">
           <ThinkFlywheel />
 
           <motion.p variants={fadeUp} className="text-2xl md:text-3xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium mb-10">
@@ -206,51 +206,59 @@ export default function Home() {
             )}
           </motion.div>
 
-          <motion.div variants={fadeUp} className="mt-16">
+          <motion.div variants={fadeUp} className="mt-24">
             <p className="text-[10px] text-gray-500 font-black tracking-[0.4em] uppercase mb-6 text-center opacity-40">The Zone Flow</p>
             <div className="flex justify-center">
               <ZoneFlow />
             </div>
           </motion.div>
 
-          <motion.div variants={fadeUp} className="mt-16">
+          <motion.div variants={fadeUp} className="mt-20">
             <ScrollCue />
           </motion.div>
         </div>
       </motion.section>
 
-      {/* Scrolling Marquee Banner */}
-      <MarqueeBanner />
-
-      {isConnected && (
-        <RevealSection>
-          <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
-            <div className="relative z-10 max-w-6xl mx-auto px-10">
-              <div className="text-center mb-20">
-                <ZoneFlywheel />
-                <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-medium">
-                  Everything you think and track lives here. Private, structured, and accumulating value over time.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                <ZoneCard 
-                  title="Journal" 
-                  desc="Write daily thoughts & reflections" 
-                  startHere
-                />
-                <ZoneCard 
-                  title="Research" 
-                  desc="Log facts & extract intelligence" 
-                />
-              </div>
-            </div>
-          </section>
-        </RevealSection>
-      )}
+      {/* Primary Transition */}
+      <div className="h-32 bg-gradient-to-b from-black to-[#050505]" />
 
       <RevealSection>
-        <section className="relative py-32 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-48 bg-black border-t border-white/[0.03] overflow-hidden">
+          <div className="relative z-10 max-w-6xl mx-auto px-10">
+            <div className="text-center mb-20">
+              <ZoneFlywheel />
+              <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-medium">
+                Everything you think and track lives here. Private, structured, and accumulating value over time.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              <ZoneCard 
+                title="Journal" 
+                desc="Write daily thoughts & reflections" 
+                startHere={isConnected}
+              />
+              <ZoneCard 
+                title="Research" 
+                desc="Log facts & extract intelligence" 
+              />
+            </div>
+            
+            {!isConnected && (
+              <div className="mt-16 text-center">
+                <div className="inline-block p-[1px] rounded-full bg-gradient-to-r from-purple-500/50 to-blue-500/50">
+                  <div className="px-8 py-3 rounded-full bg-black text-xs font-black uppercase tracking-widest text-gray-400">
+                    Connect wallet to enter your zones
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-48 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-5xl mx-auto px-10 text-center">
             <ClarityFlywheel />
             <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-16 max-w-3xl mx-auto">
@@ -277,11 +285,8 @@ export default function Home() {
         </section>
       </RevealSection>
 
-      {/* Second Scrolling Marquee */}
-      <MarqueeBanner />
-
       <RevealSection>
-        <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-48 bg-black border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-4xl mx-auto px-10">
             <div className="text-center mb-16">
               <FAQFlywheel />

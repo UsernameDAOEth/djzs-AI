@@ -22,9 +22,9 @@ export function ZoneFlywheel() {
                 filter: ["blur(4px)", "blur(0px)", "blur(4px)"],
               }}
               transition={{
-                duration: 3,
+                duration: 3.5,
                 repeat: Infinity,
-                delay: i * 1,
+                delay: i * 1.2,
                 ease: "easeInOut",
               }}
               className="absolute text-6xl md:text-8xl font-black tracking-tighter uppercase pointer-events-none select-none text-white whitespace-nowrap"

@@ -22,9 +22,9 @@ export function ThinkFlywheel() {
                 filter: ["blur(4px)", "blur(0px)", "blur(4px)"],
               }}
               transition={{
-                duration: 3,
+                duration: 4.5,
                 repeat: Infinity,
-                delay: i * 1,
+                delay: i * 1.5,
                 ease: "easeInOut",
               }}
               className="absolute text-7xl md:text-9xl font-black tracking-tighter uppercase pointer-events-none select-none text-white whitespace-nowrap"
