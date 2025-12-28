@@ -241,7 +241,7 @@ export const insertPinnedMemorySchema = createInsertSchema(pinnedMemories).omit(
 export type InsertPinnedMemory = z.infer<typeof insertPinnedMemorySchema>;
 export type PinnedMemory = typeof pinnedMemories.$inferSelect;
 
-// Venice AI structured response schema
+// Venice AI structured response schemas
 export const journalAnalysisSchema = z.object({
   summary: z.string().min(10).max(300),
   insight: z.string().min(10).max(220),
@@ -250,6 +250,21 @@ export const journalAnalysisSchema = z.object({
 });
 
 export type JournalAnalysis = z.infer<typeof journalAnalysisSchema>;
+
+// Research mode analysis schema
+export const researchAnalysisSchema = z.object({
+  keyClaims: z.array(z.string().min(10).max(200)).min(1).max(5),
+  evidence: z.array(z.string().min(10).max(200)).max(4),
+  unknowns: z.array(z.string().min(10).max(200)).max(3),
+  nextQuestion: z.string().min(10).max(220),
+});
+
+export type ResearchAnalysis = z.infer<typeof researchAnalysisSchema>;
+
+// Combined analysis result type
+export type ZoneAnalysis = 
+  | { zone: "journal"; analysis: JournalAnalysis }
+  | { zone: "research"; analysis: ResearchAnalysis };
 
 // Journal insight card for chat display
 export const journalInsightCardSchema = z.object({

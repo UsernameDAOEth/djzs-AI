@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema, insertJournalEntrySchema, insertPinnedMemorySchema } from "@shared/schema";
 import { z } from "zod";
 import { verifyMessage } from "viem";
-import { analyzeJournalEntry } from "./venice";
+import { analyzeJournalEntry, analyzeResearchEntry } from "./venice";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -487,7 +487,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a journal entry and analyze it with Venice AI
   app.post("/api/journal/analyze", async (req, res) => {
     try {
-      const { content, walletAddress } = req.body;
+      const { content, walletAddress, zone = "journal" } = req.body;
       
       if (!content || !walletAddress) {
         return res.status(400).json({ error: "content and walletAddress required" });
@@ -507,13 +507,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Filter out the current entry from recent entries
       const contextEntries = recentEntries.filter(e => e.id !== entry.id);
       
-      // 3. Call Venice AI
-      const analysis = await analyzeJournalEntry(content, contextEntries, pinnedMemories);
+      // 3. Call Venice AI with zone-specific analysis
+      let analysis;
+      if (zone === "research") {
+        analysis = await analyzeResearchEntry(content, contextEntries, pinnedMemories);
+      } else {
+        analysis = await analyzeJournalEntry(content, contextEntries, pinnedMemories);
+      }
       
-      // 4. Return entry + analysis
+      // 4. Return entry + analysis + zone
       res.json({
         entry,
         analysis,
+        zone,
       });
     } catch (error) {
       console.error("Error analyzing journal entry:", error);

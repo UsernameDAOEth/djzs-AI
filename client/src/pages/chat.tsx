@@ -51,13 +51,22 @@ import { useDisplayName, useMultipleEnsNames, formatAddress } from "@/hooks/use-
 import { useXmtp } from "@/hooks/use-xmtp";
 import { MessageCard } from "@/components/chat/message-cards";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import type { Member, ChatMessage, StoredMessage, JournalAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
+import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
 import { format } from "date-fns";
 
-interface AnalysisResult {
+interface JournalAnalysisResult {
   entry: JournalEntry;
   analysis: JournalAnalysis;
+  zone: "journal";
 }
+
+interface ResearchAnalysisResult {
+  entry: JournalEntry;
+  analysis: ResearchAnalysis;
+  zone: "research";
+}
+
+type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
 
 const V1_ZONES = [
   { id: "journal", name: "Journal", icon: BookOpen, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight." },
@@ -187,10 +196,11 @@ export default function Chat() {
 
   // Analyze journal entry with Venice AI
   const analyzeEntry = useMutation({
-    mutationFn: async (content: string) => {
+    mutationFn: async ({ content, zone }: { content: string; zone: string }) => {
       const res = await apiRequest("POST", "/api/journal/analyze", {
         content,
         walletAddress: address,
+        zone,
       });
       return res.json() as Promise<AnalysisResult>;
     },
@@ -251,7 +261,7 @@ export default function Chat() {
       setFrozenHeight(textareaRef.current.scrollHeight);
     }
     setIsAnalyzing(true);
-    analyzeEntry.mutate(messageInput);
+    analyzeEntry.mutate({ content: messageInput, zone: selectedZone });
   };
 
   // Handle keyboard shortcuts
@@ -500,48 +510,99 @@ export default function Chat() {
                           <Sparkles className="w-6 h-6 text-purple-400" />
                         </div>
                         <div className="flex-1">
-                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-4">Zone Agent Insight</p>
+                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-4">
+                            {latestAnalysis.zone === "research" ? "Research Analysis" : "Zone Agent Insight"}
+                          </p>
                           
-                          <div className="space-y-6">
-                            <div>
-                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Summary</p>
-                              <p className="text-white font-medium leading-relaxed">{latestAnalysis.analysis.summary}</p>
-                            </div>
-                            
-                            <div>
-                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Insight</p>
-                              <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
-                            </div>
-                            
-                            <div>
-                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Reflection Question</p>
-                              <p className="text-purple-300 font-medium">{latestAnalysis.analysis.question}</p>
-                            </div>
-                            
-                            {latestAnalysis.analysis.memoryCandidates.length > 0 && (
+                          {latestAnalysis.zone === "journal" ? (
+                            <div className="space-y-6">
                               <div>
-                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3">Worth Remembering</p>
-                                <div className="space-y-2">
-                                  {latestAnalysis.analysis.memoryCandidates.map((memory, idx) => (
-                                    <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] group">
-                                      <p className="flex-1 text-sm text-gray-400">{memory}</p>
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        onClick={() => pinMemory.mutate(memory)}
-                                        disabled={pinMemory.isPending}
-                                        className="opacity-0 group-hover:opacity-100 transition-opacity text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
-                                        data-testid={`button-pin-memory-${idx}`}
-                                      >
-                                        <Pin className="w-4 h-4 mr-1" />
-                                        Pin
-                                      </Button>
-                                    </div>
-                                  ))}
-                                </div>
+                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Summary</p>
+                                <p className="text-white font-medium leading-relaxed">{latestAnalysis.analysis.summary}</p>
                               </div>
-                            )}
-                          </div>
+                              
+                              <div>
+                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Insight</p>
+                                <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
+                              </div>
+                              
+                              <div>
+                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Reflection Question</p>
+                                <p className="text-purple-300 font-medium">{latestAnalysis.analysis.question}</p>
+                              </div>
+                              
+                              {latestAnalysis.analysis.memoryCandidates.length > 0 && (
+                                <div>
+                                  <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3">Worth Remembering</p>
+                                  <div className="space-y-2">
+                                    {latestAnalysis.analysis.memoryCandidates.map((memory, idx) => (
+                                      <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] group">
+                                        <p className="flex-1 text-sm text-gray-400">{memory}</p>
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          onClick={() => pinMemory.mutate(memory)}
+                                          disabled={pinMemory.isPending}
+                                          className="opacity-0 group-hover:opacity-100 transition-opacity text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
+                                          data-testid={`button-pin-memory-${idx}`}
+                                        >
+                                          <Pin className="w-4 h-4 mr-1" />
+                                          Pin
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="space-y-6">
+                              <div>
+                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Key Claims</p>
+                                <ul className="space-y-2">
+                                  {latestAnalysis.analysis.keyClaims.map((claim, idx) => (
+                                    <li key={idx} className="flex items-start gap-2">
+                                      <span className="text-purple-400 mt-1">•</span>
+                                      <p className="text-white font-medium leading-relaxed">{claim}</p>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              
+                              {latestAnalysis.analysis.evidence.length > 0 && (
+                                <div>
+                                  <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Evidence</p>
+                                  <ul className="space-y-2">
+                                    {latestAnalysis.analysis.evidence.map((item, idx) => (
+                                      <li key={idx} className="flex items-start gap-2">
+                                        <span className="text-green-400 mt-1">•</span>
+                                        <p className="text-gray-300 leading-relaxed">{item}</p>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              
+                              {latestAnalysis.analysis.unknowns.length > 0 && (
+                                <div>
+                                  <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Unknowns</p>
+                                  <ul className="space-y-2">
+                                    {latestAnalysis.analysis.unknowns.map((item, idx) => (
+                                      <li key={idx} className="flex items-start gap-2">
+                                        <span className="text-yellow-400 mt-1">?</span>
+                                        <p className="text-gray-400 italic leading-relaxed">{item}</p>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              
+                              <div>
+                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Next Question</p>
+                                <p className="text-purple-300 font-medium">{latestAnalysis.analysis.nextQuestion}</p>
+                              </div>
+                            </div>
+                          )}
 
                           <div className="mt-8 pt-6 border-t border-white/[0.05] flex items-center gap-3">
                             <Button
