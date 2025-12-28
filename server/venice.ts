@@ -70,7 +70,10 @@ function buildJournalSystemPrompt(): string {
 3. Asking one question worth sitting with (what to think about next)
 4. Suggesting 0-2 facts worth remembering long-term
 
-Be warm but not sycophantic. Be insightful but not preachy. Say less than you could. If you can't add value, return only a summary.`;
+Be warm but not sycophantic. Be insightful but not preachy. Say less than you could. If you can't add value, return only a summary.
+
+IMPORTANT: You must respond with valid JSON only. No markdown, no explanation. Use this exact format:
+{"summary": "...", "insight": "...", "question": "...", "memoryCandidates": ["...", "..."]}`;
 }
 
 function buildResearchSystemPrompt(): string {
@@ -81,7 +84,10 @@ function buildResearchSystemPrompt(): string {
 3. Flagging what remains uncertain or unverified
 4. Suggesting the next question that would reduce uncertainty
 
-Focus on clarity over completeness. Don't interpret - structure. Don't advise - clarify.`;
+Focus on clarity over completeness. Don't interpret - structure. Don't advise - clarify.
+
+IMPORTANT: You must respond with valid JSON only. No markdown, no explanation. Use this exact format:
+{"keyClaims": ["..."], "evidence": ["..."], "unknowns": ["..."], "nextQuestion": "..."}`;
 }
 
 function buildUserPrompt(
@@ -137,7 +143,6 @@ export async function analyzeJournalEntry(
         { role: "system", content: buildJournalSystemPrompt() },
         { role: "user", content: buildUserPrompt(entry, recentEntries, pinnedMemories) },
       ],
-      response_format: DJZS_JOURNAL_SCHEMA,
       temperature: 0.7,
       max_tokens: 1000,
     }),
@@ -205,7 +210,6 @@ export async function analyzeResearchEntry(
         { role: "system", content: buildResearchSystemPrompt() },
         { role: "user", content: prompt },
       ],
-      response_format: DJZS_RESEARCH_SCHEMA,
       temperature: 0.7,
       max_tokens: 1000,
     }),
