@@ -5,7 +5,7 @@ import { Lock, Network, Zap, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel } from "@/components/hero";
+import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel } from "@/components/hero";
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -228,7 +228,7 @@ export default function Home() {
             <div className="relative z-10 max-w-6xl mx-auto px-10">
               <div className="text-center mb-20">
                 <p className="text-[10px] font-black text-purple-400 uppercase tracking-[0.4em] mb-4">Workspace</p>
-                <h2 className="text-7xl md:text-8xl font-black mb-6 tracking-tighter">Get in the <span className="text-purple-500">Zone</span></h2>
+                <ZoneFlywheel />
                 <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-medium">
                   Everything you think and track lives here. Private, structured, and accumulating value over time.
                 </p>
