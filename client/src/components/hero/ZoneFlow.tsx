@@ -4,7 +4,6 @@ const ZONES = [
   "ZONE",
   "JOURNAL",
   "RESEARCH",
-  "E2E ENCRYPTION",
   "DATA OWNERSHIP"
 ];
 
