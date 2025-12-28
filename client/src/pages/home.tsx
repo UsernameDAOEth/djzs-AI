@@ -252,74 +252,29 @@ export default function Home() {
 
       <RevealSection>
         <section className="relative py-32 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
-          <div className="relative z-10 max-w-7xl mx-auto px-10">
-            <div className="grid md:grid-cols-2 gap-20 items-center">
-              <div>
-                <h2 className="text-6xl font-black mb-8 tracking-tighter">
-                  Built For <span className="text-purple-500">Clarity.</span>
-                </h2>
-                <p className="text-xl text-gray-500 leading-relaxed font-medium mb-12">
-                  DJZS isn't a social network. It's a personal operating system for your mind. Private, owned, and AI-assisted.
-                </p>
-                <div className="space-y-10">
-                  <FeatureRow 
-                    icon={<Lock className="w-6 h-6 text-purple-400" />}
-                    title="Private by Design"
-                    desc="Your entries are encrypted locally. Only you hold the keys to your thoughts."
-                  />
-                  <FeatureRow 
-                    icon={<Zap className="w-6 h-6 text-yellow-400" />}
-                    title="Insight Extraction"
-                    desc="The Zone Agent monitors your entries to surface patterns and answer questions."
-                  />
-                  <FeatureRow 
-                    icon={<Network className="w-6 h-6 text-green-400" />}
-                    title="Knowledge Compounding"
-                    desc="Turn raw notes into a structured knowledge base that accumulates value over time."
-                  />
-                </div>
-              </div>
-              <div className="relative">
-                <div className="rounded-[2rem] bg-gradient-to-br from-purple-500/[0.05] to-blue-500/[0.03] border border-purple-500/20 p-6 overflow-hidden">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center shrink-0">
-                      <Sparkles className="w-5 h-5 text-purple-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-[9px] font-black text-purple-400 uppercase tracking-widest mb-3">Zone Agent Insight</p>
-                      
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">Summary</p>
-                          <p className="text-white text-sm font-medium leading-relaxed">You're exploring a structured framework for organizing thoughts across multiple domains.</p>
-                        </div>
-                        
-                        <div>
-                          <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">Insight</p>
-                          <p className="text-gray-400 text-sm italic leading-relaxed">"This framework could become your personal operating system for structured thinking."</p>
-                        </div>
-                        
-                        <div>
-                          <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">Reflection Question</p>
-                          <p className="text-purple-300 text-sm font-medium">Which zone would benefit most from daily attention?</p>
-                        </div>
-                        
-                        <div>
-                          <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-2">Worth Remembering</p>
-                          <div className="space-y-2">
-                            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
-                              <p className="text-xs text-gray-400">Zones reduce context-switching overhead</p>
-                            </div>
-                            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
-                              <p className="text-xs text-gray-400">Daily entries compound into insight</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div className="relative z-10 max-w-5xl mx-auto px-10 text-center">
+            <h2 className="text-7xl md:text-8xl font-black mb-8 tracking-tighter">
+              Built For <span className="text-purple-500">Clarity.</span>
+            </h2>
+            <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-16 max-w-3xl mx-auto">
+              DJZS isn't a social network. It's a personal operating system for your mind. Private, owned, and AI-assisted.
+            </p>
+            <div className="grid md:grid-cols-3 gap-8">
+              <FeatureCard 
+                icon={<Lock className="w-6 h-6 text-purple-400" />}
+                title="Private by Design"
+                desc="Your entries are encrypted locally. Only you hold the keys to your thoughts."
+              />
+              <FeatureCard 
+                icon={<Zap className="w-6 h-6 text-yellow-400" />}
+                title="Insight Extraction"
+                desc="The Zone Agent monitors your entries to surface patterns and answer questions."
+              />
+              <FeatureCard 
+                icon={<Network className="w-6 h-6 text-green-400" />}
+                title="Knowledge Compounding"
+                desc="Turn raw notes into a structured knowledge base that accumulates value over time."
+              />
             </div>
           </div>
         </section>
@@ -487,16 +442,14 @@ export default function Home() {
   );
 }
 
-function FeatureRow({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+function FeatureCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="flex gap-6 items-start group">
-      <div className="mt-1 w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center shrink-0 group-hover:border-purple-500/30 transition-all">
+    <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-purple-500/20 transition-all group text-center">
+      <div className="w-14 h-14 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center mx-auto mb-6 group-hover:border-purple-500/30 transition-all">
         {icon}
       </div>
-      <div>
-        <h4 className="text-xl font-black text-white mb-2 tracking-tight group-hover:text-purple-200 transition-colors">{title}</h4>
-        <p className="text-gray-500 font-medium leading-relaxed">{desc}</p>
-      </div>
+      <h4 className="text-xl font-black text-white mb-3 tracking-tight group-hover:text-purple-200 transition-colors">{title}</h4>
+      <p className="text-gray-500 font-medium leading-relaxed text-sm">{desc}</p>
     </div>
   );
 }
