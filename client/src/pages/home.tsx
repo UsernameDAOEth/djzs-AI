@@ -227,7 +227,6 @@ export default function Home() {
           <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
             <div className="relative z-10 max-w-6xl mx-auto px-10">
               <div className="text-center mb-20">
-                <p className="text-[10px] font-black text-purple-400 uppercase tracking-[0.4em] mb-4">Workspace</p>
                 <ZoneFlywheel />
                 <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-medium">
                   Everything you think and track lives here. Private, structured, and accumulating value over time.
