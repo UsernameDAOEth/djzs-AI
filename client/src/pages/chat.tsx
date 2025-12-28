@@ -149,7 +149,7 @@ export default function Chat() {
       .where('type')
       .equals(selectedZone)
       .toArray()
-      .then(entries => entries.sort((a, b) => b.createdAt - a.createdAt).slice(0, 10)),
+      .then(entries => entries.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 10)),
     [selectedZone]
   );
 
@@ -654,7 +654,7 @@ export default function Chat() {
                           <Bot className="w-6 h-6 text-purple-400" />
                         </div>
                         <div className="flex-1">
-                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-6">Username DJZS</p>
+                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-6">Thinking Partner</p>
                           
                           <div className="space-y-6">
                             <div>
@@ -977,7 +977,7 @@ export default function Chat() {
                         <div className="flex items-center gap-2 mb-3">
                           <Bot className="w-4 h-4 text-purple-400" />
                           <span className="text-[9px] font-black text-purple-400 uppercase tracking-widest">
-                            Username DJZS
+                            Thinking Partner
                           </span>
                         </div>
                         <div className="space-y-3">

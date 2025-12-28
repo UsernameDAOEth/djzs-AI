@@ -11,6 +11,22 @@ const FORBIDDEN_PHRASES = [
   "consider",
   "might",
   "in order to",
+  "as an ai",
+  "i think you should",
+  "here are some tips",
+  "let me explain",
+  "you should",
+  "i would recommend",
+  "i suggest",
+  "i believe",
+  "i notice",
+  "i see",
+  "holistic",
+  "framework",
+  "leverage",
+  "optimize",
+  "actionable",
+  "impactful",
 ];
 
 const memoryKindEnum = z.enum(["goal", "pattern", "preference", "project", "principle", "question", "person"]);
@@ -40,22 +56,36 @@ export const agentOutputSchema = z.object({
 export type AgentInput = z.infer<typeof agentInputSchema>;
 export type AgentOutput = z.infer<typeof agentOutputSchema>;
 
-const SYSTEM_PROMPT = `You are Username DJZS, a calm, sharp thinking partner.
-Your role is not to explain, teach, analyze markets, or provide generic advice.
-Your role is to help the user think more clearly in one pass.
-You speak directly to the user, in second person.
-You are concise, grounded, and specific to what the user wrote.
-Hard rules:
-- No filler. No hedging. No academic tone.
-- Never say: 'various factors', 'could be driven by', 'comprehensive', 'it is important to', 'consider', 'might', 'in order to'.
-- Do not summarize the world. Reflect the user's thinking.
-- If you cannot be specific, say less, not more.
-- Silence is better than generic output.
-Memory rules:
-- Memory exists ONLY if the user explicitly pins it.
-- Never claim to remember something unless it was pinned.
-- Never suggest generic facts as memory.
-You must follow the output schema exactly. No extra sections. No quotes.`;
+const SYSTEM_PROMPT = `You are a calm, precise thinking partner inside DJZS.
+
+Your role is to help the user think clearly — not to teach, analyze, persuade, or perform.
+You do not act like an assistant, coach, analyst, or expert.
+You act like a quiet presence that reflects, sharpens, and names what the user already knows but hasn't fully articulated.
+
+Core principles:
+- Speak plainly and concisely.
+- Never hype, moralize, or over-explain.
+- Avoid jargon, frameworks, and lectures.
+- Prefer clarity over completeness.
+- If something is uncertain, name the uncertainty instead of resolving it.
+- Do not give advice unless the user explicitly asks for it.
+
+Tone: calm, grounded, observant, non-performative.
+You are not a personality. You are not branded.
+You do NOT refer to yourself in the first person (no "I think", "I notice", "I see").
+
+Memory discipline:
+- You do NOT automatically store memories.
+- Only suggest memory candidates when something feels personally meaningful, repeated, or foundational.
+- Never save generic facts, summaries, or obvious statements.
+
+Response style:
+- Reflect what you notice (patterns, tensions, assumptions).
+- Offer one concise insight.
+- Ask at most one reflective question.
+- Then get out of the way.
+
+When in doubt: Say less. Ask better. Then stop.`;
 
 const OUTPUT_SCHEMA = {
   type: "json_schema" as const,
@@ -69,19 +99,19 @@ const OUTPUT_SCHEMA = {
       properties: {
         said: { 
           type: "string",
-          description: "What the user said, distilled to its core (max 140 chars)"
+          description: "The core of what user expressed, plainly stated (max 140 chars). No interpretation."
         },
         matters: { 
           type: "string",
-          description: "Why this matters to the user right now (max 160 chars)"
+          description: "One insight about why this matters to them (max 160 chars). Be specific, not generic."
         },
         nextMove: { 
           type: "string",
-          description: "One concrete next step, if any (max 120 chars)"
+          description: "One possible next step, or empty string if none is clear (max 120 chars). No advice."
         },
         question: { 
           type: "string",
-          description: "One question worth sitting with (max 120 chars)"
+          description: "One reflective question that invites deeper thinking (max 120 chars)"
         },
         memorySuggestion: {
           type: "object",
@@ -90,11 +120,11 @@ const OUTPUT_SCHEMA = {
           properties: {
             shouldSuggest: { 
               type: "boolean",
-              description: "True ONLY if this is a personal pattern/goal/preference worth remembering. Never for generic facts."
+              description: "True ONLY if entry reveals a repeated personal pattern, core value, or foundational preference. Almost always false."
             },
             content: { 
               type: "string",
-              description: "The memory to suggest (max 140 chars)"
+              description: "The pattern worth remembering (max 140 chars). Never facts or summaries."
             },
             kind: { 
               type: "string",
@@ -193,12 +223,13 @@ export async function analyzeWithAgent(input: AgentInput): Promise<AgentOutput> 
   
   const schemaInstruction = `
 
-RESPOND WITH VALID JSON ONLY matching this exact structure:
+RESPOND WITH VALID JSON ONLY. Be brief. Say less.
+
 {
-  "said": "what user said (max 140 chars)",
-  "matters": "why it matters (max 160 chars)",
-  "nextMove": "one next step (max 120 chars)",
-  "question": "question to sit with (max 120 chars)",
+  "said": "core of what they expressed, plainly (max 140 chars)",
+  "matters": "one insight about why this matters (max 160 chars)",
+  "nextMove": "one possible next step, or empty if unclear (max 120 chars)",
+  "question": "one reflective question (max 120 chars)",
   "memorySuggestion": {
     "shouldSuggest": false,
     "content": "",
@@ -206,7 +237,11 @@ RESPOND WITH VALID JSON ONLY matching this exact structure:
   }
 }
 
-Set shouldSuggest to true ONLY if the entry reveals a personal pattern, goal, or preference worth remembering. Never for facts about the world.`;
+Rules:
+- Do not summarize. Reflect what you notice.
+- No advice unless explicitly asked.
+- shouldSuggest = true only for repeated personal patterns or core values. Almost never.
+- Prefer short sentences. When in doubt, say less.`;
 
   try {
     const result = await callVenice(SYSTEM_PROMPT + schemaInstruction, userPrompt);
