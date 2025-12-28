@@ -1,0 +1,102 @@
+Build DJZS v1 “Thinking Partner” Agent + Local-First Vault.
+
+Goal:
+- Local-first journaling + research capture
+- One AI Thinking Partner named “Username DJZS”
+- Memory is user-controlled: Pin / Forget only
+- Export for personal use only
+- No trade, no NFTs, no dashboards, no feeds, no cloud sync
+
+Tech choices:
+- Frontend: React (existing app)
+- Local storage: IndexedDB using Dexie
+- Backend: Node/Express OR Next.js API route (use whichever this repo already uses)
+- AI: Venice API (OpenAI-compatible) with STRUCTURED RESPONSES (json_schema)
+
+Core UX loop:
+Open → write → Think with me → close
+
+AI behavior (NON-NEGOTIABLE):
+The agent must sound like a calm, sharp thinking partner.
+Not an analyst, not a teacher, not a hype machine.
+
+System Prompt (use exactly):
+"You are Username DJZS, a calm, sharp thinking partner.
+Your role is not to explain, teach, analyze markets, or provide generic advice.
+Your role is to help the user think more clearly in one pass.
+You speak directly to the user, in second person.
+You are concise, grounded, and specific to what the user wrote.
+Hard rules:
+- No filler. No hedging. No academic tone.
+- Never say: 'various factors', 'could be driven by', 'comprehensive', 'it is important to', 'consider', 'might', 'in order to'.
+- Do not summarize the world. Reflect the user's thinking.
+- If you cannot be specific, say less, not more.
+- Silence is better than generic output.
+Memory rules:
+- Memory exists ONLY if the user explicitly pins it.
+- Never claim to remember something unless it was pinned.
+- Never suggest generic facts as memory.
+You must follow the output schema exactly. No extra sections. No quotes."
+
+Input contract (what frontend sends to backend):
+{
+  mode: "journal" | "research",
+  intent: "clarity" | "decision" | "plan" | "research" | "rewrite",
+  entry: string,
+  pinnedMemory: Array<{ kind: "goal"|"pattern"|"preference"|"project"|"principle"|"question"|"person", content: string }>
+}
+
+Output contract (STRUCTURED JSON ONLY):
+Return JSON matching this schema. If response violates schema or includes forbidden phrases, retry once with instruction:
+"Be more specific. Remove generic language. Say less."
+
+Schema fields (max lengths enforced):
+- said: string (<= 140 chars)
+- matters: string (<= 160 chars)
+- nextMove: string (<= 120 chars)
+- question: string (<= 120 chars)
+- memorySuggestion: { shouldSuggest: boolean, content: string (<= 140), kind: enum }
+
+Memory discipline:
+- Only user pinned memory is stored and reused
+- No auto-save “truths”
+- memorySuggestion shouldSuggest=true ONLY if it is personal (pattern/goal/preference), never generic facts
+
+Local-first storage requirements (IndexedDB Dexie):
+Stores:
+1) entries: {id, type("journal"|"research"), text, createdAt, updatedAt, tags[]}
+2) insights: {id, entryId, type, said, matters, nextMove, question, createdAt}
+3) memoryPins: {id, kind, content, sourceEntryId?, createdAt, lastUsedAt?, isActive(0|1)}
+
+UI requirements:
+- Writing surface is large (dominant)
+- Primary button: “Think with me”
+- After AI response, show Memory suggestion only if shouldSuggest=true with buttons: Pin / Skip
+- Sidebar shows only Pinned Memories (user-pinned), no duplicates, no auto-generated notes
+
+Build tasks:
+1) Add Dexie IndexedDB vault module (entries/insights/memoryPins)
+2) Add API endpoint /api/agent/analyze that:
+   - accepts input contract
+   - calls Venice with response_format json_schema
+   - validates schema + forbidden phrases
+   - retries once on failure
+   - returns the structured JSON
+3) Frontend flow:
+   - Save entry locally
+   - Load up to 3 newest pinned memories
+   - Call /api/agent/analyze
+   - Save insight locally
+   - Render Thinking Partner card with said/matters/nextMove/question
+   - If memorySuggestion.shouldSuggest true → show Pin/Skip; Pin writes to memoryPins
+
+Environment variables needed:
+- VENICE_API_KEY=...
+- VENICE_BASE_URL=https://api.venice.ai/api/v1
+- VENICE_MODEL=<model-id>
+
+Important:
+- Do not add extra features.
+- Do not add cloud sync.
+- Do not add trade, payments, NFTs, or multi-agent.
+- Keep outputs short and specific.

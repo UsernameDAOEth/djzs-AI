@@ -53,6 +53,18 @@ import { MessageCard } from "@/components/chat/message-cards";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
 import { format } from "date-fns";
+import { useLiveQuery } from "dexie-react-hooks";
+import { 
+  vault, 
+  saveEntry, 
+  saveInsight, 
+  getActiveMemories, 
+  getMemoriesForAgent, 
+  pinMemory as pinLocalMemory, 
+  forgetMemory,
+  type MemoryPin,
+  type EntryType
+} from "@/lib/vault";
 
 interface JournalAnalysisResult {
   entry: JournalEntry;
@@ -74,26 +86,38 @@ const V1_ZONES = [
 ];
 
 const JOURNAL_PROMPTS = [
-  "What's on your mind right now?",
-  "What happened today?",
-  "What feels unclear right now?",
-  "What's one thing you learned recently?",
-  "What decision are you avoiding?",
-  "What would you do if you weren't afraid?",
-  "What's draining your energy lately?",
-  "What are you grateful for today?",
+  "What feels unresolved right now?",
+  "What are you unsure about?",
+  "What don't you fully understand yet?",
+  "What decision keeps circling back?",
+  "What would clarity look like here?",
+  "What's the tension you're sitting with?",
+  "What are you avoiding thinking about?",
+  "What pattern do you keep noticing?",
 ];
 
 const RESEARCH_PROMPTS = [
   "What are you trying to figure out?",
-  "What's a question you keep coming back to?",
   "What evidence would change your mind?",
-  "What do you need to verify?",
-  "What's the strongest counterargument?",
-  "What assumptions are you making?",
-  "What would an expert say about this?",
-  "What's missing from your understanding?",
+  "What's the gap in your understanding?",
+  "What assumption haven't you tested?",
+  "What would disprove your current view?",
+  "What's the question behind the question?",
+  "What would an expert challenge here?",
+  "What's missing from the picture?",
 ];
+
+interface AgentResponse {
+  said: string;
+  matters: string;
+  nextMove: string;
+  question: string;
+  memorySuggestion: {
+    shouldSuggest: boolean;
+    content: string;
+    kind: string;
+  };
+}
 
 export default function Chat() {
   const { address, isConnected } = useAccount();
@@ -109,10 +133,25 @@ export default function Chat() {
   const [isFocused, setIsFocused] = useState(false);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [latestAnalysis, setLatestAnalysis] = useState<AnalysisResult | null>(null);
+  const [agentResponse, setAgentResponse] = useState<AgentResponse | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [frozenHeight, setFrozenHeight] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [lastEntryId, setLastEntryId] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Local-first: Query memories from IndexedDB
+  const localMemories = useLiveQuery(() => getActiveMemories(10), []);
+  
+  // Local-first: Query recent entries from IndexedDB (newest first)
+  const localEntries = useLiveQuery(
+    () => vault.entries
+      .where('type')
+      .equals(selectedZone)
+      .toArray()
+      .then(entries => entries.sort((a, b) => b.createdAt - a.createdAt).slice(0, 10)),
+    [selectedZone]
+  );
 
   const autoResize = useCallback(() => {
     const textarea = textareaRef.current;
@@ -215,7 +254,7 @@ export default function Chat() {
     },
   });
 
-  // Analyze journal entry with Venice AI
+  // Analyze journal entry with Venice AI (legacy)
   const analyzeEntry = useMutation({
     mutationFn: async ({ content, zone }: { content: string; zone: string }) => {
       const res = await apiRequest("POST", "/api/journal/analyze", {
@@ -228,10 +267,6 @@ export default function Chat() {
     onSuccess: (data) => {
       setLatestAnalysis(data);
       queryClient.invalidateQueries({ queryKey: ["/api/journal/entries", address] });
-      toast({
-        title: "Insight generated",
-        description: "Your entry has been analyzed.",
-      });
       setIsAnalyzing(false);
     },
     onError: (error) => {
@@ -244,7 +279,50 @@ export default function Chat() {
     },
   });
 
-  // Pin a memory
+  // NEW: Think with me - local-first agent analysis
+  const thinkWithMe = useMutation({
+    mutationFn: async ({ content, mode }: { content: string; mode: EntryType }) => {
+      // 1. Save entry locally first
+      const entryId = await saveEntry(mode, content);
+      setLastEntryId(entryId);
+      
+      // 2. Get pinned memories for context
+      const memories = await getMemoriesForAgent();
+      
+      // 3. Call agent API
+      const res = await apiRequest("POST", "/api/agent/analyze", {
+        mode,
+        intent: "clarity",
+        entry: content,
+        pinnedMemory: memories,
+      });
+      const response = await res.json() as AgentResponse;
+      
+      // 4. Save insight locally
+      await saveInsight(entryId, mode, {
+        said: response.said,
+        matters: response.matters,
+        nextMove: response.nextMove,
+        question: response.question,
+      });
+      
+      return response;
+    },
+    onSuccess: (data) => {
+      setAgentResponse(data);
+      setIsAnalyzing(false);
+    },
+    onError: (error) => {
+      setIsAnalyzing(false);
+      toast({
+        title: "Thinking failed",
+        description: error instanceof Error ? error.message : "Could not process entry",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Pin a memory (server)
   const pinMemory = useMutation({
     mutationFn: async (content: string) => {
       const res = await apiRequest("POST", "/api/memories/pin", {
@@ -264,6 +342,30 @@ export default function Chat() {
     },
   });
 
+  // Pin memory locally (for agent suggestions)
+  const handlePinSuggestion = async () => {
+    if (!agentResponse?.memorySuggestion.shouldSuggest) return;
+    const { content, kind } = agentResponse.memorySuggestion;
+    await pinLocalMemory(kind as any, content, lastEntryId || undefined);
+    toast({
+      title: "Memory pinned",
+      description: "This pattern will be remembered.",
+    });
+    setAgentResponse(prev => prev ? { ...prev, memorySuggestion: { ...prev.memorySuggestion, shouldSuggest: false } } : null);
+  };
+
+  const handleSkipSuggestion = () => {
+    setAgentResponse(prev => prev ? { ...prev, memorySuggestion: { ...prev.memorySuggestion, shouldSuggest: false } } : null);
+  };
+
+  const handleForgetMemory = async (id: number) => {
+    await forgetMemory(id);
+    toast({
+      title: "Memory forgotten",
+      description: "This will no longer be used for context.",
+    });
+  };
+
   const handleSendText = () => {
     if (!messageInput.trim() || !address || sendMessage.isPending) return;
     const message: ChatMessage = {
@@ -277,12 +379,21 @@ export default function Chat() {
   };
 
   const handleAnalyze = () => {
-    if (!messageInput.trim() || !address || analyzeEntry.isPending) return;
+    if (!messageInput.trim() || thinkWithMe.isPending) return;
     if (textareaRef.current) {
       setFrozenHeight(textareaRef.current.scrollHeight);
     }
     setIsAnalyzing(true);
-    analyzeEntry.mutate({ content: messageInput, zone: selectedZone });
+    setAgentResponse(null);
+    thinkWithMe.mutate({ content: messageInput, mode: selectedZone as EntryType });
+  };
+
+  const clearAndReset = () => {
+    setMessageInput("");
+    setAgentResponse(null);
+    setLatestAnalysis(null);
+    setFrozenHeight(null);
+    textareaRef.current?.focus();
   };
 
   // Handle keyboard shortcuts
@@ -500,7 +611,7 @@ export default function Chat() {
                     </Button>
                     <Button
                       onClick={handleAnalyze}
-                      disabled={!messageInput.trim() || analyzeEntry.isPending || isAnalyzing}
+                      disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
                       className="bg-purple-600 hover:bg-purple-500 h-11 px-6 rounded-xl font-bold text-sm shadow-lg shadow-purple-900/30 transition-all"
                       data-testid="button-analyze"
                     >
@@ -511,8 +622,8 @@ export default function Chat() {
                         </>
                       ) : (
                         <>
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          Generate Insight
+                          <Bot className="w-4 h-4 mr-2" />
+                          Think with me
                         </>
                       )}
                     </Button>
@@ -521,16 +632,105 @@ export default function Chat() {
               </div>
 
               {/* Insight appears below text when analyzing is complete */}
-              {(isAnalyzing || latestAnalysis) && (
+              {(isAnalyzing || agentResponse || latestAnalysis) && (
                 <div className="pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  {isAnalyzing && !latestAnalysis && (
+                  {isAnalyzing && !agentResponse && !latestAnalysis && (
                     <div className="p-8 rounded-3xl bg-purple-500/[0.02] border border-purple-500/10" data-testid="analyzing-loader">
                       <div className="flex items-center gap-4">
                         <Loader2 className="w-6 h-6 text-purple-400 animate-spin" />
                         <div>
-                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-1">Analyzing Entry</p>
-                          <p className="text-sm text-gray-500">The Zone Agent is processing your reflection...</p>
+                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-1">Thinking</p>
+                          <p className="text-sm text-gray-500">Processing your entry...</p>
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* NEW: Agent Response Card (v1 Thinking Partner) */}
+                  {agentResponse && (
+                    <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/[0.05] to-blue-500/[0.03] border border-purple-500/20" data-testid="agent-response-card">
+                      <div className="flex items-start gap-6">
+                        <div className="w-12 h-12 rounded-2xl bg-purple-600/20 flex items-center justify-center shrink-0">
+                          <Bot className="w-6 h-6 text-purple-400" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-6">Username DJZS</p>
+                          
+                          <div className="space-y-6">
+                            <div>
+                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">What you said</p>
+                              <p className="text-white font-medium leading-relaxed">{agentResponse.said}</p>
+                            </div>
+                            
+                            <div>
+                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Why it matters</p>
+                              <p className="text-gray-300 leading-relaxed">{agentResponse.matters}</p>
+                            </div>
+                            
+                            {agentResponse.nextMove && (
+                              <div>
+                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Next move</p>
+                                <p className="text-gray-400 leading-relaxed">{agentResponse.nextMove}</p>
+                              </div>
+                            )}
+                            
+                            <div>
+                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Question to sit with</p>
+                              <p className="text-purple-300 font-medium italic">{agentResponse.question}</p>
+                            </div>
+
+                            {/* Memory suggestion */}
+                            {agentResponse.memorySuggestion.shouldSuggest && (
+                              <div className="mt-6 p-4 rounded-xl bg-yellow-500/[0.05] border border-yellow-500/20">
+                                <p className="text-[9px] font-black text-yellow-500/70 uppercase tracking-widest mb-2">Worth remembering?</p>
+                                <p className="text-sm text-gray-300 mb-4">{agentResponse.memorySuggestion.content}</p>
+                                <div className="flex items-center gap-3">
+                                  <Button
+                                    size="sm"
+                                    onClick={handlePinSuggestion}
+                                    className="bg-purple-600 hover:bg-purple-500 text-sm"
+                                    data-testid="button-pin-suggestion"
+                                  >
+                                    <Pin className="w-4 h-4 mr-1" />
+                                    Pin
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={handleSkipSuggestion}
+                                    className="text-gray-500 hover:text-white"
+                                    data-testid="button-skip-suggestion"
+                                  >
+                                    Skip
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Closing line */}
+                            <p className="text-[11px] text-gray-600 italic mt-8 pt-6 border-t border-white/[0.03]">
+                              You don't need to resolve this now.
+                            </p>
+                          </div>
+
+                          <div className="mt-8 pt-6 border-t border-white/[0.05] flex items-center gap-3">
+                            <Button
+                              onClick={clearAndReset}
+                              variant="ghost"
+                              className="text-gray-500 hover:text-white hover:bg-white/5"
+                            >
+                              New Entry
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <button 
+                          onClick={clearAndReset}
+                          className="p-2 rounded-full hover:bg-white/5 transition-colors"
+                        >
+                          <X className="w-4 h-4 text-gray-600" />
+                        </button>
                       </div>
                     </div>
                   )}
@@ -660,8 +860,8 @@ export default function Chat() {
                 </div>
               )}
 
-              {/* Past Entries - Collapsible */}
-              {journalEntries.length > 0 && (
+              {/* Past Entries - Collapsible (Local-first) */}
+              {localEntries && localEntries.length > 0 && (
                 <div className="pb-12">
                   <button
                     onClick={() => setShowHistory(!showHistory)}
@@ -669,12 +869,12 @@ export default function Chat() {
                     data-testid="button-toggle-history"
                   >
                     <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
-                    Past Entries ({journalEntries.length})
+                    Past Entries ({localEntries.length})
                   </button>
                   
                   {showHistory && (
                     <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                      {journalEntries.slice(0, 10).map((entry) => (
+                      {localEntries.slice(0, 10).map((entry) => (
                         <div 
                           key={entry.id} 
                           className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.03] hover:border-purple-500/10 transition-all group"
@@ -682,7 +882,7 @@ export default function Chat() {
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1 min-w-0">
                               <p className="text-sm text-gray-400 leading-relaxed line-clamp-3">
-                                {entry.content}
+                                {entry.text}
                               </p>
                             </div>
                             <span className="text-[9px] font-black text-gray-700 uppercase tracking-widest shrink-0">
@@ -718,19 +918,24 @@ export default function Chat() {
 
               <TabsContent value="memories" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
                 <div className="px-6 py-3 border-b border-white/[0.02]">
-                  <p className="text-[10px] text-gray-600 font-bold uppercase">{pinnedMemories.length} items saved</p>
+                  <p className="text-[10px] text-gray-600 font-bold uppercase">{localMemories?.length || 0} patterns saved</p>
                 </div>
                 <ScrollArea className="flex-1">
                   <div className="p-6 space-y-4">
-                    {pinnedMemories.length === 0 ? (
+                    {!localMemories || localMemories.length === 0 ? (
                       <div className="text-center py-10">
                         <Pin className="w-8 h-8 text-gray-700 mx-auto mb-4" />
-                        <p className="text-sm text-gray-600 font-medium">No memories pinned yet</p>
-                        <p className="text-xs text-gray-700 mt-2">Write an entry and pin insights worth remembering</p>
+                        <p className="text-sm text-gray-600 font-medium">No patterns pinned yet</p>
+                        <p className="text-xs text-gray-700 mt-2">Pin patterns worth remembering from your entries</p>
                       </div>
                     ) : (
-                      pinnedMemories.map((memory) => (
+                      localMemories.map((memory) => (
                         <div key={memory.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] group">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="outline" className="text-[8px] uppercase tracking-widest border-purple-500/30 text-purple-400/70">
+                              {memory.kind}
+                            </Badge>
+                          </div>
                           <p className="text-sm text-gray-300 leading-relaxed font-medium mb-3">
                             {memory.content}
                           </p>
@@ -741,13 +946,11 @@ export default function Chat() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={async () => {
-                                await fetch(`/api/memories/${memory.id}`, { method: "DELETE" });
-                                queryClient.invalidateQueries({ queryKey: ["/api/memories", address] });
-                              }}
+                              onClick={() => memory.id && handleForgetMemory(memory.id)}
                               className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-7 px-2"
+                              data-testid={`button-forget-memory-${memory.id}`}
                             >
-                              <X className="w-3 h-3" />
+                              Forget
                             </Button>
                           </div>
                         </div>
@@ -758,44 +961,37 @@ export default function Chat() {
                 <div className="p-4 border-t border-white/[0.03]">
                   <Button variant="outline" className="w-full border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.03] text-gray-500 hover:text-white h-12 rounded-xl font-black text-[9px] uppercase tracking-[0.15em] transition-all">
                     <Download className="w-3 h-3 mr-2" />
-                    Export Memories
+                    Export Vault
                   </Button>
                 </div>
               </TabsContent>
 
               <TabsContent value="insights" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
                 <div className="px-6 py-3 border-b border-white/[0.02]">
-                  <p className="text-[10px] text-gray-600 font-bold uppercase">Recent analysis results</p>
+                  <p className="text-[10px] text-gray-600 font-bold uppercase">Latest thinking</p>
                 </div>
                 <ScrollArea className="flex-1">
                   <div className="p-6 space-y-4">
-                    {latestAnalysis ? (
+                    {agentResponse ? (
                       <div className="p-4 rounded-2xl bg-purple-500/[0.05] border border-purple-500/20">
                         <div className="flex items-center gap-2 mb-3">
-                          <Sparkles className="w-4 h-4 text-purple-400" />
+                          <Bot className="w-4 h-4 text-purple-400" />
                           <span className="text-[9px] font-black text-purple-400 uppercase tracking-widest">
-                            {latestAnalysis.zone === "research" ? "Research" : "Journal"} Insight
+                            Username DJZS
                           </span>
                         </div>
-                        {latestAnalysis.zone === "journal" ? (
-                          <div className="space-y-3">
-                            <p className="text-sm text-white font-medium leading-relaxed line-clamp-3">{latestAnalysis.analysis.summary}</p>
-                            <p className="text-xs text-gray-500 italic line-clamp-2">"{latestAnalysis.analysis.insight}"</p>
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            {latestAnalysis.analysis.keyClaims.slice(0, 2).map((claim, idx) => (
-                              <p key={idx} className="text-sm text-white font-medium leading-relaxed line-clamp-2">• {claim}</p>
-                            ))}
-                          </div>
-                        )}
+                        <div className="space-y-3">
+                          <p className="text-sm text-white font-medium leading-relaxed">{agentResponse.said}</p>
+                          <p className="text-xs text-gray-500">{agentResponse.matters}</p>
+                          <p className="text-xs text-purple-300 italic">{agentResponse.question}</p>
+                        </div>
                         <p className="text-[9px] text-gray-600 mt-3 uppercase tracking-widest">Just now</p>
                       </div>
                     ) : (
                       <div className="text-center py-10">
-                        <Sparkles className="w-8 h-8 text-gray-700 mx-auto mb-4" />
-                        <p className="text-sm text-gray-600 font-medium">No insights yet</p>
-                        <p className="text-xs text-gray-700 mt-2">Write an entry and click "Generate Insight"</p>
+                        <Bot className="w-8 h-8 text-gray-700 mx-auto mb-4" />
+                        <p className="text-sm text-gray-600 font-medium">No thinking yet</p>
+                        <p className="text-xs text-gray-700 mt-2">Write an entry and click "Think with me"</p>
                       </div>
                     )}
                   </div>

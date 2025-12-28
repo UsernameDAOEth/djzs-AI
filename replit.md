@@ -175,9 +175,10 @@ client/src/
     chat/          # Message cards, composers
     ui/            # shadcn components
   hooks/           # useEns, useXmtp
-  lib/             # wagmi-config, xmtp, queryClient
+  lib/             # wagmi-config, xmtp, queryClient, vault (Dexie IndexedDB)
 server/
   routes.ts        # API endpoints
+  agent.api.ts     # Venice AI agent endpoint
   storage.ts       # In-memory storage
 shared/
   schema.ts        # Types, Zod schemas, Drizzle tables
@@ -185,6 +186,15 @@ shared/
 
 ## Recent Changes
 
+- **Dec 28, 2024**: Implemented local-first "Think with me" flow
+  - New Dexie IndexedDB vault module (`client/src/lib/vault.ts`) with entries, insights, and memoryPins stores
+  - `/api/agent/analyze` endpoint with Venice AI structured JSON responses
+  - Agent response card with said/matters/nextMove/question format
+  - Memory suggestion UI with Pin/Skip buttons
+  - "You don't need to resolve this now" closing line (uncertainty philosophy)
+  - Sidebar shows local memories with kind badges and Forget option
+  - Past Entries list uses local IndexedDB data
+  - Main button changed from "Generate Insight" to "Think with me"
 - **Dec 28, 2024**: Added PWA support for mobile installation
   - Web app manifest with icons and theme colors
   - Service worker for offline caching

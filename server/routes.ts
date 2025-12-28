@@ -5,6 +5,7 @@ import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, inser
 import { z } from "zod";
 import { verifyMessage } from "viem";
 import { analyzeJournalEntry, analyzeResearchEntry } from "./venice";
+import { analyzeWithAgent, agentInputSchema } from "./agent.api";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -580,6 +581,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting memory:", error);
       res.status(500).json({ error: "Failed to delete memory" });
+    }
+  });
+
+  // ==================== AGENT API (v1 Thinking Partner) ====================
+  
+  // Analyze entry with the Thinking Partner agent
+  app.post("/api/agent/analyze", async (req, res) => {
+    try {
+      const input = agentInputSchema.parse(req.body);
+      const result = await analyzeWithAgent(input);
+      res.json(result);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid input", details: error.errors });
+      }
+      console.error("Error in agent analyze:", error);
+      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
+        return res.status(503).json({ error: "AI service not configured" });
+      }
+      res.status(500).json({ error: "Failed to analyze entry" });
     }
   });
 
