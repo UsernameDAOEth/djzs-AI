@@ -51,8 +51,13 @@ import { useDisplayName, useMultipleEnsNames, formatAddress } from "@/hooks/use-
 import { useXmtp } from "@/hooks/use-xmtp";
 import { MessageCard } from "@/components/chat/message-cards";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import type { Member, ChatMessage, StoredMessage } from "@shared/schema";
+import type { Member, ChatMessage, StoredMessage, JournalAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
 import { format } from "date-fns";
+
+interface AnalysisResult {
+  entry: JournalEntry;
+  analysis: JournalAnalysis;
+}
 
 const V1_ZONES = [
   { id: "journal", name: "Journal", icon: BookOpen, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight." },
@@ -79,6 +84,8 @@ export default function Chat() {
   const [memoryDrawerOpen, setMemoryDrawerOpen] = useState(false);
   const [isWriting, setIsWriting] = useState(false);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
+  const [latestAnalysis, setLatestAnalysis] = useState<AnalysisResult | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -124,6 +131,28 @@ export default function Chat() {
     refetchInterval: 5000,
   });
 
+  // Fetch journal entries
+  const { data: journalEntries = [] } = useQuery<JournalEntry[]>({
+    queryKey: ["/api/journal/entries", address],
+    queryFn: async () => {
+      const res = await fetch(`/api/journal/entries/${address}`);
+      if (!res.ok) throw new Error("Failed to fetch entries");
+      return res.json();
+    },
+    enabled: !!address && selectedZone === "journal",
+  });
+
+  // Fetch pinned memories
+  const { data: pinnedMemories = [] } = useQuery<PinnedMemory[]>({
+    queryKey: ["/api/memories", address],
+    queryFn: async () => {
+      const res = await fetch(`/api/memories/${address}`);
+      if (!res.ok) throw new Error("Failed to fetch memories");
+      return res.json();
+    },
+    enabled: !!address,
+  });
+
   const sendMessage = useMutation({
     mutationFn: async (message: ChatMessage) => {
       const res = await apiRequest("POST", "/api/messages", {
@@ -142,6 +171,55 @@ export default function Chat() {
     },
   });
 
+  // Analyze journal entry with Venice AI
+  const analyzeEntry = useMutation({
+    mutationFn: async (content: string) => {
+      const res = await apiRequest("POST", "/api/journal/analyze", {
+        content,
+        walletAddress: address,
+      });
+      return res.json() as Promise<AnalysisResult>;
+    },
+    onSuccess: (data) => {
+      setLatestAnalysis(data);
+      queryClient.invalidateQueries({ queryKey: ["/api/journal/entries", address] });
+      toast({
+        title: "Insight generated",
+        description: "Your entry has been analyzed.",
+      });
+      setIsWriting(false);
+      setIsAnalyzing(false);
+    },
+    onError: (error) => {
+      setIsAnalyzing(false);
+      toast({
+        title: "Analysis failed",
+        description: error instanceof Error ? error.message : "Could not analyze entry",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Pin a memory
+  const pinMemory = useMutation({
+    mutationFn: async (content: string) => {
+      const res = await apiRequest("POST", "/api/memories/pin", {
+        walletAddress: address,
+        content,
+        source: "user_pinned",
+        sourceEntryId: latestAnalysis?.entry.id,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/memories", address] });
+      toast({
+        title: "Memory pinned",
+        description: "This insight will be remembered.",
+      });
+    },
+  });
+
   const handleSendText = () => {
     if (!messageInput.trim() || !address || sendMessage.isPending) return;
     const message: ChatMessage = {
@@ -152,6 +230,24 @@ export default function Chat() {
     };
     sendMessage.mutate(message);
     setMessageInput("");
+  };
+
+  const handleAnalyze = () => {
+    if (!messageInput.trim() || !address || analyzeEntry.isPending) return;
+    setIsAnalyzing(true);
+    analyzeEntry.mutate(messageInput);
+    setMessageInput("");
+  };
+
+  // Handle keyboard shortcuts
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault();
+      handleSendText();
+    } else if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleAnalyze();
+    }
   };
 
   const currentZone = V1_ZONES.find(z => z.id === selectedZone) || V1_ZONES[0];
@@ -283,7 +379,82 @@ export default function Chat() {
 
           <ScrollArea className="flex-1">
             <div className="max-w-3xl mx-auto px-6 py-20">
-              {messages.length === 0 && !isWriting ? (
+              {/* Latest Analysis Insight Card */}
+              {latestAnalysis && (
+                <div className="mb-12 p-8 rounded-[2rem] bg-gradient-to-br from-purple-500/[0.05] to-blue-500/[0.03] border border-purple-500/20 animate-in fade-in slide-in-from-bottom-4 duration-700" data-testid="insight-card">
+                  <div className="flex items-start gap-6">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-600/20 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-6 h-6 text-purple-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-4">Zone Agent Insight</p>
+                      
+                      <div className="space-y-6">
+                        <div>
+                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Summary</p>
+                          <p className="text-white font-medium leading-relaxed">{latestAnalysis.analysis.summary}</p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Insight</p>
+                          <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Reflection Question</p>
+                          <p className="text-purple-300 font-medium">{latestAnalysis.analysis.question}</p>
+                        </div>
+                        
+                        {latestAnalysis.analysis.memoryCandidates.length > 0 && (
+                          <div>
+                            <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3">Worth Remembering</p>
+                            <div className="space-y-2">
+                              {latestAnalysis.analysis.memoryCandidates.map((memory, idx) => (
+                                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] group">
+                                  <p className="flex-1 text-sm text-gray-400">{memory}</p>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => pinMemory.mutate(memory)}
+                                    disabled={pinMemory.isPending}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
+                                    data-testid={`button-pin-memory-${idx}`}
+                                  >
+                                    <Pin className="w-4 h-4 mr-1" />
+                                    Pin
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <button 
+                      onClick={() => setLatestAnalysis(null)}
+                      className="p-2 rounded-full hover:bg-white/5 transition-colors"
+                    >
+                      <X className="w-4 h-4 text-gray-600" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Analyzing loader */}
+              {isAnalyzing && (
+                <div className="mb-12 p-8 rounded-[2rem] bg-purple-500/[0.02] border border-purple-500/10 animate-pulse" data-testid="analyzing-loader">
+                  <div className="flex items-center gap-4">
+                    <Loader2 className="w-6 h-6 text-purple-400 animate-spin" />
+                    <div>
+                      <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-1">Analyzing Entry</p>
+                      <p className="text-sm text-gray-500">The Zone Agent is processing your reflection...</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {messages.length === 0 && !isWriting && journalEntries.length === 0 ? (
                 <div className="text-center py-20 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                   <h3 className="text-5xl font-black text-white mb-6 tracking-tighter">Start with one thought.</h3>
                   <p className="text-xl text-gray-500 mb-12 font-medium">DJZS will help you make sense of it.</p>
@@ -324,18 +495,6 @@ export default function Chat() {
                           </div>
                         </div>
 
-                        {/* Agent Insight Mockup (v1 Feel) */}
-                        {idx === 0 && (
-                          <div className="mt-4 ml-8 p-6 rounded-2xl bg-blue-500/[0.03] border border-blue-500/10 flex gap-4 animate-in fade-in zoom-in duration-1000 delay-500">
-                            <Sparkles className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-                            <div>
-                              <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Thinking Partner</p>
-                              <p className="text-sm text-gray-400 leading-relaxed font-medium italic">
-                                "You're circling the same decision as yesterday. The blocker isn't information — it's confidence."
-                              </p>
-                            </div>
-                          </div>
-                        )}
                       </div>
                     );
                   })}
@@ -368,6 +527,7 @@ export default function Chat() {
                   autoFocus
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   placeholder="Write what you're thinking. No formatting. No pressure."
                   className="w-full bg-transparent border-none focus:ring-0 text-3xl font-bold text-white placeholder:text-gray-800 resize-none min-h-[300px] leading-snug tracking-tight"
                 />
@@ -385,51 +545,88 @@ export default function Chat() {
                   </div>
                 </div>
 
-                <Button
-                  onClick={handleSendText}
-                  disabled={!messageInput.trim() || sendMessage.isPending}
-                  className="bg-purple-600 hover:bg-purple-700 h-14 px-10 rounded-2xl font-black text-lg shadow-2xl shadow-purple-900/40"
-                >
-                  {sendMessage.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Save Entry"}
-                </Button>
+                <div className="flex items-center gap-3">
+                  <Button
+                    onClick={handleSendText}
+                    disabled={!messageInput.trim() || sendMessage.isPending}
+                    variant="outline"
+                    className="h-14 px-8 rounded-2xl font-black text-sm border-white/10 hover:bg-white/5"
+                  >
+                    {sendMessage.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Save Only"}
+                  </Button>
+                  <Button
+                    onClick={handleAnalyze}
+                    disabled={!messageInput.trim() || analyzeEntry.isPending || isAnalyzing}
+                    className="bg-purple-600 hover:bg-purple-700 h-14 px-10 rounded-2xl font-black text-lg shadow-2xl shadow-purple-900/40"
+                    data-testid="button-analyze"
+                  >
+                    {isAnalyzing ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                        Thinking...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        Analyze
+                      </>
+                    )}
+                  </Button>
+                </div>
               </footer>
             </div>
           </div>
         </main>
 
-        {/* Right Sidebar - Insight Drawer */}
+        {/* Right Sidebar - Memory Drawer */}
         {memoryDrawerOpen && (
           <aside className="w-80 border-l border-white/[0.03] flex flex-col bg-black/20 backdrop-blur-xl animate-in slide-in-from-right duration-500">
             <div className="p-8 border-b border-white/[0.02]">
-              <h3 className="text-sm font-black text-white tracking-widest uppercase mb-1">Zone Memory</h3>
-              <p className="text-[10px] text-gray-600 font-bold uppercase">Compound Intelligence</p>
+              <h3 className="text-sm font-black text-white tracking-widest uppercase mb-1">Pinned Memories</h3>
+              <p className="text-[10px] text-gray-600 font-bold uppercase">{pinnedMemories.length} items saved</p>
             </div>
 
-            <ScrollArea className="flex-1 p-8 space-y-10">
-              <div className="space-y-4">
-                <p className="text-[10px] font-black text-gray-700 uppercase tracking-widest">Active Insight</p>
-                <div className="p-6 rounded-[2rem] bg-purple-600/5 border border-purple-500/10">
-                  <p className="text-sm text-gray-300 leading-relaxed italic font-medium">
-                    "You've mentioned 'uncertainty' in 4 of your last 5 entries. The common thread is a fear of commitment to a specific path."
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <p className="text-[10px] font-black text-gray-700 uppercase tracking-widest">Extracted Topics</p>
-                <div className="flex flex-wrap gap-2">
-                  {["Confidence", "Decision Making", "Product Strategy", "Self-Reflection"].map(topic => (
-                    <span key={topic} className="px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.05] text-[10px] font-black text-gray-500 uppercase tracking-wider">{topic}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-10 border-t border-white/[0.03]">
-                <Button variant="outline" className="w-full border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.03] text-gray-500 hover:text-white h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all">
-                  Export Knowledge
-                </Button>
+            <ScrollArea className="flex-1">
+              <div className="p-8 space-y-6">
+                {pinnedMemories.length === 0 ? (
+                  <div className="text-center py-10">
+                    <Pin className="w-8 h-8 text-gray-700 mx-auto mb-4" />
+                    <p className="text-sm text-gray-600 font-medium">No memories pinned yet</p>
+                    <p className="text-xs text-gray-700 mt-2">Write an entry and pin insights worth remembering</p>
+                  </div>
+                ) : (
+                  pinnedMemories.map((memory) => (
+                    <div key={memory.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] group">
+                      <p className="text-sm text-gray-300 leading-relaxed font-medium mb-3">
+                        {memory.content}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-black text-gray-700 uppercase tracking-widest">
+                          {format(new Date(memory.createdAt), "MMM d, yyyy")}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={async () => {
+                            await fetch(`/api/memories/${memory.id}`, { method: "DELETE" });
+                            queryClient.invalidateQueries({ queryKey: ["/api/memories", address] });
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-7 px-2"
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </ScrollArea>
+
+            <div className="p-6 border-t border-white/[0.03]">
+              <Button variant="outline" className="w-full border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.03] text-gray-500 hover:text-white h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all">
+                Export Memories
+              </Button>
+            </div>
           </aside>
         )}
       </div>

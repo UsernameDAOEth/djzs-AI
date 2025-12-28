@@ -1,9 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema } from "@shared/schema";
+import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema, insertJournalEntrySchema, insertPinnedMemorySchema } from "@shared/schema";
 import { z } from "zod";
 import { verifyMessage } from "viem";
+import { analyzeJournalEntry } from "./venice";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -478,6 +479,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching post:", error);
       res.status(500).json({ error: "Failed to fetch post" });
+    }
+  });
+
+  // ==================== JOURNAL API ====================
+  
+  // Create a journal entry and analyze it with Venice AI
+  app.post("/api/journal/analyze", async (req, res) => {
+    try {
+      const { content, walletAddress } = req.body;
+      
+      if (!content || !walletAddress) {
+        return res.status(400).json({ error: "content and walletAddress required" });
+      }
+      
+      if (typeof content !== "string" || content.length < 10) {
+        return res.status(400).json({ error: "Entry must be at least 10 characters" });
+      }
+      
+      // 1. Save the entry
+      const entry = await storage.createJournalEntry({ content, walletAddress });
+      
+      // 2. Retrieve context (3 recent entries + 3 pinned memories)
+      const recentEntries = await storage.getRecentJournalEntries(walletAddress, 3);
+      const pinnedMemories = await storage.getPinnedMemories(walletAddress, 3);
+      
+      // Filter out the current entry from recent entries
+      const contextEntries = recentEntries.filter(e => e.id !== entry.id);
+      
+      // 3. Call Venice AI
+      const analysis = await analyzeJournalEntry(content, contextEntries, pinnedMemories);
+      
+      // 4. Return entry + analysis
+      res.json({
+        entry,
+        analysis,
+      });
+    } catch (error) {
+      console.error("Error analyzing journal entry:", error);
+      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
+        return res.status(503).json({ error: "AI service not configured" });
+      }
+      res.status(500).json({ error: "Failed to analyze journal entry" });
+    }
+  });
+
+  // Get recent journal entries
+  app.get("/api/journal/entries/:walletAddress", async (req, res) => {
+    try {
+      const entries = await storage.getRecentJournalEntries(req.params.walletAddress, 20);
+      res.json(entries);
+    } catch (error) {
+      console.error("Error fetching journal entries:", error);
+      res.status(500).json({ error: "Failed to fetch entries" });
+    }
+  });
+
+  // ==================== MEMORY API ====================
+  
+  // Pin a memory
+  app.post("/api/memories/pin", async (req, res) => {
+    try {
+      const validatedData = insertPinnedMemorySchema.parse(req.body);
+      const memory = await storage.createPinnedMemory(validatedData);
+      res.status(201).json(memory);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid memory data", details: error.errors });
+      }
+      console.error("Error pinning memory:", error);
+      res.status(500).json({ error: "Failed to pin memory" });
+    }
+  });
+
+  // Get pinned memories for a wallet
+  app.get("/api/memories/:walletAddress", async (req, res) => {
+    try {
+      const memories = await storage.getPinnedMemories(req.params.walletAddress, 50);
+      res.json(memories);
+    } catch (error) {
+      console.error("Error fetching memories:", error);
+      res.status(500).json({ error: "Failed to fetch memories" });
+    }
+  });
+
+  // Delete a pinned memory
+  app.delete("/api/memories/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deletePinnedMemory(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Memory not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting memory:", error);
+      res.status(500).json({ error: "Failed to delete memory" });
     }
   });
 

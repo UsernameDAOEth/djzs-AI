@@ -1,4 +1,4 @@
-import { type Member, type InsertMember, type Room, type InsertRoom, type PaymentReceipt, type InsertPaymentReceipt, type StoredMessage, type InsertStoredMessage } from "@shared/schema";
+import { type Member, type InsertMember, type Room, type InsertRoom, type PaymentReceipt, type InsertPaymentReceipt, type StoredMessage, type InsertStoredMessage, type JournalEntry, type InsertJournalEntry, type PinnedMemory, type InsertPinnedMemory } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -21,6 +21,16 @@ export interface IStorage {
 
   createMessage(message: InsertStoredMessage): Promise<StoredMessage>;
   getMessagesByRoom(roomId: string): Promise<StoredMessage[]>;
+
+  // Journal entries
+  createJournalEntry(entry: InsertJournalEntry): Promise<JournalEntry>;
+  getJournalEntry(id: string): Promise<JournalEntry | undefined>;
+  getRecentJournalEntries(walletAddress: string, limit: number): Promise<JournalEntry[]>;
+  
+  // Pinned memories
+  createPinnedMemory(memory: InsertPinnedMemory): Promise<PinnedMemory>;
+  getPinnedMemories(walletAddress: string, limit: number): Promise<PinnedMemory[]>;
+  deletePinnedMemory(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -28,12 +38,16 @@ export class MemStorage implements IStorage {
   private rooms: Map<string, Room>;
   private paymentReceipts: Map<string, PaymentReceipt>;
   private messages: Map<string, StoredMessage>;
+  private journalEntries: Map<string, JournalEntry>;
+  private pinnedMemories: Map<string, PinnedMemory>;
 
   constructor() {
     this.members = new Map();
     this.rooms = new Map();
     this.paymentReceipts = new Map();
     this.messages = new Map();
+    this.journalEntries = new Map();
+    this.pinnedMemories = new Map();
     this.seedDefaultRooms();
   }
 
@@ -194,6 +208,54 @@ export class MemStorage implements IStorage {
     return Array.from(this.messages.values())
       .filter((m) => m.roomId === roomId)
       .sort((a, b) => new Date(a.message.createdAt).getTime() - new Date(b.message.createdAt).getTime());
+  }
+
+  async createJournalEntry(insertEntry: InsertJournalEntry): Promise<JournalEntry> {
+    const id = randomUUID();
+    const entry: JournalEntry = {
+      id,
+      walletAddress: insertEntry.walletAddress,
+      content: insertEntry.content,
+      createdAt: new Date(),
+    };
+    this.journalEntries.set(id, entry);
+    return entry;
+  }
+
+  async getJournalEntry(id: string): Promise<JournalEntry | undefined> {
+    return this.journalEntries.get(id);
+  }
+
+  async getRecentJournalEntries(walletAddress: string, limit: number): Promise<JournalEntry[]> {
+    return Array.from(this.journalEntries.values())
+      .filter((e) => e.walletAddress.toLowerCase() === walletAddress.toLowerCase())
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, limit);
+  }
+
+  async createPinnedMemory(insertMemory: InsertPinnedMemory): Promise<PinnedMemory> {
+    const id = randomUUID();
+    const memory: PinnedMemory = {
+      id,
+      walletAddress: insertMemory.walletAddress,
+      content: insertMemory.content,
+      source: insertMemory.source ?? null,
+      sourceEntryId: insertMemory.sourceEntryId ?? null,
+      createdAt: new Date(),
+    };
+    this.pinnedMemories.set(id, memory);
+    return memory;
+  }
+
+  async getPinnedMemories(walletAddress: string, limit: number): Promise<PinnedMemory[]> {
+    return Array.from(this.pinnedMemories.values())
+      .filter((m) => m.walletAddress.toLowerCase() === walletAddress.toLowerCase())
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, limit);
+  }
+
+  async deletePinnedMemory(id: string): Promise<boolean> {
+    return this.pinnedMemories.delete(id);
   }
 }
 

@@ -206,3 +206,62 @@ export type StoredMessage = z.infer<typeof storedMessageSchema>;
 
 export const insertStoredMessageSchema = storedMessageSchema.omit({ id: true });
 export type InsertStoredMessage = z.infer<typeof insertStoredMessageSchema>;
+
+// Journal entries table
+export const journalEntries = pgTable("journal_entries", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  walletAddress: text("wallet_address").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertJournalEntrySchema = createInsertSchema(journalEntries).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertJournalEntry = z.infer<typeof insertJournalEntrySchema>;
+export type JournalEntry = typeof journalEntries.$inferSelect;
+
+// Pinned memories table
+export const pinnedMemories = pgTable("pinned_memories", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  walletAddress: text("wallet_address").notNull(),
+  content: text("content").notNull(),
+  source: text("source"), // "user_pinned" | "recurring_theme"
+  sourceEntryId: text("source_entry_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertPinnedMemorySchema = createInsertSchema(pinnedMemories).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertPinnedMemory = z.infer<typeof insertPinnedMemorySchema>;
+export type PinnedMemory = typeof pinnedMemories.$inferSelect;
+
+// Venice AI structured response schema
+export const journalAnalysisSchema = z.object({
+  summary: z.string().min(10).max(300),
+  insight: z.string().min(10).max(220),
+  question: z.string().min(10).max(220),
+  memoryCandidates: z.array(z.string().min(6).max(140)).max(2),
+});
+
+export type JournalAnalysis = z.infer<typeof journalAnalysisSchema>;
+
+// Journal insight card for chat display
+export const journalInsightCardSchema = z.object({
+  type: z.literal("journal_insight"),
+  id: z.string(),
+  entryId: z.string(),
+  summary: z.string(),
+  insight: z.string(),
+  question: z.string(),
+  memoryCandidates: z.array(z.string()),
+  createdAt: z.string(),
+  authorAddress: z.string(),
+});
+
+export type JournalInsightCard = z.infer<typeof journalInsightCardSchema>;
