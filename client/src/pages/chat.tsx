@@ -276,7 +276,9 @@ export default function Chat() {
           </div>
           <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Access Locked</h2>
           <p className="text-gray-400 mb-8 leading-relaxed">DJZS requires a cryptographic identity to ensure absolute privacy for your Journal.</p>
-          <ConnectButton />
+          <div className="flex justify-center">
+            <ConnectButton />
+          </div>
         </div>
       </div>
     );
