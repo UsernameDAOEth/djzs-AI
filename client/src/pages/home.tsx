@@ -5,7 +5,7 @@ import { Lock, Network, Zap, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight } from "@/components/hero";
+import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel } from "@/components/hero";
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -181,10 +181,7 @@ export default function Home() {
         />
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-          <motion.h1 variants={fadeUp} className="text-7xl md:text-9xl font-black leading-[0.9] tracking-tighter mb-8">
-            <span className="block">Think <span className="text-purple-500">clearly.</span></span>
-            <span className="block">Every <span className="text-purple-400">day.</span></span>
-          </motion.h1>
+          <ThinkFlywheel />
 
           <motion.p variants={fadeUp} className="text-2xl md:text-3xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium mb-10">
             DJZS is a private AI journal that summarizes your thinking and surfaces insight over time.
