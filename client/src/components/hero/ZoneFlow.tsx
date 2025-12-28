@@ -31,7 +31,7 @@ export function ZoneFlow() {
               }}
               className="absolute text-5xl md:text-7xl font-black tracking-tighter uppercase pointer-events-none select-none"
               style={{
-                color: i === 0 ? "white" : "rgba(255,255,255,0.1)",
+                color: "white",
                 zIndex: 10 - i,
               }}
             >
