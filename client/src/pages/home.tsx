@@ -285,7 +285,6 @@ export default function Home() {
         <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-4xl mx-auto px-10">
             <div className="text-center mb-16">
-              <p className="text-[10px] font-black text-purple-400 uppercase tracking-[0.4em] mb-4">Questions</p>
               <FAQFlywheel />
             </div>
             <div className="divide-y divide-white/[0.05]">
