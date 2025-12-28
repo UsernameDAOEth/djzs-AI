@@ -1,76 +1,56 @@
-import { motion, useAnimation } from "framer-motion";
-import { useEffect } from "react";
+import { motion } from "framer-motion";
 
-function FlowPill({
-  label,
-  controls,
-}: {
-  label: string;
-  controls: any;
-}) {
-  return (
-    <motion.div
-      animate={controls}
-      initial={{ opacity: 0.7, scale: 1 }}
-      className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs tracking-wide text-white/70"
-    >
-      {label}
-    </motion.div>
-  );
-}
+const ZONES = [
+  "JOURNAL",
+  "RESEARCH",
+  "IDENTITY",
+  "INSIGHTS",
+  "TRADES",
+  "PREDICTIONS",
+  "EVENTS",
+  "PAYMENTS"
+];
 
 export function ZoneFlow() {
-  const a = useAnimation();
-  const b = useAnimation();
-  const c = useAnimation();
-
-  useEffect(() => {
-    let mounted = true;
-
-    async function run() {
-      await Promise.all([
-        a.start({ opacity: 0.7, scale: 1, boxShadow: "none" }),
-        b.start({ opacity: 0.7, scale: 1, boxShadow: "none" }),
-        c.start({ opacity: 0.7, scale: 1, boxShadow: "none" }),
-      ]);
-
-      const flash = async (ctrl: any) => {
-        if (!mounted) return;
-        await ctrl.start({
-          opacity: 1,
-          scale: 1.02,
-          boxShadow: "0 0 0 1px rgba(168,85,247,0.35), 0 14px 30px rgba(168,85,247,0.10)",
-          transition: { duration: 0.25, ease: "easeOut" },
-        });
-        await ctrl.start({
-          opacity: 0.7,
-          scale: 1,
-          boxShadow: "none",
-          transition: { duration: 0.35, ease: "easeOut" },
-        });
-      };
-
-      await new Promise((r) => setTimeout(r, 650));
-      await flash(a);
-      await new Promise((r) => setTimeout(r, 80));
-      await flash(b);
-      await new Promise((r) => setTimeout(r, 80));
-      await flash(c);
-    }
-
-    run();
-    return () => {
-      mounted = false;
-    };
-  }, [a, b, c]);
-
   return (
-    <div className="flex items-center gap-3">
-      <FlowPill label="WALLET / IDENTITY" controls={a} />
-      <div className="text-white/30">→</div>
-      <FlowPill label="ZONES" controls={b} />
-      <div className="text-white/30">→</div>
-      <FlowPill label="INSIGHTS" controls={c} />
+    <div className="relative h-[400px] w-full flex items-center justify-center overflow-hidden">
+      <div className="flex flex-col items-center">
+        {ZONES.map((zone, i) => {
+          return (
+            <motion.div
+              key={zone}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{
+                opacity: [0, 1, 1, 0],
+                y: [100, 0, -100],
+                scale: [0.8, 1.2, 0.8],
+                filter: ["blur(4px)", "blur(0px)", "blur(4px)"],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: i * 0.5,
+                ease: "easeInOut",
+              }}
+              className="absolute text-5xl md:text-7xl font-black tracking-tighter uppercase pointer-events-none select-none"
+              style={{
+                color: i === 0 ? "white" : "rgba(255,255,255,0.1)",
+                zIndex: 10 - i,
+              }}
+            >
+              {zone}
+            </motion.div>
+          );
+        })}
+      </div>
+      
+      {/* Visual Indicator like in the image */}
+      <div className="absolute right-10 top-1/2 -translate-y-1/2 flex items-center gap-4">
+        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-white/10 flex items-center justify-center">
+          <div className="w-4 h-6 bg-white/80 rounded-sm shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
+        </div>
+        <div className="w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-l-4 border-l-white/40" />
+      </div>
     </div>
   );
 }
