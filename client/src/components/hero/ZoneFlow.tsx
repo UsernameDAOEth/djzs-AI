@@ -1,14 +1,11 @@
 import { motion } from "framer-motion";
 
 const ZONES = [
+  "ZONE",
   "JOURNAL",
   "RESEARCH",
-  "IDENTITY",
-  "INSIGHTS",
-  "TRADES",
-  "PREDICTIONS",
-  "EVENTS",
-  "PAYMENTS"
+  "E2E ENCRYPTION",
+  "DATA OWNERSHIP"
 ];
 
 export function ZoneFlow() {
