@@ -73,11 +73,26 @@ const V1_ZONES = [
   { id: "research", name: "Research", icon: Search, description: "Information gathering", purpose: "Collective context and verified intelligence." },
 ];
 
-const PROMPTS = [
+const JOURNAL_PROMPTS = [
   "What's on your mind right now?",
   "What happened today?",
-  "What are you trying to figure out?",
   "What feels unclear right now?",
+  "What's one thing you learned recently?",
+  "What decision are you avoiding?",
+  "What would you do if you weren't afraid?",
+  "What's draining your energy lately?",
+  "What are you grateful for today?",
+];
+
+const RESEARCH_PROMPTS = [
+  "What are you trying to figure out?",
+  "What's a question you keep coming back to?",
+  "What evidence would change your mind?",
+  "What do you need to verify?",
+  "What's the strongest counterargument?",
+  "What assumptions are you making?",
+  "What would an expert say about this?",
+  "What's missing from your understanding?",
 ];
 
 export default function Chat() {
@@ -111,12 +126,18 @@ export default function Chat() {
     autoResize();
   }, [messageInput, autoResize]);
 
+  const currentPrompts = selectedZone === "research" ? RESEARCH_PROMPTS : JOURNAL_PROMPTS;
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentPromptIndex((prev) => (prev + 1) % PROMPTS.length);
+      setCurrentPromptIndex((prev) => (prev + 1) % currentPrompts.length);
     }, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentPrompts.length]);
+
+  useEffect(() => {
+    setCurrentPromptIndex(0);
+  }, [selectedZone]);
 
   const { data: member, isLoading: memberLoading } = useQuery<Member | null>({
     queryKey: ["/api/members", address],
@@ -417,7 +438,7 @@ export default function Chat() {
               <div className="flex-1 flex flex-col justify-center min-h-[70vh] py-12">
                 {/* Prompt hint */}
                 <p className={`text-purple-400/40 text-sm font-medium mb-6 transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-60'}`}>
-                  {PROMPTS[currentPromptIndex]}
+                  {currentPrompts[currentPromptIndex]}
                 </p>
                 
                 {/* Textarea - no visible box, glow on focus only */}
@@ -443,33 +464,44 @@ export default function Chat() {
                   />
                 </div>
 
-                {/* Action bar - dims when not focused */}
-                <div className={`flex items-center justify-between mt-8 transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-40'}`}>
-                  <div className="flex items-center gap-6 text-[10px] font-black text-gray-600 uppercase tracking-widest">
-                    <div className="flex items-center gap-2">
-                      <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">Enter</kbd>
-                      <span>Save</span>
+                {/* Action bar - persistent footer */}
+                <div className={`flex items-center justify-between mt-8 py-4 border-t border-white/[0.03] transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-60'}`}>
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4 text-[10px] font-black text-gray-600 uppercase tracking-widest">
+                      <div className="flex items-center gap-2">
+                        <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">Enter</kbd>
+                        <span>Commit</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">⌘ + Enter</kbd>
+                        <span>Analyze</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">⌘ + Enter</kbd>
-                      <span>Analyze</span>
-                    </div>
+                    <div className="w-px h-4 bg-white/10"></div>
+                    <span className={`text-[10px] font-bold tabular-nums transition-colors ${messageInput.length > 0 ? 'text-gray-500' : 'text-gray-700'}`}>
+                      {messageInput.length} chars
+                    </span>
                   </div>
 
-                  <div className={`flex items-center gap-3 transition-opacity duration-500 ${isFocused || messageInput.trim() ? 'opacity-100' : 'opacity-40'}`}>
+                  <div className="flex items-center gap-3">
                     <Button
                       onClick={handleSendText}
                       disabled={!messageInput.trim() || sendMessage.isPending}
-                      variant="ghost"
-                      className="h-12 px-6 rounded-xl font-bold text-sm text-gray-500 hover:text-white hover:bg-white/5"
+                      variant="outline"
+                      className="h-11 px-5 rounded-xl font-bold text-sm border-white/10 bg-white/[0.02] text-gray-400 hover:text-white hover:bg-white/5 hover:border-white/20"
                       data-testid="button-save"
                     >
-                      {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Only"}
+                      {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                        <>
+                          <FileText className="w-4 h-4 mr-2" />
+                          Commit Entry
+                        </>
+                      )}
                     </Button>
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || analyzeEntry.isPending || isAnalyzing}
-                      className="bg-purple-600 hover:bg-purple-700 h-12 px-8 rounded-xl font-bold text-sm shadow-lg shadow-purple-900/30"
+                      className="bg-purple-600 hover:bg-purple-500 h-11 px-6 rounded-xl font-bold text-sm shadow-lg shadow-purple-900/30 transition-all"
                       data-testid="button-analyze"
                     >
                       {isAnalyzing ? (
@@ -480,7 +512,7 @@ export default function Chat() {
                       ) : (
                         <>
                           <Sparkles className="w-4 h-4 mr-2" />
-                          Analyze
+                          Generate Insight
                         </>
                       )}
                     </Button>
@@ -667,55 +699,109 @@ export default function Chat() {
           </div>
         </main>
 
-        {/* Right Sidebar - Memory Drawer */}
+        {/* Right Sidebar - Insight & Memory Drawer */}
         {memoryDrawerOpen && (
           <aside className="w-80 border-l border-white/[0.03] flex flex-col bg-black/20 backdrop-blur-xl animate-in slide-in-from-right duration-500">
-            <div className="p-8 border-b border-white/[0.02]">
-              <h3 className="text-sm font-black text-white tracking-widest uppercase mb-1">Pinned Memories</h3>
-              <p className="text-[10px] text-gray-600 font-bold uppercase">{pinnedMemories.length} items saved</p>
-            </div>
-
-            <ScrollArea className="flex-1">
-              <div className="p-8 space-y-6">
-                {pinnedMemories.length === 0 ? (
-                  <div className="text-center py-10">
-                    <Pin className="w-8 h-8 text-gray-700 mx-auto mb-4" />
-                    <p className="text-sm text-gray-600 font-medium">No memories pinned yet</p>
-                    <p className="text-xs text-gray-700 mt-2">Write an entry and pin insights worth remembering</p>
-                  </div>
-                ) : (
-                  pinnedMemories.map((memory) => (
-                    <div key={memory.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] group">
-                      <p className="text-sm text-gray-300 leading-relaxed font-medium mb-3">
-                        {memory.content}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-black text-gray-700 uppercase tracking-widest">
-                          {format(new Date(memory.createdAt), "MMM d, yyyy")}
-                        </span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={async () => {
-                            await fetch(`/api/memories/${memory.id}`, { method: "DELETE" });
-                            queryClient.invalidateQueries({ queryKey: ["/api/memories", address] });
-                          }}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-7 px-2"
-                        >
-                          <X className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                )}
+            <Tabs defaultValue="memories" className="flex-1 flex flex-col">
+              <div className="px-6 pt-6 pb-4 border-b border-white/[0.02]">
+                <TabsList className="w-full bg-white/[0.02] p-1 rounded-xl">
+                  <TabsTrigger value="memories" className="flex-1 text-[10px] font-black uppercase tracking-widest rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
+                    <Pin className="w-3 h-3 mr-1.5" />
+                    Memories
+                  </TabsTrigger>
+                  <TabsTrigger value="insights" className="flex-1 text-[10px] font-black uppercase tracking-widest rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
+                    <Sparkles className="w-3 h-3 mr-1.5" />
+                    Insights
+                  </TabsTrigger>
+                </TabsList>
               </div>
-            </ScrollArea>
 
-            <div className="p-6 border-t border-white/[0.03]">
-              <Button variant="outline" className="w-full border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.03] text-gray-500 hover:text-white h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all">
-                Export Memories
-              </Button>
-            </div>
+              <TabsContent value="memories" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
+                <div className="px-6 py-3 border-b border-white/[0.02]">
+                  <p className="text-[10px] text-gray-600 font-bold uppercase">{pinnedMemories.length} items saved</p>
+                </div>
+                <ScrollArea className="flex-1">
+                  <div className="p-6 space-y-4">
+                    {pinnedMemories.length === 0 ? (
+                      <div className="text-center py-10">
+                        <Pin className="w-8 h-8 text-gray-700 mx-auto mb-4" />
+                        <p className="text-sm text-gray-600 font-medium">No memories pinned yet</p>
+                        <p className="text-xs text-gray-700 mt-2">Write an entry and pin insights worth remembering</p>
+                      </div>
+                    ) : (
+                      pinnedMemories.map((memory) => (
+                        <div key={memory.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] group">
+                          <p className="text-sm text-gray-300 leading-relaxed font-medium mb-3">
+                            {memory.content}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-black text-gray-700 uppercase tracking-widest">
+                              {format(new Date(memory.createdAt), "MMM d, yyyy")}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={async () => {
+                                await fetch(`/api/memories/${memory.id}`, { method: "DELETE" });
+                                queryClient.invalidateQueries({ queryKey: ["/api/memories", address] });
+                              }}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-7 px-2"
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+                <div className="p-4 border-t border-white/[0.03]">
+                  <Button variant="outline" className="w-full border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.03] text-gray-500 hover:text-white h-12 rounded-xl font-black text-[9px] uppercase tracking-[0.15em] transition-all">
+                    <Download className="w-3 h-3 mr-2" />
+                    Export Memories
+                  </Button>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="insights" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
+                <div className="px-6 py-3 border-b border-white/[0.02]">
+                  <p className="text-[10px] text-gray-600 font-bold uppercase">Recent analysis results</p>
+                </div>
+                <ScrollArea className="flex-1">
+                  <div className="p-6 space-y-4">
+                    {latestAnalysis ? (
+                      <div className="p-4 rounded-2xl bg-purple-500/[0.05] border border-purple-500/20">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Sparkles className="w-4 h-4 text-purple-400" />
+                          <span className="text-[9px] font-black text-purple-400 uppercase tracking-widest">
+                            {latestAnalysis.zone === "research" ? "Research" : "Journal"} Insight
+                          </span>
+                        </div>
+                        {latestAnalysis.zone === "journal" ? (
+                          <div className="space-y-3">
+                            <p className="text-sm text-white font-medium leading-relaxed line-clamp-3">{latestAnalysis.analysis.summary}</p>
+                            <p className="text-xs text-gray-500 italic line-clamp-2">"{latestAnalysis.analysis.insight}"</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {latestAnalysis.analysis.keyClaims.slice(0, 2).map((claim, idx) => (
+                              <p key={idx} className="text-sm text-white font-medium leading-relaxed line-clamp-2">• {claim}</p>
+                            ))}
+                          </div>
+                        )}
+                        <p className="text-[9px] text-gray-600 mt-3 uppercase tracking-widest">Just now</p>
+                      </div>
+                    ) : (
+                      <div className="text-center py-10">
+                        <Sparkles className="w-8 h-8 text-gray-700 mx-auto mb-4" />
+                        <p className="text-sm text-gray-600 font-medium">No insights yet</p>
+                        <p className="text-xs text-gray-700 mt-2">Write an entry and click "Generate Insight"</p>
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+            </Tabs>
           </aside>
         )}
       </div>
