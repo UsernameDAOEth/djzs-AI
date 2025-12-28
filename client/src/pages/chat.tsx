@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useAccount, useSignMessage } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -82,10 +82,25 @@ export default function Chat() {
   const [messageInput, setMessageInput] = useState("");
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [memoryDrawerOpen, setMemoryDrawerOpen] = useState(false);
-  const [isWriting, setIsWriting] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [latestAnalysis, setLatestAnalysis] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [frozenHeight, setFrozenHeight] = useState<number | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const autoResize = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (textarea && !frozenHeight) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${Math.max(textarea.scrollHeight, 200)}px`;
+    }
+  }, [frozenHeight]);
+
+  useEffect(() => {
+    autoResize();
+  }, [messageInput, autoResize]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -167,7 +182,6 @@ export default function Chat() {
         title: "Entry committed",
         description: "Your reflection has been saved to the Zone.",
       });
-      setIsWriting(false);
     },
   });
 
@@ -187,7 +201,6 @@ export default function Chat() {
         title: "Insight generated",
         description: "Your entry has been analyzed.",
       });
-      setIsWriting(false);
       setIsAnalyzing(false);
     },
     onError: (error) => {
@@ -234,9 +247,11 @@ export default function Chat() {
 
   const handleAnalyze = () => {
     if (!messageInput.trim() || !address || analyzeEntry.isPending) return;
+    if (textareaRef.current) {
+      setFrozenHeight(textareaRef.current.scrollHeight);
+    }
     setIsAnalyzing(true);
     analyzeEntry.mutate(messageInput);
-    setMessageInput("");
   };
 
   // Handle keyboard shortcuts
@@ -294,11 +309,17 @@ export default function Chat() {
     );
   }
 
+  const clearAnalysis = () => {
+    setLatestAnalysis(null);
+    setFrozenHeight(null);
+    setMessageInput("");
+  };
+
   return (
     <TooltipProvider>
       <div className="h-screen bg-[#050505] text-gray-300 flex overflow-hidden font-sans selection:bg-purple-500/30">
-        {/* Minimal Left Sidebar */}
-        <aside className="w-64 border-r border-white/[0.03] flex flex-col bg-black/20">
+        {/* Minimal Left Sidebar - dims when focused */}
+        <aside className={`w-64 border-r border-white/[0.03] flex flex-col bg-black/20 transition-opacity duration-500 ${isFocused ? 'opacity-40' : 'opacity-100'}`}>
           <div className="p-8 pb-4">
             <Link href="/">
               <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-purple-400 transition-all group">
@@ -377,203 +398,208 @@ export default function Chat() {
             </div>
           </header>
 
-          <ScrollArea className="flex-1">
-            <div className="max-w-3xl mx-auto px-6 py-20">
-              {/* Latest Analysis Insight Card */}
-              {latestAnalysis && (
-                <div className="mb-12 p-8 rounded-[2rem] bg-gradient-to-br from-purple-500/[0.05] to-blue-500/[0.03] border border-purple-500/20 animate-in fade-in slide-in-from-bottom-4 duration-700" data-testid="insight-card">
-                  <div className="flex items-start gap-6">
-                    <div className="w-12 h-12 rounded-2xl bg-purple-600/20 flex items-center justify-center shrink-0">
-                      <Sparkles className="w-6 h-6 text-purple-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-4">Zone Agent Insight</p>
-                      
-                      <div className="space-y-6">
-                        <div>
-                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Summary</p>
-                          <p className="text-white font-medium leading-relaxed">{latestAnalysis.analysis.summary}</p>
-                        </div>
-                        
-                        <div>
-                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Insight</p>
-                          <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
-                        </div>
-                        
-                        <div>
-                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Reflection Question</p>
-                          <p className="text-purple-300 font-medium">{latestAnalysis.analysis.question}</p>
-                        </div>
-                        
-                        {latestAnalysis.analysis.memoryCandidates.length > 0 && (
-                          <div>
-                            <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3">Worth Remembering</p>
-                            <div className="space-y-2">
-                              {latestAnalysis.analysis.memoryCandidates.map((memory, idx) => (
-                                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] group">
-                                  <p className="flex-1 text-sm text-gray-400">{memory}</p>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => pinMemory.mutate(memory)}
-                                    disabled={pinMemory.isPending}
-                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
-                                    data-testid={`button-pin-memory-${idx}`}
-                                  >
-                                    <Pin className="w-4 h-4 mr-1" />
-                                    Pin
-                                  </Button>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <button 
-                      onClick={() => setLatestAnalysis(null)}
-                      className="p-2 rounded-full hover:bg-white/5 transition-colors"
-                    >
-                      <X className="w-4 h-4 text-gray-600" />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Analyzing loader */}
-              {isAnalyzing && (
-                <div className="mb-12 p-8 rounded-[2rem] bg-purple-500/[0.02] border border-purple-500/10 animate-pulse" data-testid="analyzing-loader">
-                  <div className="flex items-center gap-4">
-                    <Loader2 className="w-6 h-6 text-purple-400 animate-spin" />
-                    <div>
-                      <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-1">Analyzing Entry</p>
-                      <p className="text-sm text-gray-500">The Zone Agent is processing your reflection...</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {messages.length === 0 && !isWriting && journalEntries.length === 0 ? (
-                <div className="text-center py-20 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                  <h3 className="text-5xl font-black text-white mb-6 tracking-tighter">Start with one thought.</h3>
-                  <p className="text-xl text-gray-500 mb-12 font-medium">DJZS will help you make sense of it.</p>
-                  <Button 
-                    onClick={() => setIsWriting(true)}
-                    className="bg-purple-600 hover:bg-purple-700 h-16 px-12 rounded-2xl font-black text-xl shadow-2xl shadow-purple-900/40 group transition-all"
-                  >
-                    Start Writing
-                    <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-12">
-                  {messages.slice().reverse().map((stored, idx) => {
-                    const msg = stored.message as any;
-                    const date = new Date(msg.createdAt);
-                    return (
-                      <div key={stored.id} className="group animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: `${idx * 100}ms` }}>
-                        <div className="flex items-center gap-3 mb-4 opacity-40 group-hover:opacity-100 transition-opacity">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span className="text-[10px] font-black uppercase tracking-[0.2em]">{format(date, "EEE, MMM d — h:mm a")}</span>
-                        </div>
-                        
-                        <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/[0.03] group-hover:border-purple-500/20 group-hover:bg-purple-500/[0.02] transition-all cursor-pointer">
-                          <div className="flex items-start gap-6">
-                            <div className="flex-1">
-                              <p className="text-lg font-bold text-white mb-3 tracking-tight group-hover:text-purple-100 transition-colors">
-                                {msg.content.split('\n')[0].substring(0, 80)}...
-                              </p>
-                              <div className="h-px w-8 bg-purple-500/30 mb-4"></div>
-                              <p className="text-gray-500 leading-relaxed line-clamp-2 italic group-hover:text-gray-400 transition-colors">
-                                {msg.content}
-                              </p>
-                            </div>
-                            <div className="w-10 h-10 rounded-2xl bg-white/[0.03] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                              <ChevronRight className="w-5 h-5 text-purple-400" />
-                            </div>
-                          </div>
-                        </div>
-
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </ScrollArea>
-
-          {/* Writing Overlay / Input Area */}
-          <div className={`absolute inset-0 bg-[#050505]/95 backdrop-blur-2xl z-[100] transition-all duration-500 ${isWriting ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-            <div className="h-full flex flex-col max-w-4xl mx-auto px-10">
-              <header className="h-24 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></div>
-                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Direct Journaling Active</span>
-                </div>
-                <button 
-                  onClick={() => setIsWriting(false)}
-                  className="p-3 hover:bg-white/5 rounded-full transition-colors"
-                >
-                  <X className="w-6 h-6 text-gray-500" />
-                </button>
-              </header>
-
-              <div className="flex-1 flex flex-col justify-center py-20">
-                <p className="text-purple-400/50 text-sm font-medium mb-8 animate-pulse italic">
+          {/* Inline Writing Experience - scrollable */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="flex flex-col max-w-3xl w-full mx-auto px-6">
+              {/* Writing Area - vertically centered, min 70vh */}
+              <div className="flex-1 flex flex-col justify-center min-h-[70vh] py-12">
+                {/* Prompt hint */}
+                <p className={`text-purple-400/40 text-sm font-medium mb-6 transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-60'}`}>
                   {PROMPTS[currentPromptIndex]}
                 </p>
-                <textarea
-                  autoFocus
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Write what you're thinking. No formatting. No pressure."
-                  className="w-full bg-transparent border-none focus:ring-0 text-3xl font-bold text-white placeholder:text-gray-800 resize-none min-h-[300px] leading-snug tracking-tight"
-                />
+                
+                {/* Textarea - no visible box, glow on focus only */}
+                <div className={`relative transition-all duration-300 ${isFocused ? 'ring-1 ring-purple-500/20 shadow-[0_0_60px_-15px_rgba(168,85,247,0.15)] rounded-3xl bg-purple-500/[0.01]' : ''}`}>
+                  <textarea
+                    ref={textareaRef}
+                    autoFocus
+                    value={messageInput}
+                    onChange={(e) => {
+                      setMessageInput(e.target.value);
+                      if (frozenHeight) setFrozenHeight(null);
+                    }}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    placeholder="Write what you're thinking. No formatting. No pressure."
+                    className="w-full bg-transparent border-none outline-none focus:ring-0 text-xl font-medium text-white placeholder:text-gray-700 resize-none leading-[1.8] tracking-tight p-6 overflow-hidden"
+                    style={{ 
+                      minHeight: frozenHeight ? undefined : 'max(200px, calc(60vh - 100px))',
+                      height: frozenHeight ? `${frozenHeight}px` : 'auto'
+                    }}
+                    data-testid="textarea-journal"
+                  />
+                </div>
+
+                {/* Action bar - dims when not focused */}
+                <div className={`flex items-center justify-between mt-8 transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-40'}`}>
+                  <div className="flex items-center gap-6 text-[10px] font-black text-gray-600 uppercase tracking-widest">
+                    <div className="flex items-center gap-2">
+                      <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">Enter</kbd>
+                      <span>Save</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">⌘ + Enter</kbd>
+                      <span>Analyze</span>
+                    </div>
+                  </div>
+
+                  <div className={`flex items-center gap-3 transition-opacity duration-500 ${isFocused || messageInput.trim() ? 'opacity-100' : 'opacity-40'}`}>
+                    <Button
+                      onClick={handleSendText}
+                      disabled={!messageInput.trim() || sendMessage.isPending}
+                      variant="ghost"
+                      className="h-12 px-6 rounded-xl font-bold text-sm text-gray-500 hover:text-white hover:bg-white/5"
+                      data-testid="button-save"
+                    >
+                      {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Only"}
+                    </Button>
+                    <Button
+                      onClick={handleAnalyze}
+                      disabled={!messageInput.trim() || analyzeEntry.isPending || isAnalyzing}
+                      className="bg-purple-600 hover:bg-purple-700 h-12 px-8 rounded-xl font-bold text-sm shadow-lg shadow-purple-900/30"
+                      data-testid="button-analyze"
+                    >
+                      {isAnalyzing ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          Thinking...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Analyze
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
               </div>
 
-              <footer className="h-32 flex items-center justify-between border-t border-white/[0.03]">
-                <div className="flex items-center gap-6 text-[10px] font-black text-gray-700 uppercase tracking-widest">
-                  <div className="flex items-center gap-2">
-                    <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">Enter</kbd>
-                    <span>Save Entry</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">⌘ + Enter</kbd>
-                    <span>Save + Insight</span>
-                  </div>
-                </div>
+              {/* Insight appears below text when analyzing is complete */}
+              {(isAnalyzing || latestAnalysis) && (
+                <div className="pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                  {isAnalyzing && !latestAnalysis && (
+                    <div className="p-8 rounded-3xl bg-purple-500/[0.02] border border-purple-500/10" data-testid="analyzing-loader">
+                      <div className="flex items-center gap-4">
+                        <Loader2 className="w-6 h-6 text-purple-400 animate-spin" />
+                        <div>
+                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-1">Analyzing Entry</p>
+                          <p className="text-sm text-gray-500">The Zone Agent is processing your reflection...</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-                <div className="flex items-center gap-3">
-                  <Button
-                    onClick={handleSendText}
-                    disabled={!messageInput.trim() || sendMessage.isPending}
-                    variant="outline"
-                    className="h-14 px-8 rounded-2xl font-black text-sm border-white/10 hover:bg-white/5"
-                  >
-                    {sendMessage.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Save Only"}
-                  </Button>
-                  <Button
-                    onClick={handleAnalyze}
-                    disabled={!messageInput.trim() || analyzeEntry.isPending || isAnalyzing}
-                    className="bg-purple-600 hover:bg-purple-700 h-14 px-10 rounded-2xl font-black text-lg shadow-2xl shadow-purple-900/40"
-                    data-testid="button-analyze"
-                  >
-                    {isAnalyzing ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                        Thinking...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-5 h-5 mr-2" />
-                        Analyze
-                      </>
-                    )}
-                  </Button>
+                  {latestAnalysis && (
+                    <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/[0.05] to-blue-500/[0.03] border border-purple-500/20" data-testid="insight-card">
+                      <div className="flex items-start gap-6">
+                        <div className="w-12 h-12 rounded-2xl bg-purple-600/20 flex items-center justify-center shrink-0">
+                          <Sparkles className="w-6 h-6 text-purple-400" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-4">Zone Agent Insight</p>
+                          
+                          <div className="space-y-6">
+                            <div>
+                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Summary</p>
+                              <p className="text-white font-medium leading-relaxed">{latestAnalysis.analysis.summary}</p>
+                            </div>
+                            
+                            <div>
+                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Insight</p>
+                              <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
+                            </div>
+                            
+                            <div>
+                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Reflection Question</p>
+                              <p className="text-purple-300 font-medium">{latestAnalysis.analysis.question}</p>
+                            </div>
+                            
+                            {latestAnalysis.analysis.memoryCandidates.length > 0 && (
+                              <div>
+                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3">Worth Remembering</p>
+                                <div className="space-y-2">
+                                  {latestAnalysis.analysis.memoryCandidates.map((memory, idx) => (
+                                    <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] group">
+                                      <p className="flex-1 text-sm text-gray-400">{memory}</p>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => pinMemory.mutate(memory)}
+                                        disabled={pinMemory.isPending}
+                                        className="opacity-0 group-hover:opacity-100 transition-opacity text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
+                                        data-testid={`button-pin-memory-${idx}`}
+                                      >
+                                        <Pin className="w-4 h-4 mr-1" />
+                                        Pin
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="mt-8 pt-6 border-t border-white/[0.05] flex items-center gap-3">
+                            <Button
+                              onClick={clearAnalysis}
+                              variant="ghost"
+                              className="text-gray-500 hover:text-white hover:bg-white/5"
+                            >
+                              New Entry
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <button 
+                          onClick={clearAnalysis}
+                          className="p-2 rounded-full hover:bg-white/5 transition-colors"
+                        >
+                          <X className="w-4 h-4 text-gray-600" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </footer>
+              )}
+
+              {/* Past Entries - Collapsible */}
+              {journalEntries.length > 0 && (
+                <div className="pb-12">
+                  <button
+                    onClick={() => setShowHistory(!showHistory)}
+                    className="flex items-center gap-2 text-[10px] font-black text-gray-600 uppercase tracking-widest hover:text-gray-400 transition-colors mb-4"
+                    data-testid="button-toggle-history"
+                  >
+                    <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
+                    Past Entries ({journalEntries.length})
+                  </button>
+                  
+                  {showHistory && (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                      {journalEntries.slice(0, 10).map((entry) => (
+                        <div 
+                          key={entry.id} 
+                          className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.03] hover:border-purple-500/10 transition-all group"
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm text-gray-400 leading-relaxed line-clamp-3">
+                                {entry.content}
+                              </p>
+                            </div>
+                            <span className="text-[9px] font-black text-gray-700 uppercase tracking-widest shrink-0">
+                              {format(new Date(entry.createdAt), "MMM d")}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </main>
