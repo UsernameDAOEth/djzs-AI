@@ -185,6 +185,15 @@ shared/
 
 ## Recent Changes
 
+- **Dec 28, 2024**: Added PWA support for mobile installation
+  - Web app manifest with icons and theme colors
+  - Service worker for offline caching
+  - Install prompt component for Android and iOS
+  - App can be installed to home screen on mobile devices
+- **Dec 28, 2024**: Implemented zone-aware Venice AI analysis
+  - Research mode uses Key Claims/Evidence/Unknowns/Next Question format
+  - Journal mode uses Summary/Insight/Reflection Question format
+  - Zone parameter passed to /api/journal/analyze endpoint
 - **Dec 24, 2024**: Added XMTP Agent SDK
   - New autonomous agent in `server/agent.ts`
   - Agent responds to commands: /help, /zones, /format, /summarize
