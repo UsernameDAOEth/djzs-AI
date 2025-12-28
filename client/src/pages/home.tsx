@@ -5,13 +5,14 @@ import { Lock, Network, Zap, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground } from "@/components/hero";
+import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight } from "@/components/hero";
 
 export default function Home() {
   const { isConnected } = useAccount();
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden selection:bg-purple-500/30">
+      <CursorSpotlight />
       {/* Time-of-day animated background */}
       <AnimatedBackground />
       {/* Header Banner */}
