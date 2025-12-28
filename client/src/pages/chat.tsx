@@ -632,7 +632,7 @@ export default function Chat() {
                       ) : (
                         <>
                           <Bot className="w-4 h-4 mr-2" />
-                          Think with me
+                          Analyze
                         </>
                       )}
                     </Button>
