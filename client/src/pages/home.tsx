@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Lock, Network, Zap, Search as SearchIcon, Sparkles } from "lucide-react";
+import { Lock, Network, Zap, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -285,9 +286,12 @@ export default function Home() {
 
       <RevealSection>
         <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
-          <div className="relative z-10 max-w-3xl mx-auto px-10">
-            <h2 className="text-5xl font-black mb-20 text-center tracking-tighter">Frequently Asked</h2>
-            <div className="space-y-4">
+          <div className="relative z-10 max-w-4xl mx-auto px-10">
+            <div className="text-center mb-16">
+              <p className="text-[10px] font-black text-purple-400 uppercase tracking-[0.4em] mb-4">Questions</p>
+              <h2 className="text-6xl md:text-7xl font-black tracking-tighter">Frequently <span className="text-purple-500">Asked</span></h2>
+            </div>
+            <div className="divide-y divide-white/[0.05]">
               <FAQItem
                 question="Is my data really private?"
                 answer="Every entry is encrypted with XMTP before leaving your browser. Only you hold the keys."
@@ -455,17 +459,32 @@ function FeatureCard({ icon, title, desc }: { icon: React.ReactNode; title: stri
 }
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  
   return (
-    <motion.div
-      whileHover={{
-        y: -2,
-        boxShadow: "0 0 0 1px rgba(255,255,255,0.06), 0 12px 30px rgba(168,85,247,0.06)",
-      }}
-      transition={{ duration: 0.18, ease: "easeOut" }}
-      className="p-8 rounded-3xl bg-white/[0.01] border border-white/[0.03] hover:border-white/[0.1] hover:bg-white/[0.02] transition-all group"
-    >
-      <h3 className="text-lg font-bold text-white mb-4 group-hover:text-purple-300 transition-colors">{question}</h3>
-      <p className="text-gray-500 leading-relaxed font-medium">{answer}</p>
-    </motion.div>
+    <div className="py-6 group">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between gap-4 text-left"
+      >
+        <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors">{question}</h3>
+        <div className="shrink-0 w-10 h-10 rounded-full border border-white/[0.1] flex items-center justify-center group-hover:border-purple-500/30 transition-all">
+          <motion.div
+            animate={{ rotate: isOpen ? 45 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Plus className="w-5 h-5 text-purple-400" />
+          </motion.div>
+        </div>
+      </button>
+      <motion.div
+        initial={false}
+        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="overflow-hidden"
+      >
+        <p className="text-gray-500 leading-relaxed font-medium text-lg pt-4 max-w-2xl">{answer}</p>
+      </motion.div>
+    </div>
   );
 }
