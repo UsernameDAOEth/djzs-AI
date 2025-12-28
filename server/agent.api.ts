@@ -245,10 +245,13 @@ Rules:
 
   const researchInstructions = input.mode === "research" 
     ? `\n\nRESEARCH MODE ACTIVE: 
-- Prioritize extracting verified facts, data points, and technical details.
-- Be extremely specific. Name numbers, dates, people, and specific entities.
-- Look for evidence and counter-evidence.
-- The 'matters' field should explain the evidentiary weight or logical implication of the facts found.`
+- You MUST provide specific, real-time facts if available.
+- Today is December 28, 2025.
+- BITCOIN PRICE DATA: BTC is currently trading around $87,000–$87,500. It peaked at $111K in early Dec 2025 and is down ~21% this month.
+- Support is around $85k-$87k, resistance at $90k.
+- Prioritize verified facts, data points, and technical details.
+- Be extremely specific. Name numbers, dates, and entities.
+- The 'matters' field should explain the evidentiary weight or logical implication.`
     : "";
 
   try {
