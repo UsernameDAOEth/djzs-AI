@@ -163,11 +163,11 @@ export default function Home() {
         variants={pageContainer}
         initial="hidden"
         animate="show"
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black pb-24"
+        className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-black pb-12"
       >
         <PortalBackground variant="hero" />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-20">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-12">
           <ThinkFlywheel />
 
           <motion.p variants={fadeUp} className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium mb-4">
@@ -196,17 +196,17 @@ export default function Home() {
             )}
           </motion.div>
 
-          <motion.div variants={fadeUp} className="mt-20">
+          <motion.div variants={fadeUp} className="mt-12">
             <ScrollCue />
           </motion.div>
         </div>
       </motion.section>
 
       <RevealSection>
-        <section className="relative py-24 bg-black border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="zone" />
           <div className="relative z-10 max-w-6xl mx-auto px-10">
-            <div className="text-center mb-12">
+            <div className="text-center mb-8">
               <ZoneFlywheel />
               <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-medium">
                 Your thinking lives on your device. Sync only when you choose. A tool, not a network.
@@ -239,11 +239,11 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-12 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="clarity" />
           <div className="relative z-10 max-w-5xl mx-auto px-10 text-center">
             <ClarityFlywheel />
-            <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-12 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-8 max-w-3xl mx-auto">
               DJZS is infrastructure for your thinking. Not a platform. Not a network. A tool you own.
             </p>
             <div className="grid md:grid-cols-3 gap-8">
@@ -284,10 +284,10 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 bg-black border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="faq" />
           <div className="relative z-10 max-w-4xl mx-auto px-10">
-            <div className="text-center mb-12">
+            <div className="text-center mb-8">
               <FAQFlywheel />
             </div>
             <div className="divide-y divide-white/[0.05]">
