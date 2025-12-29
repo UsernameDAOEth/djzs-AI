@@ -5,7 +5,7 @@ import { HardDrive, Shield, Bot, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, FAQFlywheel, PortalBackground } from "@/components/hero";
+import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, FAQFlywheel, PortalBackground, FlipFeatureCard } from "@/components/hero";
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -247,20 +247,36 @@ export default function Home() {
               DJZS is infrastructure for your thinking. Not a platform. Not a network. A tool you own.
             </p>
             <div className="grid md:grid-cols-3 gap-8">
-              <FeatureCard 
+              <FlipFeatureCard 
                 icon={<HardDrive className="w-6 h-6 text-purple-400" />}
                 title="Local-First by Default"
-                desc="Your journal and research live on your device. Nothing syncs unless you choose to move it."
+                frontText="Your journal and research live on your device. Nothing syncs unless you choose."
+                backItems={[
+                  "Stored locally: Entries, Insights, Memory Pins (IndexedDB)",
+                  "Offline ready: Works without internet",
+                  "You control sync: Cloud/onchain is optional"
+                ]}
               />
-              <FeatureCard 
+              <FlipFeatureCard 
                 icon={<Shield className="w-6 h-6 text-blue-400" />}
                 title="Decentralized Ownership"
-                desc="Sync, back up, or timestamp entries using decentralized networks. Ownership without handing your data to a company."
+                frontText="Back up or timestamp your work without handing your mind to a company."
+                backItems={[
+                  "Optional proofs: timestamp / provenance / export",
+                  "User-owned identity: wallet as your portable account",
+                  "No platform lock-in: your data remains yours"
+                ]}
               />
-              <FeatureCard 
+              <FlipFeatureCard 
                 icon={<Bot className="w-6 h-6 text-green-400" />}
                 title="AI Without a Platform"
-                desc="The DJZS Agent helps you think locally. No social graphs. No global profiles. No engagement loops."
+                frontText="A calm Thinking Partner. No feeds. No social graphs. No engagement loops."
+                backItems={[
+                  "\"Think with me\" uses just enough context: current entry + up to 3 pins",
+                  "Journal mode: Summary / Insight / Reflection Question",
+                  "Research mode: Claims / Evidence / Unknowns / Next Question",
+                  "Memory is opt-in: you Pin or Skip"
+                ]}
               />
             </div>
           </div>
@@ -429,18 +445,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
-
-function FeatureCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
-  return (
-    <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-purple-500/20 transition-all group text-center">
-      <div className="w-14 h-14 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center mx-auto mb-6 group-hover:border-purple-500/30 transition-all">
-        {icon}
-      </div>
-      <h4 className="text-xl font-black text-white mb-3 tracking-tight group-hover:text-purple-200 transition-colors">{title}</h4>
-      <p className="text-gray-500 font-medium leading-relaxed text-sm">{desc}</p>
     </div>
   );
 }
