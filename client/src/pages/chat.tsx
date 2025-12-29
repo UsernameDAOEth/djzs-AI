@@ -381,6 +381,28 @@ export default function Chat() {
     });
   };
 
+  const [pinDialogOpen, setPinDialogOpen] = useState(false);
+  const [selectedPinKind, setSelectedPinKind] = useState<string>("pattern");
+  
+  const handleManualPin = async () => {
+    if (!messageInput.trim()) return;
+    try {
+      await pinLocalMemory(selectedPinKind as any, messageInput.trim(), lastEntryId || undefined);
+      toast({
+        title: "Memory pinned",
+        description: "Text preserved — continue editing or commit.",
+      });
+      setPinDialogOpen(false);
+    } catch (err) {
+      console.error("Failed to pin memory:", err);
+      toast({
+        title: "Pin failed",
+        description: "Check console for details",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleSendText = () => {
     if (!messageInput.trim() || !address || sendMessage.isPending) return;
     const message: ChatMessage = {
@@ -610,6 +632,57 @@ export default function Chat() {
                   </div>
 
                   <div className="flex items-center gap-3">
+                    <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button
+                          disabled={!messageInput.trim()}
+                          variant="outline"
+                          className="h-11 px-4 rounded-xl font-bold text-sm border-white/10 bg-white/[0.02] text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/30"
+                          data-testid="button-pin"
+                        >
+                          <Pin className="w-4 h-4 mr-2" />
+                          Pin
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-gray-950 border-white/10 max-w-md">
+                        <DialogHeader>
+                          <DialogTitle className="text-white font-bold">Pin as Memory</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          <p className="text-sm text-gray-400">This will be saved locally and used as context for future thinking.</p>
+                          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                            <p className="text-sm text-white leading-relaxed line-clamp-4">{messageInput}</p>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Memory Type</label>
+                            <div className="flex flex-wrap gap-2">
+                              {["pattern", "goal", "preference", "principle", "project", "question", "person"].map((kind) => (
+                                <button
+                                  key={kind}
+                                  onClick={() => setSelectedPinKind(kind)}
+                                  className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                                    selectedPinKind === kind 
+                                      ? "bg-purple-600 text-white" 
+                                      : "bg-white/[0.02] text-gray-500 hover:text-white hover:bg-white/5 border border-white/[0.05]"
+                                  }`}
+                                  data-testid={`button-kind-${kind}`}
+                                >
+                                  {kind}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                          <Button
+                            onClick={handleManualPin}
+                            className="w-full bg-purple-600 hover:bg-purple-500 h-11 rounded-xl font-bold"
+                            data-testid="button-confirm-pin"
+                          >
+                            <Pin className="w-4 h-4 mr-2" />
+                            Pin Memory
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                     <Button
                       onClick={handleSendText}
                       disabled={!messageInput.trim() || sendMessage.isPending}
