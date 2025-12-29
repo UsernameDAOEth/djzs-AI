@@ -1,0 +1,142 @@
+Good instinct. “Decentralized” fits DJZS better than “private” — if you anchor it in control and architecture, not crypto hype.
+
+Right now, “private” sounds like a promise.
+“Decentralized” sounds like a design choice.
+
+Let’s realign the page so users immediately understand why decentralization matters to their thinking.
+
+⸻
+
+1️⃣ Reframe the Core Idea (This Is the Shift)
+
+Private = “Trust us”
+Decentralized = “You don’t have to”
+
+That’s the mental upgrade you’re making.
+
+⸻
+
+2️⃣ New Hero Direction (Clean, Calm, Serious)
+
+Headline
+
+BUILT FOR DECENTRALIZED THINKING
+
+Subheadline
+
+DJZS is a local-first journal and research system.
+Your thoughts live with you — not on a platform.
+
+Optional one-liner under it:
+
+No feeds. No surveillance. No centralized memory.
+
+This keeps it human, not technical.
+
+⸻
+
+3️⃣ Replace Feature Cards with Architecture Cards
+
+Card 1 — Local-First (Anchor of Decentralization)
+
+Local-First by Default
+
+Your journal and research live on your device.
+Nothing syncs unless you choose to move it.
+
+This establishes where power starts.
+
+⸻
+
+Card 2 — Decentralized Storage & Proofs
+
+Decentralized Ownership
+
+Sync, back up, or timestamp entries using decentralized networks.
+Ownership without handing your data to a company.
+
+Note:
+	•	You’re selling optionality, not obligation.
+
+⸻
+
+Card 3 — AI Without Centralization
+
+AI Without a Platform
+
+The DJZS Agent helps you think locally.
+No social graphs. No global profiles. No engagement loops.
+
+This is very differentiated.
+
+⸻
+
+4️⃣ Explicitly Define What “Decentralized” Means (In Plain English)
+
+Add a short section titled:
+
+What Decentralized Means in DJZS
+
+	•	Your data doesn’t live in one company’s database
+	•	Your thinking isn’t shaped by algorithms or feeds
+	•	Your history can’t be locked, deleted, or monetized by a platform
+
+DJZS is a tool — not a network.
+
+That last line is 🔥 for your product.
+
+⸻
+
+5️⃣ Reframe Blockchain (Keep It Subtle but Real)
+
+Do not lead with “Base blockchain” in the hero.
+
+Instead:
+
+Optional Onchain Layer
+
+Use blockchain for proofs, timestamps, and ownership —
+not for publishing your private thoughts.
+
+This reassures non-crypto users while still signaling depth.
+
+⸻
+
+6️⃣ New Single-Line Differentiator (Pick One)
+
+These replace “private” messaging everywhere:
+	•	“Your mind doesn’t belong on a platform.”
+	•	“Decentralized by design. Personal by nature.”
+	•	“A thinking system, not a network.”
+
+My strongest recommendation:
+
+A thinking system, not a network.
+
+⸻
+
+7️⃣ What This Signals (Why This Is the Right Move)
+
+By choosing decentralized you’re saying:
+	•	This is infrastructure, not content
+	•	This is daily-use, not performance
+	•	This is ownership, not audience
+
+That aligns perfectly with:
+	•	DJZS daily journaling
+	•	Research compounding
+	•	One calm thinking partner agent
+	•	No feeds, no dashboards, no noise
+
+You’re building a mental OS, not an app.
+
+⸻
+
+Next High-Leverage Step
+
+If you want, I can:
+	•	Rewrite your entire landing page copy with “decentralized” as the spine
+	•	Create a 1-screen “How DJZS Works” diagram (Local → Agent → Optional Onchain)
+	•	Help you name the agent so it doesn’t sound centralized or branded
+
+Tell me which one you want to ship next.
