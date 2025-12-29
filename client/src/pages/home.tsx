@@ -223,9 +223,9 @@ export default function Home() {
       </motion.section>
 
       <RevealSection>
-        <section className="relative py-48 bg-black border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-24 bg-black border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-6xl mx-auto px-10">
-            <div className="text-center mb-20">
+            <div className="text-center mb-12">
               <ZoneFlywheel />
               <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-medium">
                 Your thinking lives on your device. Sync only when you choose. A tool, not a network.
@@ -258,10 +258,10 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-48 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-24 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-5xl mx-auto px-10 text-center">
             <ClarityFlywheel />
-            <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-16 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-12 max-w-3xl mx-auto">
               DJZS is infrastructure for your thinking. Not a platform. Not a network. A tool you own.
             </p>
             <div className="grid md:grid-cols-3 gap-8">
@@ -286,9 +286,9 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-48 bg-black border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-24 bg-black border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-4xl mx-auto px-10">
-            <div className="text-center mb-16">
+            <div className="text-center mb-12">
               <FAQFlywheel />
             </div>
             <div className="divide-y divide-white/[0.05]">
