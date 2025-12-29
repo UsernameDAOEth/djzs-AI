@@ -44,6 +44,8 @@ export function PortalBackground({ variant = "hero" }: PortalBackgroundProps) {
           animate={{ 
             scale: [1, 1.05, 1],
             opacity: [0.8, 1, 0.8],
+            x: circle.x,
+            y: circle.y,
           }}
           transition={{ 
             duration: circle.duration, 
@@ -55,7 +57,10 @@ export function PortalBackground({ variant = "hero" }: PortalBackgroundProps) {
           style={{
             width: circle.size,
             height: circle.size,
-            transform: `translate(${circle.x}px, ${circle.y}px)`,
+            left: '50%',
+            top: '50%',
+            marginLeft: -circle.size / 2,
+            marginTop: -circle.size / 2,
           }}
         />
       ))}
