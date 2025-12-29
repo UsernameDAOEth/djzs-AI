@@ -18,7 +18,7 @@ export function ThinkFlywheel() {
               animate={{
                 opacity: [0, 1, 1, 0],
                 y: [80, 0, -80],
-                scale: [0.8, 1.1, 0.8],
+                scale: [0.7, 1, 0.7],
                 filter: ["blur(4px)", "blur(0px)", "blur(4px)"],
               }}
               transition={{
@@ -27,7 +27,7 @@ export function ThinkFlywheel() {
                 delay: i * 1.5,
                 ease: "easeInOut",
               }}
-              className="absolute text-7xl md:text-9xl font-black tracking-tighter uppercase pointer-events-none select-none text-white whitespace-nowrap"
+              className="absolute text-5xl md:text-8xl font-black tracking-tighter uppercase pointer-events-none select-none text-white whitespace-nowrap"
               style={{
                 zIndex: 10 - i,
               }}
