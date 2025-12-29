@@ -1,0 +1,196 @@
+Perfect place to lock in trust + differentiation. Below is a clean, calm, product-ready FAQ you can drop straight into the site or accordion UI.
+Tone: confident, non-hype, precise — aligned with DJZS as infrastructure, not a chatbot.
+
+I’ve ordered these in the exact sequence users mentally ask them.
+
+⸻
+
+Frequently Asked Questions
+
+⸻
+
+How is DJZS different from ChatGPT or Claude?
+
+DJZS is not a chat app and not a general AI assistant.
+
+ChatGPT and Claude are centralized AI platforms:
+	•	Your conversations happen on their servers
+	•	Memory is global or platform-controlled
+	•	The primary interaction is asking questions
+
+DJZS is a local-first thinking system:
+	•	You write first, in your own workspace
+	•	The AI responds only when you ask it to
+	•	Memory is explicit, user-controlled, and local
+	•	There are no feeds, profiles, or engagement loops
+
+DJZS helps you think.
+It doesn’t replace your thinking.
+
+⸻
+
+What does “decentralized” mean in DJZS?
+
+Decentralized does not mean “stored on a server”
+and it does not mean “everything is on a blockchain.”
+
+In DJZS, decentralized means:
+	•	Your data is not dependent on a single company
+	•	Your thinking does not live in a central database
+	•	Ownership starts on your device, not a platform
+
+Centralized servers — and public blockchains — are still single points of failure.
+They can be indexed, surveilled, or compromised.
+
+In DJZS, decentralization starts with local-first storage.
+Everything else is optional.
+
+⸻
+
+Is my data really private?
+
+Yes — by design.
+	•	Your journal and research live on your device first
+	•	Data is encrypted end-to-end before it ever leaves your machine
+	•	DJZS does not scan, profile, or monetize your writing
+	•	Nothing syncs unless you choose to sync it
+
+DJZS works fully offline.
+
+If your device is offline, your thoughts are offline.
+
+⸻
+
+How does AI memory work in Journal and Research?
+
+The AI does not have automatic or global memory.
+
+DJZS uses explicit, user-controlled memory:
+	•	You write an entry
+	•	You click Think with me
+	•	The agent sees:
+	•	Your current entry
+	•	Up to 3 memory pins you previously saved
+	•	The response is generated and stored locally as an insight
+
+If something is worth remembering, the AI may suggest a memory —
+but only you can pin it.
+
+There is no background memory.
+There is no silent learning.
+
+⸻
+
+What’s the difference between Journal mode and Research mode?
+
+They use the same system, but different thinking lenses.
+
+Journal mode
+	•	Summary
+	•	Insight
+	•	Reflection question
+
+Research mode
+	•	Key claims
+	•	Evidence
+	•	Unknowns
+	•	Next question
+
+The AI adapts its output — not your data.
+
+⸻
+
+What is a Memory Pin?
+
+A Memory Pin is a thought you choose to keep.
+	•	Pins stay on your device
+	•	Pins are reused as context in future sessions
+	•	Pins are never added automatically
+
+This allows your thinking to compound over time
+without creating a centralized memory graph.
+
+⸻
+
+Why not store everything on a centralized server or blockchain?
+
+Because that’s not decentralized — it’s just outsourced risk.
+
+Centralized servers:
+	•	Are attractive targets for breaches
+	•	Require trust in a company
+	•	Turn private thinking into stored assets
+
+Public blockchains:
+	•	Are permanent and indexable
+	•	Are not designed for private cognition
+	•	Can expose metadata even if content is encrypted
+
+DJZS uses local-first storage and treats cloud or blockchain as:
+	•	Optional
+	•	Secondary
+	•	User-initiated
+
+Your thoughts don’t belong on a global ledger by default.
+
+⸻
+
+Can I sync or back up my data?
+
+Yes — when you choose to.
+
+You can:
+	•	Export your data
+	•	Back it up
+	•	Timestamp or prove ownership using decentralized networks
+
+But DJZS never requires this.
+
+The system works without sync.
+Sync exists for your convenience, not control.
+
+⸻
+
+Who owns my data?
+
+You do.
+	•	You write it
+	•	You store it
+	•	You choose what’s remembered
+	•	You choose what’s shared
+	•	You can leave at any time with your data intact
+
+DJZS is a tool you own — not a platform that owns you.
+
+⸻
+
+What is a “Zone”?
+
+A Zone is a thinking context.
+
+Zones help you separate:
+	•	Journaling
+	•	Research
+	•	Reflection
+	•	Long-term memory
+
+Each Zone changes how the AI responds,
+without mixing your thoughts into a feed or profile.
+
+You move through Zones.
+You don’t perform in them.
+
+⸻
+
+One-line closer (optional, strong)
+
+DJZS is infrastructure for thinking — not a platform, not a network, not a surveillance system.
+
+⸻
+
+If you want next, I can:
+	•	Compress this into accordion-perfect microcopy
+	•	Rewrite it for a Privacy & Architecture page
+	•	Or map each FAQ answer directly to UI moments (first write, first Think, first Pin)
+
+Tell me where this FAQ will live and I’ll tailor it exactly.
