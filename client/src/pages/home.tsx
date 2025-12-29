@@ -227,8 +227,8 @@ export default function Home() {
             
             {!isConnected && (
               <div className="mt-16 text-center">
-                <div className="inline-block p-[1px] rounded-full bg-gradient-to-r from-purple-500/50 to-blue-500/50">
-                  <div className="px-8 py-3 rounded-full bg-black text-xs font-black uppercase tracking-widest text-gray-400">
+                <div className="inline-block p-[1px] rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                  <div className="px-8 py-3 rounded-full bg-black text-xs font-black uppercase tracking-widest text-white">
                     Connect wallet to enter your zones
                   </div>
                 </div>
