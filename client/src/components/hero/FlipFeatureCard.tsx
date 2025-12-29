@@ -6,12 +6,20 @@ interface FlipFeatureCardProps {
   title: string;
   frontText: string;
   backItems: string[];
+  status?: "aligned" | "partial" | "intentional";
 }
 
-export function FlipFeatureCard({ icon, title, frontText, backItems }: FlipFeatureCardProps) {
+const statusConfig = {
+  aligned: { label: "✓ Aligned", color: "text-green-400 border-green-500/30 bg-green-500/10" },
+  partial: { label: "○ Staged", color: "text-yellow-400 border-yellow-500/30 bg-yellow-500/10" },
+  intentional: { label: "✗ By Design", color: "text-gray-400 border-gray-500/30 bg-gray-500/10" },
+};
+
+export function FlipFeatureCard({ icon, title, frontText, backItems, status }: FlipFeatureCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => setIsFlipped(!isFlipped);
+  const statusInfo = status ? statusConfig[status] : null;
 
   return (
     <div
@@ -34,6 +42,11 @@ export function FlipFeatureCard({ icon, title, frontText, backItems }: FlipFeatu
           className="absolute inset-0 p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col items-center justify-center text-center"
           style={{ backfaceVisibility: "hidden" }}
         >
+          {statusInfo && (
+            <span className={`absolute top-4 right-4 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full border ${statusInfo.color}`}>
+              {statusInfo.label}
+            </span>
+          )}
           <div className="w-14 h-14 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center mb-6">
             {icon}
           </div>

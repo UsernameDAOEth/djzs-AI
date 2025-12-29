@@ -248,33 +248,37 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8">
               <FlipFeatureCard 
                 icon={<HardDrive className="w-6 h-6 text-purple-400" />}
-                title="Local-First by Default"
-                frontText="Your journal and research live on your device. Nothing syncs unless you choose."
+                title="Instant & Offline"
+                frontText="No spinners. No waiting. The act of thinking never waits on the network."
+                status="aligned"
                 backItems={[
-                  "Entries, insights, and memory pins stay in your browser",
-                  "Works offline — no internet required",
-                  "Export anytime, sync only when you decide"
+                  "Writes to IndexedDB immediately — no network required",
+                  "Works fully offline: journaling, pins, history, review",
+                  "Network only used when you explicitly invoke AI or sync"
                 ]}
               />
               <FlipFeatureCard 
                 icon={<Shield className="w-6 h-6 text-blue-400" />}
-                title="Decentralized Ownership"
-                frontText="Back up or timestamp your work without handing your mind to a company."
+                title="You Own Your Data"
+                frontText="Long-term preservation. If DJZS disappears, your thinking remains."
+                status="aligned"
                 backItems={[
-                  "Wallet = your portable, platform-free identity",
-                  "Optional timestamps for provenance",
-                  "No lock-in — take your data anywhere"
+                  "Data lives locally in open, exportable formats",
+                  "No proprietary server-locked formats",
+                  "No subscription required to access your history",
+                  "Exit anytime with your data intact"
                 ]}
               />
               <FlipFeatureCard 
-                icon={<Bot className="w-6 h-6 text-green-400" />}
-                title="AI Without a Platform"
-                frontText="A calm Thinking Partner. No feeds. No social graphs. No engagement loops."
+                icon={<Bot className="w-6 h-6 text-gray-400" />}
+                title="Thinking, Not Collaboration"
+                frontText="Personal cognition workflows. Collaboration introduces surveillance risk."
+                status="intentional"
                 backItems={[
-                  "Only your current entry + pinned memories are used",
-                  "Journal: summary, insight, reflection question",
-                  "Research: claims, evidence, unknowns",
-                  "You choose what to remember"
+                  "No real-time co-editing or shared cursors",
+                  "No multi-user presence or social pressure",
+                  "Sync is optional, not assumed",
+                  "DJZS chooses clarity over collaboration"
                 ]}
               />
             </div>
