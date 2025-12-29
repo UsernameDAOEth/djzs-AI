@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 
 const WORDS = [
-  "WORKSPACE",
-  "ZONE",
-  "CLARITY"
+  "YOUR SPACE",
+  "JOURNALING",
+  "PRIVATE"
 ];
 
 export function ZoneFlywheel() {
@@ -32,8 +32,8 @@ export function ZoneFlywheel() {
                 zIndex: 10 - i,
               }}
             >
-              {word === "ZONE" ? (
-                <span>GET IN THE <span className="text-purple-500">ZONE</span></span>
+              {word === "JOURNALING" ? (
+                <span className="text-purple-400">{word}</span>
               ) : word}
             </motion.div>
           );

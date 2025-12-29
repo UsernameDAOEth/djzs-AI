@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 
 const WORDS = [
   "QUESTIONS",
-  "ANSWERS",
-  "FREQUENTLY ASKED"
+  "SYSTEM",
+  "ANSWERS"
 ];
 
 export function FAQFlywheel() {
@@ -32,8 +32,8 @@ export function FAQFlywheel() {
                 zIndex: 10 - i,
               }}
             >
-              {word === "FREQUENTLY ASKED" ? (
-                <span>FREQUENTLY <span className="text-purple-500">ASKED</span></span>
+              {word === "SYSTEM" ? (
+                <span className="text-purple-400">{word}</span>
               ) : word}
             </motion.div>
           );

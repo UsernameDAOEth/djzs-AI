@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 
 const WORDS = [
+  "ZONE",
   "CLARITY",
-  "PRIVATE",
   "OWNED",
   "AI-ASSISTED"
 ];
@@ -33,8 +33,8 @@ export function ClarityFlywheel() {
                 zIndex: 10 - i,
               }}
             >
-              {word === "CLARITY" ? (
-                <span>BUILT FOR <span className="text-purple-500">CLARITY</span></span>
+              {word === "ZONE" ? (
+                <span>GET IN THE <span className="text-purple-400">ZONE</span></span>
               ) : word}
             </motion.div>
           );
