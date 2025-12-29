@@ -286,39 +286,16 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
-          <div className="relative z-10 max-w-3xl mx-auto px-10 text-center">
-            <h3 className="text-3xl md:text-4xl font-black text-white mb-12 tracking-tight">
-              What <span className="text-purple-400">Decentralized</span> Means in DJZS
-            </h3>
-            <div className="space-y-6 text-left">
-              <div className="flex items-start gap-4">
-                <div className="w-2 h-2 rounded-full bg-purple-500 mt-3 shrink-0" />
-                <p className="text-lg md:text-xl text-gray-400 font-medium">Your data doesn't live in one company's database</p>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-2 h-2 rounded-full bg-purple-500 mt-3 shrink-0" />
-                <p className="text-lg md:text-xl text-gray-400 font-medium">Your thinking isn't shaped by algorithms or feeds</p>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-2 h-2 rounded-full bg-purple-500 mt-3 shrink-0" />
-                <p className="text-lg md:text-xl text-gray-400 font-medium">Your history can't be locked, deleted, or monetized by a platform</p>
-              </div>
-            </div>
-            <p className="text-2xl md:text-3xl font-black text-white mt-12">
-              DJZS is a tool — not a network.
-            </p>
-          </div>
-        </section>
-      </RevealSection>
-
-      <RevealSection>
-        <section className="relative py-48 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-48 bg-black border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-4xl mx-auto px-10">
             <div className="text-center mb-16">
               <FAQFlywheel />
             </div>
             <div className="divide-y divide-white/[0.05]">
+              <FAQItem
+                question="What does 'decentralized' mean in DJZS?"
+                answer="Your data doesn't live in one company's database. Your thinking isn't shaped by algorithms or feeds. Your history can't be locked, deleted, or monetized by a platform. DJZS is a tool — not a network."
+              />
               <FAQItem
                 question="Is my data really private?"
                 answer="Every entry is encrypted with XMTP before leaving your browser. Only you hold the keys."
