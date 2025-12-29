@@ -216,12 +216,12 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               <ZoneCard 
                 title="Journal" 
-                desc="Write daily thoughts & reflections" 
+                desc="Daily reflections with a calm thinking partner" 
                 startHere={isConnected}
               />
               <ZoneCard 
                 title="Research" 
-                desc="Log facts & extract intelligence" 
+                desc="Gather claims, track evidence, surface unknowns" 
               />
             </div>
             
@@ -252,9 +252,9 @@ export default function Home() {
                 title="Local-First by Default"
                 frontText="Your journal and research live on your device. Nothing syncs unless you choose."
                 backItems={[
-                  "Stored locally: Entries, Insights, Memory Pins (IndexedDB)",
-                  "Offline ready: Works without internet",
-                  "You control sync: Cloud/onchain is optional"
+                  "Entries, insights, and memory pins stay in your browser",
+                  "Works offline — no internet required",
+                  "Export anytime, sync only when you decide"
                 ]}
               />
               <FlipFeatureCard 
@@ -262,9 +262,9 @@ export default function Home() {
                 title="Decentralized Ownership"
                 frontText="Back up or timestamp your work without handing your mind to a company."
                 backItems={[
-                  "Optional proofs: timestamp / provenance / export",
-                  "User-owned identity: wallet as your portable account",
-                  "No platform lock-in: your data remains yours"
+                  "Wallet = your portable, platform-free identity",
+                  "Optional timestamps for provenance",
+                  "No lock-in — take your data anywhere"
                 ]}
               />
               <FlipFeatureCard 
@@ -272,10 +272,10 @@ export default function Home() {
                 title="AI Without a Platform"
                 frontText="A calm Thinking Partner. No feeds. No social graphs. No engagement loops."
                 backItems={[
-                  "\"Think with me\" uses just enough context: current entry + up to 3 pins",
-                  "Journal mode: Summary / Insight / Reflection Question",
-                  "Research mode: Claims / Evidence / Unknowns / Next Question",
-                  "Memory is opt-in: you Pin or Skip"
+                  "Only your current entry + pinned memories are used",
+                  "Journal: summary, insight, reflection question",
+                  "Research: claims, evidence, unknowns",
+                  "You choose what to remember"
                 ]}
               />
             </div>
@@ -297,15 +297,15 @@ export default function Home() {
               />
               <FAQItem
                 question="Is my data really private?"
-                answer="Every entry is encrypted with XMTP before leaving your browser. Only you hold the keys."
+                answer="Your entries live in your browser's local storage (IndexedDB). Nothing syncs unless you choose. No servers see your thoughts."
               />
               <FAQItem
-                question="How does the Agent work?"
-                answer="The Zone Agent runs in a secure environment, extracting insights only from the content you've committed to a Zone."
+                question="How does the Thinking Partner work?"
+                answer="When you tap 'Think with me,' only your current entry and pinned memories are sent to Venice AI. The response stays local. You decide what to remember."
               />
               <FAQItem
                 question="What is a 'Zone'?"
-                answer="A Zone is a dedicated encrypted thread for a specific type of thinking or coordination."
+                answer="A Zone is a dedicated space for a specific type of thinking — Journal for reflections, Research for facts and claims. Each has its own analysis format."
               />
             </div>
           </div>
@@ -438,10 +438,12 @@ export default function Home() {
             <p className="text-gray-600 text-sm font-medium uppercase tracking-widest">A thinking system, not a network</p>
           </div>
           <div className="flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">
-            <a href="#" className="hover:text-purple-400 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-purple-400 transition-colors">Terms</a>
-            <a href="#" className="hover:text-purple-400 transition-colors">Roadmap</a>
-            <a href="#" className="hover:text-purple-400 transition-colors">Journal</a>
+            <span className="opacity-50 cursor-default">Privacy</span>
+            <span className="opacity-50 cursor-default">Terms</span>
+            <span className="opacity-50 cursor-default">Roadmap</span>
+            {isConnected && (
+              <Link href="/chat" className="hover:text-purple-400 transition-colors">Enter</Link>
+            )}
           </div>
         </div>
       </footer>
