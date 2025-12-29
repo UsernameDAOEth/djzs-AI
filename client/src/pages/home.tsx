@@ -5,7 +5,7 @@ import { HardDrive, Shield, Bot, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, FAQFlywheel } from "@/components/hero";
+import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, FAQFlywheel, PortalBackground } from "@/components/hero";
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -165,20 +165,7 @@ export default function Home() {
         animate="show"
         className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black pb-24"
       >
-        <div
-          style={{
-            position: "absolute",
-            inset: "-30%",
-            background: `
-              radial-gradient(900px 380px at 20% 40%, rgba(140,80,255,.25), transparent 60%),
-              radial-gradient(900px 420px at 80% 60%, rgba(80,210,255,.2), transparent 60%),
-              radial-gradient(1100px 520px at 50% 10%, rgba(255,255,255,.08), transparent 60%)
-            `,
-            filter: "blur(10px)",
-            animation: "djzsDrift 16s ease-in-out infinite",
-            pointerEvents: "none",
-          }}
-        />
+        <PortalBackground variant="hero" />
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-20">
           <ThinkFlywheel />
@@ -224,6 +211,7 @@ export default function Home() {
 
       <RevealSection>
         <section className="relative py-24 bg-black border-t border-white/[0.03] overflow-hidden">
+          <PortalBackground variant="zone" />
           <div className="relative z-10 max-w-6xl mx-auto px-10">
             <div className="text-center mb-12">
               <ZoneFlywheel />
@@ -259,6 +247,7 @@ export default function Home() {
 
       <RevealSection>
         <section className="relative py-24 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
+          <PortalBackground variant="clarity" />
           <div className="relative z-10 max-w-5xl mx-auto px-10 text-center">
             <ClarityFlywheel />
             <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-12 max-w-3xl mx-auto">
@@ -287,6 +276,7 @@ export default function Home() {
 
       <RevealSection>
         <section className="relative py-24 bg-black border-t border-white/[0.03] overflow-hidden">
+          <PortalBackground variant="faq" />
           <div className="relative z-10 max-w-4xl mx-auto px-10">
             <div className="text-center mb-12">
               <FAQFlywheel />

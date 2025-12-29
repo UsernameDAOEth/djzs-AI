@@ -27,7 +27,7 @@ export function ZoneFlywheel() {
                 delay: i * 1.2,
                 ease: "easeInOut",
               }}
-              className="absolute text-6xl md:text-8xl font-black tracking-tighter uppercase pointer-events-none select-none text-white whitespace-nowrap"
+              className="absolute text-5xl md:text-7xl font-extrabold tracking-tight uppercase pointer-events-none select-none text-white whitespace-nowrap drop-shadow-[0_0_25px_rgba(59,130,246,0.4)]"
               style={{
                 zIndex: 10 - i,
               }}

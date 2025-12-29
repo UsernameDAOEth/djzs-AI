@@ -27,7 +27,7 @@ export function ThinkFlywheel() {
                 delay: i * 1.5,
                 ease: "easeInOut",
               }}
-              className="absolute text-5xl md:text-8xl font-black tracking-tighter uppercase pointer-events-none select-none text-white whitespace-nowrap"
+              className="absolute text-5xl md:text-8xl font-extrabold tracking-tight uppercase pointer-events-none select-none text-white whitespace-nowrap drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]"
               style={{
                 zIndex: 10 - i,
               }}

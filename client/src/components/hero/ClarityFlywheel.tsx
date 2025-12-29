@@ -28,7 +28,7 @@ export function ClarityFlywheel() {
                 delay: i * 0.7,
                 ease: "easeInOut",
               }}
-              className="absolute text-6xl md:text-8xl font-black tracking-tighter uppercase pointer-events-none select-none text-white whitespace-nowrap"
+              className="absolute text-5xl md:text-7xl font-extrabold tracking-tight uppercase pointer-events-none select-none text-white whitespace-nowrap drop-shadow-[0_0_25px_rgba(99,102,241,0.4)]"
               style={{
                 zIndex: 10 - i,
               }}
