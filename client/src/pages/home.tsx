@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { HardDrive, Shield, Bot, Plus } from "lucide-react";
@@ -291,26 +291,151 @@ export default function Home() {
               <FAQFlywheel />
             </div>
             <div className="divide-y divide-white/[0.05]">
-              <FAQItem
-                question="How is this different from ChatGPT or Claude?"
-                answer="We don't optimize for engagement, and we don't generate content for you. DJZS reflects what you write, notices tensions, and asks questions so insight emerges naturally. You stay in the zone; we just hold the mirror."
-              />
-              <FAQItem
-                question="What does 'decentralized' mean in DJZS?"
-                answer="Your data doesn't live in one company's database. Your thinking isn't shaped by algorithms or feeds. Your history can't be locked, deleted, or monetized by a platform. DJZS is a tool — not a network."
-              />
-              <FAQItem
-                question="Is my data really private?"
-                answer="Your entries live in your browser's local storage (IndexedDB). Nothing syncs unless you choose. No servers see your thoughts."
-              />
-              <FAQItem
-                question="How does the Thinking Partner work?"
-                answer="When you tap 'Think with me,' only your current entry and pinned memories are sent to Venice AI. The response stays local. You decide what to remember."
-              />
-              <FAQItem
-                question="What is a 'Zone'?"
-                answer="A Zone is a dedicated space for a specific type of thinking — Journal for reflections, Research for facts and claims. Each has its own analysis format."
-              />
+              <FAQItem question="How is DJZS different from ChatGPT or Claude?">
+                <p>DJZS is not a chat app and not a general AI assistant.</p>
+                <p className="text-gray-600 mt-2">ChatGPT and Claude are centralized AI platforms:</p>
+                <ul className="list-disc list-inside text-gray-600 ml-2">
+                  <li>Your conversations happen on their servers</li>
+                  <li>Memory is global or platform-controlled</li>
+                  <li>The primary interaction is asking questions</li>
+                </ul>
+                <p className="text-gray-400 mt-3">DJZS is a local-first thinking system:</p>
+                <ul className="list-disc list-inside text-gray-400 ml-2">
+                  <li>You write first, in your own workspace</li>
+                  <li>The AI responds only when you ask it to</li>
+                  <li>Memory is explicit, user-controlled, and local</li>
+                  <li>There are no feeds, profiles, or engagement loops</li>
+                </ul>
+                <p className="text-white mt-3 font-semibold">DJZS helps you think. It doesn't replace your thinking.</p>
+              </FAQItem>
+
+              <FAQItem question="What does 'decentralized' mean in DJZS?">
+                <p>Decentralized does not mean "stored on a server" and it does not mean "everything is on a blockchain."</p>
+                <p className="mt-2">In DJZS, decentralized means:</p>
+                <ul className="list-disc list-inside ml-2">
+                  <li>Your data is not dependent on a single company</li>
+                  <li>Your thinking does not live in a central database</li>
+                  <li>Ownership starts on your device, not a platform</li>
+                </ul>
+                <p className="mt-3 text-gray-600">Centralized servers — and public blockchains — are still single points of failure. They can be indexed, surveilled, or compromised.</p>
+                <p className="text-white mt-2 font-semibold">In DJZS, decentralization starts with local-first storage. Everything else is optional.</p>
+              </FAQItem>
+
+              <FAQItem question="Is my data really private?">
+                <p className="text-white font-semibold">Yes — by design.</p>
+                <ul className="list-disc list-inside ml-2 mt-2">
+                  <li>Your journal and research live on your device first</li>
+                  <li>Data is encrypted end-to-end before it ever leaves your machine</li>
+                  <li>DJZS does not scan, profile, or monetize your writing</li>
+                  <li>Nothing syncs unless you choose to sync it</li>
+                </ul>
+                <p className="mt-3">DJZS works fully offline. If your device is offline, your thoughts are offline.</p>
+              </FAQItem>
+
+              <FAQItem question="How does AI memory work in Journal and Research?">
+                <p>The AI does not have automatic or global memory.</p>
+                <p className="mt-2">DJZS uses explicit, user-controlled memory:</p>
+                <ul className="list-disc list-inside ml-2">
+                  <li>You write an entry</li>
+                  <li>You click "Think with me"</li>
+                  <li>The agent sees: your current entry + up to 3 memory pins you previously saved</li>
+                  <li>The response is generated and stored locally as an insight</li>
+                </ul>
+                <p className="mt-3">If something is worth remembering, the AI may suggest a memory — but only you can pin it.</p>
+                <p className="text-white mt-2 font-semibold">There is no background memory. There is no silent learning.</p>
+              </FAQItem>
+
+              <FAQItem question="What's the difference between Journal mode and Research mode?">
+                <p>They use the same system, but different thinking lenses.</p>
+                <div className="grid grid-cols-2 gap-4 mt-3">
+                  <div>
+                    <p className="text-purple-400 font-semibold mb-1">Journal mode</p>
+                    <ul className="list-disc list-inside ml-2 text-sm">
+                      <li>Summary</li>
+                      <li>Insight</li>
+                      <li>Reflection question</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-blue-400 font-semibold mb-1">Research mode</p>
+                    <ul className="list-disc list-inside ml-2 text-sm">
+                      <li>Key claims</li>
+                      <li>Evidence</li>
+                      <li>Unknowns</li>
+                      <li>Next question</li>
+                    </ul>
+                  </div>
+                </div>
+                <p className="mt-3 text-white font-semibold">The AI adapts its output — not your data.</p>
+              </FAQItem>
+
+              <FAQItem question="What is a Memory Pin?">
+                <p>A Memory Pin is a thought you choose to keep.</p>
+                <ul className="list-disc list-inside ml-2 mt-2">
+                  <li>Pins stay on your device</li>
+                  <li>Pins are reused as context in future sessions</li>
+                  <li>Pins are never added automatically</li>
+                </ul>
+                <p className="mt-3">This allows your thinking to compound over time without creating a centralized memory graph.</p>
+              </FAQItem>
+
+              <FAQItem question="Why not store everything on a centralized server or blockchain?">
+                <p className="text-white font-semibold">Because that's not decentralized — it's just outsourced risk.</p>
+                <div className="grid grid-cols-2 gap-4 mt-3">
+                  <div>
+                    <p className="text-gray-400 font-semibold mb-1">Centralized servers:</p>
+                    <ul className="list-disc list-inside ml-2 text-sm">
+                      <li>Attractive targets for breaches</li>
+                      <li>Require trust in a company</li>
+                      <li>Turn private thinking into stored assets</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 font-semibold mb-1">Public blockchains:</p>
+                    <ul className="list-disc list-inside ml-2 text-sm">
+                      <li>Permanent and indexable</li>
+                      <li>Not designed for private cognition</li>
+                      <li>Can expose metadata</li>
+                    </ul>
+                  </div>
+                </div>
+                <p className="mt-3">DJZS uses local-first storage and treats cloud or blockchain as optional, secondary, and user-initiated.</p>
+              </FAQItem>
+
+              <FAQItem question="Can I sync or back up my data?">
+                <p className="text-white font-semibold">Yes — when you choose to.</p>
+                <ul className="list-disc list-inside ml-2 mt-2">
+                  <li>Export your data</li>
+                  <li>Back it up</li>
+                  <li>Timestamp or prove ownership using decentralized networks</li>
+                </ul>
+                <p className="mt-3">But DJZS never requires this. The system works without sync. Sync exists for your convenience, not control.</p>
+              </FAQItem>
+
+              <FAQItem question="Who owns my data?">
+                <p className="text-white font-semibold text-lg">You do.</p>
+                <ul className="list-disc list-inside ml-2 mt-2">
+                  <li>You write it</li>
+                  <li>You store it</li>
+                  <li>You choose what's remembered</li>
+                  <li>You choose what's shared</li>
+                  <li>You can leave at any time with your data intact</li>
+                </ul>
+                <p className="mt-3 text-white font-semibold">DJZS is a tool you own — not a platform that owns you.</p>
+              </FAQItem>
+
+              <FAQItem question="What is a 'Zone'?">
+                <p>A Zone is a thinking context.</p>
+                <p className="mt-2">Zones help you separate:</p>
+                <ul className="list-disc list-inside ml-2">
+                  <li>Journaling</li>
+                  <li>Research</li>
+                  <li>Reflection</li>
+                  <li>Long-term memory</li>
+                </ul>
+                <p className="mt-3">Each Zone changes how the AI responds, without mixing your thoughts into a feed or profile.</p>
+                <p className="text-white mt-2 font-semibold">You move through Zones. You don't perform in them.</p>
+              </FAQItem>
             </div>
           </div>
         </section>
@@ -455,7 +580,7 @@ export default function Home() {
   );
 }
 
-function FAQItem({ question, answer }: { question: string; answer: string }) {
+function FAQItem({ question, children }: { question: string; children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   
   return (
@@ -480,7 +605,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="overflow-hidden"
       >
-        <p className="text-gray-500 leading-relaxed font-medium text-lg pt-4 max-w-2xl">{answer}</p>
+        <div className="text-gray-500 leading-relaxed font-medium text-base pt-4 max-w-2xl space-y-3">{children}</div>
       </motion.div>
     </div>
   );
