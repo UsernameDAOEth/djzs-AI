@@ -219,9 +219,6 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Primary Transition */}
-      <div className="h-32 bg-gradient-to-b from-black to-[#050505]" />
-
       <RevealSection>
         <section className="relative py-48 bg-black border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-6xl mx-auto px-10">
