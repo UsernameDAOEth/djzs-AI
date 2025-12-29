@@ -292,6 +292,10 @@ export default function Home() {
             </div>
             <div className="divide-y divide-white/[0.05]">
               <FAQItem
+                question="How is this different from ChatGPT or Claude?"
+                answer="We don't optimize for engagement, and we don't generate content for you. DJZS reflects what you write, notices tensions, and asks questions so insight emerges naturally. You stay in the zone; we just hold the mirror."
+              />
+              <FAQItem
                 question="What does 'decentralized' mean in DJZS?"
                 answer="Your data doesn't live in one company's database. Your thinking isn't shaped by algorithms or feeds. Your history can't be locked, deleted, or monetized by a platform. DJZS is a tool — not a network."
               />
