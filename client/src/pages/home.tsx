@@ -185,7 +185,7 @@ export default function Home() {
                   <span>•</span>
                   <span>Your data stays yours</span>
                   <span>•</span>
-                  <span>No feed</span>
+                  <span>Privacy</span>
                 </div>
               </div>
             ) : (
