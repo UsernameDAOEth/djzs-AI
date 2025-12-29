@@ -5,7 +5,7 @@ import { HardDrive, Shield, Bot, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ZoneFlow, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, FAQFlywheel, PortalBackground } from "@/components/hero";
+import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, FAQFlywheel, PortalBackground } from "@/components/hero";
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -194,13 +194,6 @@ export default function Home() {
                 <ConnectButton showBalance={false} />
               </div>
             )}
-          </motion.div>
-
-          <motion.div variants={fadeUp} className="mt-24">
-            <p className="text-[10px] text-gray-500 font-black tracking-[0.4em] uppercase mb-6 text-center opacity-40">The Zone Flow</p>
-            <div className="flex justify-center">
-              <ZoneFlow />
-            </div>
           </motion.div>
 
           <motion.div variants={fadeUp} className="mt-20">
