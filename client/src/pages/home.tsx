@@ -157,7 +157,6 @@ export default function Home() {
           </div>
         </div>
       </header>
-
       {/* Hero Section */}
       <motion.section
         variants={pageContainer}
@@ -201,7 +200,6 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
-
       <RevealSection>
         <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="zone" />
@@ -237,7 +235,6 @@ export default function Home() {
           </div>
         </section>
       </RevealSection>
-
       <RevealSection>
         <section className="relative py-12 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="clarity" />
@@ -282,7 +279,6 @@ export default function Home() {
           </div>
         </section>
       </RevealSection>
-
       <RevealSection>
         <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="faq" />
@@ -326,7 +322,7 @@ export default function Home() {
                 <ul className="list-disc list-inside ml-2 mt-2">
                   <li>Your journal and research live on your device first</li>
                   <li>Data is encrypted end-to-end before it ever leaves your machine</li>
-                  <li>DJZS does not scan, profile, or monetize your writing</li>
+                  <li>DJZS does not scan, profile, or monetize your journaling.</li>
                   <li>Nothing syncs unless you choose to sync it</li>
                 </ul>
                 <p className="mt-3">DJZS works fully offline. If your device is offline, your thoughts are offline.</p>
@@ -440,7 +436,6 @@ export default function Home() {
           </div>
         </section>
       </RevealSection>
-
       <footer className="relative border-t border-white/[0.03] pt-0 pb-20 overflow-hidden">
         <div style={{ position: "relative", overflow: "hidden", borderRadius: 0 }}>
           {/* Background */}
