@@ -126,7 +126,13 @@ export default function Chat() {
   const { client: xmtpClient, isConnecting: xmtpConnecting, connect: connectXmtp } = useXmtp();
   const { signMessageAsync } = useSignMessage();
   
-  const [selectedZone, setSelectedZone] = useState("journal");
+  const [selectedZone, setSelectedZone] = useState(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("zone") === "research" ? "research" : "journal";
+    }
+    return "journal";
+  });
   const [messageInput, setMessageInput] = useState("");
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [memoryDrawerOpen, setMemoryDrawerOpen] = useState(false);

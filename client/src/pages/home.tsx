@@ -216,10 +216,12 @@ export default function Home() {
                 title="Journal" 
                 desc="Daily reflections with a calm thinking partner" 
                 startHere={isConnected}
+                href={isConnected ? "/chat" : "#"}
               />
               <ZoneCard 
                 title="Research" 
                 desc="Gather claims, track evidence, surface unknowns" 
+                href={isConnected ? "/chat?zone=research" : "#"}
               />
             </div>
             
