@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Lock, Network, Zap, Plus } from "lucide-react";
+import { HardDrive, Shield, Bot, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -183,8 +183,11 @@ export default function Home() {
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-20">
           <ThinkFlywheel />
 
-          <motion.p variants={fadeUp} className="text-2xl md:text-3xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium mb-10">
-            DJZS is a private AI journal that summarizes your thinking and surfaces insight over time.
+          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium mb-4">
+            A local-first journal and research system. Your thoughts live with you — not on a platform.
+          </motion.p>
+          <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto font-medium mb-10">
+            No feeds. No surveillance. No centralized memory.
           </motion.p>
 
           <motion.div variants={fadeUp}>
@@ -225,7 +228,7 @@ export default function Home() {
             <div className="text-center mb-20">
               <ZoneFlywheel />
               <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-medium">
-                Everything you think and track lives here. Private, structured, and accumulating value over time.
+                Your thinking lives on your device. Sync only when you choose. A tool, not a network.
               </p>
             </div>
 
@@ -259,23 +262,23 @@ export default function Home() {
           <div className="relative z-10 max-w-5xl mx-auto px-10 text-center">
             <ClarityFlywheel />
             <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-16 max-w-3xl mx-auto">
-              DJZS isn't a social network. It's a personal operating system for your mind. Private, owned, and AI-assisted.
+              DJZS is infrastructure for your thinking. Not a platform. Not a network. A tool you own.
             </p>
             <div className="grid md:grid-cols-3 gap-8">
               <FeatureCard 
-                icon={<Lock className="w-6 h-6 text-purple-400" />}
-                title="Private by Design"
-                desc="Your entries are encrypted locally. Only you hold the keys to your thoughts."
+                icon={<HardDrive className="w-6 h-6 text-purple-400" />}
+                title="Local-First by Default"
+                desc="Your journal and research live on your device. Nothing syncs unless you choose to move it."
               />
               <FeatureCard 
-                icon={<Zap className="w-6 h-6 text-yellow-400" />}
-                title="Insight Extraction"
-                desc="The Zone Agent monitors your entries to surface patterns and answer questions."
+                icon={<Shield className="w-6 h-6 text-blue-400" />}
+                title="Decentralized Ownership"
+                desc="Sync, back up, or timestamp entries using decentralized networks. Ownership without handing your data to a company."
               />
               <FeatureCard 
-                icon={<Network className="w-6 h-6 text-green-400" />}
-                title="Knowledge Compounding"
-                desc="Turn raw notes into a structured knowledge base that accumulates value over time."
+                icon={<Bot className="w-6 h-6 text-green-400" />}
+                title="AI Without a Platform"
+                desc="The DJZS Agent helps you think locally. No social graphs. No global profiles. No engagement loops."
               />
             </div>
           </div>
@@ -283,7 +286,34 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-48 bg-black border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-32 bg-black border-t border-white/[0.03] overflow-hidden">
+          <div className="relative z-10 max-w-3xl mx-auto px-10 text-center">
+            <h3 className="text-3xl md:text-4xl font-black text-white mb-12 tracking-tight">
+              What <span className="text-purple-400">Decentralized</span> Means in DJZS
+            </h3>
+            <div className="space-y-6 text-left">
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 rounded-full bg-purple-500 mt-3 shrink-0" />
+                <p className="text-lg md:text-xl text-gray-400 font-medium">Your data doesn't live in one company's database</p>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 rounded-full bg-purple-500 mt-3 shrink-0" />
+                <p className="text-lg md:text-xl text-gray-400 font-medium">Your thinking isn't shaped by algorithms or feeds</p>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 rounded-full bg-purple-500 mt-3 shrink-0" />
+                <p className="text-lg md:text-xl text-gray-400 font-medium">Your history can't be locked, deleted, or monetized by a platform</p>
+              </div>
+            </div>
+            <p className="text-2xl md:text-3xl font-black text-white mt-12">
+              DJZS is a tool — not a network.
+            </p>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-48 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-4xl mx-auto px-10">
             <div className="text-center mb-16">
               <FAQFlywheel />
@@ -429,7 +459,7 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-10 flex flex-col md:flex-row items-center justify-between gap-10">
           <div>
             <h2 className="text-2xl font-black text-white tracking-widest mb-2 uppercase">DJZS</h2>
-            <p className="text-gray-600 text-sm font-medium uppercase tracking-widest">Decentralized Journaling Zone System</p>
+            <p className="text-gray-600 text-sm font-medium uppercase tracking-widest">A thinking system, not a network</p>
           </div>
           <div className="flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">
             <a href="#" className="hover:text-purple-400 transition-colors">Privacy</a>

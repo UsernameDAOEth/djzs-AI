@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 
 const WORDS = [
-  "THINK",
-  "CLEARLY",
-  "EVERYDAY"
+  "BUILT FOR",
+  "DECENTRALIZED",
+  "THINKING"
 ];
 
 export function ThinkFlywheel() {
