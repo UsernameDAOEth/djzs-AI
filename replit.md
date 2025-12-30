@@ -8,6 +8,23 @@ DJZS Chat is a members-only, end-to-end encrypted chat application where ENS dom
 
 Preferred communication style: Simple, everyday language.
 
+## YC Messaging Copy
+
+**One-liner:**
+> DJZS is a private, local-first AI journaling partner that helps you think more clearly.
+
+**If asked to expand:**
+> It's an AI journaling partner, but the key difference is that it doesn't generate content or save memory automatically. It helps users reflect on their own thinking and build insight through daily habit.
+
+**Product description:**
+> DJZS is an AI journaling partner for thinking and research. It creates a private space where users can process ideas, track patterns in their thinking, and develop clarity—without the AI taking over.
+
+**Public language:** AI journaling partner (always pair with thinking/clarity/local-first language)
+
+**Internal language:** Thinking partner, Intelligence companion, The Zone Agent
+
+**Avoid:** AI therapist, AI coach, AI analyst, AI memory system, second brain
+
 ## System Architecture
 
 ### Frontend Architecture
