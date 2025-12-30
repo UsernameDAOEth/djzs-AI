@@ -170,7 +170,7 @@ export default function Home() {
           <ThinkFlywheel />
 
           <motion.p variants={fadeUp} className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium mb-4">
-            A local-first journal and research system. Your thoughts live with you — not on a platform.
+            Local-first AI journaling and research. Memory that stays yours.
           </motion.p>
           <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto font-medium mb-10">
             No feeds. No surveillance. No centralized memory.
