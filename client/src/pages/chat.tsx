@@ -613,56 +613,66 @@ export default function Chat() {
                 </div>
 
                 {/* Action bar - persistent footer */}
-                <div className={`flex items-center justify-between mt-8 py-4 border-t border-white/[0.03] transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-60'}`}>
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-4 text-[10px] font-black text-gray-600 uppercase tracking-widest">
-                      <div className="flex items-center gap-2">
-                        <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">Enter</kbd>
-                        <span>Commit</span>
+                <div className={`flex items-center justify-between mt-8 py-4 border-t border-white/[0.05] transition-all duration-500 ${isFocused ? 'opacity-100 translate-y-0' : 'opacity-40 translate-y-2'}`}>
+                  <div className="flex items-center gap-8">
+                    <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-2 group cursor-default">
+                        <kbd className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[9px] font-black text-gray-400 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">Enter</kbd>
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">Commit</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">⌘ + Enter</kbd>
-                        <span>Analyze</span>
+                      <div className="flex items-center gap-2 group cursor-default">
+                        <kbd className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[9px] font-black text-gray-400 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">⌘ Enter</kbd>
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">Analyze</span>
                       </div>
                     </div>
-                    <div className="w-px h-4 bg-white/10"></div>
-                    <span className={`text-[10px] font-bold tabular-nums transition-colors ${messageInput.length > 0 ? 'text-gray-500' : 'text-gray-700'}`}>
-                      {messageInput.length} chars
-                    </span>
+                    
+                    <div className="h-4 w-px bg-white/10" />
+                    
+                    <div className="flex items-center gap-2">
+                      <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${messageInput.length > 0 ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'bg-gray-800'}`} />
+                      <span className={`text-[10px] font-black tabular-nums tracking-widest transition-colors ${messageInput.length > 0 ? 'text-gray-400' : 'text-gray-700'}`}>
+                        {messageInput.length.toLocaleString()} <span className="text-[8px] opacity-50">CHARS</span>
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
                       <DialogTrigger asChild>
                         <Button
                           disabled={!messageInput.trim()}
-                          variant="outline"
-                          className="h-11 px-4 rounded-xl font-bold text-sm border-white/10 bg-white/[0.02] text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/30"
+                          variant="ghost"
+                          className="h-10 px-4 rounded-xl font-bold text-[11px] uppercase tracking-widest text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all active:scale-95"
                           data-testid="button-pin"
                         >
-                          <Pin className="w-4 h-4 mr-2" />
-                          Pin
+                          <Pin className="w-3.5 h-3.5 mr-2" />
+                          Pin Pattern
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="bg-gray-950 border-white/10 max-w-md">
+                      <DialogContent className="bg-[#0a0a0a] border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl">
                         <DialogHeader>
-                          <DialogTitle className="text-white font-bold">Pin as Memory</DialogTitle>
+                          <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">Pin Memory</DialogTitle>
                         </DialogHeader>
-                        <div className="space-y-4 py-4">
-                          <p className="text-sm text-gray-400">This will be saved locally and used as context for future thinking.</p>
-                          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                            <p className="text-sm text-white leading-relaxed line-clamp-4">{messageInput}</p>
+                        <div className="space-y-8 py-4">
+                          <p className="text-sm text-gray-500 leading-relaxed font-medium">This thought will be stored in your local vault and used as context for future thinking partners.</p>
+                          
+                          <div className="relative group">
+                            <div className="absolute -inset-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="relative p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] shadow-inner">
+                              <p className="text-sm text-gray-300 leading-relaxed line-clamp-4 font-medium italic">"{messageInput}"</p>
+                            </div>
                           </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Memory Type</label>
+
+                          <div className="space-y-4">
+                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] ml-1">Context Category</label>
                             <div className="flex flex-wrap gap-2">
                               {["pattern", "goal", "preference", "principle", "project", "question", "person"].map((kind) => (
                                 <button
                                   key={kind}
                                   onClick={() => setSelectedPinKind(kind)}
-                                  className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                                  className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${
                                     selectedPinKind === kind 
-                                      ? "bg-purple-600 text-white" 
+                                      ? "bg-purple-600 text-white shadow-lg shadow-purple-900/40 border-transparent" 
                                       : "bg-white/[0.02] text-gray-500 hover:text-white hover:bg-white/5 border border-white/[0.05]"
                                   }`}
                                   data-testid={`button-kind-${kind}`}
@@ -674,44 +684,46 @@ export default function Chat() {
                           </div>
                           <Button
                             onClick={handleManualPin}
-                            className="w-full bg-purple-600 hover:bg-purple-500 h-11 rounded-xl font-bold"
+                            className="w-full bg-purple-600 hover:bg-purple-500 h-14 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-purple-900/20 transition-all active:scale-[0.98]"
                             data-testid="button-confirm-pin"
                           >
                             <Pin className="w-4 h-4 mr-2" />
-                            Pin Memory
+                            Secure to Vault
                           </Button>
                         </div>
                       </DialogContent>
                     </Dialog>
+
                     <Button
                       onClick={handleSendText}
                       disabled={!messageInput.trim() || sendMessage.isPending}
-                      variant="outline"
-                      className="h-11 px-5 rounded-xl font-bold text-sm border-white/10 bg-white/[0.02] text-gray-400 hover:text-white hover:bg-white/5 hover:border-white/20"
+                      variant="ghost"
+                      className="h-10 px-4 rounded-xl font-bold text-[11px] uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all active:scale-95"
                       data-testid="button-save"
                     >
-                      {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                      {sendMessage.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (
                         <>
-                          <FileText className="w-4 h-4 mr-2" />
-                          Commit Entry
+                          <FileText className="w-3.5 h-3.5 mr-2 opacity-50" />
+                          Commit
                         </>
                       )}
                     </Button>
+
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className="bg-purple-600 hover:bg-purple-500 h-11 px-6 rounded-xl font-bold text-sm shadow-lg shadow-purple-900/30 transition-all"
+                      className="bg-purple-600 hover:bg-purple-500 h-12 px-8 rounded-2xl font-black text-[11px] uppercase tracking-[0.15em] shadow-xl shadow-purple-900/40 transition-all active:scale-95 group"
                       data-testid="button-analyze"
                     >
                       {isAnalyzing ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                          Thinking...
+                          Thinking
                         </>
                       ) : (
                         <>
-                          <Bot className="w-4 h-4 mr-2" />
-                          Analyze
+                          <Bot className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                          Think with me
                         </>
                       )}
                     </Button>
