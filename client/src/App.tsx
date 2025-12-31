@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import Chat from "@/pages/chat";
+import Docs from "@/pages/docs";
 import NotFound from "@/pages/not-found";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
@@ -22,6 +23,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/chat" component={Chat} />
+      <Route path="/docs" component={Docs} />
       <Route component={NotFound} />
     </Switch>
   );

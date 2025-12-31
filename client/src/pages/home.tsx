@@ -568,6 +568,7 @@ export default function Home() {
             <p className="text-gray-600 text-sm font-medium uppercase tracking-widest">A thinking system, not a network</p>
           </div>
           <div className="flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">
+            <Link href="/docs" className="hover:text-purple-400 transition-colors">Docs</Link>
             <span className="opacity-50 cursor-default">Privacy</span>
             <span className="opacity-50 cursor-default">Terms</span>
             <span className="opacity-50 cursor-default">Roadmap</span>
