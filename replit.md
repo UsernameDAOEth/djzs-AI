@@ -36,6 +36,7 @@ Preferred communication style: Simple, everyday language.
 **Routing**: Wouter provides client-side routing:
 - `/` - Landing page with feature overview and wallet connection
 - `/chat` - Main chat interface (members-only)
+- `/docs` - Documentation page (purpose, philosophy, technical stack)
 - `*` - 404 fallback
 
 **State Management**: React hooks for local state, TanStack Query for server state.
