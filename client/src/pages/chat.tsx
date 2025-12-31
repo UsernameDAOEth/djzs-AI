@@ -37,7 +37,8 @@ import {
   Zap,
   Clock,
   ChevronRight,
-  ChevronDown
+  ChevronDown,
+  Menu
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -136,6 +137,7 @@ export default function Chat() {
   const [messageInput, setMessageInput] = useState("");
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [memoryDrawerOpen, setMemoryDrawerOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [latestAnalysis, setLatestAnalysis] = useState<AnalysisResult | null>(null);
@@ -499,15 +501,38 @@ export default function Chat() {
   return (
     <TooltipProvider>
       <div className="h-screen bg-[#050505] text-gray-300 flex overflow-hidden font-sans selection:bg-purple-500/30">
-        {/* Minimal Left Sidebar - dims when focused */}
-        <aside className={`w-64 border-r border-white/[0.03] flex flex-col bg-black/20 transition-opacity duration-500 ${isFocused ? 'opacity-40' : 'opacity-100'}`}>
-          <div className="p-8 pb-4">
+        {/* Mobile sidebar overlay */}
+        {mobileSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 z-40 md:hidden" 
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        )}
+
+        {/* Left Sidebar - hidden on mobile by default */}
+        <aside className={`
+          ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+          md:translate-x-0
+          fixed md:relative z-50 md:z-auto
+          w-64 h-full border-r border-white/[0.03] flex flex-col bg-[#050505] md:bg-black/20 
+          transition-all duration-300 
+          ${isFocused && !mobileSidebarOpen ? 'md:opacity-40' : 'opacity-100'}
+        `}>
+          <div className="p-8 pb-4 flex items-center justify-between">
             <Link href="/">
               <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-purple-400 transition-all group">
                 <Home className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                 <span>DJZS v1</span>
               </button>
             </Link>
+            {/* Close button on mobile */}
+            <button 
+              onClick={() => setMobileSidebarOpen(false)}
+              className="md:hidden p-2 text-gray-500 hover:text-white"
+              data-testid="button-close-sidebar"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           <nav className="flex-1 px-4 space-y-1">
@@ -517,7 +542,10 @@ export default function Chat() {
               return (
                 <button
                   key={zone.id}
-                  onClick={() => setSelectedZone(zone.id)}
+                  onClick={() => {
+                    setSelectedZone(zone.id);
+                    setMobileSidebarOpen(false);
+                  }}
                   className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all group ${
                     isActive 
                       ? "bg-white/[0.03] text-white" 
@@ -551,14 +579,25 @@ export default function Chat() {
         {/* Main Interface */}
         <main className="flex-1 flex flex-col relative">
           {/* Transparent Glassy Header */}
-          <header className="h-20 flex items-center justify-between px-10 bg-[#050505]/80 backdrop-blur-xl border-b border-white/[0.02] sticky top-0 z-50">
-            <div className="flex flex-col">
-              <h2 className="text-xl font-black text-white tracking-tight">{currentZone.name}</h2>
-              <p className="text-xs text-gray-500 font-medium mt-0.5">{currentZone.purpose}</p>
+          <header className="h-16 md:h-20 flex items-center justify-between px-4 md:px-10 bg-[#050505]/80 backdrop-blur-xl border-b border-white/[0.02] sticky top-0 z-30">
+            <div className="flex items-center gap-3">
+              {/* Hamburger menu for mobile */}
+              <button 
+                onClick={() => setMobileSidebarOpen(true)}
+                className="md:hidden p-2 text-gray-500 hover:text-white"
+                data-testid="button-open-sidebar"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+              <div className="flex flex-col">
+                <h2 className="text-lg md:text-xl font-black text-white tracking-tight">{currentZone.name}</h2>
+                <p className="text-[10px] md:text-xs text-gray-500 font-medium mt-0.5 hidden sm:block">{currentZone.purpose}</p>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-4 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.03]">
+            <div className="flex items-center gap-2 md:gap-3">
+              {/* Status badges - hidden on mobile */}
+              <div className="hidden md:flex items-center gap-4 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.03]">
                 <div className="flex items-center gap-2">
                   <Lock className="w-3 h-3 text-green-500/50" />
                   <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">E2E Private</span>
@@ -570,9 +609,11 @@ export default function Chat() {
                 </div>
               </div>
               
+              {/* Memory/Insights toggle button */}
               <button 
                 onClick={() => setMemoryDrawerOpen(!memoryDrawerOpen)}
-                className={`p-3 rounded-full transition-all ${memoryDrawerOpen ? 'bg-purple-600/10 text-purple-400' : 'text-gray-600 hover:text-white hover:bg-white/5'}`}
+                className={`p-2.5 md:p-3 rounded-full transition-all ${memoryDrawerOpen ? 'bg-purple-600/10 text-purple-400' : 'text-gray-600 hover:text-white hover:bg-white/5'}`}
+                data-testid="button-toggle-memory"
               >
                 <Zap className="w-5 h-5" />
               </button>
@@ -1001,20 +1042,36 @@ export default function Chat() {
 
         {/* Right Sidebar - Insight & Memory Drawer */}
         {memoryDrawerOpen && (
-          <aside className="w-80 border-l border-white/[0.03] flex flex-col bg-black/20 backdrop-blur-xl animate-in slide-in-from-right duration-500">
-            <Tabs defaultValue="memories" className="flex-1 flex flex-col">
-              <div className="px-6 pt-6 pb-4 border-b border-white/[0.02]">
-                <TabsList className="w-full bg-white/[0.02] p-1 rounded-xl">
-                  <TabsTrigger value="memories" className="flex-1 text-[10px] font-black uppercase tracking-widest rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
-                    <Pin className="w-3 h-3 mr-1.5" />
-                    Memories
-                  </TabsTrigger>
-                  <TabsTrigger value="insights" className="flex-1 text-[10px] font-black uppercase tracking-widest rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
-                    <Sparkles className="w-3 h-3 mr-1.5" />
-                    Insights
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+          <>
+            {/* Mobile overlay backdrop */}
+            <div 
+              className="fixed inset-0 bg-black/60 z-40 md:hidden" 
+              onClick={() => setMemoryDrawerOpen(false)}
+            />
+            <aside className="fixed md:relative inset-0 md:inset-auto z-50 md:z-auto w-full md:w-80 border-l border-white/[0.03] flex flex-col bg-[#050505] md:bg-black/20 backdrop-blur-xl animate-in slide-in-from-right duration-300">
+              <Tabs defaultValue="memories" className="flex-1 flex flex-col">
+                <div className="px-6 pt-6 pb-4 border-b border-white/[0.02]">
+                  <div className="flex items-center justify-between mb-4 md:hidden">
+                    <h3 className="text-lg font-black text-white">Memory & Insights</h3>
+                    <button 
+                      onClick={() => setMemoryDrawerOpen(false)}
+                      className="p-2 text-gray-500 hover:text-white"
+                      data-testid="button-close-memory"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <TabsList className="w-full bg-white/[0.02] p-1 rounded-xl">
+                    <TabsTrigger value="memories" className="flex-1 text-[10px] font-black uppercase tracking-widest rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
+                      <Pin className="w-3 h-3 mr-1.5" />
+                      Memories
+                    </TabsTrigger>
+                    <TabsTrigger value="insights" className="flex-1 text-[10px] font-black uppercase tracking-widest rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
+                      <Sparkles className="w-3 h-3 mr-1.5" />
+                      Insights
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
 
               <TabsContent value="memories" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
                 <div className="px-6 py-3 border-b border-white/[0.02]">
@@ -1097,8 +1154,9 @@ export default function Chat() {
                   </div>
                 </ScrollArea>
               </TabsContent>
-            </Tabs>
-          </aside>
+              </Tabs>
+            </aside>
+          </>
         )}
       </div>
     </TooltipProvider>
