@@ -1,0 +1,208 @@
+import { withPaymentInterceptor } from 'x402-axios';
+import axios, { AxiosInstance } from 'axios';
+import { type WalletClient } from 'viem';
+
+const X402_API_BASE = 'https://x402-api.heyelsa.ai';
+const FACILITATOR_URL = 'https://facilitator.heyelsa.build';
+
+export interface SwapQuote {
+  from_amount: string;
+  estimatedOutput: string;
+  price_impact: string;
+  gas_estimate: string;
+  route: string[];
+}
+
+export interface SwapParams {
+  from_chain: string;
+  from_token: string;
+  from_amount: string;
+  to_chain: string;
+  to_token: string;
+  wallet_address: string;
+  slippage: number;
+  dry_run: boolean;
+}
+
+export interface PipelineStatus {
+  pipeline_id: string;
+  status: string;
+  tasks: Array<{
+    type: string;
+    status: string;
+    tx_hash?: string;
+    tx_data?: {
+      to: string;
+      data: string;
+      value: string;
+    };
+  }>;
+}
+
+export interface TokenBalance {
+  asset: string;
+  balance: string;
+  balance_usd: string;
+  chain: string;
+}
+
+export interface PortfolioResult {
+  wallet_address: string;
+  total_value_usd: string;
+  chains: string[];
+  balances: TokenBalance[];
+}
+
+export interface TokenSearchResult {
+  symbol: string;
+  name: string;
+  address: string;
+  chain: string;
+  priceUSD: string;
+}
+
+const TOKEN_ADDRESSES: Record<string, string> = {
+  USDC: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+  WETH: '0x4200000000000000000000000000000000000006',
+  ETH: '0x4200000000000000000000000000000000000006',
+  USDT: '0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2',
+  DAI: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
+};
+
+export function getTokenAddress(symbol: string): string | undefined {
+  return TOKEN_ADDRESSES[symbol.toUpperCase()];
+}
+
+export function createX402Client(walletClient: WalletClient): AxiosInstance {
+  const baseClient = axios.create({ 
+    baseURL: X402_API_BASE,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  
+  return withPaymentInterceptor(baseClient, walletClient as any);
+}
+
+export async function getSwapQuote(
+  client: AxiosInstance,
+  params: Omit<SwapParams, 'dry_run'>
+): Promise<SwapQuote> {
+  const response = await client.post('/api/get_swap_quote', {
+    ...params,
+    slippage: params.slippage || 2.0,
+  });
+  return response.data.quote;
+}
+
+export async function executeSwap(
+  client: AxiosInstance,
+  params: SwapParams
+): Promise<{ pipeline_id: string; tasks: PipelineStatus['tasks'] }> {
+  const response = await client.post('/api/execute_swap', params);
+  return response.data;
+}
+
+export async function getTransactionStatus(
+  client: AxiosInstance,
+  pipeline_id: string
+): Promise<PipelineStatus> {
+  const response = await client.post('/api/get_transaction_status', { pipeline_id });
+  return response.data;
+}
+
+export async function getPortfolio(
+  client: AxiosInstance,
+  wallet_address: string
+): Promise<PortfolioResult> {
+  const response = await client.post('/api/get_portfolio', { wallet_address });
+  return response.data;
+}
+
+export async function getBalances(
+  client: AxiosInstance,
+  wallet_address: string
+): Promise<{ balances: TokenBalance[] }> {
+  const response = await client.post('/api/get_balances', { wallet_address });
+  return response.data;
+}
+
+export async function searchToken(
+  client: AxiosInstance,
+  symbol_or_address: string,
+  limit: number = 5
+): Promise<{ results: TokenSearchResult[] }> {
+  const response = await client.post('/api/search_token', { symbol_or_address, limit });
+  return response.data.result;
+}
+
+export async function getTokenPrice(
+  client: AxiosInstance,
+  token_address: string,
+  chain: string = 'base'
+): Promise<{ priceUSD: string }> {
+  const response = await client.post('/api/get_token_price', { token_address, chain });
+  return response.data;
+}
+
+export interface ParsedTradeIntent {
+  action: 'swap' | 'portfolio' | 'balance' | 'price' | 'unknown';
+  fromToken?: string;
+  toToken?: string;
+  amount?: string;
+  tokenForPrice?: string;
+  rawInput: string;
+}
+
+export function parseTradeIntent(input: string): ParsedTradeIntent {
+  const normalized = input.toLowerCase().trim();
+  
+  const swapMatch = normalized.match(
+    /swap\s+(\d+(?:\.\d+)?)\s*(\w+)\s+(?:to|for)\s+(\w+)/i
+  );
+  if (swapMatch) {
+    return {
+      action: 'swap',
+      amount: swapMatch[1],
+      fromToken: swapMatch[2].toUpperCase(),
+      toToken: swapMatch[3].toUpperCase(),
+      rawInput: input,
+    };
+  }
+  
+  if (normalized.includes('portfolio') || normalized.includes('holdings')) {
+    return { action: 'portfolio', rawInput: input };
+  }
+  
+  if (normalized.includes('balance') || normalized.includes('balances')) {
+    return { action: 'balance', rawInput: input };
+  }
+  
+  const priceMatch = normalized.match(/(?:price|cost)\s+(?:of\s+)?(\w+)/i);
+  if (priceMatch) {
+    return { 
+      action: 'price', 
+      tokenForPrice: priceMatch[1].toUpperCase(),
+      rawInput: input 
+    };
+  }
+  
+  if (normalized.includes('price')) {
+    return { action: 'price', rawInput: input };
+  }
+  
+  return { action: 'unknown', rawInput: input };
+}
+
+export function formatUSD(value: string | number): string {
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(num);
+}
+
+export function formatTokenAmount(value: string | number, decimals: number = 6): string {
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  return num.toLocaleString('en-US', { maximumFractionDigits: decimals });
+}

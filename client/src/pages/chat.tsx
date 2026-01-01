@@ -84,6 +84,7 @@ type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
 const V1_ZONES = [
   { id: "journal", name: "Journal", icon: BookOpen, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight." },
   { id: "research", name: "Research", icon: Search, description: "Information gathering", purpose: "Collective context and verified intelligence." },
+  { id: "trade", name: "Trade", icon: TrendingUp, description: "Execute with clarity", purpose: "Think through trades before you act." },
 ];
 
 const JOURNAL_PROMPTS = [
@@ -106,6 +107,14 @@ const RESEARCH_PROMPTS = [
   "What's the question behind the question?",
   "What would an expert challenge here?",
   "What's missing from the picture?",
+];
+
+const TRADE_PROMPTS = [
+  "swap 100 USDC to ETH",
+  "what's my portfolio?",
+  "check my balances",
+  "swap 0.1 ETH to USDC",
+  "get price of ETH",
 ];
 
 interface AgentResponse {
@@ -173,7 +182,11 @@ export default function Chat() {
     autoResize();
   }, [messageInput, autoResize]);
 
-  const currentPrompts = selectedZone === "research" ? RESEARCH_PROMPTS : JOURNAL_PROMPTS;
+  const currentPrompts = selectedZone === "research" 
+    ? RESEARCH_PROMPTS 
+    : selectedZone === "trade" 
+      ? TRADE_PROMPTS 
+      : JOURNAL_PROMPTS;
 
   useEffect(() => {
     const interval = setInterval(() => {

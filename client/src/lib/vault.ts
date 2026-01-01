@@ -1,6 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie';
 
-export type EntryType = 'journal' | 'research';
+export type EntryType = 'journal' | 'research' | 'trade';
 export type MemoryKind = 'goal' | 'pattern' | 'preference' | 'project' | 'principle' | 'question' | 'person';
 
 export interface VaultEntry {
@@ -33,10 +33,27 @@ export interface MemoryPin {
   isActive: 0 | 1;
 }
 
+export interface TradeRecord {
+  id?: number;
+  action: 'swap' | 'limit_order' | 'portfolio' | 'balance';
+  inputCommand: string;
+  thesis?: string;
+  fromToken?: string;
+  toToken?: string;
+  amount?: string;
+  quoteData?: string;
+  txHash?: string;
+  status: 'pending' | 'confirmed' | 'failed' | 'cancelled';
+  reflection?: string;
+  createdAt: Date;
+  completedAt?: Date;
+}
+
 class VaultDatabase extends Dexie {
   entries!: EntityTable<VaultEntry, 'id'>;
   insights!: EntityTable<VaultInsight, 'id'>;
   memoryPins!: EntityTable<MemoryPin, 'id'>;
+  tradeRecords!: EntityTable<TradeRecord, 'id'>;
 
   constructor() {
     super('djzs-vault');
@@ -45,6 +62,13 @@ class VaultDatabase extends Dexie {
       entries: '++id, type, createdAt, updatedAt',
       insights: '++id, entryId, type, createdAt',
       memoryPins: '++id, kind, content, isActive, createdAt',
+    });
+    
+    this.version(2).stores({
+      entries: '++id, type, createdAt, updatedAt',
+      insights: '++id, entryId, type, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
+      tradeRecords: '++id, action, status, createdAt',
     });
   }
 }
@@ -150,4 +174,24 @@ export async function exportVault(): Promise<{
   const insights = await vault.insights.toArray();
   const memories = await vault.memoryPins.where('isActive').equals(1).toArray();
   return { entries, insights, memories };
+}
+
+export async function saveTradeRecord(record: Omit<TradeRecord, 'id' | 'createdAt'>): Promise<number> {
+  const id = await vault.tradeRecords.add({
+    ...record,
+    createdAt: new Date(),
+  });
+  return id as number;
+}
+
+export async function updateTradeRecord(id: number, updates: Partial<TradeRecord>): Promise<void> {
+  await vault.tradeRecords.update(id, updates);
+}
+
+export async function getRecentTrades(limit: number = 10): Promise<TradeRecord[]> {
+  return vault.tradeRecords
+    .orderBy('createdAt')
+    .reverse()
+    .limit(limit)
+    .toArray();
 }
