@@ -15,7 +15,8 @@ import {
   Key,
   FileText,
   Layers,
-  ExternalLink
+  ExternalLink,
+  TrendingUp
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -192,7 +193,7 @@ export default function Docs() {
 
         <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-black text-white mb-8">Zones</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center">
@@ -239,6 +240,29 @@ export default function Docs() {
                 </li>
               </ul>
             </div>
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-green-600/20 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-green-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white">Trade</h3>
+              </div>
+              <p className="text-gray-400 mb-4">Execute with clarity. Think through trades before you act.</p>
+              <ul className="space-y-2 text-sm text-gray-500">
+                <li className="flex items-start gap-2">
+                  <span className="text-green-400 mt-1">•</span>
+                  Natural language commands (swap, portfolio, price)
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-400 mt-1">•</span>
+                  Quote confirmation before execution
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-400 mt-1">•</span>
+                  Trade history stored locally
+                </li>
+              </ul>
+            </div>
           </div>
         </motion.section>
 
@@ -255,7 +279,7 @@ export default function Docs() {
             />
             <TechStackItem 
               category="Web3"
-              items={["wagmi", "viem", "RainbowKit", "ENS Resolution"]}
+              items={["wagmi", "viem", "RainbowKit", "ENS Resolution", "x402 (micropayments)"]}
             />
             <TechStackItem 
               category="Backend"

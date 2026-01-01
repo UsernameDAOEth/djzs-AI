@@ -51,6 +51,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useDisplayName, useMultipleEnsNames, formatAddress } from "@/hooks/use-ens";
 import { useXmtp } from "@/hooks/use-xmtp";
 import { MessageCard } from "@/components/chat/message-cards";
+import { TradeZone } from "@/components/chat/trade-zone";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
 import { format } from "date-fns";
@@ -652,8 +653,11 @@ export default function Chat() {
             </div>
           </header>
 
-          {/* Inline Writing Experience - scrollable */}
+          {/* Main Content Area - scrollable */}
           <div className="flex-1 overflow-y-auto">
+            {selectedZone === "trade" ? (
+              <TradeZone address={address || ""} toast={toast} />
+            ) : (
             <div className="flex flex-col max-w-3xl w-full mx-auto px-6">
               {/* Writing Area - vertically centered, min 70vh */}
               <div className="flex-1 flex flex-col justify-center min-h-[70vh] py-12">
@@ -1069,6 +1073,7 @@ export default function Chat() {
                 </div>
               )}
             </div>
+            )}
           </div>
         </main>
 

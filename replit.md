@@ -204,6 +204,14 @@ shared/
 
 ## Recent Changes
 
+- **Jan 01, 2026**: Built Trade Zone with x402 integration
+  - New Trade Zone component (`client/src/components/chat/trade-zone.tsx`)
+  - x402 client wrapper (`client/src/lib/x402-client.ts`) for swap, portfolio, balance, price
+  - Natural language command parsing (swap X to Y, portfolio, balance, price ETH)
+  - Quote confirmation flow before swap execution
+  - TradeRecord schema in vault.ts for local trade history storage
+  - Integrated Trade Zone into chat page with zone tab switching
+  - Updated docs page to include Trade Zone information
 - **Dec 28, 2024**: Refined thinking partner to be calm, precise, minimal
   - Updated agent prompt to match "calm, precise thinking partner" philosophy
   - Expanded forbidden phrases (no "I think you should", "as an AI", etc.)
