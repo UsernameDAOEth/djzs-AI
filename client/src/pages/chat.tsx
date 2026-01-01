@@ -200,15 +200,34 @@ export default function Chat() {
 
   const registerMember = useMutation({
     mutationFn: async () => {
+      console.log("[DJZS] Starting member registration for:", address);
       const res = await apiRequest("POST", "/api/members", {
         address,
         ensName,
         isAllowlisted: true,
       });
-      return res.json();
+      const data = await res.json().catch(() => ({ error: "Unknown error" }));
+      if (!res.ok) {
+        console.error("[DJZS] Registration failed:", res.status, data);
+        throw new Error(data.error || `Registration failed: ${res.status}`);
+      }
+      console.log("[DJZS] Registration successful");
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/members", address] });
+      toast({
+        title: "Welcome to DJZS",
+        description: "Your journal is ready.",
+      });
+    },
+    onError: (error: Error) => {
+      console.error("[DJZS] Registration error:", error);
+      toast({
+        title: "Failed to initialize",
+        description: error.message || "Please try again",
+        variant: "destructive",
+      });
     },
   });
 
