@@ -140,7 +140,10 @@ export default function Chat() {
   const [selectedZone, setSelectedZone] = useState(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      return params.get("zone") === "research" ? "research" : "journal";
+      const zoneParam = params.get("zone");
+      if (zoneParam === "research") return "research";
+      if (zoneParam === "trade") return "trade";
+      return "journal";
     }
     return "journal";
   });
