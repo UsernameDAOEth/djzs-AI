@@ -1,0 +1,565 @@
+Yep. Here’s a Replit-ready project template that wires:
+
+Gopher API (live search + web scraper) → DJZS “Thinking Partner” pipeline → outputs
+	•	out/DJZS_Daily_Research_YYYY-MM-DD.md
+	•	public/daily-snapshot.json (for your landing page section)
+	•	optional local dev server to preview
+
+Everything below is based on Gopher’s docs:
+	•	Live Search endpoint is POST /api/v1/search/live  ￼
+	•	Live Search job format uses a top-level type + arguments  ￼
+	•	Twitter job examples use type: "twitter" and arguments.type: "searchbyquery"  ￼
+	•	Bearer token auth is documented for their search endpoints  ￼
+
+Note: The live-search pages don’t visibly show the auth header in the excerpt we can view, but the platform’s search endpoints use Authorization: Bearer <API_KEY> per their API docs for search.  ￼
+
+⸻
+
+1) Create this Replit project structure
+
+djzs-gopher-agent/
+  package.json
+  .env.example
+  README.md
+  src/
+    index.js
+    pipeline/
+      djzsAgent.js
+      normalize.js
+      score.js
+      render.js
+    services/
+      gopher.js
+    lib/
+      fetchWithRetry.js
+      format.js
+  out/                (created at runtime)
+  public/
+    daily-snapshot.json
+
+
+⸻
+
+2) package.json
+
+{
+  "name": "djzs-gopher-agent",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.js",
+    "run:daily": "node src/index.js --once"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
+
+Node 18+ has fetch built-in; keeping deps minimal.
+
+⸻
+
+3) .env.example
+
+# Required
+GOPHER_API_KEY="YOUR_GOPHER_API_KEY"
+
+# Optional
+GOPHER_BASE_URL="https://data.gopher-ai.com"
+PORT="3000"
+
+# What your agent should focus on (comma separated)
+DJZS_TOPICS="DJZS,local-first,agent memory,Venice AI,ElizaOS,MCP,Bittensor,DePIN,DeSci,Aztec,Base"
+
+
+⸻
+
+4) src/lib/fetchWithRetry.js
+
+export async function fetchWithRetry(url, options = {}, { retries = 2, timeoutMs = 9000 } = {}) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(id);
+
+      if (!res.ok) {
+        const body = await safeText(res);
+        throw new Error(`HTTP ${res.status} ${res.statusText} :: ${body?.slice?.(0, 200) || ""}`);
+      }
+
+      return res;
+    } catch (err) {
+      clearTimeout(id);
+      if (attempt === retries) throw err;
+      await sleep(350 * (attempt + 1));
+    }
+  }
+}
+
+async function safeText(res) {
+  try { return await res.text(); } catch { return ""; }
+}
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+
+⸻
+
+5) src/services/gopher.js
+
+import { fetchWithRetry } from "../lib/fetchWithRetry.js";
+
+export function makeGopherClient() {
+  const baseUrl = process.env.GOPHER_BASE_URL || "https://data.gopher-ai.com";
+  const apiKey = process.env.GOPHER_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("Missing GOPHER_API_KEY. Put it in Secrets (Replit) or .env");
+  }
+
+  async function liveSearch(job) {
+    // Docs: live search uses POST /api/v1/search/live and job structure {type, arguments}
+    //  [oai_citation:5‡Gopher Network](https://developers.gopher-ai.com/docs/data/web)
+    const url = `${baseUrl}/api/v1/search/live`;
+
+    const res = await fetchWithRetry(
+      url,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Bearer auth documented on their API endpoints  [oai_citation:6‡Gopher Network](https://developers.gopher-ai.com/docs/data/similarity)
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(job)
+      },
+      { retries: 2, timeoutMs: 12000 }
+    );
+
+    return await res.json();
+  }
+
+  return { liveSearch };
+}
+
+
+⸻
+
+6) src/pipeline/normalize.js
+
+export function normalizeGopherItems(raw) {
+  // Gopher responses vary by source; normalize to a shared shape:
+  // { source, text, url, author, createdAt, meta }
+  const items = [];
+
+  if (Array.isArray(raw)) {
+    for (const r of raw) items.push(...normalizeOne(r));
+    return items;
+  }
+
+  return normalizeOne(raw);
+
+  function normalizeOne(r) {
+    if (!r) return [];
+
+    // Common “Content” keys show up in indexed endpoints; live responses may differ.
+    // We'll defensively map multiple shapes.
+    const text =
+      r.text ||
+      r.content ||
+      r.Content ||
+      r.body ||
+      r.title ||
+      "";
+
+    const url =
+      r.url ||
+      r.link ||
+      r.permalink ||
+      (r.Metadata && r.Metadata.url) ||
+      "";
+
+    const createdAt =
+      r.created_at ||
+      r.createdAt ||
+      r.date ||
+      (r.Metadata && (r.Metadata.created_at || r.Metadata.createdAt)) ||
+      "";
+
+    const author =
+      r.author ||
+      r.username ||
+      (r.Metadata && (r.Metadata.author || r.Metadata.username)) ||
+      "";
+
+    const source =
+      r.source ||
+      r.platform ||
+      (r.Metadata && r.Metadata.source) ||
+      guessSource(r);
+
+    if (!text) return [];
+
+    return [{
+      source,
+      text: String(text).trim(),
+      url: url ? String(url) : "",
+      author: author ? String(author) : "",
+      createdAt: createdAt ? String(createdAt) : "",
+      meta: r.Metadata || r.meta || null
+    }];
+  }
+
+  function guessSource(r) {
+    if (r.subreddit) return "reddit";
+    if (r.tweet_id || r.tweetId || r.id_str) return "twitter";
+    return "web";
+  }
+}
+
+
+⸻
+
+7) src/pipeline/score.js
+
+export function scoreAndSelect(items, { max = 24 } = {}) {
+  // Simple, DJZS-style: pick “signal” over “volume”.
+  // Score based on: recency-ish (if timestamp), length (not too short), presence of topic keywords.
+  const topics = (process.env.DJZS_TOPICS || "")
+    .split(",")
+    .map(s => s.trim().toLowerCase())
+    .filter(Boolean);
+
+  const scored = items.map((it) => {
+    const text = it.text.toLowerCase();
+    let score = 0;
+
+    // keyword hits
+    for (const t of topics) {
+      if (t && text.includes(t)) score += 3;
+    }
+
+    // prefer substance but not essays
+    const len = it.text.length;
+    if (len >= 120) score += 2;
+    if (len >= 240) score += 1;
+    if (len < 60) score -= 2;
+
+    // slight preference if url exists
+    if (it.url) score += 1;
+
+    return { ...it, _score: score };
+  });
+
+  // Deduplicate rough duplicates by text prefix
+  const seen = new Set();
+  const unique = [];
+  for (const s of scored.sort((a, b) => b._score - a._score)) {
+    const key = s.text.slice(0, 120);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(s);
+    if (unique.length >= max) break;
+  }
+
+  return unique;
+}
+
+
+⸻
+
+8) src/pipeline/render.js
+
+import fs from "fs";
+import path from "path";
+
+export function writeOutputs({ dateStr, snapshot, markdown }) {
+  fs.mkdirSync("out", { recursive: true });
+  fs.mkdirSync("public", { recursive: true });
+
+  const mdPath = path.join("out", `DJZS_Daily_Research_${dateStr}.md`);
+  fs.writeFileSync(mdPath, markdown, "utf8");
+
+  const jsonPath = path.join("public", "daily-snapshot.json");
+  fs.writeFileSync(jsonPath, JSON.stringify(snapshot, null, 2), "utf8");
+
+  return { mdPath, jsonPath };
+}
+
+
+⸻
+
+9) src/pipeline/djzsAgent.js
+
+This is the “agent” (calm, non-hype) that turns raw items into:
+	•	snapshot JSON for landing page
+	•	full markdown for archive
+
+export function runDjzsAgent({ dateStr, selectedItems, sourcesUsed }) {
+  const bullets = selectedItems.slice(0, 6).map((it) => {
+    const who = it.author ? ` — ${it.author}` : "";
+    const where = it.source ? `[${it.source}]` : "";
+    const link = it.url ? ` (${it.url})` : "";
+    return `- ${where} ${clean(it.text, 220)}${who}${link}`.trim();
+  });
+
+  const marketTone = inferTone(selectedItems);
+  const notableMove = inferNotable(selectedItems) || "No single dominant move — mixed signals.";
+  const defiNote = inferDefi(selectedItems) || "No clear TVL narrative detected in today’s sample.";
+  const reflection = "What is the one signal worth remembering today?";
+
+  const snapshot = {
+    date: dateStr,
+    marketTone,
+    fearGreed: "",
+    notableMove,
+    defiNote,
+    reflection,
+    updatedAt: new Date().toISOString(),
+    href: `/daily/${dateStr}`,
+    sourcesUsed
+  };
+
+  const markdown = `# DJZS Daily Research — ${dateStr}
+
+## 1) Today’s Snapshot
+- Market tone: **${snapshot.marketTone}**
+- Notable move: **${snapshot.notableMove}**
+- DeFi note: **${snapshot.defiNote}**
+
+## 2) Raw Inputs (Selected)
+${bullets.length ? bullets.join("\n") : "- (no items returned)"}
+
+## 3) What Changed Today
+- **Primary shift:** ${snapshot.notableMove}
+- **Second-order read:** ${snapshot.defiNote}
+- **Noise check:** If this disappears tomorrow, does it matter?
+
+## 4) DJZS Reflection Prompt
+- ${reflection}
+- What did I almost overreact to?
+- What would I do if I couldn’t check charts for 24 hours?
+
+---
+
+Generated by DJZS (Gopher ingestion → signal selection → reflection-first synthesis).
+`;
+
+  return { snapshot, markdown };
+}
+
+function clean(s, n) {
+  const t = String(s || "").replace(/\s+/g, " ").trim();
+  if (t.length <= n) return t;
+  return t.slice(0, n - 1) + "…";
+}
+
+function inferTone(items) {
+  const text = items.map(i => i.text.toLowerCase()).join(" ");
+  const riskOn = ["breakout", "bull", "up only", "rip", "pump"];
+  const riskOff = ["hack", "exploit", "downtime", "lawsuit", "rug", "crash", "bear"];
+
+  let score = 0;
+  for (const w of riskOn) if (text.includes(w)) score += 1;
+  for (const w of riskOff) if (text.includes(w)) score -= 1;
+
+  if (score >= 2) return "Risk-on";
+  if (score <= -2) return "Cautious";
+  return "Neutral";
+}
+
+function inferNotable(items) {
+  // Look for something that reads like an event: “X did Y”, “announced”, “launched”, “upgrade”
+  const keywords = ["announc", "launch", "upgrade", "proposal", "release", "partnership", "exploit", "incident"];
+  for (const it of items) {
+    const t = it.text.toLowerCase();
+    if (keywords.some(k => t.includes(k))) return clean(it.text, 90);
+  }
+  return "";
+}
+
+function inferDefi(items) {
+  const keywords = ["tvl", "liquidity", "yield", "lending", "dex", "bridge", "stablecoin"];
+  for (const it of items) {
+    const t = it.text.toLowerCase();
+    if (keywords.some(k => t.includes(k))) return clean(it.text, 90);
+  }
+  return "";
+}
+
+
+⸻
+
+10) src/index.js (the runner + optional preview server)
+
+import express from "express";
+import fs from "fs";
+import path from "path";
+
+import { makeGopherClient } from "./services/gopher.js";
+import { normalizeGopherItems } from "./pipeline/normalize.js";
+import { scoreAndSelect } from "./pipeline/score.js";
+import { runDjzsAgent } from "./pipeline/djzsAgent.js";
+import { writeOutputs } from "./pipeline/render.js";
+
+const args = new Set(process.argv.slice(2));
+const ONCE = args.has("--once");
+
+function dateStrLA() {
+  // Safe “YYYY-MM-DD” in America/Los_Angeles
+  const fmt = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Los_Angeles",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return fmt.format(new Date()); // "2025-12-31"
+}
+
+async function runOnce() {
+  const dateStr = dateStrLA();
+  const gopher = makeGopherClient();
+
+  // DJZS-oriented queries (calm, not hype)
+  const twitterJob = {
+    type: "twitter",
+    arguments: {
+      type: "searchbyquery",
+      // Twitter query syntax; keep it simple and broad
+      query: "(DJZS OR local-first OR \"agent memory\" OR Venice AI OR ElizaOS OR MCP OR DePIN OR DeSci OR Aztec OR Base) -filter:replies",
+      max_results: 40
+    }
+  };
+
+  const webJob = {
+    type: "web",
+    arguments: {
+      type: "scraper",
+      // Example: scrape a docs/blog page you care about (edit this)
+      url: "https://developers.gopher-ai.com/docs/intro",
+      max_depth: 0,
+      max_pages: 1
+    }
+  };
+
+  const sourcesUsed = ["gopher:twitter", "gopher:web"];
+
+  const [twitterRaw, webRaw] = await Promise.allSettled([
+    gopher.liveSearch(twitterJob),
+    gopher.liveSearch(webJob)
+  ]);
+
+  const rawBundle = [];
+  if (twitterRaw.status === "fulfilled") rawBundle.push(twitterRaw.value);
+  if (webRaw.status === "fulfilled") rawBundle.push(webRaw.value);
+
+  const normalized = normalizeGopherItems(rawBundle);
+  const selected = scoreAndSelect(normalized, { max: 24 });
+
+  const { snapshot, markdown } = runDjzsAgent({
+    dateStr,
+    selectedItems: selected,
+    sourcesUsed
+  });
+
+  const { mdPath, jsonPath } = writeOutputs({ dateStr, snapshot, markdown });
+
+  console.log("DJZS Daily Research generated:");
+  console.log(`- Markdown: ${mdPath}`);
+  console.log(`- Snapshot JSON: ${jsonPath}`);
+  console.log("");
+  console.log(`Summary: ${snapshot.marketTone} | ${snapshot.notableMove}`);
+}
+
+async function main() {
+  await runOnce();
+
+  if (ONCE) return;
+
+  const app = express();
+  const port = Number(process.env.PORT || 3000);
+
+  app.use("/public", express.static("public"));
+  app.use("/out", express.static("out"));
+
+  app.get("/daily-snapshot.json", (req, res) => {
+    const p = path.join(process.cwd(), "public", "daily-snapshot.json");
+    if (!fs.existsSync(p)) return res.status(404).json({ error: "No snapshot yet. Run the agent." });
+    res.setHeader("Cache-Control", "no-cache");
+    res.sendFile(p);
+  });
+
+  app.get("/daily/:date", (req, res) => {
+    const p = path.join(process.cwd(), "out", `DJZS_Daily_Research_${req.params.date}.md`);
+    if (!fs.existsSync(p)) return res.status(404).send("No report for that date.");
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.send(fs.readFileSync(p, "utf8"));
+  });
+
+  app.get("/", (req, res) => {
+    res.send(`DJZS Gopher Agent is running.
+- GET /daily-snapshot.json
+- GET /daily/YYYY-MM-DD
+- Files: /public and /out
+`);
+  });
+
+  app.listen(port, () => console.log(`Preview server: http://localhost:${port}`));
+}
+
+main().catch((e) => {
+  console.error("Agent failed:", e?.message || e);
+  process.exitCode = 1;
+});
+
+
+⸻
+
+11) README.md (Replit instructions)
+
+# DJZS × Gopher Daily Research Agent
+
+This Replit project pulls real-time data via the Gopher Data API (live search + web scraping)
+and produces:
+- out/DJZS_Daily_Research_YYYY-MM-DD.md
+- public/daily-snapshot.json (for a landing page “Today’s Research Snapshot” section)
+
+## Setup
+1) Add `GOPHER_API_KEY` to Replit Secrets
+2) Run:
+- `npm install`
+- `npm run start`
+
+## One-off run
+`npm run run:daily`
+
+## Preview endpoints
+- `/daily-snapshot.json` -> small JSON used by your landing page section
+- `/daily/YYYY-MM-DD` -> full markdown report
+
+## Notes
+This is a prototype pipeline:
+Gopher ingestion -> normalize -> score/choose -> DJZS reflection-first synthesis -> outputs.
+
+
+⸻
+
+How this connects to your dj-z-s.box landing page
+
+Your React landing page section should simply fetch("/daily-snapshot.json") and render the calm card. (That’s exactly the component you asked for earlier.)
+
+⸻
+
+Want the “DJZS Agent pipeline” to be smarter next?
+
+Two upgrades (still simple):
+	1.	Add Gopher similarity search for “what looks like yesterday’s patterns?” (they document similarity/hybrid endpoints + bearer auth)  ￼
+	2.	Add a “3-sentence synthesis” that is constrained: what changed / why it matters / what to ignore
+
+If you tell me what topics you want DJZS to prioritize (DePIN vs DeSci vs DeFi vs L2 infra), I’ll hardcode the “query pack” and the scoring so it matches your Zones.
