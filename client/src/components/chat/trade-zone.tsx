@@ -1,25 +1,18 @@
-import { useState, useEffect, useMemo } from "react";
-import { useWalletClient } from "wagmi";
+import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { TrendingUp, Wallet, ArrowRight, Loader2, CheckCircle, XCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  createX402Client,
   parseTradeIntent,
-  getSwapQuote,
-  executeSwap,
-  getPortfolio,
-  getBalances,
-  getTokenPrice,
   formatUSD,
   getTokenAddress,
   type SwapQuote,
   type PortfolioResult,
   type TokenBalance,
 } from "@/lib/x402-client";
-import { saveTradeRecord, updateTradeRecord, getRecentTrades, type TradeRecord } from "@/lib/vault";
+import { saveTradeRecord, getRecentTrades } from "@/lib/vault";
 
 type TradeState = 
   | { type: "idle" }
@@ -32,23 +25,41 @@ type TradeState =
   | { type: "success"; txHash?: string }
   | { type: "error"; message: string };
 
+async function apiCall(endpoint: string, body: object) {
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({ error: "Request failed" }));
+    throw new Error(data.error || `API error: ${response.status}`);
+  }
+  
+  return response.json();
+}
+
 export function TradeZone({ address, toast }: { address: string; toast: any }) {
   const [command, setCommand] = useState("");
   const [state, setState] = useState<TradeState>({ type: "idle" });
-  const { data: walletClient } = useWalletClient();
 
   const recentTrades = useLiveQuery(() => getRecentTrades(5), []);
 
-  const x402Client = useMemo(() => {
-    if (!walletClient) return null;
-    return createX402Client(walletClient);
-  }, [walletClient]);
-
   const executeCommand = async (cmd: string) => {
-    if (!cmd.trim() || !x402Client || !walletClient) {
+    if (!cmd.trim()) {
       toast({
-        title: "Wallet not ready",
-        description: "Please ensure your wallet is connected.",
+        title: "Empty command",
+        description: "Please enter a command.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!address) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet first.",
         variant: "destructive",
       });
       return;
@@ -60,7 +71,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
       switch (intent.action) {
         case "swap": {
           if (!intent.fromToken || !intent.toToken || !intent.amount) {
-            setState({ type: "error", message: "Could not parse swap details" });
+            setState({ type: "error", message: "Could not parse swap details. Try: 'swap 100 USDC to ETH'" });
             return;
           }
           setState({ type: "loading", message: "Getting quote..." });
@@ -73,7 +84,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
             return;
           }
 
-          const quote = await getSwapQuote(x402Client, {
+          const data = await apiCall("/api/x402/quote", {
             from_chain: "base",
             from_token: fromAddress,
             from_amount: intent.amount,
@@ -85,7 +96,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
 
           setState({
             type: "quote",
-            quote,
+            quote: data.quote,
             intent: { fromToken: intent.fromToken, toToken: intent.toToken, amount: intent.amount },
           });
           break;
@@ -93,7 +104,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
 
         case "portfolio": {
           setState({ type: "loading", message: "Fetching portfolio..." });
-          const data = await getPortfolio(x402Client, address);
+          const data = await apiCall("/api/x402/portfolio", { wallet_address: address });
           setState({ type: "portfolio", data });
           await saveTradeRecord({
             action: "portfolio",
@@ -105,8 +116,8 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
 
         case "balance": {
           setState({ type: "loading", message: "Fetching balances..." });
-          const { balances } = await getBalances(x402Client, address);
-          setState({ type: "balances", data: balances });
+          const data = await apiCall("/api/x402/balances", { wallet_address: address });
+          setState({ type: "balances", data: data.balances || [] });
           await saveTradeRecord({
             action: "balance",
             inputCommand: cmd,
@@ -123,8 +134,8 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
             setState({ type: "error", message: `Unknown token: ${tokenSymbol}` });
             return;
           }
-          const { priceUSD } = await getTokenPrice(x402Client, tokenAddress, "base");
-          setState({ type: "price", token: tokenSymbol, priceUSD });
+          const data = await apiCall("/api/x402/price", { token_address: tokenAddress, chain: "base" });
+          setState({ type: "price", token: tokenSymbol, priceUSD: data.priceUSD });
           break;
         }
 
@@ -135,7 +146,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
       console.error("Trade error:", err);
       const message = err instanceof Error ? err.message : "Unknown error";
       if (message.includes("402") || message.includes("payment")) {
-        setState({ type: "error", message: "Payment required. Ensure your wallet has ETH for API calls." });
+        setState({ type: "error", message: "Payment required. The x402 API requires micropayments." });
       } else if (message.includes("network") || message.includes("fetch")) {
         setState({ type: "error", message: "Network error. Check your connection and try again." });
       } else {
@@ -149,60 +160,8 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
   };
 
   const handleConfirmSwap = async () => {
-    if (state.type !== "quote" || !x402Client) return;
-
-    const { quote, intent } = state;
-    
-    const recordId = await saveTradeRecord({
-      action: "swap",
-      inputCommand: command,
-      fromToken: intent.fromToken,
-      toToken: intent.toToken,
-      amount: intent.amount,
-      quoteData: JSON.stringify(quote),
-      status: "pending",
-    });
-
-    setState({ type: "executing", recordId });
-
-    try {
-      const fromAddress = getTokenAddress(intent.fromToken)!;
-      const toAddress = getTokenAddress(intent.toToken)!;
-
-      const result = await executeSwap(x402Client, {
-        from_chain: "base",
-        from_token: fromAddress,
-        from_amount: intent.amount,
-        to_chain: "base",
-        to_token: toAddress,
-        wallet_address: address,
-        slippage: 2.0,
-        dry_run: false,
-      });
-
-      const txHash = result.tasks.find(t => t.tx_hash)?.tx_hash;
-      
-      await updateTradeRecord(recordId, {
-        status: "confirmed",
-        txHash,
-        completedAt: new Date(),
-      });
-
-      setState({ type: "success", txHash });
-      toast({
-        title: "Swap executed!",
-        description: txHash ? `TX: ${txHash.slice(0, 10)}...` : "Swap completed successfully",
-      });
-    } catch (err) {
-      console.error("Swap execution failed:", err);
-      await updateTradeRecord(recordId, { status: "failed" });
-      setState({ type: "error", message: err instanceof Error ? err.message : "Swap failed" });
-      toast({
-        title: "Swap failed",
-        description: err instanceof Error ? err.message : "Unknown error",
-        variant: "destructive",
-      });
-    }
+    if (state.type !== "quote") return;
+    setState({ type: "error", message: "Swap execution requires wallet signing. This feature is coming soon." });
   };
 
   const handleCancel = () => {
@@ -396,7 +355,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
               {formatUSD(state.data.total_value_usd)}
             </div>
             <div className="space-y-1">
-              {state.data.balances.map((bal, i) => (
+              {state.data.balances?.map((bal, i) => (
                 <div key={i} className="flex justify-between text-sm" data-testid={`row-balance-${i}`}>
                   <span className="text-gray-400">{bal.asset}</span>
                   <span className="text-white">
@@ -418,14 +377,18 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
-            {state.data.map((bal, i) => (
-              <div key={i} className="flex justify-between text-sm" data-testid={`row-balance-${i}`}>
-                <span className="text-gray-400">{bal.asset} ({bal.chain})</span>
-                <span className="text-white">
-                  {bal.balance} <span className="text-gray-500">({formatUSD(bal.balance_usd)})</span>
-                </span>
-              </div>
-            ))}
+            {state.data.length > 0 ? (
+              state.data.map((bal, i) => (
+                <div key={i} className="flex justify-between text-sm" data-testid={`row-balance-${i}`}>
+                  <span className="text-gray-400">{bal.asset} ({bal.chain})</span>
+                  <span className="text-white">
+                    {bal.balance} <span className="text-gray-500">({formatUSD(bal.balance_usd)})</span>
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No balances found</p>
+            )}
           </CardContent>
         </Card>
       )}

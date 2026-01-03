@@ -604,6 +604,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ==================== X402 API PROXY ====================
+  // Proxy endpoints for x402 API with server-side payment handling
+  
+  const X402_API_BASE = "https://x402-api.heyelsa.ai";
+  
+  // Helper for x402 API calls - passes through to API
+  // Note: x402 API requires micropayments. Without payment, calls return 402.
+  // For now, we'll try the call and surface appropriate errors.
+  async function x402Fetch(endpoint: string, body: object) {
+    const response = await fetch(`${X402_API_BASE}${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    
+    if (response.status === 402) {
+      throw new Error("Payment required. The x402 API requires micropayments to use. Contact the app owner to configure server-side payments.");
+    }
+    
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`x402 API error: ${response.status} - ${text.slice(0, 200)}`);
+    }
+    
+    return response.json();
+  }
+
+  // Get portfolio
+  app.post("/api/x402/portfolio", async (req, res) => {
+    try {
+      const { wallet_address } = req.body;
+      if (!wallet_address) {
+        return res.status(400).json({ error: "wallet_address required" });
+      }
+      const data = await x402Fetch("/api/get_portfolio", { wallet_address });
+      res.json(data);
+    } catch (error) {
+      console.error("x402 portfolio error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch portfolio" });
+    }
+  });
+
+  // Get balances
+  app.post("/api/x402/balances", async (req, res) => {
+    try {
+      const { wallet_address } = req.body;
+      if (!wallet_address) {
+        return res.status(400).json({ error: "wallet_address required" });
+      }
+      const data = await x402Fetch("/api/get_balances", { wallet_address });
+      res.json(data);
+    } catch (error) {
+      console.error("x402 balances error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch balances" });
+    }
+  });
+
+  // Get token price
+  app.post("/api/x402/price", async (req, res) => {
+    try {
+      const { token_address, chain = "base" } = req.body;
+      if (!token_address) {
+        return res.status(400).json({ error: "token_address required" });
+      }
+      const data = await x402Fetch("/api/get_token_price", { token_address, chain });
+      res.json(data);
+    } catch (error) {
+      console.error("x402 price error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch price" });
+    }
+  });
+
+  // Get swap quote
+  app.post("/api/x402/quote", async (req, res) => {
+    try {
+      const data = await x402Fetch("/api/get_swap_quote", req.body);
+      res.json(data);
+    } catch (error) {
+      console.error("x402 quote error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to get quote" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
