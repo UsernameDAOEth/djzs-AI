@@ -251,15 +251,23 @@ export default function Docs() {
               <ul className="space-y-2 text-sm text-gray-500">
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 mt-1">•</span>
-                  Natural language commands (swap, portfolio, price)
+                  Natural language commands (swap, portfolio, price, analyze, pnl)
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 mt-1">•</span>
-                  Quote confirmation before execution
+                  Wallet analysis with win rate and risk scoring
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 mt-1">•</span>
-                  Trade history stored locally
+                  PnL reports with best/worst trade tracking
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-400 mt-1">•</span>
+                  Limit orders with order management
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-400 mt-1">•</span>
+                  x402 micropayments for API access
                 </li>
               </ul>
             </div>
@@ -297,6 +305,64 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-black text-white mb-8">XMTP Agent Commands</h2>
+          <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+            <p className="text-gray-400 mb-6">
+              The DJZS Agent runs on XMTP and responds to commands in encrypted messages. 
+              It integrates with the Trade Zone for autonomous trading signals.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-sm font-black text-purple-400 uppercase tracking-widest mb-3">General</h4>
+                <ul className="space-y-2 text-sm font-mono">
+                  <li className="flex items-start gap-3">
+                    <code className="text-white bg-white/[0.05] px-2 py-0.5 rounded">/help</code>
+                    <span className="text-gray-500">List all commands</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <code className="text-white bg-white/[0.05] px-2 py-0.5 rounded">/zones</code>
+                    <span className="text-gray-500">Display all zones</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <code className="text-white bg-white/[0.05] px-2 py-0.5 rounded">/format signal</code>
+                    <span className="text-gray-500">Signal card format</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-green-400 uppercase tracking-widest mb-3">Trade Zone</h4>
+                <ul className="space-y-2 text-sm font-mono">
+                  <li className="flex items-start gap-3">
+                    <code className="text-white bg-white/[0.05] px-2 py-0.5 rounded">/price ETH</code>
+                    <span className="text-gray-500">Get token price</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <code className="text-white bg-white/[0.05] px-2 py-0.5 rounded">/portfolio 0x...</code>
+                    <span className="text-gray-500">View holdings</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <code className="text-white bg-white/[0.05] px-2 py-0.5 rounded">/balance 0x...</code>
+                    <span className="text-gray-500">Token balances</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <code className="text-white bg-white/[0.05] px-2 py-0.5 rounded">/analyze 0x...</code>
+                    <span className="text-gray-500">Trading analysis</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <code className="text-white bg-white/[0.05] px-2 py-0.5 rounded">/pnl 0x... 30d</code>
+                    <span className="text-gray-500">Profit/loss report</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <code className="text-white bg-white/[0.05] px-2 py-0.5 rounded">/quote 100 USDC to ETH</code>
+                    <span className="text-gray-500">Get swap quote</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-black text-white mb-8">Quick Links</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <QuickLink 
@@ -308,6 +374,16 @@ export default function Docs() {
               href="/chat?zone=research"
               title="Research Mode"
               description="Gather claims and track evidence"
+            />
+            <QuickLink 
+              href="/chat?zone=trade"
+              title="Trade Zone"
+              description="Execute trades with natural language"
+            />
+            <QuickLink 
+              href="/terms"
+              title="Terms of Service"
+              description="Legal terms and risk disclosures"
             />
             <QuickLink 
               href="/"
