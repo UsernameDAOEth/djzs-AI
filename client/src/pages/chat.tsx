@@ -38,8 +38,10 @@ import {
   Clock,
   ChevronRight,
   ChevronDown,
-  Menu
+  Menu,
+  Globe
 } from "lucide-react";
+import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -50,6 +52,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useToast } from "@/hooks/use-toast";
 import { useDisplayName, useMultipleEnsNames, formatAddress } from "@/hooks/use-ens";
 import { useXmtp } from "@/hooks/use-xmtp";
+import { useWeb3Profile, getPrimaryProfile, getAllLinks, getTotalFollowers } from "@/hooks/useWeb3Profile";
 import { MessageCard } from "@/components/chat/message-cards";
 import { TradeZone } from "@/components/chat/trade-zone";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -136,6 +139,11 @@ export default function Chat() {
   const { displayName, ensName } = useDisplayName(address);
   const { client: xmtpClient, isConnecting: xmtpConnecting, connect: connectXmtp } = useXmtp();
   const { signMessageAsync } = useSignMessage();
+  const { data: web3Profiles, isLoading: profileLoading } = useWeb3Profile(address);
+  
+  const primaryProfile = useMemo(() => getPrimaryProfile(web3Profiles || []), [web3Profiles]);
+  const profileLinks = useMemo(() => getAllLinks(web3Profiles || []), [web3Profiles]);
+  const totalFollowers = useMemo(() => getTotalFollowers(web3Profiles || []), [web3Profiles]);
   
   const [selectedZone, setSelectedZone] = useState(() => {
     if (typeof window !== "undefined") {
@@ -596,18 +604,95 @@ export default function Chat() {
             })}
           </nav>
 
-          <div className="p-6 mt-auto">
-            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.03] flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-purple-600/20 flex items-center justify-center text-[10px] font-black text-purple-400 border border-purple-500/20">
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-white truncate uppercase tracking-wider">{ensName || formatAddress(address || "")}</p>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <div className="w-1 h-1 rounded-full bg-green-500 shadow-[0_0_4px_rgba(34,197,94,0.5)]"></div>
-                  <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Connected</span>
+          <div className="p-4 mt-auto">
+            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.03]">
+              <div className="flex items-center gap-3 mb-3">
+                {primaryProfile?.avatar ? (
+                  <img 
+                    src={primaryProfile.avatar} 
+                    alt={primaryProfile.displayName} 
+                    className="w-10 h-10 rounded-full border border-purple-500/20 object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center text-sm font-black text-purple-400 border border-purple-500/20">
+                    {displayName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-white truncate">{primaryProfile?.displayName || ensName || formatAddress(address || "")}</p>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="w-1 h-1 rounded-full bg-green-500 shadow-[0_0_4px_rgba(34,197,94,0.5)]"></div>
+                    <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Connected</span>
+                  </div>
                 </div>
               </div>
+
+              {primaryProfile?.description && (
+                <p className="text-[10px] text-gray-500 leading-relaxed mb-3 line-clamp-2">{primaryProfile.description}</p>
+              )}
+
+              {totalFollowers > 0 && (
+                <div className="flex items-center gap-1 mb-3">
+                  <Users className="w-3 h-3 text-gray-600" />
+                  <span className="text-[9px] font-bold text-gray-500">{totalFollowers.toLocaleString()} followers</span>
+                </div>
+              )}
+
+              {Object.keys(profileLinks).length > 0 && (
+                <div className="flex items-center gap-2 pt-2 border-t border-white/[0.03]">
+                  {profileLinks.twitter && (
+                    <a 
+                      href={profileLinks.twitter.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
+                      title={`@${profileLinks.twitter.handle}`}
+                      data-testid="link-twitter"
+                    >
+                      <SiX className="w-3 h-3" />
+                    </a>
+                  )}
+                  {profileLinks.github && (
+                    <a 
+                      href={profileLinks.github.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
+                      title={profileLinks.github.handle}
+                      data-testid="link-github"
+                    >
+                      <SiGithub className="w-3 h-3" />
+                    </a>
+                  )}
+                  {profileLinks.farcaster && (
+                    <a 
+                      href={profileLinks.farcaster.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-purple-400 transition-colors"
+                      title={profileLinks.farcaster.handle}
+                      data-testid="link-farcaster"
+                    >
+                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.24.24H5.76A5.76 5.76 0 000 6v12a5.76 5.76 0 005.76 5.76h12.48A5.76 5.76 0 0024 18V6A5.76 5.76 0 0018.24.24zm.81 17.52h-.53v-5.4c0-.28-.23-.5-.5-.5h-4v5.9h-.54v-5.9h-3.96v5.9h-.54v-5.9h-4c-.28 0-.5.22-.5.5v5.4h-.54V9.25c0-.28.23-.5.5-.5h13.11c.28 0 .5.22.5.5v8.51z"/></svg>
+                    </a>
+                  )}
+                  {profileLinks.website && (
+                    <a 
+                      href={profileLinks.website.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
+                      title={profileLinks.website.handle}
+                      data-testid="link-website"
+                    >
+                      <Globe className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </aside>
