@@ -115,11 +115,21 @@ textMessageSchema     // content
 
 **Agent File**: `server/agent.ts` - Listens to XMTP messages and responds with commands.
 
+**x402 API Helper**: `server/x402-api.ts` - Server-side module for Trade Zone API calls.
+
 **Available Commands**:
 - `/help` — List available commands
 - `/zones` — Display all DJZS zones
 - `/format signal` — Show signal format template
 - `/summarize` — Trigger zone activity summary (in progress)
+
+**Trade Zone Commands** (integrated with x402 API):
+- `/price ETH` — Get current token price
+- `/portfolio 0x...` — View wallet holdings and total value
+- `/balance 0x...` — Get token balances
+- `/analyze 0x...` — Trading pattern analysis (win rate, risk score)
+- `/pnl 0x... [30d]` — Profit/loss report with timeframe
+- `/quote 100 USDC to ETH` — Get swap quote without execution
 
 **Running the Agent**:
 ```bash
