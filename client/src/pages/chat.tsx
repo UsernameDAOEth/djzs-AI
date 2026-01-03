@@ -627,7 +627,7 @@ export default function Chat() {
               </button>
               <div className="flex flex-col">
                 <h2 className="text-lg md:text-xl font-black text-white tracking-tight">{currentZone.name}</h2>
-                <p className="text-[10px] md:text-xs text-gray-500 font-medium mt-0.5 hidden sm:block">{currentZone.purpose}</p>
+                <p className="text-[10px] md:text-xs text-gray-400 font-medium mt-0.5 hidden sm:block">{currentZone.purpose}</p>
               </div>
             </div>
 
@@ -665,7 +665,7 @@ export default function Chat() {
               {/* Writing Area - vertically centered, min 70vh */}
               <div className="flex-1 flex flex-col justify-center min-h-[70vh] py-12">
                 {/* Prompt hint */}
-                <p className={`text-purple-400/40 text-sm font-medium mb-6 transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-60'}`}>
+                <p className={`text-purple-300/60 text-sm font-medium mb-6 transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-80'}`}>
                   {currentPrompts[currentPromptIndex]}
                 </p>
                 
@@ -683,7 +683,7 @@ export default function Chat() {
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     placeholder="Write what you're thinking. No formatting. No pressure."
-                    className="w-full bg-transparent border-none outline-none focus:ring-0 text-xl font-medium text-white placeholder:text-gray-700 resize-none leading-[1.8] tracking-tight p-6 overflow-hidden"
+                    className="w-full bg-transparent border-none outline-none focus:ring-0 text-xl font-medium text-white placeholder:text-gray-500 resize-none leading-[1.8] tracking-tight p-6 overflow-hidden"
                     style={{ 
                       minHeight: frozenHeight ? undefined : 'max(200px, calc(60vh - 100px))',
                       height: frozenHeight ? `${frozenHeight}px` : 'auto'
@@ -693,7 +693,7 @@ export default function Chat() {
                 </div>
 
                 {/* Action bar - persistent footer */}
-                <div className={`flex items-center justify-between mt-8 py-4 border-t border-white/[0.05] transition-all duration-500 ${isFocused ? 'opacity-100 translate-y-0' : 'opacity-40 translate-y-2'}`}>
+                <div className={`flex items-center justify-between mt-8 py-4 border-t border-white/[0.05] transition-all duration-500 ${isFocused ? 'opacity-100 translate-y-0' : 'opacity-70 translate-y-1'}`}>
                   <div className="flex items-center gap-8">
                     <div className="flex items-center gap-6">
                       <div className="flex items-center gap-2 group cursor-default">
