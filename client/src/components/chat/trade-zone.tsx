@@ -44,8 +44,8 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
     return createX402Client(walletClient);
   }, [walletClient]);
 
-  const handleSubmit = async () => {
-    if (!command.trim() || !x402Client || !walletClient) {
+  const executeCommand = async (cmd: string) => {
+    if (!cmd.trim() || !x402Client || !walletClient) {
       toast({
         title: "Wallet not ready",
         description: "Please ensure your wallet is connected.",
@@ -54,7 +54,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
       return;
     }
 
-    const intent = parseTradeIntent(command);
+    const intent = parseTradeIntent(cmd);
 
     try {
       switch (intent.action) {
@@ -97,7 +97,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
           setState({ type: "portfolio", data });
           await saveTradeRecord({
             action: "portfolio",
-            inputCommand: command,
+            inputCommand: cmd,
             status: "confirmed",
           });
           break;
@@ -109,7 +109,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
           setState({ type: "balances", data: balances });
           await saveTradeRecord({
             action: "balance",
-            inputCommand: command,
+            inputCommand: cmd,
             status: "confirmed",
           });
           break;
@@ -133,8 +133,19 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
       }
     } catch (err) {
       console.error("Trade error:", err);
-      setState({ type: "error", message: err instanceof Error ? err.message : "Unknown error" });
+      const message = err instanceof Error ? err.message : "Unknown error";
+      if (message.includes("402") || message.includes("payment")) {
+        setState({ type: "error", message: "Payment required. Ensure your wallet has ETH for API calls." });
+      } else if (message.includes("network") || message.includes("fetch")) {
+        setState({ type: "error", message: "Network error. Check your connection and try again." });
+      } else {
+        setState({ type: "error", message });
+      }
     }
+  };
+
+  const handleSubmit = () => {
+    executeCommand(command);
   };
 
   const handleConfirmSwap = async () => {
@@ -206,14 +217,43 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
     }
   };
 
+  const quickCommands = [
+    { label: "Portfolio", command: "portfolio" },
+    { label: "Balances", command: "balance" },
+    { label: "ETH Price", command: "price ETH" },
+    { label: "USDC Price", command: "price USDC" },
+  ];
+
+  const handleQuickCommand = (cmd: string) => {
+    setCommand(cmd);
+    executeCommand(cmd);
+  };
+
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 p-4 max-w-2xl mx-auto">
+      {/* Quick action buttons */}
+      <div className="flex flex-wrap gap-2">
+        {quickCommands.map((qc) => (
+          <Button
+            key={qc.command}
+            variant="outline"
+            size="sm"
+            onClick={() => handleQuickCommand(qc.command)}
+            disabled={state.type === "loading" || state.type === "executing"}
+            className="border-white/10 text-gray-300 hover:bg-purple-500/10 hover:text-purple-300 hover:border-purple-500/30 text-xs font-medium"
+            data-testid={`button-quick-${qc.label.toLowerCase().replace(" ", "-")}`}
+          >
+            {qc.label}
+          </Button>
+        ))}
+      </div>
+
       <div className="flex gap-2">
         <Input
           value={command}
           onChange={(e) => setCommand(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="swap 100 USDC to ETH"
+          placeholder="swap 100 USDC to ETH, portfolio, price ETH..."
           className="flex-1 bg-[#0a0a0a] border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500/50"
           disabled={state.type === "loading" || state.type === "executing"}
           data-testid="input-trade-command"
