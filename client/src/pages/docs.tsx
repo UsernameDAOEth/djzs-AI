@@ -305,6 +305,44 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-black text-white mb-8">Trade Zone Setup</h2>
+          <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+            <p className="text-gray-400 mb-6">
+              The Trade Zone uses the x402 micropayments protocol to access blockchain data APIs. 
+              Each API call costs a small amount (fractions of a cent). To enable these features:
+            </p>
+            <div className="space-y-4">
+              <div className="bg-white/[0.03] rounded-lg p-4 border border-white/[0.05]">
+                <h4 className="text-sm font-black text-green-400 uppercase tracking-widest mb-2">Step 1: Create a Wallet</h4>
+                <p className="text-gray-500 text-sm">
+                  Create a new Ethereum wallet (or use an existing one) that will pay for API requests. 
+                  This should be a separate wallet from your main funds.
+                </p>
+              </div>
+              <div className="bg-white/[0.03] rounded-lg p-4 border border-white/[0.05]">
+                <h4 className="text-sm font-black text-green-400 uppercase tracking-widest mb-2">Step 2: Fund the Wallet</h4>
+                <p className="text-gray-500 text-sm">
+                  Send a small amount of ETH or USDC to this wallet on <strong className="text-white">Base network</strong>. 
+                  Even $5-10 will cover thousands of API calls.
+                </p>
+              </div>
+              <div className="bg-white/[0.03] rounded-lg p-4 border border-white/[0.05]">
+                <h4 className="text-sm font-black text-green-400 uppercase tracking-widest mb-2">Step 3: Add Private Key</h4>
+                <p className="text-gray-500 text-sm">
+                  Add the wallet's private key to your Replit Secrets as <code className="text-white bg-white/[0.1] px-1.5 py-0.5 rounded">PRIVATE_KEY</code>. 
+                  This allows the server to sign payment transactions automatically.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+              <p className="text-yellow-400 text-sm">
+                <strong>Security Note:</strong> Use a dedicated wallet with limited funds. Never use your main wallet's private key.
+              </p>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-black text-white mb-8">XMTP Agent Commands</h2>
           <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
             <p className="text-gray-400 mb-6">
