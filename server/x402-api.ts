@@ -75,7 +75,7 @@ async function x402Fetch(endpoint: string, body: object): Promise<any> {
   });
 
   if (response.status === 402) {
-    throw new Error("Payment required - x402 API needs micropayments configured");
+    throw new Error("Payment required - x402 API needs a funded PRIVATE_KEY in secrets to pay for micropayments");
   }
 
   if (!response.ok) {

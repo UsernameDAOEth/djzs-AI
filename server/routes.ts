@@ -620,7 +620,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
     
     if (response.status === 402) {
-      throw new Error("Payment required. The x402 API requires micropayments to use. Contact the app owner to configure server-side payments.");
+      throw new Error("Payment required. The x402 API requires micropayments. To enable this, add a funded PRIVATE_KEY to your secrets or configure a CDP facilitator.");
     }
     
     if (!response.ok) {
