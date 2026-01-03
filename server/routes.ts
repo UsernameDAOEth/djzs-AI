@@ -687,6 +687,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Analyze wallet trading patterns
+  app.post("/api/x402/analyze", async (req, res) => {
+    try {
+      const { wallet_address } = req.body;
+      if (!wallet_address) {
+        return res.status(400).json({ error: "wallet_address required" });
+      }
+      const data = await x402Fetch("/api/analyze_wallet", { wallet_address });
+      res.json(data);
+    } catch (error) {
+      console.error("x402 analyze error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to analyze wallet" });
+    }
+  });
+
+  // Get PnL report
+  app.post("/api/x402/pnl", async (req, res) => {
+    try {
+      const { wallet_address, timeframe = "30d" } = req.body;
+      if (!wallet_address) {
+        return res.status(400).json({ error: "wallet_address required" });
+      }
+      const data = await x402Fetch("/api/get_pnl_report", { wallet_address, timeframe });
+      res.json(data);
+    } catch (error) {
+      console.error("x402 pnl error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to get PnL report" });
+    }
+  });
+
+  // Create limit order
+  app.post("/api/x402/limit-order", async (req, res) => {
+    try {
+      const { wallet_address, from_token, to_token, amount, target_price, direction } = req.body;
+      if (!wallet_address || !from_token || !to_token || !amount || !target_price) {
+        return res.status(400).json({ error: "Missing required fields: wallet_address, from_token, to_token, amount, target_price" });
+      }
+      const data = await x402Fetch("/api/create_limit_order", {
+        wallet_address,
+        from_token,
+        to_token,
+        amount,
+        target_price,
+        direction: direction || "buy",
+      });
+      res.json(data);
+    } catch (error) {
+      console.error("x402 limit order error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to create limit order" });
+    }
+  });
+
+  // Get active limit orders
+  app.post("/api/x402/limit-orders", async (req, res) => {
+    try {
+      const { wallet_address } = req.body;
+      if (!wallet_address) {
+        return res.status(400).json({ error: "wallet_address required" });
+      }
+      const data = await x402Fetch("/api/get_limit_orders", { wallet_address });
+      res.json(data);
+    } catch (error) {
+      console.error("x402 limit orders error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to get limit orders" });
+    }
+  });
+
+  // Cancel limit order
+  app.post("/api/x402/cancel-order", async (req, res) => {
+    try {
+      const { wallet_address, order_id } = req.body;
+      if (!wallet_address || !order_id) {
+        return res.status(400).json({ error: "wallet_address and order_id required" });
+      }
+      const data = await x402Fetch("/api/cancel_limit_order", { wallet_address, order_id });
+      res.json(data);
+    } catch (error) {
+      console.error("x402 cancel order error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to cancel order" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

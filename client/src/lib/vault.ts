@@ -35,7 +35,7 @@ export interface MemoryPin {
 
 export interface TradeRecord {
   id?: number;
-  action: 'swap' | 'limit_order' | 'portfolio' | 'balance';
+  action: 'swap' | 'limit_order' | 'portfolio' | 'balance' | 'analyze' | 'pnl' | 'limit' | 'orders';
   inputCommand: string;
   thesis?: string;
   fromToken?: string;

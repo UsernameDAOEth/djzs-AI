@@ -145,18 +145,54 @@ export async function getTokenPrice(
   return response.data;
 }
 
+export interface WalletAnalysis {
+  wallet_address: string;
+  total_trades: number;
+  win_rate: string;
+  avg_trade_size: string;
+  most_traded_tokens: string[];
+  trading_style: string;
+  risk_score: string;
+}
+
+export interface PnLReport {
+  wallet_address: string;
+  timeframe: string;
+  total_pnl: string;
+  realized_pnl: string;
+  unrealized_pnl: string;
+  best_trade: { token: string; pnl: string };
+  worst_trade: { token: string; pnl: string };
+  trade_count: number;
+}
+
+export interface LimitOrder {
+  order_id: string;
+  from_token: string;
+  to_token: string;
+  amount: string;
+  target_price: string;
+  direction: 'buy' | 'sell';
+  status: 'pending' | 'filled' | 'cancelled';
+  created_at: string;
+}
+
 export interface ParsedTradeIntent {
-  action: 'swap' | 'portfolio' | 'balance' | 'price' | 'unknown';
+  action: 'swap' | 'portfolio' | 'balance' | 'price' | 'analyze' | 'pnl' | 'limit' | 'orders' | 'unknown';
   fromToken?: string;
   toToken?: string;
   amount?: string;
   tokenForPrice?: string;
+  targetPrice?: string;
+  direction?: 'buy' | 'sell';
+  timeframe?: string;
   rawInput: string;
 }
 
 export function parseTradeIntent(input: string): ParsedTradeIntent {
   const normalized = input.toLowerCase().trim();
   
+  // Swap: "swap 100 USDC to ETH"
   const swapMatch = normalized.match(
     /swap\s+(\d+(?:\.\d+)?)\s*(\w+)\s+(?:to|for)\s+(\w+)/i
   );
@@ -167,6 +203,42 @@ export function parseTradeIntent(input: string): ParsedTradeIntent {
       fromToken: swapMatch[2].toUpperCase(),
       toToken: swapMatch[3].toUpperCase(),
       rawInput: input,
+    };
+  }
+  
+  // Limit order: "limit buy 100 USDC at 3500 ETH" or "limit sell 0.5 ETH at 3600 USDC"
+  const limitMatch = normalized.match(
+    /limit\s+(buy|sell)\s+(\d+(?:\.\d+)?)\s*(\w+)\s+(?:at|@)\s+(\d+(?:\.\d+)?)\s*(\w+)?/i
+  );
+  if (limitMatch) {
+    return {
+      action: 'limit',
+      direction: limitMatch[1] as 'buy' | 'sell',
+      amount: limitMatch[2],
+      fromToken: limitMatch[3].toUpperCase(),
+      targetPrice: limitMatch[4],
+      toToken: limitMatch[5]?.toUpperCase() || 'USD',
+      rawInput: input,
+    };
+  }
+  
+  // View limit orders
+  if (normalized.includes('orders') || normalized.includes('my orders') || normalized.includes('limit orders')) {
+    return { action: 'orders', rawInput: input };
+  }
+  
+  // Analyze wallet
+  if (normalized.includes('analyze') || normalized.includes('analysis') || normalized.includes('insights')) {
+    return { action: 'analyze', rawInput: input };
+  }
+  
+  // PnL report with optional timeframe
+  if (normalized.includes('pnl') || normalized.includes('profit') || normalized.includes('loss')) {
+    const timeframeMatch = normalized.match(/(\d+[dDwWmM])/);
+    return { 
+      action: 'pnl', 
+      timeframe: timeframeMatch ? timeframeMatch[1] : '30d',
+      rawInput: input 
     };
   }
   

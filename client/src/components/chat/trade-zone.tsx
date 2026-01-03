@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { TrendingUp, Wallet, ArrowRight, Loader2, CheckCircle, XCircle, Clock } from "lucide-react";
+import { TrendingUp, Wallet, ArrowRight, Loader2, CheckCircle, XCircle, Clock, BarChart3, Target, LineChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,9 @@ import {
   type SwapQuote,
   type PortfolioResult,
   type TokenBalance,
+  type WalletAnalysis,
+  type PnLReport,
+  type LimitOrder,
 } from "@/lib/x402-client";
 import { saveTradeRecord, getRecentTrades } from "@/lib/vault";
 
@@ -21,6 +24,10 @@ type TradeState =
   | { type: "portfolio"; data: PortfolioResult }
   | { type: "balances"; data: TokenBalance[] }
   | { type: "price"; token: string; priceUSD: string }
+  | { type: "analysis"; data: WalletAnalysis }
+  | { type: "pnl"; data: PnLReport }
+  | { type: "orders"; data: LimitOrder[] }
+  | { type: "limit_created"; order: LimitOrder }
   | { type: "executing"; recordId: number }
   | { type: "success"; txHash?: string }
   | { type: "error"; message: string };
@@ -139,8 +146,80 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
           break;
         }
 
+        case "analyze": {
+          setState({ type: "loading", message: "Analyzing wallet..." });
+          const data = await apiCall("/api/x402/analyze", { wallet_address: address });
+          setState({ type: "analysis", data });
+          await saveTradeRecord({
+            action: "analyze",
+            inputCommand: cmd,
+            status: "confirmed",
+          });
+          break;
+        }
+
+        case "pnl": {
+          const timeframe = intent.timeframe || "30d";
+          setState({ type: "loading", message: `Fetching PnL report (${timeframe})...` });
+          const data = await apiCall("/api/x402/pnl", { wallet_address: address, timeframe });
+          setState({ type: "pnl", data });
+          await saveTradeRecord({
+            action: "pnl",
+            inputCommand: cmd,
+            status: "confirmed",
+          });
+          break;
+        }
+
+        case "orders": {
+          setState({ type: "loading", message: "Fetching limit orders..." });
+          const data = await apiCall("/api/x402/limit-orders", { wallet_address: address });
+          setState({ type: "orders", data: data.orders || [] });
+          break;
+        }
+
+        case "limit": {
+          if (!intent.fromToken || !intent.targetPrice || !intent.amount) {
+            setState({ type: "error", message: "Could not parse limit order. Try: 'limit buy 0.5 ETH at 3500' or 'limit sell 100 USDC at 3600'" });
+            return;
+          }
+          setState({ type: "loading", message: "Creating limit order..." });
+
+          const fromAddress = getTokenAddress(intent.fromToken);
+          // For limit orders, if no toToken specified or it's USD, default to USDC as the quote token
+          const toTokenSymbol = intent.toToken && intent.toToken !== "USD" ? intent.toToken : "USDC";
+          const toAddress = getTokenAddress(toTokenSymbol);
+
+          if (!fromAddress) {
+            setState({ type: "error", message: `Unknown token: ${intent.fromToken}. Supported: ETH, USDC, USDT, DAI, WETH` });
+            return;
+          }
+
+          if (!toAddress) {
+            setState({ type: "error", message: `Unknown token: ${toTokenSymbol}. Supported: ETH, USDC, USDT, DAI, WETH` });
+            return;
+          }
+
+          const data = await apiCall("/api/x402/limit-order", {
+            wallet_address: address,
+            from_token: fromAddress,
+            to_token: toAddress,
+            amount: intent.amount,
+            target_price: intent.targetPrice,
+            direction: intent.direction || "buy",
+          });
+
+          setState({ type: "limit_created", order: data.order });
+          await saveTradeRecord({
+            action: "limit",
+            inputCommand: cmd,
+            status: "confirmed",
+          });
+          break;
+        }
+
         default:
-          setState({ type: "error", message: "Unknown command. Try: 'swap 100 USDC to ETH', 'portfolio', or 'price ETH'" });
+          setState({ type: "error", message: "Unknown command. Try: 'swap 100 USDC to ETH', 'portfolio', 'analyze', 'pnl', or 'orders'" });
       }
     } catch (err) {
       console.error("Trade error:", err);
@@ -177,10 +256,12 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
   };
 
   const quickCommands = [
-    { label: "Portfolio", command: "portfolio" },
-    { label: "Balances", command: "balance" },
-    { label: "ETH Price", command: "price ETH" },
-    { label: "USDC Price", command: "price USDC" },
+    { label: "Portfolio", command: "portfolio", icon: Wallet },
+    { label: "Balances", command: "balance", icon: Wallet },
+    { label: "Analyze", command: "analyze", icon: BarChart3 },
+    { label: "PnL", command: "pnl 30d", icon: LineChart },
+    { label: "Orders", command: "orders", icon: Target },
+    { label: "ETH Price", command: "price ETH", icon: TrendingUp },
   ];
 
   const handleQuickCommand = (cmd: string) => {
@@ -202,6 +283,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
             className="border-white/10 text-gray-300 hover:bg-purple-500/10 hover:text-purple-300 hover:border-purple-500/30 text-xs font-medium"
             data-testid={`button-quick-${qc.label.toLowerCase().replace(" ", "-")}`}
           >
+            <qc.icon className="w-3 h-3 mr-1" />
             {qc.label}
           </Button>
         ))}
@@ -212,7 +294,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
           value={command}
           onChange={(e) => setCommand(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="swap 100 USDC to ETH, portfolio, price ETH..."
+          placeholder="swap 100 USDC to ETH, analyze, pnl 30d, limit buy 100 USDC at 3500..."
           className="flex-1 bg-[#0a0a0a] border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500/50"
           disabled={state.type === "loading" || state.type === "executing"}
           data-testid="input-trade-command"
@@ -411,12 +493,175 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
         </Card>
       )}
 
+      {state.type === "analysis" && (
+        <Card className="bg-[#0a0a0a] border-white/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-white flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-purple-400" />
+              Wallet Analysis
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white/5 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Total Trades</p>
+                <p className="text-xl font-bold text-white">{state.data.total_trades}</p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Win Rate</p>
+                <p className="text-xl font-bold text-green-400">{state.data.win_rate}</p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Avg Trade Size</p>
+                <p className="text-xl font-bold text-white">{formatUSD(state.data.avg_trade_size)}</p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Risk Score</p>
+                <p className="text-xl font-bold text-yellow-400">{state.data.risk_score}</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Trading Style</p>
+              <p className="text-sm text-white">{state.data.trading_style}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Most Traded Tokens</p>
+              <div className="flex flex-wrap gap-1">
+                {state.data.most_traded_tokens?.map((token, i) => (
+                  <span key={i} className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs">
+                    {token}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {state.type === "pnl" && (
+        <Card className="bg-[#0a0a0a] border-white/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-white flex items-center gap-2">
+              <LineChart className="w-5 h-5 text-purple-400" />
+              PnL Report ({state.data.timeframe})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="text-center py-2">
+              <p className="text-xs text-gray-500">Total PnL</p>
+              <p className={`text-3xl font-bold ${parseFloat(state.data.total_pnl) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {parseFloat(state.data.total_pnl) >= 0 ? '+' : ''}{formatUSD(state.data.total_pnl)}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white/5 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Realized</p>
+                <p className={`text-lg font-bold ${parseFloat(state.data.realized_pnl) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  {formatUSD(state.data.realized_pnl)}
+                </p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Unrealized</p>
+                <p className={`text-lg font-bold ${parseFloat(state.data.unrealized_pnl) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  {formatUSD(state.data.unrealized_pnl)}
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-green-500/10 rounded-lg p-3 border border-green-500/20">
+                <p className="text-xs text-gray-500">Best Trade</p>
+                <p className="text-sm text-white">{state.data.best_trade?.token}</p>
+                <p className="text-lg font-bold text-green-400">+{formatUSD(state.data.best_trade?.pnl || "0")}</p>
+              </div>
+              <div className="bg-red-500/10 rounded-lg p-3 border border-red-500/20">
+                <p className="text-xs text-gray-500">Worst Trade</p>
+                <p className="text-sm text-white">{state.data.worst_trade?.token}</p>
+                <p className="text-lg font-bold text-red-400">{formatUSD(state.data.worst_trade?.pnl || "0")}</p>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 text-center">{state.data.trade_count} trades in this period</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {state.type === "orders" && (
+        <Card className="bg-[#0a0a0a] border-white/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-white flex items-center gap-2">
+              <Target className="w-5 h-5 text-purple-400" />
+              Limit Orders
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {state.data.length > 0 ? (
+              state.data.map((order, i) => (
+                <div key={order.order_id} className="bg-white/5 rounded-lg p-3" data-testid={`row-order-${i}`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${order.direction === 'buy' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                      {order.direction.toUpperCase()}
+                    </span>
+                    <span className={`text-xs ${order.status === 'pending' ? 'text-yellow-400' : order.status === 'filled' ? 'text-green-400' : 'text-gray-400'}`}>
+                      {order.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-white">
+                    {order.amount} {order.from_token} → {order.to_token}
+                  </p>
+                  <p className="text-xs text-gray-500">Target: {formatUSD(order.target_price)}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm text-center py-4">No active limit orders</p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {state.type === "limit_created" && (
+        <Card className="bg-[#0a0a0a] border-green-500/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-white flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+              Limit Order Created
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-400">Direction</span>
+              <span className={`font-medium ${state.order.direction === 'buy' ? 'text-green-400' : 'text-red-400'}`}>
+                {state.order.direction.toUpperCase()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-400">Amount</span>
+              <span className="text-white">{state.order.amount} {state.order.from_token}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-400">Target Price</span>
+              <span className="text-white">{formatUSD(state.order.target_price)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-400">Status</span>
+              <span className="text-yellow-400">{state.order.status}</span>
+            </div>
+            <Button
+              onClick={handleCancel}
+              variant="outline"
+              className="w-full mt-2 border-white/10 text-gray-300 hover:bg-white/5"
+              data-testid="button-dismiss-order"
+            >
+              Done
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {recentTrades && recentTrades.length > 0 && (
         <Card className="bg-[#0a0a0a] border-white/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-gray-400 flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              Recent Trades
+              Recent Activity
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
