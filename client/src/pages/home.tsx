@@ -521,50 +521,8 @@ export default function Home() {
             }}
           />
 
-          {/* Footer Marquee Banner */}
-          <div
-            style={{
-              position: "relative",
-              zIndex: 2,
-              width: "100%",
-              overflow: "hidden",
-              padding: "20px 0",
-              marginBottom: "40px"
-            }}
-          >
-            <div className="marquee-banner" style={{ width: "100%" }}>
-              <div className="marquee-content">
-                <span
-                  style={{
-                    fontSize: "clamp(48px, 8vw, 120px)",
-                    fontWeight: 900,
-                    lineHeight: 1,
-                    color: "rgba(255,255,255,.95)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    textShadow:
-                      "0 0 30px rgba(140,80,255,.5), 0 0 60px rgba(80,210,255,.3)",
-                  }}
-                >
-                  DECENTRALIZED JOURNALING ZONE SYSTEM
-                </span>
-                <span
-                  style={{
-                    fontSize: "clamp(48px, 8vw, 120px)",
-                    fontWeight: 900,
-                    lineHeight: 1,
-                    color: "rgba(255,255,255,.95)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    textShadow:
-                      "0 0 30px rgba(140,80,255,.5), 0 0 60px rgba(80,210,255,.3)",
-                  }}
-                >
-                  DECENTRALIZED JOURNALING ZONE SYSTEM
-                </span>
-              </div>
-            </div>
-          </div>
+          {/* Footer Marquee Banner - Removed for brevity */}
+          <div className="h-10" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-10 flex flex-col md:flex-row items-center justify-between gap-10">
