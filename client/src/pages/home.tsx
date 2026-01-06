@@ -1,11 +1,12 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, Plus } from "lucide-react";
+import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
 import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, FAQFlywheel, PortalBackground, FlipFeatureCard } from "@/components/hero";
+import { Helmet } from "react-helmet";
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -157,6 +158,19 @@ export default function Home() {
           </div>
         </div>
       </header>
+      {/* SEO */}
+      <Helmet>
+        <title>DJZS - Private AI Journaling + Research | Local-First Thinking System</title>
+        <meta name="description" content="Private AI journaling and research capture with a Thinking Partner. Local-first, end-to-end encrypted. No centralized journal database. Your notes stay on your device." />
+        <meta property="og:title" content="DJZS - Private AI Journaling + Research" />
+        <meta property="og:description" content="Local-first AI journaling and research. Memory that stays yours. No feeds. No surveillance." />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="DJZS - Private AI Journaling" />
+        <meta name="twitter:description" content="Local-first AI journaling and research. Your thinking stays yours." />
+      </Helmet>
+
       {/* Hero Section */}
       <motion.section
         variants={pageContainer}
@@ -169,30 +183,53 @@ export default function Home() {
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-12">
           <ThinkFlywheel />
 
-          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium mb-4">
-            Local-first AI journaling and research. Memory that stays yours.
+          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-semibold mb-2">
+            Private AI journaling + research capture + a Thinking Partner.
           </motion.p>
-          <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto font-medium mb-10">
-            No feeds. No surveillance. No centralized memory.
+          <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-500 max-w-2xl mx-auto font-medium mb-8">
+            Local-first + end-to-end encrypted. No centralized journal database.
           </motion.p>
 
-          <motion.div variants={fadeUp}>
+          <motion.div variants={fadeUp} className="flex flex-col items-center gap-4">
             {isConnected ? (
-              <div className="flex flex-col items-center gap-6">
-                <StartWritingButton />
-                <div className="flex items-center gap-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest opacity-60">
-                  <span>Local-first</span>
-                  <span>•</span>
-                  <span>Your data stays yours</span>
-                  <span>•</span>
-                  <span>Privacy</span>
+              <StartWritingButton />
+            ) : (
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <Link href="/chat">
+                  <motion.button
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-base font-bold text-black hover:bg-gray-100 transition-colors min-h-[52px]"
+                    data-testid="button-try-demo"
+                  >
+                    Try the demo
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </Link>
+                <div className="scale-110">
+                  <ConnectButton showBalance={false} />
                 </div>
               </div>
-            ) : (
-              <div className="flex justify-center scale-125">
-                <ConnectButton showBalance={false} />
-              </div>
             )}
+            
+            {/* Trust bullets */}
+            <motion.div 
+              variants={fadeUp}
+              className="mt-6 flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-gray-500 text-sm"
+            >
+              <div className="flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-green-500/70" />
+                <span>Your notes stay on your device</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Download className="w-4 h-4 text-blue-400/70" />
+                <span>Export anytime</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Lock className="w-4 h-4 text-purple-400/70" />
+                <span>AI insights without data retention</span>
+              </div>
+            </motion.div>
           </motion.div>
 
           <motion.div variants={fadeUp} className="mt-12">
@@ -200,6 +237,89 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
+
+      {/* How It Works - 3-step strip */}
+      <RevealSection>
+        <section className="relative py-16 bg-[#030303] border-t border-white/[0.03] overflow-hidden">
+          <div className="relative z-10 max-w-5xl mx-auto px-6">
+            <h2 className="text-center text-2xl md:text-3xl font-black text-white mb-4 tracking-tight">
+              How It Works
+            </h2>
+            <p className="text-center text-gray-500 mb-12 max-w-2xl mx-auto">
+              Your thinking never leaves your device unless you choose.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4">
+              {/* Step 1 */}
+              <div className="relative flex flex-col items-center text-center p-6">
+                <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
+                  <span className="text-3xl">✍️</span>
+                </div>
+                <div className="absolute top-8 left-1/2 right-0 hidden md:block border-t border-dashed border-white/10 -z-10" style={{ width: "calc(50% + 2rem)", left: "50%" }} />
+                <h3 className="text-lg font-bold text-white mb-2">1. Write & Save</h3>
+                <p className="text-gray-500 text-sm">
+                  Your entries are saved to IndexedDB on your device. Works fully offline.
+                </p>
+                <div className="mt-3 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+                  <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">Local-first</span>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="relative flex flex-col items-center text-center p-6">
+                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
+                  <Bot className="w-8 h-8 text-blue-400" />
+                </div>
+                <div className="absolute top-8 left-1/2 right-0 hidden md:block border-t border-dashed border-white/10 -z-10" style={{ width: "calc(50% + 2rem)", left: "50%" }} />
+                <h3 className="text-lg font-bold text-white mb-2">2. Think with AI</h3>
+                <p className="text-gray-500 text-sm">
+                  When you click "Think with me", the AI sees only your current entry + your memory pins.
+                </p>
+                <div className="mt-3 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">No retention</span>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center text-center p-6">
+                <div className="w-16 h-16 rounded-2xl bg-gray-500/10 border border-gray-500/20 flex items-center justify-center mb-4">
+                  <Shield className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">3. You Control Storage</h3>
+                <p className="text-gray-500 text-sm">
+                  Export, clear, or back up anytime. Optional encrypted sync. Your data, your rules.
+                </p>
+                <div className="mt-3 px-3 py-1 rounded-full bg-gray-500/10 border border-gray-500/20">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Yours forever</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Visual flow diagram */}
+            <div className="mt-12 flex items-center justify-center gap-4 text-gray-600 text-sm">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                <Smartphone className="w-4 h-4" />
+                <span>Your Device</span>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-700" />
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                <Lock className="w-4 h-4" />
+                <span>Encrypted</span>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-700" />
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                <Bot className="w-4 h-4" />
+                <span>AI Insights</span>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-700" />
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                <Smartphone className="w-4 h-4" />
+                <span>Back to You</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
       <RevealSection>
         <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="zone" />
@@ -253,37 +373,38 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8">
               <FlipFeatureCard 
                 icon={<HardDrive className="w-6 h-6 text-purple-400" />}
-                title="Instant & Offline"
-                frontText="No spinners. No waiting. The act of thinking never waits on the network."
+                title="Local-first"
+                frontText="Your journal lives on your device. No central database."
                 status="aligned"
                 backItems={[
-                  "Writes to IndexedDB immediately — no network required",
-                  "Works fully offline: journaling, pins, history, review",
-                  "Network only used when you explicitly invoke AI or sync"
+                  "Writes to IndexedDB — no network required",
+                  "Works fully offline: journaling, pins, history",
+                  "You can export anytime in open formats",
+                  "If DJZS disappears, your thinking remains"
                 ]}
               />
               <FlipFeatureCard 
-                icon={<Shield className="w-6 h-6 text-blue-400" />}
-                title="You Own Your Data"
-                frontText="Long-term preservation. If DJZS disappears, your thinking remains."
+                icon={<Bot className="w-6 h-6 text-blue-400" />}
+                title="AI Memory"
+                frontText="Memory is opt-in: pin what matters, forget what doesn't."
                 status="aligned"
                 backItems={[
-                  "Data lives locally in open, exportable formats",
-                  "No proprietary server-locked formats",
-                  "No subscription required to access your history",
-                  "Exit anytime with your data intact"
+                  "AI sees only your current entry + your pins",
+                  "Memory is explicit, not automatic",
+                  "No silent learning or background retention",
+                  "You control what the AI remembers"
                 ]}
               />
               <FlipFeatureCard 
-                icon={<Bot className="w-6 h-6 text-gray-400" />}
-                title="Thinking, Not Collaboration"
-                frontText="Personal cognition workflows. Collaboration introduces surveillance risk."
+                icon={<Shield className="w-6 h-6 text-gray-400" />}
+                title="Wallet login"
+                frontText="Login without email/password. No account needed."
                 status="intentional"
                 backItems={[
-                  "No real-time co-editing or shared cursors",
-                  "No multi-user presence or social pressure",
-                  "Sync is optional, not assumed",
-                  "DJZS chooses clarity over collaboration"
+                  "Your wallet is your identity",
+                  "No email harvesting or password resets",
+                  "You can try the demo without connecting",
+                  "Privacy by design, not by policy"
                 ]}
               />
             </div>
@@ -541,6 +662,25 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      {/* Mobile Sticky CTA Bar */}
+      {!isConnected && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black/95 backdrop-blur-xl border-t border-white/[0.05] p-4 safe-area-inset-bottom">
+          <div className="flex items-center gap-3 max-w-lg mx-auto">
+            <Link href="/chat" className="flex-1">
+              <button 
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-bold text-black hover:bg-gray-100 transition-colors min-h-[48px]"
+                data-testid="button-mobile-try-demo"
+              >
+                Try demo
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </Link>
+            <div className="flex-1">
+              <ConnectButton />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
