@@ -214,6 +214,15 @@ shared/
 
 ## Recent Changes
 
+- **Jan 08, 2026**: Wired Trade Zone to user-pays micropayment model
+  - Trade Zone now uses connected wallet directly for x402 micropayments (no server-side wallet needed)
+  - User's wallet signs micropayments for API calls - aligns with DJZS philosophy "your data, your costs"
+  - x402Client created with walletClient from useWalletClient(), recreated on account/chain changes
+  - Added analyzeWallet() and getPnLReport() functions to x402-client.ts
+  - Token lookup uses searchToken() as fallback for non-hardcoded tokens
+  - Micropayments info banner explains the user-pays model
+  - Quick commands: Portfolio, Balances, Analyze, PnL, ETH Price
+  - Limit orders marked as "coming soon"
 - **Jan 01, 2026**: Built Trade Zone with x402 integration
   - New Trade Zone component (`client/src/components/chat/trade-zone.tsx`)
   - x402 client wrapper (`client/src/lib/x402-client.ts`) for swap, portfolio, balance, price

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { TrendingUp, Wallet, ArrowRight, Loader2, CheckCircle, XCircle, Clock, BarChart3, Target, LineChart } from "lucide-react";
+import { useWalletClient, useAccount, useChainId } from "wagmi";
+import { TrendingUp, Wallet, ArrowRight, Loader2, CheckCircle, XCircle, BarChart3, Target, LineChart, DollarSign, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,14 @@ import {
   parseTradeIntent,
   formatUSD,
   getTokenAddress,
+  createX402Client,
+  getPortfolio,
+  getBalances,
+  getTokenPrice,
+  getSwapQuote,
+  analyzeWallet,
+  getPnLReport,
+  searchToken,
   type SwapQuote,
   type PortfolioResult,
   type TokenBalance,
@@ -32,24 +41,17 @@ type TradeState =
   | { type: "success"; txHash?: string }
   | { type: "error"; message: string };
 
-async function apiCall(endpoint: string, body: object) {
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({ error: "Request failed" }));
-    throw new Error(data.error || `API error: ${response.status}`);
-  }
-  
-  return response.json();
-}
-
 export function TradeZone({ address, toast }: { address: string; toast: any }) {
   const [command, setCommand] = useState("");
   const [state, setState] = useState<TradeState>({ type: "idle" });
+  const { data: walletClient } = useWalletClient();
+  const { address: connectedAddress } = useAccount();
+  const chainId = useChainId();
+
+  const x402Client = useMemo(() => {
+    if (!walletClient) return null;
+    return createX402Client(walletClient);
+  }, [walletClient, connectedAddress, chainId]);
 
   const recentTrades = useLiveQuery(() => getRecentTrades(5), []);
 
@@ -72,6 +74,15 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
       return;
     }
 
+    if (!x402Client) {
+      toast({
+        title: "Wallet not ready",
+        description: "Please wait for wallet connection to complete.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const intent = parseTradeIntent(cmd);
 
     try {
@@ -81,17 +92,39 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
             setState({ type: "error", message: "Could not parse swap details. Try: 'swap 100 USDC to ETH'" });
             return;
           }
-          setState({ type: "loading", message: "Getting quote..." });
+          setState({ type: "loading", message: "Getting quote... (your wallet will sign a micropayment)" });
 
-          const fromAddress = getTokenAddress(intent.fromToken);
-          const toAddress = getTokenAddress(intent.toToken);
+          let fromAddress = getTokenAddress(intent.fromToken);
+          let toAddress = getTokenAddress(intent.toToken);
+
+          if (!fromAddress) {
+            try {
+              const results = await searchToken(x402Client, intent.fromToken, 1);
+              if (results?.length > 0) {
+                fromAddress = results[0].address;
+              }
+            } catch (e) {
+              console.error("Token search failed:", e);
+            }
+          }
+
+          if (!toAddress) {
+            try {
+              const results = await searchToken(x402Client, intent.toToken, 1);
+              if (results?.length > 0) {
+                toAddress = results[0].address;
+              }
+            } catch (e) {
+              console.error("Token search failed:", e);
+            }
+          }
 
           if (!fromAddress || !toAddress) {
-            setState({ type: "error", message: `Unknown token: ${!fromAddress ? intent.fromToken : intent.toToken}` });
+            setState({ type: "error", message: `Unknown token: ${!fromAddress ? intent.fromToken : intent.toToken}. Try common tokens like ETH, USDC, USDT, DAI.` });
             return;
           }
 
-          const data = await apiCall("/api/x402/quote", {
+          const quote = await getSwapQuote(x402Client, {
             from_chain: "base",
             from_token: fromAddress,
             from_amount: intent.amount,
@@ -103,15 +136,15 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
 
           setState({
             type: "quote",
-            quote: data.quote,
+            quote,
             intent: { fromToken: intent.fromToken, toToken: intent.toToken, amount: intent.amount },
           });
           break;
         }
 
         case "portfolio": {
-          setState({ type: "loading", message: "Fetching portfolio..." });
-          const data = await apiCall("/api/x402/portfolio", { wallet_address: address });
+          setState({ type: "loading", message: "Fetching portfolio... (your wallet will sign a micropayment)" });
+          const data = await getPortfolio(x402Client, address);
           setState({ type: "portfolio", data });
           await saveTradeRecord({
             action: "portfolio",
@@ -122,8 +155,8 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
         }
 
         case "balance": {
-          setState({ type: "loading", message: "Fetching balances..." });
-          const data = await apiCall("/api/x402/balances", { wallet_address: address });
+          setState({ type: "loading", message: "Fetching balances... (your wallet will sign a micropayment)" });
+          const data = await getBalances(x402Client, address);
           setState({ type: "balances", data: data.balances || [] });
           await saveTradeRecord({
             action: "balance",
@@ -135,20 +168,32 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
 
         case "price": {
           const tokenSymbol = intent.tokenForPrice || "ETH";
-          setState({ type: "loading", message: `Fetching ${tokenSymbol} price...` });
-          const tokenAddress = getTokenAddress(tokenSymbol);
+          setState({ type: "loading", message: `Fetching ${tokenSymbol} price... (your wallet will sign a micropayment)` });
+          
+          let tokenAddress = getTokenAddress(tokenSymbol);
           if (!tokenAddress) {
-            setState({ type: "error", message: `Unknown token: ${tokenSymbol}` });
+            try {
+              const results = await searchToken(x402Client, tokenSymbol, 1);
+              if (results?.length > 0) {
+                tokenAddress = results[0].address;
+              }
+            } catch (e) {
+              console.error("Token search failed:", e);
+            }
+          }
+
+          if (!tokenAddress) {
+            setState({ type: "error", message: `Unknown token: ${tokenSymbol}. Try common tokens like ETH, USDC, USDT, DAI.` });
             return;
           }
-          const data = await apiCall("/api/x402/price", { token_address: tokenAddress, chain: "base" });
+          const data = await getTokenPrice(x402Client, tokenAddress, "base");
           setState({ type: "price", token: tokenSymbol, priceUSD: data.priceUSD });
           break;
         }
 
         case "analyze": {
-          setState({ type: "loading", message: "Analyzing wallet..." });
-          const data = await apiCall("/api/x402/analyze", { wallet_address: address });
+          setState({ type: "loading", message: "Analyzing wallet... (your wallet will sign a micropayment)" });
+          const data = await analyzeWallet(x402Client, address);
           setState({ type: "analysis", data });
           await saveTradeRecord({
             action: "analyze",
@@ -160,8 +205,8 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
 
         case "pnl": {
           const timeframe = intent.timeframe || "30d";
-          setState({ type: "loading", message: `Fetching PnL report (${timeframe})...` });
-          const data = await apiCall("/api/x402/pnl", { wallet_address: address, timeframe });
+          setState({ type: "loading", message: `Fetching PnL report (${timeframe})... (your wallet will sign a micropayment)` });
+          const data = await getPnLReport(x402Client, address, timeframe);
           setState({ type: "pnl", data });
           await saveTradeRecord({
             action: "pnl",
@@ -172,60 +217,25 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
         }
 
         case "orders": {
-          setState({ type: "loading", message: "Fetching limit orders..." });
-          const data = await apiCall("/api/x402/limit-orders", { wallet_address: address });
-          setState({ type: "orders", data: data.orders || [] });
+          setState({ type: "error", message: "Limit orders feature coming soon." });
           break;
         }
 
         case "limit": {
-          if (!intent.fromToken || !intent.targetPrice || !intent.amount) {
-            setState({ type: "error", message: "Could not parse limit order. Try: 'limit buy 0.5 ETH at 3500' or 'limit sell 100 USDC at 3600'" });
-            return;
-          }
-          setState({ type: "loading", message: "Creating limit order..." });
-
-          const fromAddress = getTokenAddress(intent.fromToken);
-          // For limit orders, if no toToken specified or it's USD, default to USDC as the quote token
-          const toTokenSymbol = intent.toToken && intent.toToken !== "USD" ? intent.toToken : "USDC";
-          const toAddress = getTokenAddress(toTokenSymbol);
-
-          if (!fromAddress) {
-            setState({ type: "error", message: `Unknown token: ${intent.fromToken}. Supported: ETH, USDC, USDT, DAI, WETH` });
-            return;
-          }
-
-          if (!toAddress) {
-            setState({ type: "error", message: `Unknown token: ${toTokenSymbol}. Supported: ETH, USDC, USDT, DAI, WETH` });
-            return;
-          }
-
-          const data = await apiCall("/api/x402/limit-order", {
-            wallet_address: address,
-            from_token: fromAddress,
-            to_token: toAddress,
-            amount: intent.amount,
-            target_price: intent.targetPrice,
-            direction: intent.direction || "buy",
-          });
-
-          setState({ type: "limit_created", order: data.order });
-          await saveTradeRecord({
-            action: "limit",
-            inputCommand: cmd,
-            status: "confirmed",
-          });
+          setState({ type: "error", message: "Limit orders feature coming soon." });
           break;
         }
 
         default:
-          setState({ type: "error", message: "Unknown command. Try: 'swap 100 USDC to ETH', 'portfolio', 'analyze', 'pnl', or 'orders'" });
+          setState({ type: "error", message: "Unknown command. Try: 'swap 100 USDC to ETH', 'portfolio', 'balance', or 'price ETH'" });
       }
     } catch (err) {
       console.error("Trade error:", err);
       const message = err instanceof Error ? err.message : "Unknown error";
-      if (message.includes("402") || message.includes("payment")) {
-        setState({ type: "error", message: "Payment required. The x402 API requires micropayments." });
+      if (message.includes("rejected") || message.includes("denied")) {
+        setState({ type: "error", message: "Payment rejected. You cancelled the micropayment signature." });
+      } else if (message.includes("insufficient") || message.includes("balance")) {
+        setState({ type: "error", message: "Insufficient balance for micropayment. Add funds to your wallet." });
       } else if (message.includes("network") || message.includes("fetch")) {
         setState({ type: "error", message: "Network error. Check your connection and try again." });
       } else {
@@ -260,7 +270,6 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
     { label: "Balances", command: "balance", icon: Wallet },
     { label: "Analyze", command: "analyze", icon: BarChart3 },
     { label: "PnL", command: "pnl 30d", icon: LineChart },
-    { label: "Orders", command: "orders", icon: Target },
     { label: "ETH Price", command: "price ETH", icon: TrendingUp },
   ];
 
@@ -271,6 +280,12 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
 
   return (
     <div className="flex flex-col gap-4 p-4 max-w-2xl mx-auto">
+      {/* Micropayments info banner */}
+      <div className="flex items-center gap-2 px-3 py-2 bg-purple-500/10 border border-purple-500/20 rounded-lg text-xs text-purple-300">
+        <DollarSign className="w-4 h-4 flex-shrink-0" />
+        <span>Your wallet signs micropayments for API calls. You pay for your own data — no shared server costs.</span>
+      </div>
+
       {/* Quick action buttons */}
       <div className="flex flex-wrap gap-2">
         {quickCommands.map((qc) => (
@@ -294,7 +309,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
           value={command}
           onChange={(e) => setCommand(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="swap 100 USDC to ETH, analyze, pnl 30d, limit buy 100 USDC at 3500..."
+          placeholder="portfolio, balance, price ETH, swap 100 USDC to ETH..."
           className="flex-1 bg-[#0a0a0a] border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500/50"
           disabled={state.type === "loading" || state.type === "executing"}
           data-testid="input-trade-command"

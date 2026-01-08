@@ -131,9 +131,9 @@ export async function searchToken(
   client: AxiosInstance,
   symbol_or_address: string,
   limit: number = 5
-): Promise<{ results: TokenSearchResult[] }> {
+): Promise<TokenSearchResult[]> {
   const response = await client.post('/api/search_token', { symbol_or_address, limit });
-  return response.data.result;
+  return response.data.result || response.data.results || [];
 }
 
 export async function getTokenPrice(
@@ -142,6 +142,23 @@ export async function getTokenPrice(
   chain: string = 'base'
 ): Promise<{ priceUSD: string }> {
   const response = await client.post('/api/get_token_price', { token_address, chain });
+  return response.data;
+}
+
+export async function analyzeWallet(
+  client: AxiosInstance,
+  wallet_address: string
+): Promise<WalletAnalysis> {
+  const response = await client.post('/api/analyze_wallet', { wallet_address });
+  return response.data;
+}
+
+export async function getPnLReport(
+  client: AxiosInstance,
+  wallet_address: string,
+  timeframe: string = '30d'
+): Promise<PnLReport> {
+  const response = await client.post('/api/get_pnl_report', { wallet_address, timeframe });
   return response.data;
 }
 
