@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useWalletClient, useAccount, useChainId } from "wagmi";
-import { TrendingUp, Wallet, ArrowRight, Loader2, CheckCircle, XCircle, BarChart3, Target, LineChart, DollarSign, Clock } from "lucide-react";
+import { TrendingUp, Wallet, ArrowRight, Loader2, CheckCircle, XCircle, BarChart3, Target, LineChart, DollarSign, Clock, HelpCircle, RotateCcw, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   parseTradeIntent,
   formatUSD,
@@ -41,9 +42,20 @@ type TradeState =
   | { type: "success"; txHash?: string }
   | { type: "error"; message: string };
 
+const COMMAND_HELP = [
+  { cmd: "portfolio", desc: "View your token holdings with USD values", example: "portfolio" },
+  { cmd: "balance", desc: "See all token balances across chains", example: "balance" },
+  { cmd: "price [TOKEN]", desc: "Get current token price", example: "price ETH" },
+  { cmd: "swap [AMT] [FROM] to [TO]", desc: "Get a swap quote", example: "swap 100 USDC to ETH" },
+  { cmd: "analyze", desc: "Analyze your trading patterns", example: "analyze" },
+  { cmd: "pnl [TIMEFRAME]", desc: "View profit/loss report", example: "pnl 30d" },
+];
+
 export function TradeZone({ address, toast }: { address: string; toast: any }) {
   const [command, setCommand] = useState("");
   const [state, setState] = useState<TradeState>({ type: "idle" });
+  const [lastCommand, setLastCommand] = useState<string | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
   const { data: walletClient } = useWalletClient();
   const { address: connectedAddress } = useAccount();
   const chainId = useChainId();
@@ -83,6 +95,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
       return;
     }
 
+    setLastCommand(cmd);
     const intent = parseTradeIntent(cmd);
 
     try {
@@ -258,6 +271,18 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
     setCommand("");
   };
 
+  const handleRetry = () => {
+    if (lastCommand) {
+      setCommand(lastCommand);
+      executeCommand(lastCommand);
+    }
+  };
+
+  const handleHistoryClick = (cmd: string) => {
+    setCommand(cmd);
+    executeCommand(cmd);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -305,6 +330,39 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
       </div>
 
       <div className="flex gap-2">
+        <Popover open={showHelp} onOpenChange={setShowHelp}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-white/10 text-gray-400 hover:text-purple-300 hover:border-purple-500/30"
+              data-testid="button-help"
+            >
+              <HelpCircle className="w-4 h-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80 bg-[#0a0a0a] border-white/10 p-0" align="start">
+            <div className="p-3 border-b border-white/10">
+              <h4 className="font-medium text-white text-sm">Available Commands</h4>
+            </div>
+            <div className="p-2 space-y-1 max-h-64 overflow-y-auto">
+              {COMMAND_HELP.map((help, i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    setCommand(help.example);
+                    setShowHelp(false);
+                  }}
+                  className="w-full text-left p-2 rounded hover:bg-white/5 transition-colors"
+                  data-testid={`button-help-cmd-${i}`}
+                >
+                  <div className="text-xs font-mono text-purple-300">{help.cmd}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">{help.desc}</div>
+                </button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
         <Input
           value={command}
           onChange={(e) => setCommand(e.target.value)}
@@ -339,18 +397,34 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
 
       {state.type === "error" && (
         <Card className="bg-[#0a0a0a] border-red-500/20">
-          <CardContent className="p-4 flex items-center gap-3 text-red-400">
-            <XCircle className="w-5 h-5" />
-            <span>{state.message}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCancel}
-              className="ml-auto text-gray-400 hover:text-white"
-              data-testid="button-dismiss-error"
-            >
-              Dismiss
-            </Button>
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-center gap-3 text-red-400">
+              <XCircle className="w-5 h-5 flex-shrink-0" />
+              <span className="flex-1">{state.message}</span>
+            </div>
+            <div className="flex gap-2 justify-end">
+              {lastCommand && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRetry}
+                  className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10"
+                  data-testid="button-retry"
+                >
+                  <RotateCcw className="w-3 h-3 mr-1" />
+                  Retry
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCancel}
+                className="text-gray-400 hover:text-white"
+                data-testid="button-dismiss-error"
+              >
+                Dismiss
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -675,15 +749,18 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
         <Card className="bg-[#0a0a0a] border-white/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-gray-400 flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              Recent Activity
+              <History className="w-4 h-4" />
+              Command History
+              <span className="text-xs text-gray-600 ml-auto">Click to re-run</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {recentTrades.map((trade) => (
-              <div
+              <button
                 key={trade.id}
-                className="flex items-center justify-between text-sm py-1 border-b border-white/5 last:border-0"
+                onClick={() => trade.inputCommand && handleHistoryClick(trade.inputCommand)}
+                className="w-full flex items-center justify-between text-sm py-2 px-2 rounded border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors text-left"
+                disabled={state.type === "loading" || state.type === "executing"}
                 data-testid={`row-trade-${trade.id}`}
               >
                 <div className="flex items-center gap-2">
@@ -696,7 +773,7 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
                 <span className="text-gray-500 text-xs">
                   {new Date(trade.createdAt).toLocaleDateString()}
                 </span>
-              </div>
+              </button>
             ))}
           </CardContent>
         </Card>
