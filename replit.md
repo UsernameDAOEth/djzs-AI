@@ -214,6 +214,12 @@ shared/
 
 ## Recent Changes
 
+- **Jan 09, 2026**: Trade Zone UX improvements
+  - Added help popover with all available commands and clickable examples
+  - Added retry button in error states to quickly re-run failed commands
+  - Improved error messages for wallet rejection, insufficient balance, network errors
+  - Made command history clickable - click any past command to re-run it
+  - Added "Command History" section with History icon and "Click to re-run" hint
 - **Jan 08, 2026**: Wired Trade Zone to user-pays micropayment model
   - Trade Zone now uses connected wallet directly for x402 micropayments (no server-side wallet needed)
   - User's wallet signs micropayments for API calls - aligns with DJZS philosophy "your data, your costs"
