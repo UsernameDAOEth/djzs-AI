@@ -214,6 +214,12 @@ shared/
 
 ## Recent Changes
 
+- **Jan 10, 2026**: Daily Loop compounding context
+  - Added entry stats: streak tracking (🔥 X days), last entry time, total entries count
+  - AI now receives prior entries for pattern recognition and connection identification
+  - Added "Connection to prior thinking" card in agent response referencing specific prior content
+  - First-time welcome message for new users encourages building the habit
+  - Prior entries fetched before saving current to ensure true historical context
 - **Jan 09, 2026**: Trade Zone UX improvements
   - Added help popover with all available commands and clickable examples
   - Added retry button in error states to quickly re-run failed commands
