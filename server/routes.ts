@@ -667,6 +667,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   const X402_API_BASE = "https://x402-api.heyelsa.ai";
   
+  // Network name to CAIP-2 format mapping
+  const NETWORK_TO_CAIP2: Record<string, string> = {
+    'base': 'eip155:8453',
+    'base-mainnet': 'eip155:8453',
+    'base-sepolia': 'eip155:84532',
+    'ethereum': 'eip155:1',
+    'mainnet': 'eip155:1',
+  };
+  
+  // Normalize network strings in x402 payment requirements to CAIP-2 format
+  function normalizeX402Response(data: string): string {
+    try {
+      const json = JSON.parse(data);
+      if (json.accepts && Array.isArray(json.accepts)) {
+        json.accepts = json.accepts.map((req: any) => {
+          if (req.network && NETWORK_TO_CAIP2[req.network]) {
+            req.network = NETWORK_TO_CAIP2[req.network];
+          }
+          return req;
+        });
+        return JSON.stringify(json);
+      }
+      return data;
+    } catch {
+      return data;
+    }
+  }
+  
   // Transparent proxy for x402 API - passes through ALL responses including 402s
   // This allows client-side x402 library to handle payments with user's wallet
   app.post("/api/x402-proxy/*", async (req, res) => {
@@ -710,8 +738,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Return the response with original status code (including 402)
-      const data = await response.text();
+      // Get response data and normalize network strings for 402 responses
+      let data = await response.text();
+      if (response.status === 402) {
+        data = normalizeX402Response(data);
+      }
+      
       res.status(response.status).send(data);
     } catch (error) {
       console.error("x402 proxy error:", error);

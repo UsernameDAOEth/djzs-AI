@@ -180,8 +180,15 @@ export async function getPortfolio(
   client: AxiosInstance,
   wallet_address: string
 ): Promise<PortfolioResult> {
-  const response = await client.post('/api/get_portfolio', { wallet_address });
-  return response.data;
+  try {
+    console.log('[x402] Calling get_portfolio for', wallet_address);
+    const response = await client.post('/api/get_portfolio', { wallet_address });
+    console.log('[x402] get_portfolio success:', response.status);
+    return response.data;
+  } catch (err: any) {
+    console.error('[x402] get_portfolio error:', err?.message, err?.response?.status, err?.response?.data);
+    throw err;
+  }
 }
 
 export async function getBalances(
@@ -206,8 +213,15 @@ export async function getTokenPrice(
   token_address: string,
   chain: string = 'base'
 ): Promise<{ priceUSD: string }> {
-  const response = await client.post('/api/get_token_price', { token_address, chain });
-  return response.data;
+  try {
+    console.log('[x402] Calling get_token_price for', token_address);
+    const response = await client.post('/api/get_token_price', { token_address, chain });
+    console.log('[x402] get_token_price success:', response.status);
+    return response.data;
+  } catch (err: any) {
+    console.error('[x402] get_token_price error:', err?.message, err?.response?.status, err?.response?.data);
+    throw err;
+  }
 }
 
 export async function analyzeWallet(
