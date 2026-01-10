@@ -74,7 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ==================== X402 PAID INSIGHTS ====================
   // Your receiving wallet address (Base/EVM) - you get paid for insights!
   const DJZS_PAY_TO = process.env.DJZS_PAY_TO_WALLET || "0x3E79E0374383ea64bC16C9B0568C6B13eF084aFB";
-  const X402_NETWORK = process.env.X402_NETWORK || "eip155:84532"; // Base Sepolia for testing
+  const X402_NETWORK = (process.env.X402_NETWORK || "eip155:84532") as `${string}:${string}`; // Base Sepolia for testing
   const X402_FACILITATOR_URL = process.env.X402_FACILITATOR_URL || "https://x402.org/facilitator";
   
   // Create x402 resource server with EVM exact scheme
@@ -110,8 +110,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Text is required. Send {\"text\": \"your journal entry\"}" });
       }
       
-      // Use Venice AI for analysis (same as journal zone)
-      const insight = await analyzeJournalEntry(text);
+      // Use Venice AI for analysis (standalone insight, no prior context)
+      const insight = await analyzeJournalEntry(text, [], []);
       
       res.json({
         ok: true,
