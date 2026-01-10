@@ -67,8 +67,11 @@ import {
   getMemoriesForAgent, 
   pinMemory as pinLocalMemory, 
   forgetMemory,
+  getEntryStats,
+  getRecentEntriesForContext,
   type MemoryPin,
-  type EntryType
+  type EntryType,
+  type EntryStats
 } from "@/lib/vault";
 
 interface JournalAnalysisResult {
@@ -126,6 +129,7 @@ interface AgentResponse {
   matters: string;
   nextMove: string;
   question: string;
+  connectionToPrior?: string;
   memorySuggestion: {
     shouldSuggest: boolean;
     content: string;
@@ -181,6 +185,14 @@ export default function Chat() {
       .then(entries => entries.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 10)),
     [selectedZone]
   );
+  
+  // Local-first: Entry stats (streak, last entry, total count)
+  const [entryStats, setEntryStats] = useState<EntryStats | null>(null);
+  useEffect(() => {
+    if (selectedZone !== "trade") {
+      getEntryStats(selectedZone as EntryType).then(setEntryStats);
+    }
+  }, [selectedZone, localEntries]);
 
   const autoResize = useCallback(() => {
     const textarea = textareaRef.current;
@@ -341,16 +353,23 @@ export default function Chat() {
       // 2. Get pinned memories for context
       const memories = await getMemoriesForAgent();
       
-      // 3. Call agent API
+      // 3. Get recent entries for pattern recognition
+      const priorEntries = await getRecentEntriesForContext(mode, 5);
+      
+      // 4. Call agent API with prior entries
       const res = await apiRequest("POST", "/api/agent/analyze", {
         mode,
         intent: "clarity",
         entry: content,
         pinnedMemory: memories,
+        priorEntries: priorEntries.map(e => ({
+          text: e.text,
+          createdAt: e.createdAt.toISOString(),
+        })),
       });
       const response = await res.json() as AgentResponse;
       
-      // 4. Save insight locally
+      // 5. Save insight locally
       await saveInsight(entryId, mode, {
         said: response.said,
         matters: response.matters,
@@ -749,6 +768,48 @@ export default function Chat() {
             <div className="flex flex-col max-w-3xl w-full mx-auto px-6">
               {/* Writing Area - vertically centered, min 70vh */}
               <div className="flex-1 flex flex-col justify-center min-h-[70vh] py-12">
+                {/* Stats bar - streak, last entry, total */}
+                {entryStats && selectedZone !== "trade" && entryStats.totalEntries > 0 && (
+                  <div className="flex items-center gap-6 mb-6 animate-in fade-in duration-500">
+                    {entryStats.streak > 0 && (
+                      <div className="flex items-center gap-2" data-testid="streak-badge">
+                        <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center">
+                          <span className="text-[10px]">🔥</span>
+                        </div>
+                        <span className="text-[11px] font-black text-orange-400/80 tabular-nums">
+                          {entryStats.streak} day{entryStats.streak !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 text-gray-600" />
+                      <span className="text-[11px] font-medium text-gray-600">
+                        {entryStats.daysSinceLastEntry === 0 
+                          ? "Today" 
+                          : entryStats.daysSinceLastEntry === 1 
+                            ? "Yesterday" 
+                            : `${entryStats.daysSinceLastEntry} days ago`}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="w-3.5 h-3.5 text-gray-600" />
+                      <span className="text-[11px] font-medium text-gray-600">
+                        {entryStats.totalEntries} {entryStats.totalEntries === 1 ? 'entry' : 'entries'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
+                {/* First time welcome */}
+                {entryStats && entryStats.totalEntries === 0 && selectedZone !== "trade" && (
+                  <div className="mb-8 p-4 rounded-2xl bg-purple-500/[0.03] border border-purple-500/10 animate-in fade-in duration-700" data-testid="first-time-welcome">
+                    <p className="text-[11px] font-black text-purple-400/70 uppercase tracking-widest mb-2">First entry</p>
+                    <p className="text-sm text-gray-400 leading-relaxed">
+                      Write whatever's on your mind. The more you return, the more this becomes yours.
+                    </p>
+                  </div>
+                )}
+                
                 {/* Prompt hint */}
                 <p className={`text-purple-300/60 text-sm font-medium mb-6 transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-80'}`}>
                   {currentPrompts[currentPromptIndex]}
@@ -931,6 +992,13 @@ export default function Chat() {
                               <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Why it matters</p>
                               <p className="text-gray-300 leading-relaxed">{agentResponse.matters}</p>
                             </div>
+                            
+                            {agentResponse.connectionToPrior && (
+                              <div className="p-4 rounded-xl bg-blue-500/[0.05] border border-blue-500/20">
+                                <p className="text-[9px] font-black text-blue-400/70 uppercase tracking-widest mb-2">Connection to prior thinking</p>
+                                <p className="text-blue-200/80 leading-relaxed">{agentResponse.connectionToPrior}</p>
+                              </div>
+                            )}
                             
                             {agentResponse.nextMove && (
                               <div>

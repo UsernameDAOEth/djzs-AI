@@ -39,6 +39,10 @@ export const agentInputSchema = z.object({
     kind: memoryKindEnum,
     content: z.string(),
   })).default([]),
+  priorEntries: z.array(z.object({
+    text: z.string(),
+    createdAt: z.string(),
+  })).default([]),
 });
 
 export const agentOutputSchema = z.object({
@@ -46,6 +50,7 @@ export const agentOutputSchema = z.object({
   matters: z.string().max(160),
   nextMove: z.string().max(120),
   question: z.string().max(120),
+  connectionToPrior: z.string().max(200).optional(),
   memorySuggestion: z.object({
     shouldSuggest: z.boolean(),
     content: z.string().max(140),
@@ -95,7 +100,7 @@ const OUTPUT_SCHEMA = {
     schema: {
       type: "object",
       additionalProperties: false,
-      required: ["said", "matters", "nextMove", "question", "memorySuggestion"],
+      required: ["said", "matters", "nextMove", "question", "connectionToPrior", "memorySuggestion"],
       properties: {
         said: { 
           type: "string",
@@ -112,6 +117,10 @@ const OUTPUT_SCHEMA = {
         question: { 
           type: "string",
           description: "One reflective question that invites deeper thinking (max 120 chars)"
+        },
+        connectionToPrior: {
+          type: "string",
+          description: "If prior entries provided, note a specific connection, pattern, or evolution (max 200 chars). Reference the actual content. Empty if no prior entries or no meaningful connection."
         },
         memorySuggestion: {
           type: "object",
@@ -148,9 +157,20 @@ function buildUserPrompt(input: AgentInput): string {
     prompt += "\n";
   }
   
+  if (input.priorEntries.length > 0) {
+    prompt += "## Recent prior entries (for context - look for patterns/connections)\n";
+    input.priorEntries.slice(0, 3).forEach((entry, i) => {
+      const date = new Date(entry.createdAt);
+      const daysAgo = Math.floor((Date.now() - date.getTime()) / (24 * 60 * 60 * 1000));
+      const timeLabel = daysAgo === 0 ? "today" : daysAgo === 1 ? "yesterday" : `${daysAgo} days ago`;
+      const snippet = entry.text.length > 200 ? entry.text.slice(0, 200) + "..." : entry.text;
+      prompt += `[${timeLabel}] ${snippet}\n\n`;
+    });
+  }
+  
   prompt += `## Mode: ${input.mode}\n`;
   prompt += `## Intent: ${input.intent}\n\n`;
-  prompt += `## Entry\n${input.entry}`;
+  prompt += `## Current Entry\n${input.entry}`;
   
   return prompt;
 }
@@ -230,6 +250,7 @@ RESPOND WITH VALID JSON ONLY. Be brief. Say less.
   "matters": "one insight about why this matters (max 160 chars)",
   "nextMove": "one possible next step, or empty if unclear (max 120 chars)",
   "question": "one reflective question (max 120 chars)",
+  "connectionToPrior": "if prior entries provided, note a specific pattern or evolution (max 200 chars). Be concrete. Empty if none.",
   "memorySuggestion": {
     "shouldSuggest": false,
     "content": "",
@@ -240,6 +261,8 @@ RESPOND WITH VALID JSON ONLY. Be brief. Say less.
 Rules:
 - Do not summarize. Reflect what you notice.
 - No advice unless explicitly asked.
+- If prior entries are provided, actively look for recurring themes, evolving questions, or contrasts.
+- connectionToPrior should reference specific content from prior entries (e.g., "You mentioned X two days ago, and now...")
 - shouldSuggest = true only for repeated personal patterns or core values. Almost never.
 - Prefer short sentences. When in doubt, say less.`;
 

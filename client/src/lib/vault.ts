@@ -195,3 +195,84 @@ export async function getRecentTrades(limit: number = 10): Promise<TradeRecord[]
     .limit(limit)
     .toArray();
 }
+
+export interface EntryStats {
+  totalEntries: number;
+  streak: number;
+  lastEntryDate: Date | null;
+  daysSinceLastEntry: number | null;
+}
+
+export async function getEntryStats(type: EntryType): Promise<EntryStats> {
+  const entries = await vault.entries
+    .where('type')
+    .equals(type)
+    .toArray();
+  
+  if (entries.length === 0) {
+    return { totalEntries: 0, streak: 0, lastEntryDate: null, daysSinceLastEntry: null };
+  }
+  
+  const sortedDates = entries
+    .map(e => new Date(e.createdAt))
+    .sort((a, b) => b.getTime() - a.getTime());
+  
+  const lastEntryDate = sortedDates[0];
+  const now = new Date();
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const daysSinceLastEntry = Math.floor((now.getTime() - lastEntryDate.getTime()) / msPerDay);
+  
+  const uniqueDays = new Set<string>();
+  sortedDates.forEach(d => {
+    uniqueDays.add(d.toISOString().split('T')[0]);
+  });
+  
+  const sortedUniqueDays = Array.from(uniqueDays).sort((a, b) => b.localeCompare(a));
+  
+  let streak = 0;
+  const today = new Date().toISOString().split('T')[0];
+  const yesterday = new Date(Date.now() - msPerDay).toISOString().split('T')[0];
+  
+  const startDay = sortedUniqueDays[0];
+  if (startDay !== today && startDay !== yesterday) {
+    streak = 0;
+  } else {
+    for (let i = 0; i < sortedUniqueDays.length; i++) {
+      const currentDay = sortedUniqueDays[i];
+      const expectedDay = new Date(Date.now() - i * msPerDay).toISOString().split('T')[0];
+      
+      if (i === 0 && currentDay !== today && currentDay === yesterday) {
+        const adjustedExpected = new Date(Date.now() - (i + 1) * msPerDay).toISOString().split('T')[0];
+        if (currentDay === adjustedExpected || currentDay === yesterday) {
+          streak++;
+          continue;
+        }
+      }
+      
+      if (currentDay === expectedDay) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+  }
+  
+  return {
+    totalEntries: entries.length,
+    streak,
+    lastEntryDate,
+    daysSinceLastEntry,
+  };
+}
+
+export async function getRecentEntriesForContext(type: EntryType, limit: number = 5): Promise<Array<{ text: string; createdAt: Date }>> {
+  const entries = await vault.entries
+    .where('type')
+    .equals(type)
+    .toArray();
+  
+  return entries
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, limit)
+    .map(e => ({ text: e.text, createdAt: e.createdAt }));
+}
