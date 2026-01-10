@@ -609,9 +609,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   const X402_API_BASE = "https://x402-api.heyelsa.ai";
   
-  // Helper for x402 API calls - passes through to API
-  // Note: x402 API requires micropayments. Without payment, calls return 402.
-  // For now, we'll try the call and surface appropriate errors.
+  // Transparent proxy for x402 API - passes through ALL responses including 402s
+  // This allows client-side x402 library to handle payments with user's wallet
+  app.post("/api/x402-proxy/*", async (req, res) => {
+    try {
+      const targetPath = req.path.replace("/api/x402-proxy", "");
+      const targetUrl = `${X402_API_BASE}${targetPath}`;
+      
+      // Forward all headers from client that might contain payment info
+      const forwardHeaders: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      
+      // Forward x402 payment headers from client
+      const headersToForward = ["x-402-payment", "authorization"];
+      for (const header of headersToForward) {
+        const value = req.headers[header];
+        if (value && typeof value === "string") {
+          forwardHeaders[header] = value;
+        }
+      }
+      
+      const response = await fetch(targetUrl, {
+        method: "POST",
+        headers: forwardHeaders,
+        body: JSON.stringify(req.body),
+      });
+      
+      // Pass through ALL response headers (especially x402 payment requirement headers)
+      const headersToPassBack = [
+        "x-402-version",
+        "x-402-payment-requirements", 
+        "www-authenticate",
+        "content-type"
+      ];
+      
+      for (const header of headersToPassBack) {
+        const value = response.headers.get(header);
+        if (value) {
+          res.setHeader(header, value);
+        }
+      }
+      
+      // Return the response with original status code (including 402)
+      const data = await response.text();
+      res.status(response.status).send(data);
+    } catch (error) {
+      console.error("x402 proxy error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Proxy error" });
+    }
+  });
+  
+  // Helper for server-side x402 API calls (for routes that don't need client payment)
   async function x402Fetch(endpoint: string, body: object) {
     const response = await fetch(`${X402_API_BASE}${endpoint}`, {
       method: "POST",
@@ -620,7 +669,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
     
     if (response.status === 402) {
-      throw new Error("Payment required. The x402 API requires micropayments. To enable this, add a funded PRIVATE_KEY to your secrets or configure a CDP facilitator.");
+      throw new Error("Payment required. The x402 API requires micropayments.");
     }
     
     if (!response.ok) {

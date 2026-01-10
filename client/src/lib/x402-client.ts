@@ -3,7 +3,8 @@ import { ExactEvmScheme } from '@x402/evm';
 import axios, { AxiosInstance } from 'axios';
 import { type WalletClient } from 'viem';
 
-const X402_API_BASE = 'https://x402-api.heyelsa.ai';
+// Use local proxy to avoid CORS issues - proxy forwards to x402-api.heyelsa.ai
+const X402_API_BASE = '/api/x402-proxy';
 
 const NETWORK_ALIASES: Record<string, string> = {
   'base': 'eip155:8453',
