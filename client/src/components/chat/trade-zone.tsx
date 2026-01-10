@@ -245,14 +245,24 @@ export function TradeZone({ address, toast }: { address: string; toast: any }) {
     } catch (err) {
       console.error("Trade error:", err);
       const message = err instanceof Error ? err.message : "Unknown error";
-      if (message.includes("rejected") || message.includes("denied")) {
+      const lowerMsg = message.toLowerCase();
+      
+      if (lowerMsg.includes("rejected") || lowerMsg.includes("denied") || lowerMsg.includes("user refused")) {
         setState({ type: "error", message: "Payment rejected. You cancelled the micropayment signature." });
-      } else if (message.includes("insufficient") || message.includes("balance")) {
-        setState({ type: "error", message: "Insufficient balance for micropayment. Add funds to your wallet." });
-      } else if (message.includes("network") || message.includes("fetch")) {
-        setState({ type: "error", message: "Network error. Check your connection and try again." });
+      } else if (lowerMsg.includes("insufficient") || lowerMsg.includes("balance")) {
+        setState({ type: "error", message: "Insufficient USDC balance for micropayment. Add USDC to your wallet on Base." });
+      } else if (lowerMsg.includes("402") || lowerMsg.includes("payment required")) {
+        setState({ type: "error", message: "Payment required but could not be processed. Ensure you have USDC on Base network." });
+      } else if (lowerMsg.includes("wrong chain") || lowerMsg.includes("unsupported chain") || lowerMsg.includes("expected eip155") || lowerMsg.includes("chain mismatch")) {
+        setState({ type: "error", message: "Wrong network. Please switch to Base mainnet in your wallet." });
+      } else if (lowerMsg.includes("timeout") || lowerMsg.includes("timed out")) {
+        setState({ type: "error", message: "Request timed out. The API may be slow, try again." });
+      } else if (lowerMsg === "network error" || lowerMsg.includes("failed to fetch") || lowerMsg.includes("fetch failed")) {
+        setState({ type: "error", message: "Connection failed. Check your internet and try again." });
+      } else if (lowerMsg.includes("usdc") || lowerMsg.includes("token")) {
+        setState({ type: "error", message: `Token error: ${message}` });
       } else {
-        setState({ type: "error", message });
+        setState({ type: "error", message: message.slice(0, 200) });
       }
     }
   };

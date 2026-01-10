@@ -699,7 +699,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "x-402-version",
         "x-402-payment-requirements", 
         "www-authenticate",
-        "content-type"
+        "content-type",
+        "payment-required"
       ];
       
       for (const header of headersToPassBack) {
