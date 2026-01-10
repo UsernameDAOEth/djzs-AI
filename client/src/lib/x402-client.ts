@@ -1,9 +1,30 @@
-import { wrapAxiosWithPaymentFromConfig } from '@x402/axios';
+import { wrapAxiosWithPaymentFromConfig, type PaymentPolicy, type PaymentRequirements } from '@x402/axios';
 import { ExactEvmScheme } from '@x402/evm';
 import axios, { AxiosInstance } from 'axios';
 import { type WalletClient } from 'viem';
 
 const X402_API_BASE = 'https://x402-api.heyelsa.ai';
+
+const NETWORK_ALIASES: Record<string, string> = {
+  'base': 'eip155:8453',
+  'base-mainnet': 'eip155:8453',
+  'base-sepolia': 'eip155:84532',
+  'ethereum': 'eip155:1',
+  'mainnet': 'eip155:1',
+};
+
+const networkNormalizationPolicy: PaymentPolicy = (
+  _x402Version: number,
+  paymentRequirements: PaymentRequirements[]
+): PaymentRequirements[] => {
+  return paymentRequirements.map(req => {
+    const normalizedNetwork = NETWORK_ALIASES[req.network] || req.network;
+    return {
+      ...req,
+      network: normalizedNetwork as PaymentRequirements['network'],
+    };
+  });
+};
 
 function createWalletClientSigner(walletClient: WalletClient) {
   if (!walletClient.account) {
@@ -113,11 +134,17 @@ export function createX402Client(walletClient: WalletClient): AxiosInstance {
   return wrapAxiosWithPaymentFromConfig(baseClient, {
     schemes: [
       {
-        network: 'eip155:*',
+        network: 'eip155:8453',
         client: new ExactEvmScheme(signer as any),
         x402Version: 1,
       },
+      {
+        network: 'eip155:*',
+        client: new ExactEvmScheme(signer as any),
+        x402Version: 2,
+      },
     ],
+    policies: [networkNormalizationPolicy],
   });
 }
 
