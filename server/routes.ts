@@ -676,8 +676,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     'mainnet': 'eip155:1',
   };
   
-  // Normalize network strings in x402 payment requirements to CAIP-2 format
-  function normalizeX402Response(data: string): string {
+  // Normalize network strings and return parsed JSON for header synthesis
+  function normalizeX402PaymentRequirements(data: string): { json: any; normalized: string } | null {
     try {
       const json = JSON.parse(data);
       if (json.accepts && Array.isArray(json.accepts)) {
@@ -687,16 +687,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
           return req;
         });
-        return JSON.stringify(json);
+        return { json, normalized: JSON.stringify(json) };
       }
-      return data;
+      return { json, normalized: data };
     } catch {
-      return data;
+      return null;
     }
   }
   
   // Transparent proxy for x402 API - passes through ALL responses including 402s
-  // This allows client-side x402 library to handle payments with user's wallet
+  // For 402 responses, synthesizes x-402 headers from JSON body since @x402/axios looks for headers
   app.post("/api/x402-proxy/*", async (req, res) => {
     try {
       const targetPath = req.path.replace("/api/x402-proxy", "");
@@ -707,8 +707,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "Content-Type": "application/json",
       };
       
-      // Forward x402 payment headers from client
-      const headersToForward = ["x-402-payment", "authorization"];
+      // Forward x402 payment headers from client (x-payment is the header used by x402 protocol)
+      const headersToForward = ["x-payment", "x-402-payment", "authorization"];
       for (const header of headersToForward) {
         const value = req.headers[header];
         if (value && typeof value === "string") {
@@ -722,7 +722,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         body: JSON.stringify(req.body),
       });
       
-      // Pass through ALL response headers (especially x402 payment requirement headers)
+      // Get response data
+      let data = await response.text();
+      
+      // For 402 responses, synthesize x-402 headers from the JSON body
+      // The @x402/axios wrapper looks for payment requirements in headers, not body
+      if (response.status === 402) {
+        const parsed = normalizeX402PaymentRequirements(data);
+        if (parsed) {
+          // Set the x-402-version header from the response body
+          if (parsed.json.x402Version) {
+            res.setHeader("x-402-version", String(parsed.json.x402Version));
+          }
+          
+          // Synthesize the payment-requirements header from the accepts array
+          if (parsed.json.accepts && Array.isArray(parsed.json.accepts)) {
+            res.setHeader("x-402-payment-requirements", JSON.stringify(parsed.json.accepts));
+          }
+          
+          // Set content-type
+          res.setHeader("content-type", "application/json");
+          
+          // Send the normalized body
+          return res.status(402).send(parsed.normalized);
+        }
+      }
+      
+      // For non-402 responses, pass through headers normally
       const headersToPassBack = [
         "x-402-version",
         "x-402-payment-requirements", 
@@ -736,12 +762,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (value) {
           res.setHeader(header, value);
         }
-      }
-      
-      // Get response data and normalize network strings for 402 responses
-      let data = await response.text();
-      if (response.status === 402) {
-        data = normalizeX402Response(data);
       }
       
       res.status(response.status).send(data);
