@@ -346,17 +346,17 @@ export default function Chat() {
   // NEW: Think with me - local-first agent analysis
   const thinkWithMe = useMutation({
     mutationFn: async ({ content, mode }: { content: string; mode: EntryType }) => {
-      // 1. Save entry locally first
-      const entryId = await saveEntry(mode, content);
-      setLastEntryId(entryId);
+      // 1. Get prior entries BEFORE saving current (to get true history)
+      const priorEntries = await getRecentEntriesForContext(mode, 5);
       
       // 2. Get pinned memories for context
       const memories = await getMemoriesForAgent();
       
-      // 3. Get recent entries for pattern recognition
-      const priorEntries = await getRecentEntriesForContext(mode, 5);
+      // 3. Save entry locally
+      const entryId = await saveEntry(mode, content);
+      setLastEntryId(entryId);
       
-      // 4. Call agent API with prior entries
+      // 4. Call agent API with prior entries (excludes current entry)
       const res = await apiRequest("POST", "/api/agent/analyze", {
         mode,
         intent: "clarity",
