@@ -1,0 +1,110 @@
+I can see what’s happening: the Trade chat is firing a request, and your app is throwing a generic “Network error” toast. That means the browser didn’t get a clean response (or the fetch was blocked) — it’s not telling you which request failed yet.
+
+Step 1 — Find the exact failing request (takes 60 seconds)
+	1.	Open DevTools → Network
+	2.	Click Retry
+	3.	In Network, filter to Fetch/XHR
+	4.	Click the red request and look at:
+	•	Request URL
+	•	Status code (or “(failed)”)
+	•	Response body (if any)
+	5.	Also check Console for a CORS error.
+
+That one screen will tell us the real reason.
+
+⸻
+
+Most common causes + the fix (pick what matches what you see)
+
+A) CORS error in Console (very common)
+
+You’ll see something like: “blocked by CORS policy”.
+
+Fix
+	•	If your frontend is calling a different domain (Replit / API host), your API must return:
+	•	Access-Control-Allow-Origin: https://dj-z-s.box
+	•	Access-Control-Allow-Headers: content-type, authorization, x-...
+	•	Best fix: call your API via the same origin (/api/...) and proxy internally (or deploy API on the same domain).
+
+⸻
+
+B) Network shows (failed) / ERR_NAME_NOT_RESOLVED / ERR_CONNECTION_REFUSED
+
+That means the API hostname is wrong, down, sleeping, or blocked.
+
+Fix
+	•	In your code/env, confirm your API base URL is correct in production.
+	•	If you’re using Replit for the backend, it may be asleep or not publicly reachable from your custom domain.
+	•	Ensure the backend has a /healthz route and try opening it directly in a new tab.
+
+⸻
+
+C) Status 404 (route not found)
+
+Your frontend is calling an endpoint that doesn’t exist in prod.
+
+Fix
+	•	Confirm the route path (/api/trade, /api/pnl, etc.) matches what your server actually serves.
+	•	If you changed routes locally, redeploy backend + frontend together.
+
+⸻
+
+D) Status 401/403 (auth)
+
+The API is rejecting the call (missing API key, wallet auth, session token).
+
+Fix
+	•	Make sure your prod env variables exist (and in Vite, client vars must be VITE_...).
+	•	If you rely on wallet auth headers, confirm they’re actually being attached in prod.
+
+⸻
+
+E) Status 402 Payment Required (x402 / micropayments path)
+
+Since your UI says “wallet signs micropayments for API calls,” this might be it.
+
+Fix
+	•	Your client must handle the 402 challenge flow (receive payment request → sign/pay → retry).
+	•	Common breakpoints:
+	•	wrong chain/network
+	•	no balance to pay
+	•	payment receiver address not set
+	•	your server isn’t returning the expected 402 challenge format, so the client treats it like a network failure
+
+⸻
+
+Quick improvement you should add (so you never get “Network error” again)
+
+Right now your toast is hiding the real reason. Update your fetch wrapper to surface:
+	•	status code
+	•	endpoint
+	•	response text (first ~200 chars)
+
+Example pattern:
+
+async function safeFetch(url: string, opts?: RequestInit) {
+  try {
+    const res = await fetch(url, opts);
+    const text = await res.text();
+
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText} • ${url} • ${text.slice(0, 200)}`);
+    }
+
+    return text ? JSON.parse(text) : null;
+  } catch (err: any) {
+    throw new Error(err?.message || `Network error • ${url}`);
+  }
+}
+
+Then your toast will show the exact failure (CORS/402/401/500/etc.).
+
+⸻
+
+If you paste me just these 2 things, I can tell you the exact fix
+
+From DevTools after you hit Retry:
+	1.	the Request URL
+	2.	the Status (or the Console CORS message)
+
+No guessing after that — we’ll pin it down immediately.
