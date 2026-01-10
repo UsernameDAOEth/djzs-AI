@@ -1,4 +1,4 @@
-import { wrapAxiosWithPayment, x402Client } from '@x402/axios';
+import { wrapAxiosWithPaymentFromConfig } from '@x402/axios';
 import { ExactEvmScheme } from '@x402/evm';
 import axios, { AxiosInstance } from 'axios';
 import { type WalletClient } from 'viem';
@@ -109,10 +109,16 @@ export function createX402Client(walletClient: WalletClient): AxiosInstance {
   });
   
   const signer = createWalletClientSigner(walletClient);
-  const client = new x402Client()
-    .register('eip155:*', new ExactEvmScheme(signer as any));
   
-  return wrapAxiosWithPayment(baseClient, client);
+  return wrapAxiosWithPaymentFromConfig(baseClient, {
+    schemes: [
+      {
+        network: 'eip155:*',
+        client: new ExactEvmScheme(signer as any),
+        x402Version: 1,
+      },
+    ],
+  });
 }
 
 export async function getSwapQuote(
