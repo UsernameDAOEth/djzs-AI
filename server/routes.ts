@@ -6,6 +6,9 @@ import { z } from "zod";
 import { verifyMessage } from "viem";
 import { analyzeJournalEntry, analyzeResearchEntry } from "./venice";
 import { analyzeWithAgent, agentInputSchema } from "./agent.api";
+import { paymentMiddleware, x402ResourceServer } from "@x402/express";
+import { ExactEvmScheme } from "@x402/evm/exact/server";
+import { HTTPFacilitatorClient } from "@x402/core/server";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -68,6 +71,61 @@ async function verifyAdminAction(adminAddress: string, signature: string, messag
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // ==================== X402 PAID INSIGHTS ====================
+  // Your receiving wallet address (Base/EVM) - you get paid for insights!
+  const DJZS_PAY_TO = process.env.DJZS_PAY_TO_WALLET || "0x3E79E0374383ea64bC16C9B0568C6B13eF084aFB";
+  const X402_NETWORK = process.env.X402_NETWORK || "eip155:84532"; // Base Sepolia for testing
+  const X402_FACILITATOR_URL = process.env.X402_FACILITATOR_URL || "https://x402.org/facilitator";
+  
+  // Create x402 resource server with EVM exact scheme
+  const facilitatorClient = new HTTPFacilitatorClient({ url: X402_FACILITATOR_URL });
+  const x402Server = new x402ResourceServer(facilitatorClient).register(X402_NETWORK, new ExactEvmScheme());
+  
+  // Apply x402 paywall middleware for paid endpoints
+  app.use(
+    paymentMiddleware(
+      {
+        "POST /djzs/insight": {
+          accepts: [
+            {
+              scheme: "exact",
+              price: "$0.02",
+              network: X402_NETWORK,
+              payTo: DJZS_PAY_TO as `0x${string}`,
+            }
+          ],
+          description: "DJZS: Generate an AI insight from your journal entry",
+          mimeType: "application/json",
+        }
+      },
+      x402Server
+    )
+  );
+  
+  // Paid insight endpoint - only runs after payment is verified
+  app.post("/djzs/insight", async (req, res) => {
+    try {
+      const text = String(req.body?.text ?? "").trim().slice(0, 2000);
+      if (!text) {
+        return res.status(400).json({ error: "Text is required. Send {\"text\": \"your journal entry\"}" });
+      }
+      
+      // Use Venice AI for analysis (same as journal zone)
+      const insight = await analyzeJournalEntry(text);
+      
+      res.json({
+        ok: true,
+        inputPreview: text.slice(0, 100) + (text.length > 100 ? "..." : ""),
+        insight,
+        paidAmount: "$0.02",
+        network: X402_NETWORK,
+      });
+    } catch (error) {
+      console.error("Paid insight error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to generate insight" });
+    }
+  });
+  
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true, timestamp: Date.now(), service: "DJZS Chat API" });
   });

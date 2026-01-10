@@ -54,6 +54,7 @@
     "@x402/axios": "^2.2.0",
     "@x402/core": "^2.2.0",
     "@x402/evm": "^2.2.0",
+    "@x402/express": "^2.2.0",
     "@xmtp/agent-sdk": "^1.1.15",
     "@xmtp/browser-sdk": "^5.1.0",
     "@xmtp/content-type-text": "^2.0.2",
