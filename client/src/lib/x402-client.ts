@@ -1,9 +1,36 @@
-import { withPaymentInterceptor } from 'x402-axios';
+import { wrapAxiosWithPayment, x402Client } from '@x402/axios';
+import { ExactEvmScheme } from '@x402/evm';
 import axios, { AxiosInstance } from 'axios';
 import { type WalletClient } from 'viem';
 
 const X402_API_BASE = 'https://x402-api.heyelsa.ai';
-const FACILITATOR_URL = 'https://facilitator.heyelsa.build';
+
+function createWalletClientSigner(walletClient: WalletClient) {
+  if (!walletClient.account) {
+    throw new Error('Wallet not connected');
+  }
+  
+  const account = walletClient.account;
+  
+  return {
+    address: account.address,
+    
+    signTypedData: async (params: {
+      domain: Record<string, unknown>;
+      types: Record<string, unknown>;
+      primaryType: string;
+      message: Record<string, unknown>;
+    }) => {
+      return walletClient.signTypedData({
+        account,
+        domain: params.domain as any,
+        types: params.types as any,
+        primaryType: params.primaryType,
+        message: params.message as any,
+      });
+    },
+  };
+}
 
 export interface SwapQuote {
   from_amount: string;
@@ -81,7 +108,11 @@ export function createX402Client(walletClient: WalletClient): AxiosInstance {
     },
   });
   
-  return withPaymentInterceptor(baseClient, walletClient as any);
+  const signer = createWalletClientSigner(walletClient);
+  const client = new x402Client()
+    .register('eip155:*', new ExactEvmScheme(signer as any));
+  
+  return wrapAxiosWithPayment(baseClient, client);
 }
 
 export async function getSwapQuote(

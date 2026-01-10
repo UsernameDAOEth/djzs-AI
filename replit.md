@@ -214,6 +214,11 @@ shared/
 
 ## Recent Changes
 
+- **Jan 10, 2026**: Upgraded Trade Zone to x402 V2 protocol
+  - Migrated from `x402-axios` to `@x402/axios` and `@x402/evm` V2 packages
+  - Implemented browser wallet signer adapter for x402 V2 (wraps wagmi WalletClient for signTypedData)
+  - Uses `ExactEvmScheme` with CAIP-2 wildcard network (`eip155:*`) for Base chain support
+  - V2 protocol uses EIP-3009 TransferWithAuthorization for gasless USDC micropayments
 - **Jan 10, 2026**: Daily Loop compounding context
   - Added entry stats: streak tracking (🔥 X days), last entry time, total entries count
   - AI now receives prior entries for pattern recognition and connection identification
