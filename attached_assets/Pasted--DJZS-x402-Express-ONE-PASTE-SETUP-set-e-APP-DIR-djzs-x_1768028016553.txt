@@ -1,0 +1,107 @@
+# --- DJZS x402 Express (ONE-PASTE SETUP) ---
+set -e
+
+APP_DIR="djzs-x402-express"
+mkdir -p "$APP_DIR"
+cd "$APP_DIR"
+
+cat > package.json <<'JSON'
+{
+  "name": "djzs-x402-express",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "@x402/express": "^2.0.0",
+    "@x402/core": "^2.0.0",
+    "@x402/evm": "^2.0.0"
+  }
+}
+JSON
+
+npm install
+
+cat > server.mjs <<'JS'
+import express from "express";
+import { paymentMiddleware, x402ResourceServer } from "@x402/express";
+import { ExactEvmScheme } from "@x402/evm/exact/server";
+import { HTTPFacilitatorClient } from "@x402/core/server";
+
+const app = express();
+app.use(express.json());
+
+// ✅ Your receiving wallet address (Base/EVM)
+const payTo = "0x3E79E0374383ea64bC16C9B0568C6B13eF084aFB";
+
+// Defaults: Base Sepolia testnet + public facilitator (safe to test)
+const NETWORK = process.env.X402_NETWORK ?? "eip155:84532"; // Base Sepolia (CAIP-2)
+const FACILITATOR_URL = process.env.X402_FACILITATOR_URL ?? "https://x402.org/facilitator";
+const PORT = Number(process.env.PORT ?? 4021);
+
+// Create facilitator client + resource server and register EVM exact scheme
+const facilitatorClient = new HTTPFacilitatorClient({ url: FACILITATOR_URL });
+const server = new x402ResourceServer(facilitatorClient).register(NETWORK, new ExactEvmScheme());
+
+// x402 paywall config (you get paid because payTo = your wallet)
+app.use(
+  paymentMiddleware(
+    {
+      "POST /djzs/insight": {
+        accepts: [
+          {
+            scheme: "exact",
+            price: "$0.02",          // 2 cents (USDC amount in dollars)
+            network: NETWORK,
+            payTo
+          }
+        ],
+        description: "DJZS: Generate an insight from a journal entry",
+        mimeType: "application/json",
+        // Optional: discovery metadata
+        extensions: {
+          bazaar: {
+            discoverable: true,
+            category: "ai",
+            tags: ["djzs", "journaling", "insight"]
+          }
+        }
+      }
+    },
+    server
+  )
+);
+
+// Your paid endpoint (only runs AFTER payment is verified/settled)
+app.post("/djzs/insight", (req, res) => {
+  const text = String(req.body?.text ?? "");
+  const trimmed = text.trim().slice(0, 280);
+
+  res.json({
+    ok: true,
+    inputPreview: trimmed,
+    insight: trimmed
+      ? `Insight: Your entry suggests a clear theme. Next action: extract 3 bullet takeaways + 1 decision.`
+      : `Send {"text": "..."} to generate an insight.`
+  });
+});
+
+app.get("/", (_req, res) => {
+  res.type("text").send("DJZS x402 server up. POST /djzs/insight");
+});
+
+app.listen(PORT, () => {
+  console.log("✅ DJZS x402 server running:");
+  console.log(`   http://localhost:${PORT}`);
+  console.log(`   NETWORK=${NETWORK}`);
+  console.log(`   FACILITATOR_URL=${FACILITATOR_URL}`);
+  console.log(`   payTo=${payTo}`);
+});
+JS
+
+echo ""
+echo "✅ Installed. Starting server..."
+npm run start
