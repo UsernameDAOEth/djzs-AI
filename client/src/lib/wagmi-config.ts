@@ -22,9 +22,15 @@ export const USDC_ADDRESS: Record<number, `0x${string}`> = {
   84532: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
 };
 
+// Get WalletConnect projectId - required for WalletConnect to work
+const walletConnectProjectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
+if (!walletConnectProjectId) {
+  console.warn("VITE_WALLETCONNECT_PROJECT_ID not set - WalletConnect may not work properly");
+}
+
 export const wagmiConfig = getDefaultConfig({
   appName: "DJZS Chat",
-  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "djzs-chat",
+  projectId: walletConnectProjectId || "placeholder-project-id",
   chains: [base, baseSepolia],
   transports: {
     [base.id]: http(import.meta.env.VITE_RPC_URL || undefined),
