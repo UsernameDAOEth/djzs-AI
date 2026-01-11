@@ -776,12 +776,12 @@ export default function Chat() {
             {selectedZone === "trade" ? (
               <TradeZone address={address || ""} toast={toast} />
             ) : (
-            <div className="flex flex-col max-w-3xl w-full mx-auto px-6">
+            <div className="flex flex-col max-w-3xl w-full mx-auto px-3 sm:px-6">
               {/* Writing Area - vertically centered, min 70vh */}
               <div className="flex-1 flex flex-col justify-center min-h-[70vh] py-12">
                 {/* Stats bar - streak, last entry, total */}
                 {entryStats && selectedZone !== "trade" && entryStats.totalEntries > 0 && (
-                  <div className="flex items-center gap-6 mb-6 animate-in fade-in duration-500">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-6 mb-6 animate-in fade-in duration-500">
                     {entryStats.streak > 0 && (
                       <div className="flex items-center gap-2" data-testid="streak-badge">
                         <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center">
@@ -813,16 +813,16 @@ export default function Chat() {
                 
                 {/* First time welcome */}
                 {entryStats && entryStats.totalEntries === 0 && selectedZone !== "trade" && (
-                  <div className="mb-8 p-4 rounded-2xl bg-purple-500/[0.03] border border-purple-500/10 animate-in fade-in duration-700" data-testid="first-time-welcome">
-                    <p className="text-[11px] font-black text-purple-400/70 uppercase tracking-widest mb-2">First entry</p>
-                    <p className="text-sm text-gray-400 leading-relaxed">
+                  <div className="mb-6 sm:mb-8 p-3 sm:p-4 rounded-2xl bg-purple-500/[0.03] border border-purple-500/10 animate-in fade-in duration-700" data-testid="first-time-welcome">
+                    <p className="text-[10px] sm:text-[11px] font-black text-purple-400/70 uppercase tracking-widest mb-2">First entry</p>
+                    <p className="text-xs sm:text-sm text-gray-400 leading-relaxed break-words">
                       Write whatever's on your mind. The more you return, the more this becomes yours.
                     </p>
                   </div>
                 )}
                 
                 {/* Prompt hint */}
-                <p className={`text-purple-300/60 text-sm font-medium mb-6 transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-80'}`}>
+                <p className={`text-purple-300/60 text-xs sm:text-sm font-medium mb-6 transition-opacity duration-500 break-words ${isFocused ? 'opacity-100' : 'opacity-80'}`}>
                   {currentPrompts[currentPromptIndex]}
                 </p>
                 
@@ -840,7 +840,7 @@ export default function Chat() {
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     placeholder="Write what you're thinking. No formatting. No pressure."
-                    className="w-full bg-transparent border-none outline-none focus:ring-0 text-xl font-medium text-white placeholder:text-gray-500 resize-none leading-[1.8] tracking-tight p-6 overflow-hidden"
+                    className="w-full bg-transparent border-none outline-none focus:ring-0 text-base sm:text-xl font-medium text-white placeholder:text-gray-500 placeholder:break-words resize-none leading-[1.8] tracking-tight p-3 sm:p-6 overflow-hidden"
                     style={{ 
                       minHeight: frozenHeight ? undefined : 'max(200px, calc(60vh - 100px))',
                       height: frozenHeight ? `${frozenHeight}px` : 'auto'
@@ -850,40 +850,41 @@ export default function Chat() {
                 </div>
 
                 {/* Action bar - persistent footer */}
-                <div className={`flex items-center justify-between mt-8 py-4 border-t border-white/[0.05] transition-all duration-500 ${isFocused ? 'opacity-100 translate-y-0' : 'opacity-70 translate-y-1'}`}>
-                  <div className="flex items-center gap-8">
-                    <div className="flex items-center gap-6">
-                      <div className="flex items-center gap-2 group cursor-default">
-                        <kbd className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[9px] font-black text-gray-400 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">Enter</kbd>
-                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">Commit</span>
+                <div className={`flex flex-wrap items-center justify-between gap-4 mt-6 sm:mt-8 py-4 border-t border-white/[0.05] transition-all duration-500 ${isFocused ? 'opacity-100 translate-y-0' : 'opacity-70 translate-y-1'}`}>
+                  <div className="flex flex-wrap items-center gap-4 sm:gap-8">
+                    <div className="flex items-center gap-3 sm:gap-6">
+                      <div className="flex items-center gap-1.5 sm:gap-2 group cursor-default">
+                        <kbd className="px-1.5 sm:px-2 py-1 rounded bg-white/5 border border-white/10 text-[8px] sm:text-[9px] font-black text-gray-400 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">Enter</kbd>
+                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">Commit</span>
                       </div>
-                      <div className="flex items-center gap-2 group cursor-default">
-                        <kbd className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[9px] font-black text-gray-400 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">⌘ Enter</kbd>
-                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">Analyze</span>
+                      <div className="flex items-center gap-1.5 sm:gap-2 group cursor-default">
+                        <kbd className="px-1.5 sm:px-2 py-1 rounded bg-white/5 border border-white/10 text-[8px] sm:text-[9px] font-black text-gray-400 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">⌘ Enter</kbd>
+                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">Analyze</span>
                       </div>
                     </div>
                     
-                    <div className="h-4 w-px bg-white/10" />
+                    <div className="hidden sm:block h-4 w-px bg-white/10" />
                     
                     <div className="flex items-center gap-2">
                       <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${messageInput.length > 0 ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'bg-gray-800'}`} />
-                      <span className={`text-[10px] font-black tabular-nums tracking-widest transition-colors ${messageInput.length > 0 ? 'text-gray-400' : 'text-gray-700'}`}>
-                        {messageInput.length.toLocaleString()} <span className="text-[8px] opacity-50">CHARS</span>
+                      <span className={`text-[9px] sm:text-[10px] font-black tabular-nums tracking-widest transition-colors ${messageInput.length > 0 ? 'text-gray-400' : 'text-gray-700'}`}>
+                        {messageInput.length.toLocaleString()} <span className="text-[7px] sm:text-[8px] opacity-50">CHARS</span>
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 sm:gap-4">
                     <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
                       <DialogTrigger asChild>
                         <Button
                           disabled={!messageInput.trim()}
                           variant="ghost"
-                          className="h-10 px-4 rounded-xl font-bold text-[11px] uppercase tracking-widest text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all active:scale-95"
+                          className="h-8 sm:h-10 px-2 sm:px-4 rounded-xl font-bold text-[10px] sm:text-[11px] uppercase tracking-widest text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all active:scale-95"
                           data-testid="button-pin"
                         >
-                          <Pin className="w-3.5 h-3.5 mr-2" />
-                          Pin Pattern
+                          <Pin className="w-3 sm:w-3.5 h-3 sm:h-3.5 mr-1 sm:mr-2" />
+                          <span className="hidden sm:inline">Pin Pattern</span>
+                          <span className="sm:hidden">Pin</span>
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="bg-[#0a0a0a] border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl">
@@ -935,12 +936,12 @@ export default function Chat() {
                       onClick={handleSendText}
                       disabled={!messageInput.trim() || sendMessage.isPending}
                       variant="ghost"
-                      className="h-10 px-4 rounded-xl font-bold text-[11px] uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all active:scale-95"
+                      className="h-8 sm:h-10 px-2 sm:px-4 rounded-xl font-bold text-[10px] sm:text-[11px] uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all active:scale-95"
                       data-testid="button-save"
                     >
-                      {sendMessage.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (
+                      {sendMessage.isPending ? <Loader2 className="w-3 sm:w-3.5 h-3 sm:h-3.5 animate-spin" /> : (
                         <>
-                          <FileText className="w-3.5 h-3.5 mr-2 opacity-50" />
+                          <FileText className="w-3 sm:w-3.5 h-3 sm:h-3.5 mr-1 sm:mr-2 opacity-50" />
                           Commit
                         </>
                       )}
