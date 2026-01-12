@@ -414,11 +414,6 @@ export default function Docs() {
               description="Gather claims and track evidence"
             />
             <QuickLink 
-              href="/chat?zone=trade"
-              title="Trade Zone"
-              description="Execute trades with natural language"
-            />
-            <QuickLink 
               href="/terms"
               title="Terms of Service"
               description="Legal terms and risk disclosures"
