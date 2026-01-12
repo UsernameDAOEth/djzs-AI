@@ -220,6 +220,18 @@ export default function Chat() {
     setCurrentPromptIndex(0);
   }, [selectedZone]);
 
+  // Lock body scroll when memory drawer is open on mobile
+  useEffect(() => {
+    if (memoryDrawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [memoryDrawerOpen]);
+
   const { data: member, isLoading: memberLoading } = useQuery<Member | null>({
     queryKey: ["/api/members", address],
     queryFn: async () => {
@@ -725,40 +737,40 @@ export default function Chat() {
         {/* Main Interface */}
         <main className="flex-1 flex flex-col relative">
           {/* Transparent Glassy Header */}
-          <header className="h-16 md:h-20 flex items-center justify-between px-4 md:px-10 bg-[#050505]/80 backdrop-blur-xl border-b border-white/[0.02] sticky top-0 z-30">
-            <div className="flex items-center gap-3">
+          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 bg-[#050505]/80 backdrop-blur-xl border-b border-white/[0.03] sticky top-0 z-30">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Hamburger menu for mobile */}
               <button 
                 onClick={() => setMobileSidebarOpen(true)}
-                className="md:hidden p-2 text-gray-500 hover:text-white"
+                className="md:hidden p-2.5 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-colors touch-target"
                 data-testid="button-open-sidebar"
               >
                 <Menu className="w-5 h-5" />
               </button>
               <div className="flex flex-col">
-                <h2 className="text-lg md:text-xl font-black text-white tracking-tight">{currentZone.name}</h2>
-                <p className="text-[10px] md:text-xs text-gray-400 font-medium mt-0.5 hidden sm:block">{currentZone.purpose}</p>
+                <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">{currentZone.name}</h2>
+                <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">{currentZone.purpose}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Status badges - hidden on mobile */}
-              <div className="hidden md:flex items-center gap-4 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.03]">
+              <div className="hidden lg:flex items-center gap-4 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.04]">
                 <div className="flex items-center gap-2">
                   <Lock className="w-3 h-3 text-green-500/50" />
-                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">E2E Private</span>
+                  <span className="text-[10px] font-medium text-gray-500">E2E Private</span>
                 </div>
                 <div className="w-px h-3 bg-white/10"></div>
                 <div className="flex items-center gap-2">
                   <Bot className="w-3 h-3 text-purple-500/50" />
-                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Thinking Partner</span>
+                  <span className="text-[10px] font-medium text-gray-500">Thinking Partner</span>
                 </div>
               </div>
               
               {/* Memory/Insights toggle button */}
               <button 
                 onClick={() => setMemoryDrawerOpen(!memoryDrawerOpen)}
-                className={`p-2.5 md:p-3 rounded-full transition-all ${memoryDrawerOpen ? 'bg-purple-600/10 text-purple-400' : 'text-gray-600 hover:text-white hover:bg-white/5'}`}
+                className={`p-2.5 rounded-xl transition-all touch-target ${memoryDrawerOpen ? 'bg-purple-600/15 text-purple-400' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
                 data-testid="button-toggle-memory"
               >
                 <Zap className="w-5 h-5" />
@@ -867,20 +879,22 @@ export default function Chat() {
                     </div>
                   </div>
 
-                  {/* Action buttons - full width on mobile */}
-                  <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                    <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button
-                          disabled={!messageInput.trim()}
-                          variant="ghost"
-                          className="flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all active:scale-95 touch-target"
-                          data-testid="button-pin"
-                        >
-                          <Pin className="w-4 h-4 mr-2" />
-                          Pin
-                        </Button>
-                      </DialogTrigger>
+                  {/* Action buttons - stacked on mobile */}
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                    {/* Secondary actions row on mobile */}
+                    <div className="flex gap-2 sm:contents">
+                      <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button
+                            disabled={!messageInput.trim()}
+                            variant="ghost"
+                            className="flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all active:scale-95 touch-target"
+                            data-testid="button-pin"
+                          >
+                            <Pin className="w-4 h-4 mr-2" />
+                            Pin
+                          </Button>
+                        </DialogTrigger>
                       <DialogContent className="bg-[#0a0a0a] border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl">
                         <DialogHeader>
                           <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">Pin Memory</DialogTitle>
@@ -926,25 +940,27 @@ export default function Chat() {
                       </DialogContent>
                     </Dialog>
 
-                    <Button
-                      onClick={handleSendText}
-                      disabled={!messageInput.trim() || sendMessage.isPending}
-                      variant="ghost"
-                      className="flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm text-gray-500 hover:text-white hover:bg-white/5 transition-all active:scale-95 touch-target"
-                      data-testid="button-save"
-                    >
-                      {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-                        <>
-                          <FileText className="w-4 h-4 mr-2 opacity-50" />
-                          Save
-                        </>
-                      )}
-                    </Button>
+                      <Button
+                        onClick={handleSendText}
+                        disabled={!messageInput.trim() || sendMessage.isPending}
+                        variant="ghost"
+                        className="flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm text-gray-500 hover:text-white hover:bg-white/5 transition-all active:scale-95 touch-target"
+                        data-testid="button-save"
+                      >
+                        {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                          <>
+                            <FileText className="w-4 h-4 mr-2 opacity-50" />
+                            Save
+                          </>
+                        )}
+                      </Button>
+                    </div>
 
+                    {/* Primary action - full width on mobile */}
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className={`flex-[2] sm:flex-none h-12 sm:h-11 px-6 sm:px-8 rounded-xl sm:rounded-2xl font-semibold text-sm shadow-lg transition-all active:scale-95 action-btn-glow touch-target ${
+                      className={`w-full sm:w-auto h-12 sm:h-11 px-6 sm:px-8 rounded-xl sm:rounded-2xl font-semibold text-sm shadow-lg transition-all active:scale-95 action-btn-glow touch-target ${
                         selectedZone === 'research' 
                           ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/40' 
                           : 'bg-purple-600 hover:bg-purple-500 shadow-purple-900/40'
@@ -1262,66 +1278,68 @@ export default function Chat() {
           <>
             {/* Mobile overlay backdrop */}
             <div 
-              className="fixed inset-0 bg-black/60 z-40 md:hidden" 
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden" 
               onClick={() => setMemoryDrawerOpen(false)}
             />
-            <aside className="fixed md:relative inset-0 md:inset-auto z-50 md:z-auto w-full md:w-80 border-l border-white/[0.03] flex flex-col bg-[#050505] md:bg-black/20 backdrop-blur-xl animate-in slide-in-from-right duration-300">
+            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-white/[0.05] flex flex-col bg-[#080808] md:bg-black/20 backdrop-blur-xl animate-in slide-in-from-right duration-300">
               <Tabs defaultValue="memories" className="flex-1 flex flex-col">
-                <div className="px-6 pt-6 pb-4 border-b border-white/[0.02]">
+                <div className="px-5 pt-5 pb-4 border-b border-white/[0.04]">
                   <div className="flex items-center justify-between mb-4 md:hidden">
-                    <h3 className="text-lg font-black text-white">Memory & Insights</h3>
+                    <h3 className="text-lg font-bold text-white">Memory & Insights</h3>
                     <button 
                       onClick={() => setMemoryDrawerOpen(false)}
-                      className="p-2 text-gray-500 hover:text-white"
+                      className="p-2.5 rounded-full bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors touch-target"
                       data-testid="button-close-memory"
                     >
                       <X className="w-5 h-5" />
                     </button>
                   </div>
-                  <TabsList className="w-full bg-white/[0.02] p-1 rounded-xl">
-                    <TabsTrigger value="memories" className="flex-1 text-[10px] font-black uppercase tracking-widest rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
-                      <Pin className="w-3 h-3 mr-1.5" />
+                  <TabsList className="w-full bg-white/[0.03] p-1 rounded-xl h-11">
+                    <TabsTrigger value="memories" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
+                      <Pin className="w-3.5 h-3.5 mr-2" />
                       Memories
                     </TabsTrigger>
-                    <TabsTrigger value="insights" className="flex-1 text-[10px] font-black uppercase tracking-widest rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
-                      <Sparkles className="w-3 h-3 mr-1.5" />
+                    <TabsTrigger value="insights" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
+                      <Sparkles className="w-3.5 h-3.5 mr-2" />
                       Insights
                     </TabsTrigger>
                   </TabsList>
                 </div>
 
               <TabsContent value="memories" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
-                <div className="px-6 py-3 border-b border-white/[0.02]">
-                  <p className="text-[10px] text-gray-600 font-bold uppercase">{localMemories?.length || 0} patterns saved</p>
+                <div className="px-5 py-3 border-b border-white/[0.03]">
+                  <p className="text-xs text-gray-500 font-medium">{localMemories?.length || 0} patterns saved</p>
                 </div>
                 <ScrollArea className="flex-1">
-                  <div className="p-6 space-y-4">
+                  <div className="p-4 space-y-3">
                     {!localMemories || localMemories.length === 0 ? (
-                      <div className="text-center py-10">
-                        <Pin className="w-8 h-8 text-gray-700 mx-auto mb-4" />
-                        <p className="text-sm text-gray-600 font-medium">No patterns pinned yet</p>
-                        <p className="text-xs text-gray-700 mt-2">Pin patterns worth remembering from your entries</p>
+                      <div className="text-center py-12 px-4">
+                        <div className="w-12 h-12 rounded-2xl bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
+                          <Pin className="w-6 h-6 text-gray-600" />
+                        </div>
+                        <p className="text-sm text-gray-500 font-medium">No patterns pinned yet</p>
+                        <p className="text-xs text-gray-600 mt-2 leading-relaxed">Pin patterns worth remembering from your entries</p>
                       </div>
                     ) : (
                       localMemories.map((memory) => (
-                        <div key={memory.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] group">
+                        <div key={memory.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] entry-card">
                           <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline" className="text-[8px] uppercase tracking-widest border-purple-500/30 text-purple-400/70">
+                            <Badge variant="outline" className="text-[9px] font-medium border-purple-500/30 text-purple-400/70 px-2 py-0.5">
                               {memory.kind}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-300 leading-relaxed font-medium mb-3">
+                          <p className="text-sm text-gray-300 leading-relaxed mb-3">
                             {memory.content}
                           </p>
                           <div className="flex items-center justify-between">
-                            <span className="text-[9px] font-black text-gray-700 uppercase tracking-widest">
+                            <span className="text-xs text-gray-600">
                               {format(new Date(memory.createdAt), "MMM d, yyyy")}
                             </span>
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={() => memory.id && handleForgetMemory(memory.id)}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-7 px-2"
+                              className="text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-8 px-3 text-xs touch-target"
                               data-testid={`button-forget-memory-${memory.id}`}
                             >
                               Forget
@@ -1332,40 +1350,42 @@ export default function Chat() {
                     )}
                   </div>
                 </ScrollArea>
-                <div className="p-4 border-t border-white/[0.03]">
-                  <Button variant="outline" className="w-full border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.03] text-gray-500 hover:text-white h-12 rounded-xl font-black text-[9px] uppercase tracking-[0.15em] transition-all">
-                    <Download className="w-3 h-3 mr-2" />
+                <div className="p-4 border-t border-white/[0.04]">
+                  <Button variant="outline" className="w-full border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-xl font-medium text-xs transition-all touch-target">
+                    <Download className="w-4 h-4 mr-2" />
                     Export Vault
                   </Button>
                 </div>
               </TabsContent>
 
               <TabsContent value="insights" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
-                <div className="px-6 py-3 border-b border-white/[0.02]">
-                  <p className="text-[10px] text-gray-600 font-bold uppercase">Latest thinking</p>
+                <div className="px-5 py-3 border-b border-white/[0.03]">
+                  <p className="text-xs text-gray-500 font-medium">Latest thinking</p>
                 </div>
                 <ScrollArea className="flex-1">
-                  <div className="p-6 space-y-4">
+                  <div className="p-4 space-y-3">
                     {agentResponse ? (
-                      <div className="p-4 rounded-2xl bg-purple-500/[0.05] border border-purple-500/20">
+                      <div className="p-4 rounded-xl bg-purple-500/[0.05] border border-purple-500/20">
                         <div className="flex items-center gap-2 mb-3">
                           <Bot className="w-4 h-4 text-purple-400" />
-                          <span className="text-[9px] font-black text-purple-400 uppercase tracking-widest">
+                          <span className="text-xs font-medium text-purple-400">
                             Thinking Partner
                           </span>
                         </div>
                         <div className="space-y-3">
-                          <p className="text-sm text-white font-medium leading-relaxed">{agentResponse.said}</p>
-                          <p className="text-xs text-gray-500">{agentResponse.matters}</p>
-                          <p className="text-xs text-purple-300 italic">{agentResponse.question}</p>
+                          <p className="text-sm text-white/90 leading-relaxed">{agentResponse.said}</p>
+                          <p className="text-xs text-gray-500 leading-relaxed">{agentResponse.matters}</p>
+                          <p className="text-sm text-purple-300 italic leading-relaxed">{agentResponse.question}</p>
                         </div>
-                        <p className="text-[9px] text-gray-600 mt-3 uppercase tracking-widest">Just now</p>
+                        <p className="text-xs text-gray-600 mt-4">Just now</p>
                       </div>
                     ) : (
-                      <div className="text-center py-10">
-                        <Bot className="w-8 h-8 text-gray-700 mx-auto mb-4" />
-                        <p className="text-sm text-gray-600 font-medium">No thinking yet</p>
-                        <p className="text-xs text-gray-700 mt-2">Write an entry and click "Think with me"</p>
+                      <div className="text-center py-12 px-4">
+                        <div className="w-12 h-12 rounded-2xl bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
+                          <Bot className="w-6 h-6 text-gray-600" />
+                        </div>
+                        <p className="text-sm text-gray-500 font-medium">No thinking yet</p>
+                        <p className="text-xs text-gray-600 mt-2 leading-relaxed">Write an entry and click "Think with me"</p>
                       </div>
                     )}
                   </div>
