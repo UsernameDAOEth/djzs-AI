@@ -108,6 +108,71 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
+  /* Zone-specific themes */
+  .zone-journal {
+    --zone-accent: 270, 70%, 60%;
+    --zone-glow: rgba(168, 85, 247, 0.15);
+  }
+
+  .zone-research {
+    --zone-accent: 210, 80%, 60%;
+    --zone-glow: rgba(59, 130, 246, 0.15);
+  }
+
+  .zone-glow {
+    box-shadow: 0 0 80px -20px var(--zone-glow);
+  }
+
+  /* Improved textarea focus styles */
+  .writing-area-focused {
+    background: radial-gradient(ellipse at center, var(--zone-glow) 0%, transparent 70%);
+  }
+
+  /* Thinking partner card styles */
+  .thinking-card {
+    background: linear-gradient(135deg, 
+      rgba(168, 85, 247, 0.08) 0%,
+      rgba(59, 130, 246, 0.04) 50%,
+      rgba(168, 85, 247, 0.02) 100%
+    );
+    border: 1px solid rgba(168, 85, 247, 0.2);
+  }
+
+  .thinking-card-section {
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  /* Mobile-optimized touch targets */
+  @media (max-width: 640px) {
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+
+  /* Smooth scrolling */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  /* Entry history cards */
+  .entry-card {
+    transition: all 0.2s ease;
+  }
+
+  .entry-card:hover {
+    background: rgba(168, 85, 247, 0.04);
+    border-color: rgba(168, 85, 247, 0.15);
+  }
+
+  /* Action button glow on active */
+  .action-btn-glow:active {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  }
+
   .gradient-overlay {
     background: linear-gradient(135deg, 
       rgba(155, 135, 245, 0.15) 0%,

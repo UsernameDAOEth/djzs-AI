@@ -767,26 +767,24 @@ export default function Chat() {
           </header>
 
           {/* Main Content Area - scrollable */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="flex flex-col max-w-3xl w-full mx-auto px-3 sm:px-6">
+          <div className={`flex-1 overflow-y-auto scroll-smooth ${selectedZone === 'journal' ? 'zone-journal' : 'zone-research'}`}>
+            <div className="flex flex-col max-w-2xl w-full mx-auto px-4 sm:px-8">
               {/* Writing Area - vertically centered, min 70vh */}
-              <div className="flex-1 flex flex-col justify-center min-h-[70vh] py-12">
+              <div className="flex-1 flex flex-col justify-center min-h-[60vh] sm:min-h-[70vh] py-8 sm:py-12">
                 {/* Stats bar - streak, last entry, total */}
                 {entryStats && entryStats.totalEntries > 0 && (
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-6 mb-6 animate-in fade-in duration-500">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-8 p-3 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04] animate-in fade-in duration-500">
                     {entryStats.streak > 0 && (
-                      <div className="flex items-center gap-2" data-testid="streak-badge">
-                        <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center">
-                          <span className="text-[10px]">🔥</span>
-                        </div>
-                        <span className="text-[11px] font-black text-orange-400/80 tabular-nums">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10" data-testid="streak-badge">
+                        <span className="text-sm">🔥</span>
+                        <span className="text-xs font-bold text-orange-400 tabular-nums">
                           {entryStats.streak} day{entryStats.streak !== 1 ? 's' : ''}
                         </span>
                       </div>
                     )}
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-3.5 h-3.5 text-gray-600" />
-                      <span className="text-[11px] font-medium text-gray-600">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03]">
+                      <Clock className="w-3.5 h-3.5 text-gray-500" />
+                      <span className="text-xs font-medium text-gray-400">
                         {entryStats.daysSinceLastEntry === 0 
                           ? "Today" 
                           : entryStats.daysSinceLastEntry === 1 
@@ -794,9 +792,9 @@ export default function Chat() {
                             : `${entryStats.daysSinceLastEntry} days ago`}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="w-3.5 h-3.5 text-gray-600" />
-                      <span className="text-[11px] font-medium text-gray-600">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03]">
+                      <BookOpen className="w-3.5 h-3.5 text-gray-500" />
+                      <span className="text-xs font-medium text-gray-400">
                         {entryStats.totalEntries} {entryStats.totalEntries === 1 ? 'entry' : 'entries'}
                       </span>
                     </div>
@@ -814,12 +812,12 @@ export default function Chat() {
                 )}
                 
                 {/* Prompt hint */}
-                <p className={`text-purple-300/60 text-xs sm:text-sm font-medium mb-6 transition-opacity duration-500 break-words ${isFocused ? 'opacity-100' : 'opacity-80'}`}>
+                <p className={`text-sm sm:text-base font-medium mb-4 transition-all duration-500 break-words ${isFocused ? 'opacity-100 text-purple-300/70' : 'opacity-60 text-gray-400'} ${selectedZone === 'research' ? 'text-blue-300/70' : ''}`}>
                   {currentPrompts[currentPromptIndex]}
                 </p>
                 
-                {/* Textarea - no visible box, glow on focus only */}
-                <div className={`relative transition-all duration-300 ${isFocused ? 'ring-1 ring-purple-500/20 shadow-[0_0_60px_-15px_rgba(168,85,247,0.15)] rounded-3xl bg-purple-500/[0.01]' : ''}`}>
+                {/* Textarea - refined focus state */}
+                <div className={`relative transition-all duration-500 rounded-2xl sm:rounded-3xl ${isFocused ? 'zone-glow writing-area-focused' : ''}`}>
                   <textarea
                     ref={textareaRef}
                     autoFocus
@@ -831,52 +829,56 @@ export default function Chat() {
                     onKeyDown={handleKeyDown}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    placeholder="Write what you're thinking. No formatting. No pressure."
-                    className="w-full bg-transparent border-none outline-none focus:ring-0 text-base sm:text-xl font-medium text-white placeholder:text-gray-500 placeholder:break-words resize-none leading-[1.8] tracking-tight p-3 sm:p-6 overflow-hidden"
+                    placeholder={selectedZone === 'journal' 
+                      ? "Write what you're thinking. No formatting. No pressure." 
+                      : "What are you researching? Capture your findings here."
+                    }
+                    className={`w-full bg-transparent border-none outline-none focus:ring-0 text-lg sm:text-xl font-normal text-white/95 placeholder:text-gray-600 resize-none leading-[1.9] tracking-normal p-4 sm:p-6 overflow-hidden ${isFocused ? 'placeholder:text-gray-500' : ''}`}
                     style={{ 
-                      minHeight: frozenHeight ? undefined : 'max(200px, calc(60vh - 100px))',
+                      minHeight: frozenHeight ? undefined : 'max(180px, calc(50vh - 100px))',
                       height: frozenHeight ? `${frozenHeight}px` : 'auto'
                     }}
                     data-testid="textarea-journal"
                   />
                 </div>
 
-                {/* Action bar - persistent footer */}
-                <div className={`flex flex-wrap items-center justify-between gap-4 mt-6 sm:mt-8 py-4 border-t border-white/[0.05] transition-all duration-500 ${isFocused ? 'opacity-100 translate-y-0' : 'opacity-70 translate-y-1'}`}>
-                  <div className="flex flex-wrap items-center gap-4 sm:gap-8">
-                    <div className="flex items-center gap-3 sm:gap-6">
-                      <div className="flex items-center gap-1.5 sm:gap-2 group cursor-default">
-                        <kbd className="px-1.5 sm:px-2 py-1 rounded bg-white/5 border border-white/10 text-[8px] sm:text-[9px] font-black text-gray-400 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">Enter</kbd>
-                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">Commit</span>
+                {/* Action bar - mobile optimized */}
+                <div className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-6 sm:mt-8 py-4 transition-all duration-500 ${isFocused ? 'opacity-100' : 'opacity-60'}`}>
+                  {/* Character count and shortcuts - hidden on mobile */}
+                  <div className="hidden sm:flex items-center gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 group cursor-default">
+                        <kbd className="px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[9px] font-semibold text-gray-500 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">Enter</kbd>
+                        <span className="text-[10px] font-medium text-gray-600 group-hover:text-gray-400 transition-colors">Save</span>
                       </div>
-                      <div className="flex items-center gap-1.5 sm:gap-2 group cursor-default">
-                        <kbd className="px-1.5 sm:px-2 py-1 rounded bg-white/5 border border-white/10 text-[8px] sm:text-[9px] font-black text-gray-400 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">⌘ Enter</kbd>
-                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">Analyze</span>
+                      <div className="flex items-center gap-2 group cursor-default">
+                        <kbd className="px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[9px] font-semibold text-gray-500 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">⌘ Enter</kbd>
+                        <span className="text-[10px] font-medium text-gray-600 group-hover:text-gray-400 transition-colors">Think</span>
                       </div>
                     </div>
                     
-                    <div className="hidden sm:block h-4 w-px bg-white/10" />
+                    <div className="h-4 w-px bg-white/10" />
                     
                     <div className="flex items-center gap-2">
-                      <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${messageInput.length > 0 ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'bg-gray-800'}`} />
-                      <span className={`text-[9px] sm:text-[10px] font-black tabular-nums tracking-widest transition-colors ${messageInput.length > 0 ? 'text-gray-400' : 'text-gray-700'}`}>
-                        {messageInput.length.toLocaleString()} <span className="text-[7px] sm:text-[8px] opacity-50">CHARS</span>
+                      <div className={`w-2 h-2 rounded-full transition-colors duration-500 ${messageInput.length > 0 ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'bg-gray-800'}`} />
+                      <span className={`text-xs font-medium tabular-nums transition-colors ${messageInput.length > 0 ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {messageInput.length.toLocaleString()} chars
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 sm:gap-4">
+                  {/* Action buttons - full width on mobile */}
+                  <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                     <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
                       <DialogTrigger asChild>
                         <Button
                           disabled={!messageInput.trim()}
                           variant="ghost"
-                          className="h-8 sm:h-10 px-2 sm:px-4 rounded-xl font-bold text-[10px] sm:text-[11px] uppercase tracking-widest text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all active:scale-95"
+                          className="flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all active:scale-95 touch-target"
                           data-testid="button-pin"
                         >
-                          <Pin className="w-3 sm:w-3.5 h-3 sm:h-3.5 mr-1 sm:mr-2" />
-                          <span className="hidden sm:inline">Pin Pattern</span>
-                          <span className="sm:hidden">Pin</span>
+                          <Pin className="w-4 h-4 mr-2" />
+                          Pin
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="bg-[#0a0a0a] border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl">
@@ -928,13 +930,13 @@ export default function Chat() {
                       onClick={handleSendText}
                       disabled={!messageInput.trim() || sendMessage.isPending}
                       variant="ghost"
-                      className="h-8 sm:h-10 px-2 sm:px-4 rounded-xl font-bold text-[10px] sm:text-[11px] uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all active:scale-95"
+                      className="flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm text-gray-500 hover:text-white hover:bg-white/5 transition-all active:scale-95 touch-target"
                       data-testid="button-save"
                     >
-                      {sendMessage.isPending ? <Loader2 className="w-3 sm:w-3.5 h-3 sm:h-3.5 animate-spin" /> : (
+                      {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                         <>
-                          <FileText className="w-3 sm:w-3.5 h-3 sm:h-3.5 mr-1 sm:mr-2 opacity-50" />
-                          Commit
+                          <FileText className="w-4 h-4 mr-2 opacity-50" />
+                          Save
                         </>
                       )}
                     </Button>
@@ -942,17 +944,21 @@ export default function Chat() {
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className="bg-purple-600 hover:bg-purple-500 h-12 px-8 rounded-2xl font-black text-[11px] uppercase tracking-[0.15em] shadow-xl shadow-purple-900/40 transition-all active:scale-95 group"
+                      className={`flex-[2] sm:flex-none h-12 sm:h-11 px-6 sm:px-8 rounded-xl sm:rounded-2xl font-semibold text-sm shadow-lg transition-all active:scale-95 action-btn-glow touch-target ${
+                        selectedZone === 'research' 
+                          ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/40' 
+                          : 'bg-purple-600 hover:bg-purple-500 shadow-purple-900/40'
+                      }`}
                       data-testid="button-analyze"
                     >
                       {isAnalyzing ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                          Thinking
+                          Thinking...
                         </>
                       ) : (
                         <>
-                          <Bot className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                          <Bot className="w-4 h-4 mr-2" />
                           Think with me
                         </>
                       )}
@@ -963,234 +969,249 @@ export default function Chat() {
 
               {/* Insight appears below text when analyzing is complete */}
               {(isAnalyzing || agentResponse || latestAnalysis) && (
-                <div className="pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="pb-12 sm:pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
                   {isAnalyzing && !agentResponse && !latestAnalysis && (
-                    <div className="p-8 rounded-3xl bg-purple-500/[0.02] border border-purple-500/10" data-testid="analyzing-loader">
+                    <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl thinking-card" data-testid="analyzing-loader">
                       <div className="flex items-center gap-4">
-                        <Loader2 className="w-6 h-6 text-purple-400 animate-spin" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-600/20 flex items-center justify-center">
+                          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400 animate-spin" />
+                        </div>
                         <div>
-                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-1">Thinking</p>
-                          <p className="text-sm text-gray-500">Processing your entry...</p>
+                          <p className="text-xs font-semibold text-purple-400 mb-1">Thinking...</p>
+                          <p className="text-sm text-gray-500">Processing your entry</p>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* NEW: Agent Response Card (v1 Thinking Partner) */}
+                  {/* Agent Response Card - Improved Design */}
                   {agentResponse && (
-                    <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/[0.05] to-blue-500/[0.03] border border-purple-500/20" data-testid="agent-response-card">
-                      <div className="flex items-start gap-6">
-                        <div className="w-12 h-12 rounded-2xl bg-purple-600/20 flex items-center justify-center shrink-0">
-                          <Bot className="w-6 h-6 text-purple-400" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-6">Thinking Partner</p>
-                          
-                          <div className="space-y-6">
-                            <div>
-                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">What you said</p>
-                              <p className="text-white font-medium leading-relaxed">{agentResponse.said}</p>
-                            </div>
-                            
-                            <div>
-                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Why it matters</p>
-                              <p className="text-gray-300 leading-relaxed">{agentResponse.matters}</p>
-                            </div>
-                            
-                            {agentResponse.connectionToPrior && (
-                              <div className="p-4 rounded-xl bg-blue-500/[0.05] border border-blue-500/20">
-                                <p className="text-[9px] font-black text-blue-400/70 uppercase tracking-widest mb-2">Connection to prior thinking</p>
-                                <p className="text-blue-200/80 leading-relaxed">{agentResponse.connectionToPrior}</p>
-                              </div>
-                            )}
-                            
-                            {agentResponse.nextMove && (
-                              <div>
-                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Next move</p>
-                                <p className="text-gray-400 leading-relaxed">{agentResponse.nextMove}</p>
-                              </div>
-                            )}
-                            
-                            <div>
-                              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Question to sit with</p>
-                              <p className="text-purple-300 font-medium italic">{agentResponse.question}</p>
-                            </div>
-
-                            {/* Memory suggestion */}
-                            {agentResponse.memorySuggestion.shouldSuggest && (
-                              <div className="mt-6 p-4 rounded-xl bg-yellow-500/[0.05] border border-yellow-500/20">
-                                <p className="text-[9px] font-black text-yellow-500/70 uppercase tracking-widest mb-2">Worth remembering?</p>
-                                <p className="text-sm text-gray-300 mb-4">{agentResponse.memorySuggestion.content}</p>
-                                <div className="flex items-center gap-3">
-                                  <Button
-                                    size="sm"
-                                    onClick={handlePinSuggestion}
-                                    className="bg-purple-600 hover:bg-purple-500 text-sm"
-                                    data-testid="button-pin-suggestion"
-                                  >
-                                    <Pin className="w-4 h-4 mr-1" />
-                                    Pin
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={handleSkipSuggestion}
-                                    className="text-gray-500 hover:text-white"
-                                    data-testid="button-skip-suggestion"
-                                  >
-                                    Skip
-                                  </Button>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Closing line */}
-                            <p className="text-[11px] text-gray-600 italic mt-8 pt-6 border-t border-white/[0.03]">
-                              You don't need to resolve this now.
-                            </p>
+                    <div className="rounded-2xl sm:rounded-3xl thinking-card overflow-hidden" data-testid="agent-response-card">
+                      {/* Header */}
+                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${selectedZone === 'research' ? 'bg-blue-600/20' : 'bg-purple-600/20'}`}>
+                            <Bot className={`w-5 h-5 ${selectedZone === 'research' ? 'text-blue-400' : 'text-purple-400'}`} />
                           </div>
-
-                          <div className="mt-8 pt-6 border-t border-white/[0.05] flex items-center gap-3">
-                            <Button
-                              onClick={clearAndReset}
-                              variant="ghost"
-                              className="text-gray-500 hover:text-white hover:bg-white/5"
-                            >
-                              New Entry
-                              <ArrowRight className="w-4 h-4 ml-2" />
-                            </Button>
+                          <div>
+                            <p className={`text-sm font-semibold ${selectedZone === 'research' ? 'text-blue-400' : 'text-purple-400'}`}>Thinking Partner</p>
+                            <p className="text-xs text-gray-600">Just now</p>
                           </div>
                         </div>
-                        
                         <button 
                           onClick={clearAndReset}
-                          className="p-2 rounded-full hover:bg-white/5 transition-colors"
+                          className="p-2 rounded-full hover:bg-white/5 transition-colors touch-target"
                         >
-                          <X className="w-4 h-4 text-gray-600" />
+                          <X className="w-5 h-5 text-gray-500" />
                         </button>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="p-4 sm:p-6 space-y-4">
+                        {/* What you said */}
+                        <div className="thinking-card-section">
+                          <p className="text-xs font-medium text-gray-500 mb-2">What you said</p>
+                          <p className="text-white/90 leading-relaxed">{agentResponse.said}</p>
+                        </div>
+                        
+                        {/* Why it matters */}
+                        <div className="thinking-card-section">
+                          <p className="text-xs font-medium text-gray-500 mb-2">Why it matters</p>
+                          <p className="text-gray-300 leading-relaxed">{agentResponse.matters}</p>
+                        </div>
+                        
+                        {/* Connection to prior thinking */}
+                        {agentResponse.connectionToPrior && (
+                          <div className="p-4 rounded-xl bg-blue-500/[0.08] border border-blue-500/20">
+                            <p className="text-xs font-medium text-blue-400/80 mb-2">Connected to your earlier thinking</p>
+                            <p className="text-blue-200/80 leading-relaxed text-sm">{agentResponse.connectionToPrior}</p>
+                          </div>
+                        )}
+                        
+                        {/* Next move */}
+                        {agentResponse.nextMove && (
+                          <div className="thinking-card-section">
+                            <p className="text-xs font-medium text-gray-500 mb-2">Possible next step</p>
+                            <p className="text-gray-400 leading-relaxed">{agentResponse.nextMove}</p>
+                          </div>
+                        )}
+                        
+                        {/* Question to sit with - highlighted */}
+                        <div className={`p-4 rounded-xl border ${selectedZone === 'research' ? 'bg-blue-500/[0.06] border-blue-500/20' : 'bg-purple-500/[0.06] border-purple-500/20'}`}>
+                          <p className={`text-xs font-medium mb-2 ${selectedZone === 'research' ? 'text-blue-400/80' : 'text-purple-400/80'}`}>Question to sit with</p>
+                          <p className={`font-medium italic leading-relaxed ${selectedZone === 'research' ? 'text-blue-200' : 'text-purple-200'}`}>{agentResponse.question}</p>
+                        </div>
+
+                        {/* Memory suggestion */}
+                        {agentResponse.memorySuggestion.shouldSuggest && (
+                          <div className="p-4 rounded-xl bg-amber-500/[0.08] border border-amber-500/20">
+                            <p className="text-xs font-medium text-amber-400/80 mb-2">Worth remembering?</p>
+                            <p className="text-sm text-gray-300 mb-4">{agentResponse.memorySuggestion.content}</p>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                onClick={handlePinSuggestion}
+                                className="bg-purple-600 hover:bg-purple-500 h-9 px-4 text-sm touch-target"
+                                data-testid="button-pin-suggestion"
+                              >
+                                <Pin className="w-4 h-4 mr-2" />
+                                Pin this
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={handleSkipSuggestion}
+                                className="text-gray-500 hover:text-white h-9 touch-target"
+                                data-testid="button-skip-suggestion"
+                              >
+                                Skip
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Footer */}
+                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
+                        <p className="text-xs text-gray-600 italic">You don't need to resolve this now.</p>
+                        <Button
+                          onClick={clearAndReset}
+                          variant="ghost"
+                          className="text-gray-500 hover:text-white hover:bg-white/5 h-9 touch-target"
+                        >
+                          New Entry
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
                       </div>
                     </div>
                   )}
 
                   {latestAnalysis && (
-                    <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/[0.05] to-blue-500/[0.03] border border-purple-500/20" data-testid="insight-card">
-                      <div className="flex items-start gap-6">
-                        <div className="w-12 h-12 rounded-2xl bg-purple-600/20 flex items-center justify-center shrink-0">
-                          <Sparkles className="w-6 h-6 text-purple-400" />
+                    <div className="rounded-2xl sm:rounded-3xl thinking-card overflow-hidden" data-testid="insight-card">
+                      {/* Header */}
+                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${latestAnalysis.zone === 'research' ? 'bg-blue-600/20' : 'bg-purple-600/20'}`}>
+                            <Sparkles className={`w-5 h-5 ${latestAnalysis.zone === 'research' ? 'text-blue-400' : 'text-purple-400'}`} />
+                          </div>
+                          <div>
+                            <p className={`text-sm font-semibold ${latestAnalysis.zone === 'research' ? 'text-blue-400' : 'text-purple-400'}`}>
+                              {latestAnalysis.zone === "research" ? "Research Analysis" : "Insight"}
+                            </p>
+                            <p className="text-xs text-gray-600">Just now</p>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-4">
-                            {latestAnalysis.zone === "research" ? "Research Analysis" : "Zone Agent Insight"}
-                          </p>
-                          
-                          {latestAnalysis.zone === "journal" ? (
-                            <div className="space-y-6">
-                              <div>
-                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Summary</p>
-                                <p className="text-white font-medium leading-relaxed">{latestAnalysis.analysis.summary}</p>
-                              </div>
-                              
-                              <div>
-                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Insight</p>
-                                <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
-                              </div>
-                              
-                              <div>
-                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Reflection Question</p>
-                                <p className="text-purple-300 font-medium">{latestAnalysis.analysis.question}</p>
-                              </div>
-                              
-                              {latestAnalysis.analysis.memoryCandidates.length > 0 && (
-                                <div>
-                                  <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3">Worth Remembering</p>
-                                  <div className="space-y-2">
-                                    {latestAnalysis.analysis.memoryCandidates.map((memory, idx) => (
-                                      <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] group">
-                                        <p className="flex-1 text-sm text-gray-400">{memory}</p>
-                                        <Button
-                                          size="sm"
-                                          variant="ghost"
-                                          onClick={() => pinMemory.mutate(memory)}
-                                          disabled={pinMemory.isPending}
-                                          className="opacity-0 group-hover:opacity-100 transition-opacity text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
-                                          data-testid={`button-pin-memory-${idx}`}
-                                        >
-                                          <Pin className="w-4 h-4 mr-1" />
-                                          Pin
-                                        </Button>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
+                        <button 
+                          onClick={clearAndReset}
+                          className="p-2 rounded-full hover:bg-white/5 transition-colors touch-target"
+                        >
+                          <X className="w-5 h-5 text-gray-500" />
+                        </button>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="p-4 sm:p-6 space-y-4">
+                        {latestAnalysis.zone === "journal" ? (
+                          <>
+                            <div className="thinking-card-section">
+                              <p className="text-xs font-medium text-gray-500 mb-2">Summary</p>
+                              <p className="text-white/90 leading-relaxed">{latestAnalysis.analysis.summary}</p>
                             </div>
-                          ) : (
-                            <div className="space-y-6">
-                              <div>
-                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Key Claims</p>
+                            
+                            <div className="thinking-card-section">
+                              <p className="text-xs font-medium text-gray-500 mb-2">Insight</p>
+                              <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
+                            </div>
+                            
+                            <div className="p-4 rounded-xl bg-purple-500/[0.06] border border-purple-500/20">
+                              <p className="text-xs font-medium text-purple-400/80 mb-2">Reflection Question</p>
+                              <p className="text-purple-200 font-medium leading-relaxed">{latestAnalysis.analysis.question}</p>
+                            </div>
+                            
+                            {latestAnalysis.analysis.memoryCandidates.length > 0 && (
+                              <div className="p-4 rounded-xl bg-amber-500/[0.06] border border-amber-500/20">
+                                <p className="text-xs font-medium text-amber-400/80 mb-3">Worth Remembering</p>
+                                <div className="space-y-2">
+                                  {latestAnalysis.analysis.memoryCandidates.map((memory, idx) => (
+                                    <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.05]">
+                                      <p className="flex-1 text-sm text-gray-300">{memory}</p>
+                                      <Button
+                                        size="sm"
+                                        onClick={() => pinMemory.mutate(memory)}
+                                        disabled={pinMemory.isPending}
+                                        className="shrink-0 bg-purple-600/80 hover:bg-purple-500 h-8 px-3 text-xs touch-target"
+                                        data-testid={`button-pin-memory-${idx}`}
+                                      >
+                                        <Pin className="w-3.5 h-3.5 mr-1" />
+                                        Pin
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <div className="thinking-card-section">
+                              <p className="text-xs font-medium text-gray-500 mb-3">Key Claims</p>
+                              <ul className="space-y-2">
+                                {latestAnalysis.analysis.keyClaims.map((claim, idx) => (
+                                  <li key={idx} className="flex items-start gap-3">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
+                                    <p className="text-white/90 leading-relaxed">{claim}</p>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                              
+                            {latestAnalysis.analysis.evidence.length > 0 && (
+                              <div className="thinking-card-section">
+                                <p className="text-xs font-medium text-gray-500 mb-3">Evidence</p>
                                 <ul className="space-y-2">
-                                  {latestAnalysis.analysis.keyClaims.map((claim, idx) => (
-                                    <li key={idx} className="flex items-start gap-2">
-                                      <span className="text-purple-400 mt-1">•</span>
-                                      <p className="text-white font-medium leading-relaxed">{claim}</p>
+                                  {latestAnalysis.analysis.evidence.map((item, idx) => (
+                                    <li key={idx} className="flex items-start gap-3">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                                      <p className="text-gray-300 leading-relaxed">{item}</p>
                                     </li>
                                   ))}
                                 </ul>
                               </div>
+                            )}
                               
-                              {latestAnalysis.analysis.evidence.length > 0 && (
-                                <div>
-                                  <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Evidence</p>
-                                  <ul className="space-y-2">
-                                    {latestAnalysis.analysis.evidence.map((item, idx) => (
-                                      <li key={idx} className="flex items-start gap-2">
-                                        <span className="text-green-400 mt-1">•</span>
-                                        <p className="text-gray-300 leading-relaxed">{item}</p>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                              
-                              {latestAnalysis.analysis.unknowns.length > 0 && (
-                                <div>
-                                  <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Unknowns</p>
-                                  <ul className="space-y-2">
-                                    {latestAnalysis.analysis.unknowns.map((item, idx) => (
-                                      <li key={idx} className="flex items-start gap-2">
-                                        <span className="text-yellow-400 mt-1">?</span>
-                                        <p className="text-gray-400 italic leading-relaxed">{item}</p>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                              
-                              <div>
-                                <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Next Question</p>
-                                <p className="text-purple-300 font-medium">{latestAnalysis.analysis.nextQuestion}</p>
+                            {latestAnalysis.analysis.unknowns.length > 0 && (
+                              <div className="thinking-card-section">
+                                <p className="text-xs font-medium text-gray-500 mb-3">Unknowns</p>
+                                <ul className="space-y-2">
+                                  {latestAnalysis.analysis.unknowns.map((item, idx) => (
+                                    <li key={idx} className="flex items-start gap-3">
+                                      <span className="text-amber-400 mt-1.5 shrink-0">?</span>
+                                      <p className="text-gray-400 italic leading-relaxed">{item}</p>
+                                    </li>
+                                  ))}
+                                </ul>
                               </div>
+                            )}
+                              
+                            <div className="p-4 rounded-xl bg-blue-500/[0.06] border border-blue-500/20">
+                              <p className="text-xs font-medium text-blue-400/80 mb-2">Next Question</p>
+                              <p className="text-blue-200 font-medium leading-relaxed">{latestAnalysis.analysis.nextQuestion}</p>
                             </div>
-                          )}
+                          </>
+                        )}
+                      </div>
 
-                          <div className="mt-8 pt-6 border-t border-white/[0.05] flex items-center gap-3">
-                            <Button
-                              onClick={clearAnalysis}
-                              variant="ghost"
-                              className="text-gray-500 hover:text-white hover:bg-white/5"
-                            >
-                              New Entry
-                              <ArrowRight className="w-4 h-4 ml-2" />
-                            </Button>
-                          </div>
-                        </div>
-                        
-                        <button 
+                      {/* Footer */}
+                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
+                        <p className="text-xs text-gray-600 italic">You don't need to resolve this now.</p>
+                        <Button
                           onClick={clearAnalysis}
-                          className="p-2 rounded-full hover:bg-white/5 transition-colors"
+                          variant="ghost"
+                          className="text-gray-500 hover:text-white hover:bg-white/5 h-9 touch-target"
                         >
-                          <X className="w-4 h-4 text-gray-600" />
-                        </button>
+                          New Entry
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -1199,10 +1220,10 @@ export default function Chat() {
 
               {/* Past Entries - Collapsible (Local-first) */}
               {localEntries && localEntries.length > 0 && (
-                <div className="pb-12">
+                <div className="pb-12 mt-8 pt-8 border-t border-white/[0.03]">
                   <button
                     onClick={() => setShowHistory(!showHistory)}
-                    className="flex items-center gap-2 text-[10px] font-black text-gray-600 uppercase tracking-widest hover:text-gray-400 transition-colors mb-4"
+                    className="flex items-center gap-2 text-xs font-medium text-gray-500 hover:text-gray-300 transition-colors mb-4 touch-target"
                     data-testid="button-toggle-history"
                   >
                     <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
@@ -1210,11 +1231,11 @@ export default function Chat() {
                   </button>
                   
                   {showHistory && (
-                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
                       {localEntries.slice(0, 10).map((entry) => (
                         <div 
                           key={entry.id} 
-                          className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.03] hover:border-purple-500/10 transition-all group"
+                          className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] entry-card"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1 min-w-0">
@@ -1222,7 +1243,7 @@ export default function Chat() {
                                 {entry.text}
                               </p>
                             </div>
-                            <span className="text-[9px] font-black text-gray-700 uppercase tracking-widest shrink-0">
+                            <span className="text-xs font-medium text-gray-600 shrink-0">
                               {format(new Date(entry.createdAt), "MMM d")}
                             </span>
                           </div>
