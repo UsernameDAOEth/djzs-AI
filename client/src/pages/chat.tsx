@@ -55,7 +55,6 @@ import { useDisplayName, useMultipleEnsNames, formatAddress } from "@/hooks/use-
 import { useXmtp } from "@/hooks/use-xmtp";
 import { useWeb3Profile, getPrimaryProfile, getAllLinks, getTotalFollowers } from "@/hooks/useWeb3Profile";
 import { MessageCard } from "@/components/chat/message-cards";
-import { TradeZone } from "@/components/chat/trade-zone";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
 import { format } from "date-fns";
@@ -92,7 +91,6 @@ type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
 const V1_ZONES = [
   { id: "journal", name: "Journal", icon: BookOpen, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight." },
   { id: "research", name: "Research", icon: Search, description: "Information gathering", purpose: "Collective context and verified intelligence." },
-  { id: "trade", name: "Trade", icon: TrendingUp, description: "Execute with clarity", purpose: "Think through trades before you act." },
 ];
 
 const JOURNAL_PROMPTS = [
@@ -156,7 +154,6 @@ export default function Chat() {
       const params = new URLSearchParams(window.location.search);
       const zoneParam = params.get("zone");
       if (zoneParam === "research") return "research";
-      if (zoneParam === "trade") return "trade";
       return "journal";
     }
     return "journal";
@@ -191,7 +188,7 @@ export default function Chat() {
   // Local-first: Entry stats (streak, last entry, total count)
   const [entryStats, setEntryStats] = useState<EntryStats | null>(null);
   useEffect(() => {
-    if (selectedZone !== "trade") {
+    if (selectedZone === "journal" || selectedZone === "research") {
       getEntryStats(selectedZone as EntryType).then(setEntryStats);
     }
   }, [selectedZone, localEntries]);
@@ -210,9 +207,7 @@ export default function Chat() {
 
   const currentPrompts = selectedZone === "research" 
     ? RESEARCH_PROMPTS 
-    : selectedZone === "trade" 
-      ? TRADE_PROMPTS 
-      : JOURNAL_PROMPTS;
+    : JOURNAL_PROMPTS;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -773,14 +768,11 @@ export default function Chat() {
 
           {/* Main Content Area - scrollable */}
           <div className="flex-1 overflow-y-auto">
-            {selectedZone === "trade" ? (
-              <TradeZone address={address || ""} toast={toast} />
-            ) : (
             <div className="flex flex-col max-w-3xl w-full mx-auto px-3 sm:px-6">
               {/* Writing Area - vertically centered, min 70vh */}
               <div className="flex-1 flex flex-col justify-center min-h-[70vh] py-12">
                 {/* Stats bar - streak, last entry, total */}
-                {entryStats && selectedZone !== "trade" && entryStats.totalEntries > 0 && (
+                {entryStats && entryStats.totalEntries > 0 && (
                   <div className="flex flex-wrap items-center gap-3 sm:gap-6 mb-6 animate-in fade-in duration-500">
                     {entryStats.streak > 0 && (
                       <div className="flex items-center gap-2" data-testid="streak-badge">
@@ -812,7 +804,7 @@ export default function Chat() {
                 )}
                 
                 {/* First time welcome */}
-                {entryStats && entryStats.totalEntries === 0 && selectedZone !== "trade" && (
+                {entryStats && entryStats.totalEntries === 0 && (
                   <div className="mb-6 sm:mb-8 p-3 sm:p-4 rounded-2xl bg-purple-500/[0.03] border border-purple-500/10 animate-in fade-in duration-700" data-testid="first-time-welcome">
                     <p className="text-[10px] sm:text-[11px] font-black text-purple-400/70 uppercase tracking-widest mb-2">First entry</p>
                     <p className="text-xs sm:text-sm text-gray-400 leading-relaxed break-words">
@@ -1241,7 +1233,6 @@ export default function Chat() {
                 </div>
               )}
             </div>
-            )}
           </div>
         </main>
 
