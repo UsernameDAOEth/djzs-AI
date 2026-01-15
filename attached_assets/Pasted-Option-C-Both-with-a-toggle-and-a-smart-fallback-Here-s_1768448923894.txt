@@ -1,0 +1,92 @@
+Option C (Both) — with a toggle and a smart fallback.
+
+Here’s the clean way to do it so the zones feel truly different without bloating scope:
+
+Decision: Research Zone = Web + Synthesis (toggle)
+
+Default mode: Web Search + Summarize (with citations + links)
+Fallback mode: Explain (No Web) when:
+	•	user is offline
+	•	search API fails
+	•	user explicitly turns web off
+	•	topic is personal/subjective (better handled by reasoning, not web)
+
+That gives you the “real info” advantage without breaking local-first principles.
+
+⸻
+
+Finishing touches task list (copy/paste into your build plan)
+
+1) Journal Zone: “Write → Think with me”
+
+UI
+	•	Big, calm text area (minimal chrome)
+	•	Primary action: Think with me
+	•	Secondary: Save entry, Tag, Mood (optional)
+
+AI behavior
+	•	Returns 3–7 reflective questions (not advice dumps)
+	•	Tone: introspective, human, non-judgmental
+	•	Optional buttons: “Go deeper”, “Reframe”, “Next question”
+
+Data
+	•	Store: raw entry, timestamp, zone=journal, AI questions, user answers (threaded)
+
+⸻
+
+2) Research Zone: “Search → Sources → Synthesis”
+
+UI
+	•	Search bar + query suggestions
+	•	Results list (titles, snippets, source domain)
+	•	Right panel: Synthesis with citations
+
+Two modes
+	•	Web mode: shows sources + synthesized answer
+	•	No-web mode: “Explain” style output (and clearly labels it as non-browsed)
+
+Output format (important)
+	•	5 bullet key takeaways
+	•	3 “What to check next”
+	•	3 source links
+	•	“Confidence / limits” line (keeps trust high)
+
+⸻
+
+3) Hard visual separation (so users never confuse them)
+	•	Journal: purple, soft gradients, “reflection” iconography (pen/moon)
+	•	Research: blue, sharper layout, “lookup” iconography (magnifier/book)
+	•	Different input shapes:
+	•	Journal = tall writing pad
+	•	Research = single-line search bar
+
+Also: keep AI message styling distinct:
+	•	Journal AI bubbles: questions-only cards
+	•	Research AI bubbles: structured summary + citations
+
+⸻
+
+4) The bridge between zones (this is the magic)
+
+From Journal → Research:
+	•	highlight a phrase in journal entry → “Research this”
+	•	auto-create a Research query seeded from the highlighted phrase
+
+From Research → Journal:
+	•	“Add to my journal” button that inserts a short note + cited links into today’s entry
+
+This is what makes DJZS feel like a system, not two tabs.
+
+⸻
+
+Minimal tech implementation (so you don’t get stuck)
+	•	Add a /api/research/search?q= endpoint
+	•	Plug in one search provider (start with one)
+	•	Cache results by query hash (24h) to cut cost + speed up
+	•	Return: { sources: [{title,url,snippet}], synthesisMarkdown }
+
+⸻
+
+If you want the simplest product decision: turn Web mode ON by default, but keep a visible “Web: On/Off” switch in Research Zone. That’s the cleanest UX and keeps you aligned with “real utility” without forcing it.
+
+If you paste what stack you’re using for search (or if you have none yet), I’ll give you the exact endpoint response shape + UI component structure for the Research Zone.
