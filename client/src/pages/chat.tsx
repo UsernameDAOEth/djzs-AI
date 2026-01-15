@@ -842,10 +842,14 @@ export default function Chat() {
           {/* Main Content Area - scrollable */}
           <div className={`flex-1 overflow-y-auto scroll-smooth ${selectedZone === 'journal' ? 'zone-journal' : 'zone-research'}`}>
             <div className="flex flex-col max-w-2xl w-full mx-auto px-4 sm:px-8">
-              {/* Writing Area - vertically centered, min 70vh */}
-              <div className="flex-1 flex flex-col justify-center min-h-[60vh] sm:min-h-[70vh] py-8 sm:py-12">
-                {/* Stats bar - streak, last entry, total */}
-                {entryStats && entryStats.totalEntries > 0 && (
+              {/* Writing Area - vertically centered */}
+              <div className={`flex-1 flex flex-col justify-center py-8 sm:py-12 ${
+                selectedZone === 'research' 
+                  ? 'min-h-[50vh] sm:min-h-[60vh]' 
+                  : 'min-h-[60vh] sm:min-h-[70vh]'
+              }`}>
+                {/* Stats bar - streak, last entry, total (Journal only) */}
+                {selectedZone === 'journal' && entryStats && entryStats.totalEntries > 0 && (
                   <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-8 p-3 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04] animate-in fade-in duration-500">
                     {entryStats.streak > 0 && (
                       <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10" data-testid="streak-badge">
@@ -874,8 +878,8 @@ export default function Chat() {
                   </div>
                 )}
                 
-                {/* First time welcome */}
-                {entryStats && entryStats.totalEntries === 0 && (
+                {/* First time welcome (Journal only) */}
+                {selectedZone === 'journal' && entryStats && entryStats.totalEntries === 0 && (
                   <div className="mb-6 sm:mb-8 p-3 sm:p-4 rounded-2xl bg-purple-500/[0.03] border border-purple-500/10 animate-in fade-in duration-700" data-testid="first-time-welcome">
                     <p className="text-[10px] sm:text-[11px] font-black text-purple-400/70 uppercase tracking-widest mb-2">First entry</p>
                     <p className="text-xs sm:text-sm text-gray-400 leading-relaxed break-words">
@@ -917,12 +921,15 @@ export default function Chat() {
                   </>
                 ) : (
                   <>
-                    {/* Research: Search bar style */}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3 mb-2">
+                    {/* Research: Search bar style - centered on mobile */}
+                    <div className="space-y-4 text-center sm:text-left">
+                      {/* Rotating prompt - hidden on mobile for cleaner look */}
+                      <div className="hidden sm:flex items-center gap-3 mb-2">
                         <Search className="w-5 h-5 text-blue-400/60" />
                         <span className="text-sm font-medium text-blue-300/70">{currentPrompts[currentPromptIndex]}</span>
                       </div>
+                      {/* Mobile-only heading */}
+                      <p className="sm:hidden text-lg font-medium text-blue-300/80 mb-4">What do you want to know?</p>
                       
                       <div className={`relative transition-all duration-500 rounded-2xl ${isFocused ? 'zone-glow' : ''}`}>
                         <div className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3 px-4 sm:px-5 py-4 rounded-2xl border transition-all ${
