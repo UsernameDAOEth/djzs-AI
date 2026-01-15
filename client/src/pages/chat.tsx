@@ -925,33 +925,34 @@ export default function Chat() {
                       </div>
                       
                       <div className={`relative transition-all duration-500 rounded-2xl ${isFocused ? 'zone-glow' : ''}`}>
-                        <div className={`flex items-center gap-3 px-5 py-4 rounded-2xl border transition-all ${
+                        <div className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3 px-4 sm:px-5 py-4 rounded-2xl border transition-all ${
                           isFocused 
                             ? 'border-blue-500/40 bg-blue-500/[0.03]' 
                             : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.12]'
                         }`}>
-                          <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-blue-400' : 'text-gray-500'}`} />
-                          <input
-                            type="text"
-                            value={messageInput}
-                            onChange={(e) => setMessageInput(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" && !e.shiftKey) {
-                                e.preventDefault();
-                                handleAnalyze();
-                              }
-                            }}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setIsFocused(false)}
-                            placeholder="What do you want to research?"
-                            className="flex-1 bg-transparent border-none outline-none focus:ring-0 text-lg font-normal text-white/95 placeholder:text-gray-500"
-                            data-testid="input-research"
-                          />
+                          <div className="flex items-center gap-3 flex-1">
+                            <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-blue-400' : 'text-gray-500'}`} />
+                            <input
+                              type="text"
+                              value={messageInput}
+                              onChange={(e) => setMessageInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                  e.preventDefault();
+                                  handleAnalyze();
+                                }
+                              }}
+                              onFocus={() => setIsFocused(true)}
+                              onBlur={() => setIsFocused(false)}
+                              placeholder="What do you want to research?"
+                              className="flex-1 bg-transparent border-none outline-none focus:ring-0 text-base sm:text-lg font-normal text-white/95 placeholder:text-gray-500"
+                              data-testid="input-research"
+                            />
+                          </div>
                           <Button
                             onClick={handleAnalyze}
                             disabled={!messageInput.trim() || searchResearch.isPending}
-                            size="sm"
-                            className="shrink-0 bg-blue-600 hover:bg-blue-500 h-10 px-5 rounded-xl font-medium text-sm shadow-lg shadow-blue-900/30 transition-all active:scale-95"
+                            className="w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-500 h-12 sm:h-10 px-5 rounded-xl font-medium text-sm shadow-lg shadow-blue-900/30 transition-all active:scale-95 touch-target"
                             data-testid="button-search"
                           >
                             {searchResearch.isPending ? (
@@ -966,18 +967,20 @@ export default function Chat() {
                         </div>
                       </div>
                       
-                      {/* Research quick suggestions */}
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {["Latest trends", "How does X work?", "Compare A vs B", "Deep dive on topic"].map((suggestion, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => setMessageInput(suggestion)}
-                            className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-blue-500/30 hover:text-blue-400 hover:bg-blue-500/[0.05] transition-all"
-                            data-testid={`button-suggestion-${idx}`}
-                          >
-                            {suggestion}
-                          </button>
-                        ))}
+                      {/* Research quick suggestions - horizontal scroll on mobile */}
+                      <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 mt-3 scrollbar-hide">
+                        <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
+                          {["Latest trends", "How does X work?", "Compare A vs B", "Deep dive on topic"].map((suggestion, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setMessageInput(suggestion)}
+                              className="px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-blue-500/30 hover:text-blue-400 hover:bg-blue-500/[0.05] transition-all whitespace-nowrap touch-target"
+                              data-testid={`button-suggestion-${idx}`}
+                            >
+                              {suggestion}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </>
@@ -1181,25 +1184,27 @@ export default function Chat() {
                           </div>
                         )}
                         
-                        {/* What to Check Next */}
+                        {/* What to Check Next - horizontal scroll on mobile */}
                         {researchResult.whatToCheckNext && researchResult.whatToCheckNext.length > 0 && (
                           <div className="space-y-3">
                             <p className="text-xs font-medium text-gray-500">What to check next</p>
-                            <div className="flex flex-wrap gap-2">
-                              {researchResult.whatToCheckNext.map((item, idx) => (
-                                <button
-                                  key={idx}
-                                  onClick={() => {
-                                    setResearchResult(null);
-                                    setAgentResponse(null);
-                                    setMessageInput(item);
-                                  }}
-                                  className="px-3 py-2 rounded-xl text-sm text-left bg-blue-500/[0.08] border border-blue-500/20 text-blue-200/80 hover:bg-blue-500/15 hover:border-blue-500/30 hover:text-blue-100 transition-all active:scale-[0.98]"
-                                  data-testid={`button-next-check-${idx}`}
-                                >
-                                  {item}
-                                </button>
-                              ))}
+                            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-hide">
+                              <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
+                                {researchResult.whatToCheckNext.map((item, idx) => (
+                                  <button
+                                    key={idx}
+                                    onClick={() => {
+                                      setResearchResult(null);
+                                      setAgentResponse(null);
+                                      setMessageInput(item);
+                                    }}
+                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-blue-500/[0.08] border border-blue-500/20 text-blue-200/80 hover:bg-blue-500/15 hover:border-blue-500/30 hover:text-blue-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    data-testid={`button-next-check-${idx}`}
+                                  >
+                                    {item}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         )}
@@ -1288,28 +1293,30 @@ export default function Chat() {
                           <p className={`font-medium italic leading-relaxed ${selectedZone === 'research' ? 'text-blue-200' : 'text-purple-200'}`}>{agentResponse.question}</p>
                         </div>
 
-                        {/* Reflective questions for Journal mode - clickable to continue journaling */}
+                        {/* Reflective questions for Journal mode - horizontal scroll on mobile */}
                         {selectedZone === 'journal' && agentResponse.reflectiveQuestions && agentResponse.reflectiveQuestions.length > 0 && (
                           <div className="space-y-3">
                             <p className="text-xs font-medium text-gray-500">Go deeper</p>
-                            <div className="flex flex-wrap gap-2">
-                              {agentResponse.reflectiveQuestions.slice(0, 5).map((q, idx) => (
-                                <button
-                                  key={idx}
-                                  onClick={() => {
-                                    setAgentResponse(null);
-                                    setResearchResult(null);
-                                    setLatestAnalysis(null);
-                                    setFrozenHeight(null);
-                                    setMessageInput(q);
-                                    setTimeout(() => textareaRef.current?.focus(), 100);
-                                  }}
-                                  className="px-3 py-2 rounded-xl text-sm text-left bg-purple-500/[0.08] border border-purple-500/20 text-purple-200/80 hover:bg-purple-500/15 hover:border-purple-500/30 hover:text-purple-100 transition-all active:scale-[0.98]"
-                                  data-testid={`button-reflective-${idx}`}
-                                >
-                                  {q}
-                                </button>
-                              ))}
+                            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-hide">
+                              <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
+                                {agentResponse.reflectiveQuestions.slice(0, 5).map((q, idx) => (
+                                  <button
+                                    key={idx}
+                                    onClick={() => {
+                                      setAgentResponse(null);
+                                      setResearchResult(null);
+                                      setLatestAnalysis(null);
+                                      setFrozenHeight(null);
+                                      setMessageInput(q);
+                                      setTimeout(() => textareaRef.current?.focus(), 100);
+                                    }}
+                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-purple-500/[0.08] border border-purple-500/20 text-purple-200/80 hover:bg-purple-500/15 hover:border-purple-500/30 hover:text-purple-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    data-testid={`button-reflective-${idx}`}
+                                  >
+                                    {q}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         )}

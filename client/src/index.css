@@ -158,6 +158,15 @@
     scroll-behavior: smooth;
   }
 
+  /* Hide scrollbar for horizontal scroll areas on mobile */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Entry history cards */
   .entry-card {
     transition: all 0.2s ease;
