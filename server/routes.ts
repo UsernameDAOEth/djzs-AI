@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema, insertJournalEntrySchema, insertPinnedMemorySchema } from "@shared/schema";
 import { z } from "zod";
 import { verifyMessage } from "viem";
-import { analyzeJournalEntry, analyzeResearchEntry } from "./venice";
+import { analyzeJournalEntry, analyzeResearchEntry, synthesizeResearch } from "./venice";
 import { analyzeWithAgent, agentInputSchema } from "./agent.api";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
@@ -128,6 +128,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true, timestamp: Date.now(), service: "DJZS Chat API" });
+  });
+
+  // ==================== RESEARCH ZONE ====================
+  // Research synthesis endpoint - provides AI-powered explanations
+  // In "Explain" mode (no web search), uses Venice AI for knowledge synthesis
+  const researchCache = new Map<string, { result: unknown; timestamp: number }>();
+  const RESEARCH_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+  
+  app.get("/api/research/search", async (req, res) => {
+    try {
+      const query = String(req.query.q ?? "").trim();
+      const webMode = req.query.web !== "false"; // Default web mode on, but fallback to explain
+      
+      if (!query || query.length < 3) {
+        return res.status(400).json({ error: "Query must be at least 3 characters" });
+      }
+      
+      // Check cache first
+      const cacheKey = `${query}:${webMode}`;
+      const cached = researchCache.get(cacheKey);
+      if (cached && Date.now() - cached.timestamp < RESEARCH_CACHE_TTL) {
+        return res.json({ ...cached.result, cached: true });
+      }
+      
+      // For now, use Venice AI to synthesize knowledge (Explain mode)
+      // Web search integration can be added later
+      const synthesisResult = await synthesizeResearch(query, webMode);
+      
+      // Cache the result
+      researchCache.set(cacheKey, { result: synthesisResult, timestamp: Date.now() });
+      
+      // Clean old cache entries periodically
+      if (researchCache.size > 500) {
+        const now = Date.now();
+        for (const [key, value] of researchCache.entries()) {
+          if (now - value.timestamp > RESEARCH_CACHE_TTL) {
+            researchCache.delete(key);
+          }
+        }
+      }
+      
+      res.json(synthesisResult);
+    } catch (error) {
+      console.error("Research search error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Research failed" });
+    }
   });
 
   app.get("/api/members", async (_req, res) => {

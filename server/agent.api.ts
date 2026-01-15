@@ -50,6 +50,7 @@ export const agentOutputSchema = z.object({
   matters: z.string().max(160),
   nextMove: z.string().max(120),
   question: z.string().max(120),
+  reflectiveQuestions: z.array(z.string().max(100)).max(5).optional(),
   connectionToPrior: z.string().max(200).optional(),
   memorySuggestion: z.object({
     shouldSuggest: z.boolean(),
@@ -117,6 +118,11 @@ const OUTPUT_SCHEMA = {
         question: { 
           type: "string",
           description: "One reflective question that invites deeper thinking (max 120 chars)"
+        },
+        reflectiveQuestions: {
+          type: "array",
+          items: { type: "string" },
+          description: "3-5 additional reflective questions to deepen thinking (JOURNAL mode only, max 100 chars each)"
         },
         connectionToPrior: {
           type: "string",
@@ -250,6 +256,7 @@ RESPOND WITH VALID JSON ONLY. Be brief. Say less.
   "matters": "one insight about why this matters (max 160 chars)",
   "nextMove": "one possible next step, or empty if unclear (max 120 chars)",
   "question": "one reflective question (max 120 chars)",
+  "reflectiveQuestions": ["3-5 additional questions to deepen thinking (journal mode)", "each max 100 chars"],
   "connectionToPrior": "if prior entries provided, note a specific pattern or evolution (max 200 chars). Be concrete. Empty if none.",
   "memorySuggestion": {
     "shouldSuggest": false,
@@ -266,25 +273,29 @@ Rules:
 - shouldSuggest = true only for repeated personal patterns or core values. Almost never.
 - Prefer short sentences. When in doubt, say less.`;
 
-  const researchInstructions = input.mode === "research" 
+  const modeInstructions = input.mode === "research" 
     ? `\n\nRESEARCH MODE ACTIVE: 
 - You MUST provide specific, real-time facts if available.
-- Today is December 28, 2025.
-- BITCOIN PRICE DATA: BTC is currently trading around $87,000–$87,500. It peaked at $111K in early Dec 2025 and is down ~21% this month.
-- Support is around $85k-$87k, resistance at $90k.
+- Today is January 15, 2026.
 - Prioritize verified facts, data points, and technical details.
 - Be extremely specific. Name numbers, dates, and entities.
-- The 'matters' field should explain the evidentiary weight or logical implication.`
-    : "";
+- The 'matters' field should explain the evidentiary weight or logical implication.
+- reflectiveQuestions should be EMPTY ARRAY [] in research mode.`
+    : `\n\nJOURNAL MODE ACTIVE:
+- Focus on reflective questions that invite deeper self-examination.
+- reflectiveQuestions MUST contain 3-5 distinct questions that probe different angles.
+- Questions should be introspective, not advice-giving.
+- Examples: "What would change if you let go of this?", "Where else have you felt this before?", "What are you protecting here?"
+- Each question should invite a different direction of thought.`;
 
   try {
-    const result = await callVenice(SYSTEM_PROMPT + researchInstructions + schemaInstruction, userPrompt);
+    const result = await callVenice(SYSTEM_PROMPT + modeInstructions + schemaInstruction, userPrompt);
     return validateOutput(result);
   } catch (error) {
     console.log("First attempt failed, retrying with stricter prompt...");
     
     const retryPrompt = userPrompt + "\n\n---\nBe more specific. Remove generic language. Say less.";
-    const result = await callVenice(SYSTEM_PROMPT + schemaInstruction, retryPrompt);
+    const result = await callVenice(SYSTEM_PROMPT + modeInstructions + schemaInstruction, retryPrompt);
     return validateOutput(result);
   }
 }

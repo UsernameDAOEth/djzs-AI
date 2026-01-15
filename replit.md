@@ -214,6 +214,14 @@ shared/
 
 ## Recent Changes
 
+- **Jan 15, 2026**: Differentiated Journal and Research zones
+  - Journal zone: Tall writing pad (purple accents), AI thinking partner with reflective questions
+  - Research zone: Search bar interface (blue accents), AI-powered knowledge synthesis
+  - `/api/research/search` endpoint with Venice AI "Explain mode" and 24hr caching
+  - Research results display key takeaways, synthesis paragraph, "what to check next" suggestions
+  - Confidence indicators for AI limitations (based on training data only)
+  - Zone-specific icons: PenLine for Journal, Search for Research
+  - Decoupled mutation states for independent zone operation
 - **Jan 10, 2026**: Upgraded Trade Zone to x402 V2 protocol
   - Migrated from `x402-axios` to `@x402/axios` and `@x402/evm` V2 packages
   - Implemented browser wallet signer adapter for x402 V2 (wraps wagmi WalletClient for signTypedData)

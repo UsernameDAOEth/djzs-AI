@@ -40,7 +40,12 @@ import {
   ChevronDown,
   Menu,
   Globe,
-  LogOut
+  LogOut,
+  PenLine,
+  Moon,
+  RefreshCw,
+  Compass,
+  ArrowUpRight
 } from "lucide-react";
 import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
@@ -89,8 +94,8 @@ interface ResearchAnalysisResult {
 type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
 
 const V1_ZONES = [
-  { id: "journal", name: "Journal", icon: BookOpen, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight." },
-  { id: "research", name: "Research", icon: Search, description: "Information gathering", purpose: "Collective context and verified intelligence." },
+  { id: "journal", name: "Journal", icon: PenLine, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight." },
+  { id: "research", name: "Research", icon: Search, description: "Quick research", purpose: "Search and synthesize information related to your thinking." },
 ];
 
 const JOURNAL_PROMPTS = [
@@ -128,12 +133,24 @@ interface AgentResponse {
   matters: string;
   nextMove: string;
   question: string;
+  reflectiveQuestions?: string[];
   connectionToPrior?: string;
   memorySuggestion: {
     shouldSuggest: boolean;
     content: string;
     kind: string;
   };
+}
+
+interface ResearchResult {
+  query: string;
+  mode: "web" | "explain";
+  keyTakeaways: string[];
+  whatToCheckNext: string[];
+  sources?: { title: string; url: string; snippet: string }[];
+  confidence: string;
+  synthesisMarkdown: string;
+  cached?: boolean;
 }
 
 export default function Chat() {
@@ -170,6 +187,8 @@ export default function Chat() {
   const [frozenHeight, setFrozenHeight] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [lastEntryId, setLastEntryId] = useState<number | null>(null);
+  const [researchResult, setResearchResult] = useState<ResearchResult | null>(null);
+  const [webModeEnabled, setWebModeEnabled] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Local-first: Query memories from IndexedDB
@@ -218,6 +237,10 @@ export default function Chat() {
 
   useEffect(() => {
     setCurrentPromptIndex(0);
+    setAgentResponse(null);
+    setResearchResult(null);
+    setMessageInput("");
+    setFrozenHeight(null);
   }, [selectedZone]);
 
   // Lock body scroll when memory drawer is open on mobile
@@ -402,6 +425,30 @@ export default function Chat() {
     },
   });
 
+  // Research Zone search mutation
+  const searchResearch = useMutation({
+    mutationFn: async (query: string) => {
+      const res = await fetch(`/api/research/search?q=${encodeURIComponent(query)}&web=${webModeEnabled}`);
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Research failed");
+      }
+      return res.json() as Promise<ResearchResult>;
+    },
+    onSuccess: (data) => {
+      setResearchResult(data);
+      setIsAnalyzing(false);
+    },
+    onError: (error) => {
+      setIsAnalyzing(false);
+      toast({
+        title: "Research failed",
+        description: error instanceof Error ? error.message : "Could not complete search",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Pin a memory (server)
   const pinMemory = useMutation({
     mutationFn: async (content: string) => {
@@ -490,18 +537,32 @@ export default function Chat() {
   };
 
   const handleAnalyze = () => {
-    if (!messageInput.trim() || thinkWithMe.isPending) return;
-    if (textareaRef.current) {
-      setFrozenHeight(textareaRef.current.scrollHeight);
+    if (!messageInput.trim()) return;
+    
+    if (selectedZone === 'research') {
+      // Research zone: use search API (separate from journal mutation state)
+      if (searchResearch.isPending) return;
+      setIsAnalyzing(true);
+      setAgentResponse(null);
+      setResearchResult(null);
+      searchResearch.mutate(messageInput);
+    } else {
+      // Journal zone: use thinking partner
+      if (thinkWithMe.isPending) return;
+      setIsAnalyzing(true);
+      setAgentResponse(null);
+      setResearchResult(null);
+      if (textareaRef.current) {
+        setFrozenHeight(textareaRef.current.scrollHeight);
+      }
+      thinkWithMe.mutate({ content: messageInput, mode: selectedZone as EntryType });
     }
-    setIsAnalyzing(true);
-    setAgentResponse(null);
-    thinkWithMe.mutate({ content: messageInput, mode: selectedZone as EntryType });
   };
 
   const clearAndReset = () => {
     setMessageInput("");
     setAgentResponse(null);
+    setResearchResult(null);
     setLatestAnalysis(null);
     setFrozenHeight(null);
     textareaRef.current?.focus();
@@ -823,38 +884,107 @@ export default function Chat() {
                   </div>
                 )}
                 
-                {/* Prompt hint */}
-                <p className={`text-sm sm:text-base font-medium mb-4 transition-all duration-500 break-words ${isFocused ? 'opacity-100 text-purple-300/70' : 'opacity-60 text-gray-400'} ${selectedZone === 'research' ? 'text-blue-300/70' : ''}`}>
-                  {currentPrompts[currentPromptIndex]}
-                </p>
-                
-                {/* Textarea - refined focus state */}
-                <div className={`relative transition-all duration-500 rounded-2xl sm:rounded-3xl ${isFocused ? 'zone-glow writing-area-focused' : ''}`}>
-                  <textarea
-                    ref={textareaRef}
-                    autoFocus
-                    value={messageInput}
-                    onChange={(e) => {
-                      setMessageInput(e.target.value);
-                      if (frozenHeight) setFrozenHeight(null);
-                    }}
-                    onKeyDown={handleKeyDown}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    placeholder={selectedZone === 'journal' 
-                      ? "Write what you're thinking. No formatting. No pressure." 
-                      : "What are you researching? Capture your findings here."
-                    }
-                    className={`w-full bg-transparent border-none outline-none focus:ring-0 text-lg sm:text-xl font-normal text-white/95 placeholder:text-gray-600 resize-none leading-[1.9] tracking-normal p-4 sm:p-6 overflow-hidden ${isFocused ? 'placeholder:text-gray-500' : ''}`}
-                    style={{ 
-                      minHeight: frozenHeight ? undefined : 'max(180px, calc(50vh - 100px))',
-                      height: frozenHeight ? `${frozenHeight}px` : 'auto'
-                    }}
-                    data-testid="textarea-journal"
-                  />
-                </div>
+                {/* Zone-specific input areas */}
+                {selectedZone === 'journal' ? (
+                  <>
+                    {/* Journal: Prompt hint */}
+                    <p className={`text-sm sm:text-base font-medium mb-4 transition-all duration-500 break-words ${isFocused ? 'opacity-100 text-purple-300/70' : 'opacity-60 text-gray-400'}`}>
+                      {currentPrompts[currentPromptIndex]}
+                    </p>
+                    
+                    {/* Journal: Tall writing pad */}
+                    <div className={`relative transition-all duration-500 rounded-2xl sm:rounded-3xl ${isFocused ? 'zone-glow writing-area-focused' : ''}`}>
+                      <textarea
+                        ref={textareaRef}
+                        autoFocus
+                        value={messageInput}
+                        onChange={(e) => {
+                          setMessageInput(e.target.value);
+                          if (frozenHeight) setFrozenHeight(null);
+                        }}
+                        onKeyDown={handleKeyDown}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        placeholder="Write what you're thinking. No formatting. No pressure."
+                        className={`w-full bg-transparent border-none outline-none focus:ring-0 text-lg sm:text-xl font-normal text-white/95 placeholder:text-gray-600 resize-none leading-[1.9] tracking-normal p-4 sm:p-6 overflow-hidden ${isFocused ? 'placeholder:text-gray-500' : ''}`}
+                        style={{ 
+                          minHeight: frozenHeight ? undefined : 'max(180px, calc(50vh - 100px))',
+                          height: frozenHeight ? `${frozenHeight}px` : 'auto'
+                        }}
+                        data-testid="textarea-journal"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Research: Search bar style */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Search className="w-5 h-5 text-blue-400/60" />
+                        <span className="text-sm font-medium text-blue-300/70">{currentPrompts[currentPromptIndex]}</span>
+                      </div>
+                      
+                      <div className={`relative transition-all duration-500 rounded-2xl ${isFocused ? 'zone-glow' : ''}`}>
+                        <div className={`flex items-center gap-3 px-5 py-4 rounded-2xl border transition-all ${
+                          isFocused 
+                            ? 'border-blue-500/40 bg-blue-500/[0.03]' 
+                            : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.12]'
+                        }`}>
+                          <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-blue-400' : 'text-gray-500'}`} />
+                          <input
+                            type="text"
+                            value={messageInput}
+                            onChange={(e) => setMessageInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                handleAnalyze();
+                              }
+                            }}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
+                            placeholder="What do you want to research?"
+                            className="flex-1 bg-transparent border-none outline-none focus:ring-0 text-lg font-normal text-white/95 placeholder:text-gray-500"
+                            data-testid="input-research"
+                          />
+                          <Button
+                            onClick={handleAnalyze}
+                            disabled={!messageInput.trim() || searchResearch.isPending}
+                            size="sm"
+                            className="shrink-0 bg-blue-600 hover:bg-blue-500 h-10 px-5 rounded-xl font-medium text-sm shadow-lg shadow-blue-900/30 transition-all active:scale-95"
+                            data-testid="button-search"
+                          >
+                            {searchResearch.isPending ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <>
+                                <ArrowUpRight className="w-4 h-4 mr-1.5" />
+                                Research
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {/* Research quick suggestions */}
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {["Latest trends", "How does X work?", "Compare A vs B", "Deep dive on topic"].map((suggestion, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setMessageInput(suggestion)}
+                            className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-blue-500/30 hover:text-blue-400 hover:bg-blue-500/[0.05] transition-all"
+                            data-testid={`button-suggestion-${idx}`}
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
 
-                {/* Action bar - mobile optimized */}
+                {/* Action bar - Journal zone only */}
+                {selectedZone === 'journal' && (
                 <div className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-6 sm:mt-8 py-4 transition-all duration-500 ${isFocused ? 'opacity-100' : 'opacity-60'}`}>
                   {/* Character count and shortcuts - hidden on mobile */}
                   <div className="hidden sm:flex items-center gap-6">
@@ -960,11 +1090,7 @@ export default function Chat() {
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className={`w-full sm:w-auto h-12 sm:h-11 px-6 sm:px-8 rounded-xl sm:rounded-2xl font-semibold text-sm shadow-lg transition-all active:scale-95 action-btn-glow touch-target ${
-                        selectedZone === 'research' 
-                          ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/40' 
-                          : 'bg-purple-600 hover:bg-purple-500 shadow-purple-900/40'
-                      }`}
+                      className="w-full sm:w-auto h-12 sm:h-11 px-6 sm:px-8 rounded-xl sm:rounded-2xl font-semibold text-sm shadow-lg transition-all active:scale-95 action-btn-glow touch-target bg-purple-600 hover:bg-purple-500 shadow-purple-900/40"
                       data-testid="button-analyze"
                     >
                       {isAnalyzing ? (
@@ -981,21 +1107,125 @@ export default function Chat() {
                     </Button>
                   </div>
                 </div>
+                )}
               </div>
-
+              
               {/* Insight appears below text when analyzing is complete */}
-              {(isAnalyzing || agentResponse || latestAnalysis) && (
+              {(isAnalyzing || agentResponse || researchResult || latestAnalysis) && (
                 <div className="pb-12 sm:pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  {isAnalyzing && !agentResponse && !latestAnalysis && (
+                  {isAnalyzing && !agentResponse && !researchResult && !latestAnalysis && (
                     <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl thinking-card" data-testid="analyzing-loader">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-600/20 flex items-center justify-center">
-                          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400 animate-spin" />
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center ${selectedZone === 'research' ? 'bg-blue-600/20' : 'bg-purple-600/20'}`}>
+                          <Loader2 className={`w-5 h-5 sm:w-6 sm:h-6 animate-spin ${selectedZone === 'research' ? 'text-blue-400' : 'text-purple-400'}`} />
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-purple-400 mb-1">Thinking...</p>
-                          <p className="text-sm text-gray-500">Processing your entry</p>
+                          <p className={`text-xs font-semibold mb-1 ${selectedZone === 'research' ? 'text-blue-400' : 'text-purple-400'}`}>
+                            {selectedZone === 'research' ? 'Researching...' : 'Thinking...'}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {selectedZone === 'research' ? 'Synthesizing information' : 'Processing your entry'}
+                          </p>
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Research Result Card */}
+                  {researchResult && (
+                    <div className="rounded-2xl sm:rounded-3xl thinking-card overflow-hidden" data-testid="research-result-card">
+                      {/* Header */}
+                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-600/20">
+                            <Search className="w-5 h-5 text-blue-400" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-blue-400">Research Results</p>
+                            <p className="text-xs text-gray-600">
+                              {researchResult.mode === 'explain' ? 'Explain mode' : 'Web search'} 
+                              {researchResult.cached && ' • cached'}
+                            </p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={clearAndReset}
+                          className="p-2 rounded-full hover:bg-white/5 transition-colors touch-target"
+                        >
+                          <X className="w-5 h-5 text-gray-500" />
+                        </button>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="p-4 sm:p-6 space-y-5">
+                        {/* Key Takeaways */}
+                        {researchResult.keyTakeaways && researchResult.keyTakeaways.length > 0 && (
+                          <div className="space-y-3">
+                            <p className="text-xs font-medium text-gray-500">Key takeaways</p>
+                            <ul className="space-y-2">
+                              {researchResult.keyTakeaways.map((takeaway, idx) => (
+                                <li key={idx} className="flex items-start gap-3">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
+                                  <p className="text-white/90 leading-relaxed">{takeaway}</p>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        {/* Synthesis */}
+                        {researchResult.synthesisMarkdown && (
+                          <div className="p-4 rounded-xl bg-blue-500/[0.06] border border-blue-500/20">
+                            <p className="text-xs font-medium text-blue-400/80 mb-3">Synthesis</p>
+                            <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{researchResult.synthesisMarkdown}</p>
+                          </div>
+                        )}
+                        
+                        {/* What to Check Next */}
+                        {researchResult.whatToCheckNext && researchResult.whatToCheckNext.length > 0 && (
+                          <div className="space-y-3">
+                            <p className="text-xs font-medium text-gray-500">What to check next</p>
+                            <div className="flex flex-wrap gap-2">
+                              {researchResult.whatToCheckNext.map((item, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => {
+                                    setResearchResult(null);
+                                    setAgentResponse(null);
+                                    setMessageInput(item);
+                                  }}
+                                  className="px-3 py-2 rounded-xl text-sm text-left bg-blue-500/[0.08] border border-blue-500/20 text-blue-200/80 hover:bg-blue-500/15 hover:border-blue-500/30 hover:text-blue-100 transition-all active:scale-[0.98]"
+                                  data-testid={`button-next-check-${idx}`}
+                                >
+                                  {item}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Confidence */}
+                        {researchResult.confidence && (
+                          <div className="p-3 rounded-lg bg-amber-500/[0.06] border border-amber-500/15">
+                            <p className="text-xs text-amber-400/70 flex items-center gap-2">
+                              <Info className="w-3.5 h-3.5" />
+                              {researchResult.confidence}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Footer */}
+                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
+                        <p className="text-xs text-gray-600 italic">Based on AI knowledge synthesis</p>
+                        <Button
+                          onClick={clearAndReset}
+                          variant="ghost"
+                          className="text-gray-500 hover:text-white hover:bg-white/5 h-9 touch-target"
+                        >
+                          New Search
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -1057,6 +1287,32 @@ export default function Chat() {
                           <p className={`text-xs font-medium mb-2 ${selectedZone === 'research' ? 'text-blue-400/80' : 'text-purple-400/80'}`}>Question to sit with</p>
                           <p className={`font-medium italic leading-relaxed ${selectedZone === 'research' ? 'text-blue-200' : 'text-purple-200'}`}>{agentResponse.question}</p>
                         </div>
+
+                        {/* Reflective questions for Journal mode - clickable to continue journaling */}
+                        {selectedZone === 'journal' && agentResponse.reflectiveQuestions && agentResponse.reflectiveQuestions.length > 0 && (
+                          <div className="space-y-3">
+                            <p className="text-xs font-medium text-gray-500">Go deeper</p>
+                            <div className="flex flex-wrap gap-2">
+                              {agentResponse.reflectiveQuestions.slice(0, 5).map((q, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => {
+                                    setAgentResponse(null);
+                                    setResearchResult(null);
+                                    setLatestAnalysis(null);
+                                    setFrozenHeight(null);
+                                    setMessageInput(q);
+                                    setTimeout(() => textareaRef.current?.focus(), 100);
+                                  }}
+                                  className="px-3 py-2 rounded-xl text-sm text-left bg-purple-500/[0.08] border border-purple-500/20 text-purple-200/80 hover:bg-purple-500/15 hover:border-purple-500/30 hover:text-purple-100 transition-all active:scale-[0.98]"
+                                  data-testid={`button-reflective-${idx}`}
+                                >
+                                  {q}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
                         {/* Memory suggestion */}
                         {agentResponse.memorySuggestion.shouldSuggest && (

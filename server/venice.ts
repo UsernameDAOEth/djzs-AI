@@ -231,3 +231,92 @@ export async function analyzeResearchEntry(
   const parsed = JSON.parse(content);
   return researchAnalysisSchema.parse(parsed);
 }
+
+// Research synthesis for Research Zone search
+export interface ResearchSynthesis {
+  query: string;
+  mode: "web" | "explain";
+  keyTakeaways: string[];
+  whatToCheckNext: string[];
+  sources?: { title: string; url: string; snippet: string }[];
+  confidence: string;
+  synthesisMarkdown: string;
+}
+
+const RESEARCH_SYNTHESIS_PROMPT = `You are a research synthesizer for DJZS. Your role is to provide clear, accurate information on any topic.
+
+When given a research query:
+1. Provide 3-5 key takeaways (bullet points of the most important facts)
+2. Suggest 2-3 things to check or explore next
+3. Rate your confidence and explain any limitations
+4. Write a brief synthesis paragraph
+
+Be factual, concise, and honest about what you don't know. If the topic requires current data you don't have, say so explicitly.
+
+IMPORTANT: Respond with valid JSON only. Use this format:
+{
+  "keyTakeaways": ["fact 1", "fact 2", ...],
+  "whatToCheckNext": ["next step 1", "next step 2", ...],
+  "confidence": "High/Medium/Low - brief explanation of limitations",
+  "synthesisMarkdown": "Brief 2-3 paragraph synthesis of the topic"
+}`;
+
+export async function synthesizeResearch(query: string, webMode: boolean): Promise<ResearchSynthesis> {
+  const apiKey = process.env.VENICE_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("VENICE_API_KEY not configured");
+  }
+
+  const userPrompt = webMode 
+    ? `Research query: "${query}"\n\nProvide comprehensive information on this topic. Note: You're operating in Explain mode (no live web search). Be clear about any information that may be outdated or require verification.`
+    : `Research query: "${query}"\n\nProvide information based on your training knowledge. Clearly label this as "Explain mode" - no live web data is available.`;
+
+  const response = await fetch(`${VENICE_API_BASE}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "llama-3.3-70b",
+      messages: [
+        { role: "system", content: RESEARCH_SYNTHESIS_PROMPT },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.7,
+      max_tokens: 1500,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Venice API error:", response.status, errorText);
+    throw new Error(`Venice API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+  
+  if (!content) {
+    throw new Error("No content in Venice response");
+  }
+
+  // Extract JSON from response
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error("No JSON found in response");
+  }
+  
+  const parsed = JSON.parse(jsonMatch[0]);
+  
+  return {
+    query,
+    mode: webMode ? "web" : "explain",
+    keyTakeaways: parsed.keyTakeaways || [],
+    whatToCheckNext: parsed.whatToCheckNext || [],
+    sources: [], // No web sources in explain mode
+    confidence: parsed.confidence || "Medium - based on training data only",
+    synthesisMarkdown: parsed.synthesisMarkdown || "",
+  };
+}
