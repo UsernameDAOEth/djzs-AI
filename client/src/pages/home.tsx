@@ -331,7 +331,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
               <ZoneCard 
                 title="Journal" 
                 desc="Daily reflections with a calm thinking partner" 
@@ -342,11 +342,6 @@ export default function Home() {
                 title="Research" 
                 desc="Gather claims, track evidence, surface unknowns" 
                 href={isConnected ? "/chat?zone=research" : "#"}
-              />
-              <ZoneCard 
-                title="Trade" 
-                desc="Execute with clarity. Think through trades before you act." 
-                href={isConnected ? "/chat?zone=trade" : "#"}
               />
             </div>
             
