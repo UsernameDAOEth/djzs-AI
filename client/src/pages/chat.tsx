@@ -93,6 +93,7 @@ import {
   deleteClaim,
   getClaimsForDossier,
   searchJournalEntriesForTopic,
+  exportVault,
   type MemoryPin,
   type EntryType,
   type EntryStats,
@@ -2163,7 +2164,28 @@ export default function Chat() {
                   </div>
                 </ScrollArea>
                 <div className="p-4 border-t border-white/[0.04]">
-                  <Button variant="outline" className="w-full border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-xl font-medium text-xs transition-all touch-target">
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-xl font-medium text-xs transition-all touch-target"
+                    onClick={async () => {
+                      try {
+                        const data = await exportVault();
+                        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `djzs-vault-${new Date().toISOString().split('T')[0]}.json`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        toast({ title: "Vault exported", description: "Your data has been downloaded" });
+                      } catch (err) {
+                        toast({ title: "Export failed", description: "Could not export vault data", variant: "destructive" });
+                      }
+                    }}
+                    data-testid="button-export-vault"
+                  >
                     <Download className="w-4 h-4 mr-2" />
                     Export Vault
                   </Button>
