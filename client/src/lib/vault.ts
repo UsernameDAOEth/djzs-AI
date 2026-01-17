@@ -2,6 +2,8 @@ import Dexie, { type EntityTable } from 'dexie';
 
 export type EntryType = 'journal' | 'research' | 'trade';
 export type MemoryKind = 'goal' | 'pattern' | 'preference' | 'project' | 'principle' | 'question' | 'person';
+export type ClaimStatus = 'verified' | 'uncertain' | 'to_check';
+export type TrustLevel = 'high' | 'medium' | 'low' | 'unknown';
 
 export interface VaultEntry {
   id?: number;
@@ -49,11 +51,47 @@ export interface TradeRecord {
   completedAt?: Date;
 }
 
+export interface ResearchDossier {
+  id?: number;
+  name: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  isArchived: 0 | 1;
+}
+
+export interface ResearchQuery {
+  id?: number;
+  dossierId: number;
+  query: string;
+  synthesis?: string;
+  keyTakeaways?: string[];
+  nextSteps?: string[];
+  webSearchEnabled: 0 | 1;
+  createdAt: Date;
+}
+
+export interface ResearchClaim {
+  id?: number;
+  dossierId: number;
+  queryId?: number;
+  claim: string;
+  status: ClaimStatus;
+  sourceNote?: string;
+  trustLevel: TrustLevel;
+  linkedJournalEntryId?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 class VaultDatabase extends Dexie {
   entries!: EntityTable<VaultEntry, 'id'>;
   insights!: EntityTable<VaultInsight, 'id'>;
   memoryPins!: EntityTable<MemoryPin, 'id'>;
   tradeRecords!: EntityTable<TradeRecord, 'id'>;
+  researchDossiers!: EntityTable<ResearchDossier, 'id'>;
+  researchQueries!: EntityTable<ResearchQuery, 'id'>;
+  researchClaims!: EntityTable<ResearchClaim, 'id'>;
 
   constructor() {
     super('djzs-vault');
@@ -69,6 +107,16 @@ class VaultDatabase extends Dexie {
       insights: '++id, entryId, type, createdAt',
       memoryPins: '++id, kind, content, isActive, createdAt',
       tradeRecords: '++id, action, status, createdAt',
+    });
+    
+    this.version(3).stores({
+      entries: '++id, type, createdAt, updatedAt',
+      insights: '++id, entryId, type, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
+      tradeRecords: '++id, action, status, createdAt',
+      researchDossiers: '++id, name, isArchived, createdAt, updatedAt',
+      researchQueries: '++id, dossierId, createdAt',
+      researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
     });
   }
 }
@@ -275,4 +323,138 @@ export async function getRecentEntriesForContext(type: EntryType, limit: number 
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, limit)
     .map(e => ({ text: e.text, createdAt: e.createdAt }));
+}
+
+export async function createDossier(name: string, description?: string): Promise<number> {
+  const now = new Date();
+  const id = await vault.researchDossiers.add({
+    name,
+    description,
+    createdAt: now,
+    updatedAt: now,
+    isArchived: 0,
+  });
+  return id as number;
+}
+
+export async function updateDossier(id: number, updates: Partial<Pick<ResearchDossier, 'name' | 'description'>>): Promise<void> {
+  await vault.researchDossiers.update(id, { ...updates, updatedAt: new Date() });
+}
+
+export async function archiveDossier(id: number): Promise<void> {
+  await vault.researchDossiers.update(id, { isArchived: 1, updatedAt: new Date() });
+}
+
+export async function deleteDossier(id: number): Promise<void> {
+  await vault.researchClaims.where('dossierId').equals(id).delete();
+  await vault.researchQueries.where('dossierId').equals(id).delete();
+  await vault.researchDossiers.delete(id);
+}
+
+export async function getActiveDossiers(): Promise<ResearchDossier[]> {
+  return vault.researchDossiers
+    .where('isArchived')
+    .equals(0)
+    .reverse()
+    .sortBy('updatedAt');
+}
+
+export async function getDossier(id: number): Promise<ResearchDossier | undefined> {
+  return vault.researchDossiers.get(id);
+}
+
+export async function addResearchQuery(
+  dossierId: number,
+  query: string,
+  synthesis?: string,
+  keyTakeaways?: string[],
+  nextSteps?: string[],
+  webSearchEnabled: boolean = false
+): Promise<number> {
+  const id = await vault.researchQueries.add({
+    dossierId,
+    query,
+    synthesis,
+    keyTakeaways,
+    nextSteps,
+    webSearchEnabled: webSearchEnabled ? 1 : 0,
+    createdAt: new Date(),
+  });
+  await vault.researchDossiers.update(dossierId, { updatedAt: new Date() });
+  return id as number;
+}
+
+export async function getQueriesForDossier(dossierId: number): Promise<ResearchQuery[]> {
+  return vault.researchQueries
+    .where('dossierId')
+    .equals(dossierId)
+    .reverse()
+    .sortBy('createdAt');
+}
+
+export async function addClaim(
+  dossierId: number,
+  claim: string,
+  status: ClaimStatus = 'to_check',
+  trustLevel: TrustLevel = 'unknown',
+  queryId?: number,
+  sourceNote?: string
+): Promise<number> {
+  const now = new Date();
+  const id = await vault.researchClaims.add({
+    dossierId,
+    queryId,
+    claim,
+    status,
+    sourceNote,
+    trustLevel,
+    createdAt: now,
+    updatedAt: now,
+  });
+  await vault.researchDossiers.update(dossierId, { updatedAt: new Date() });
+  return id as number;
+}
+
+export async function updateClaim(
+  id: number,
+  updates: Partial<Pick<ResearchClaim, 'status' | 'sourceNote' | 'trustLevel' | 'linkedJournalEntryId'>>
+): Promise<void> {
+  await vault.researchClaims.update(id, { ...updates, updatedAt: new Date() });
+}
+
+export async function deleteClaim(id: number): Promise<void> {
+  await vault.researchClaims.delete(id);
+}
+
+export async function getClaimsForDossier(dossierId: number): Promise<ResearchClaim[]> {
+  return vault.researchClaims
+    .where('dossierId')
+    .equals(dossierId)
+    .toArray();
+}
+
+export async function getClaimsByStatus(dossierId: number, status: ClaimStatus): Promise<ResearchClaim[]> {
+  return vault.researchClaims
+    .where('dossierId')
+    .equals(dossierId)
+    .and(c => c.status === status)
+    .toArray();
+}
+
+export async function searchJournalEntriesForTopic(keywords: string[], limit: number = 5): Promise<VaultEntry[]> {
+  const entries = await vault.entries
+    .where('type')
+    .equals('journal')
+    .toArray();
+  
+  const lowerKeywords = keywords.map(k => k.toLowerCase());
+  
+  const matchingEntries = entries.filter(entry => {
+    const text = entry.text.toLowerCase();
+    return lowerKeywords.some(keyword => text.includes(keyword));
+  });
+  
+  return matchingEntries
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, limit);
 }

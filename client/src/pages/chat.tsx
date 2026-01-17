@@ -45,7 +45,14 @@ import {
   Moon,
   RefreshCw,
   Compass,
-  ArrowUpRight
+  ArrowUpRight,
+  FolderOpen,
+  FolderPlus,
+  Trash2,
+  Check,
+  AlertCircle,
+  HelpCircle,
+  Plus
 } from "lucide-react";
 import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
@@ -74,9 +81,26 @@ import {
   forgetMemory,
   getEntryStats,
   getRecentEntriesForContext,
+  createDossier,
+  updateDossier,
+  deleteDossier,
+  getActiveDossiers,
+  getDossier,
+  addResearchQuery,
+  getQueriesForDossier,
+  addClaim,
+  updateClaim,
+  deleteClaim,
+  getClaimsForDossier,
+  searchJournalEntriesForTopic,
   type MemoryPin,
   type EntryType,
-  type EntryStats
+  type EntryStats,
+  type ResearchDossier,
+  type ResearchQuery,
+  type ResearchClaim,
+  type ClaimStatus,
+  type TrustLevel
 } from "@/lib/vault";
 
 interface JournalAnalysisResult {
@@ -190,9 +214,34 @@ export default function Chat() {
   const [researchResult, setResearchResult] = useState<ResearchResult | null>(null);
   const [webModeEnabled, setWebModeEnabled] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Dossier state for Research zone
+  const [activeDossierId, setActiveDossierId] = useState<number | null>(null);
+  const [dossierName, setDossierName] = useState("");
+  const [showNewDossierInput, setShowNewDossierInput] = useState(false);
+  const [dossierDropdownOpen, setDossierDropdownOpen] = useState(false);
+  const [editingClaimId, setEditingClaimId] = useState<number | null>(null);
+  const [claimSourceNote, setClaimSourceNote] = useState("");
+  const [claimTrustLevel, setClaimTrustLevel] = useState<TrustLevel>("unknown");
+  const [relatedJournalEntries, setRelatedJournalEntries] = useState<Array<{ id?: number; text: string; createdAt: Date }>>([]);
 
   // Local-first: Query memories from IndexedDB
   const localMemories = useLiveQuery(() => getActiveMemories(10), []);
+  
+  // Local-first: Query dossiers from IndexedDB
+  const dossiers = useLiveQuery(() => getActiveDossiers(), []);
+  
+  // Local-first: Query claims for active dossier
+  const dossierClaims = useLiveQuery(
+    () => activeDossierId ? getClaimsForDossier(activeDossierId) : Promise.resolve([]),
+    [activeDossierId]
+  );
+  
+  // Local-first: Query queries for active dossier
+  const dossierQueries = useLiveQuery(
+    () => activeDossierId ? getQueriesForDossier(activeDossierId) : Promise.resolve([]),
+    [activeDossierId]
+  );
   
   // Local-first: Query recent entries from IndexedDB (newest first)
   const localEntries = useLiveQuery(
@@ -435,9 +484,34 @@ export default function Chat() {
       }
       return res.json() as Promise<ResearchResult>;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       setResearchResult(data);
       setIsAnalyzing(false);
+      
+      // Persist query to active dossier if one is selected
+      if (activeDossierId) {
+        try {
+          await addResearchQuery(
+            activeDossierId,
+            data.query,
+            data.synthesisMarkdown,
+            data.keyTakeaways,
+            data.whatToCheckNext,
+            data.mode === 'web'
+          );
+        } catch (err) {
+          console.error("Failed to save research query to dossier:", err);
+        }
+      }
+      
+      // Search for related journal entries based on key words from the query
+      const queryWords = data.query.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+      if (queryWords.length > 0) {
+        const related = await searchJournalEntriesForTopic(queryWords, 3);
+        setRelatedJournalEntries(related);
+      } else {
+        setRelatedJournalEntries([]);
+      }
     },
     onError: (error) => {
       setIsAnalyzing(false);
@@ -565,7 +639,106 @@ export default function Chat() {
     setResearchResult(null);
     setLatestAnalysis(null);
     setFrozenHeight(null);
+    setRelatedJournalEntries([]);
     textareaRef.current?.focus();
+  };
+  
+  // Dossier management handlers
+  const handleCreateDossier = async () => {
+    if (!dossierName.trim()) return;
+    try {
+      const id = await createDossier(dossierName.trim());
+      setActiveDossierId(id);
+      setDossierName("");
+      setShowNewDossierInput(false);
+      toast({ title: "Dossier created", description: `"${dossierName.trim()}" is now active` });
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to create dossier", variant: "destructive" });
+    }
+  };
+  
+  const handleDeleteDossier = async (id: number) => {
+    try {
+      await deleteDossier(id);
+      if (activeDossierId === id) {
+        setActiveDossierId(null);
+      }
+      toast({ title: "Dossier deleted" });
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to delete dossier", variant: "destructive" });
+    }
+  };
+  
+  const handleSelectDossier = (id: number | null) => {
+    setActiveDossierId(id);
+    setDossierDropdownOpen(false);
+  };
+  
+  const handleSaveClaimToDossier = async (claim: string, queryId?: number, openForEditing: boolean = false) => {
+    if (!activeDossierId) {
+      toast({ title: "Select a dossier first", description: "Create or select a dossier to save claims", variant: "destructive" });
+      return;
+    }
+    try {
+      const newClaimId = await addClaim(activeDossierId, claim, 'to_check', 'unknown', queryId);
+      toast({ title: "Claim saved", description: "Added to your dossier for tracking" });
+      
+      // Optionally open the claim for editing to allow linking
+      if (openForEditing) {
+        setEditingClaimId(newClaimId);
+        setClaimSourceNote("");
+        setClaimTrustLevel("unknown");
+      }
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to save claim", variant: "destructive" });
+    }
+  };
+  
+  const handleUpdateClaimStatus = async (claimId: number, status: ClaimStatus) => {
+    try {
+      await updateClaim(claimId, { status });
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to update claim", variant: "destructive" });
+    }
+  };
+  
+  const handleDeleteClaim = async (claimId: number) => {
+    try {
+      await deleteClaim(claimId);
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to delete claim", variant: "destructive" });
+    }
+  };
+  
+  const handleStartEditClaim = (claim: ResearchClaim) => {
+    setEditingClaimId(claim.id!);
+    setClaimSourceNote(claim.sourceNote || "");
+    setClaimTrustLevel(claim.trustLevel || "unknown");
+  };
+  
+  const handleSaveClaimEdit = async () => {
+    if (!editingClaimId) return;
+    try {
+      await updateClaim(editingClaimId, { 
+        sourceNote: claimSourceNote || undefined,
+        trustLevel: claimTrustLevel
+      });
+      setEditingClaimId(null);
+      setClaimSourceNote("");
+      setClaimTrustLevel("unknown");
+      toast({ title: "Claim updated" });
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to update claim", variant: "destructive" });
+    }
+  };
+  
+  const handleLinkClaimToJournalEntry = async (claimId: number, journalEntryId: number) => {
+    try {
+      await updateClaim(claimId, { linkedJournalEntryId: journalEntryId });
+      toast({ title: "Linked!", description: "Claim connected to your journal entry" });
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to link", variant: "destructive" });
+    }
   };
 
   // Handle keyboard shortcuts
@@ -923,6 +1096,128 @@ export default function Chat() {
                   <>
                     {/* Research: Search bar style - centered on mobile */}
                     <div className="space-y-4 text-center sm:text-left">
+                      {/* Dossier selector */}
+                      <div className="flex items-center justify-center sm:justify-start gap-2 mb-4">
+                        <div className="relative">
+                          <button
+                            onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                              activeDossierId 
+                                ? 'bg-blue-500/10 border border-blue-500/30 text-blue-400' 
+                                : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
+                            }`}
+                            data-testid="button-dossier-selector"
+                          >
+                            <FolderOpen className="w-4 h-4" />
+                            <span className="max-w-[120px] truncate">
+                              {activeDossierId && dossiers?.find(d => d.id === activeDossierId)?.name || "No dossier"}
+                            </span>
+                            <ChevronDown className={`w-3 h-3 transition-transform ${dossierDropdownOpen ? 'rotate-180' : ''}`} />
+                          </button>
+                          
+                          {dossierDropdownOpen && (
+                            <div className="absolute top-full left-0 mt-1 w-64 bg-[#0a0a0a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden" data-testid="dossier-dropdown">
+                              <div className="p-2 border-b border-white/5">
+                                <button
+                                  onClick={() => handleSelectDossier(null)}
+                                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                    !activeDossierId ? 'bg-blue-500/10 text-blue-400' : 'text-gray-400 hover:bg-white/5'
+                                  }`}
+                                  data-testid="button-no-dossier"
+                                >
+                                  <Search className="w-4 h-4" />
+                                  Quick search (no dossier)
+                                </button>
+                              </div>
+                              
+                              {dossiers && dossiers.length > 0 && (
+                                <div className="p-2 max-h-48 overflow-y-auto">
+                                  {dossiers.map(dossier => (
+                                    <div key={dossier.id} className="flex items-center gap-1 group">
+                                      <button
+                                        onClick={() => handleSelectDossier(dossier.id!)}
+                                        className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                          activeDossierId === dossier.id ? 'bg-blue-500/10 text-blue-400' : 'text-gray-400 hover:bg-white/5'
+                                        }`}
+                                        data-testid={`button-dossier-${dossier.id}`}
+                                      >
+                                        <FolderOpen className="w-4 h-4" />
+                                        <span className="truncate">{dossier.name}</span>
+                                      </button>
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); handleDeleteDossier(dossier.id!); }}
+                                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                        data-testid={`button-delete-dossier-${dossier.id}`}
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              
+                              <div className="p-2 border-t border-white/5">
+                                {showNewDossierInput ? (
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={dossierName}
+                                      onChange={(e) => setDossierName(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter') handleCreateDossier();
+                                        if (e.key === 'Escape') { setShowNewDossierInput(false); setDossierName(''); }
+                                      }}
+                                      placeholder="Dossier name..."
+                                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-gray-500 outline-none focus:border-blue-500/50"
+                                      autoFocus
+                                      data-testid="input-new-dossier"
+                                    />
+                                    <button
+                                      onClick={handleCreateDossier}
+                                      disabled={!dossierName.trim()}
+                                      className="p-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                      data-testid="button-create-dossier"
+                                    >
+                                      <Check className="w-3.5 h-3.5 text-white" />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={() => setShowNewDossierInput(true)}
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:bg-white/5 transition-all"
+                                    data-testid="button-new-dossier"
+                                  >
+                                    <FolderPlus className="w-4 h-4" />
+                                    New dossier
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {activeDossierId && dossierClaims && dossierClaims.length > 0 && (
+                          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/[0.03] text-xs text-gray-500">
+                            <span>{dossierClaims.length} claim{dossierClaims.length !== 1 ? 's' : ''}</span>
+                          </div>
+                        )}
+                        
+                        {/* Web search toggle */}
+                        <button
+                          onClick={() => setWebModeEnabled(!webModeEnabled)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                            webModeEnabled 
+                              ? 'bg-green-500/10 border border-green-500/30 text-green-400' 
+                              : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
+                          }`}
+                          title={webModeEnabled ? "Web search enabled (uses live data)" : "Explain mode (AI knowledge only)"}
+                          data-testid="button-web-toggle"
+                        >
+                          <Globe className={`w-4 h-4 ${webModeEnabled ? 'text-green-400' : 'text-gray-500'}`} />
+                          <span className="hidden sm:inline">{webModeEnabled ? 'Web' : 'Explain'}</span>
+                        </button>
+                      </div>
+                      
                       {/* Rotating prompt - hidden on mobile for cleaner look */}
                       <div className="hidden sm:flex items-center gap-3 mb-2">
                         <Search className="w-5 h-5 text-blue-400/60" />
@@ -1168,15 +1463,30 @@ export default function Chat() {
                       
                       {/* Content */}
                       <div className="p-4 sm:p-6 space-y-5">
-                        {/* Key Takeaways */}
+                        {/* Key Takeaways - saveable as claims */}
                         {researchResult.keyTakeaways && researchResult.keyTakeaways.length > 0 && (
                           <div className="space-y-3">
-                            <p className="text-xs font-medium text-gray-500">Key takeaways</p>
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-medium text-gray-500">Key takeaways</p>
+                              {activeDossierId && (
+                                <p className="text-[10px] text-blue-400/60">Click + to save as claim</p>
+                              )}
+                            </div>
                             <ul className="space-y-2">
                               {researchResult.keyTakeaways.map((takeaway, idx) => (
-                                <li key={idx} className="flex items-start gap-3">
+                                <li key={idx} className="flex items-start gap-3 group">
                                   <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                                  <p className="text-white/90 leading-relaxed">{takeaway}</p>
+                                  <p className="text-white/90 leading-relaxed flex-1">{takeaway}</p>
+                                  {activeDossierId && (
+                                    <button
+                                      onClick={() => handleSaveClaimToDossier(takeaway, undefined, true)}
+                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 transition-all shrink-0"
+                                      title="Save as claim and add details"
+                                      data-testid={`button-save-claim-${idx}`}
+                                    >
+                                      <Plus className="w-4 h-4" />
+                                    </button>
+                                  )}
                                 </li>
                               ))}
                             </ul>
@@ -1238,6 +1548,238 @@ export default function Chat() {
                           New Search
                           <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Claims Panel - Show when dossier is active */}
+                  {activeDossierId && (
+                    <div className="mt-4 rounded-2xl sm:rounded-3xl border border-white/[0.06] bg-white/[0.02] overflow-hidden" data-testid="claims-panel">
+                      <div className="p-4 border-b border-white/[0.05]">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <FolderOpen className="w-4 h-4 text-blue-400" />
+                            <p className="text-sm font-medium text-white">
+                              {dossiers?.find(d => d.id === activeDossierId)?.name} Claims
+                            </p>
+                            {dossierClaims && dossierClaims.length > 0 && (
+                              <span className="text-xs text-gray-500">({dossierClaims.length})</span>
+                            )}
+                          </div>
+                        </div>
+                        {/* Manual claim input */}
+                        <div className="mt-3 flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Add a claim manually..."
+                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-blue-500/50"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                handleSaveClaimToDossier(e.currentTarget.value.trim(), undefined, true);
+                                e.currentTarget.value = '';
+                              }
+                            }}
+                            data-testid="input-manual-claim"
+                          />
+                          <button
+                            onClick={(e) => {
+                              const input = (e.currentTarget.previousElementSibling as HTMLInputElement);
+                              if (input?.value.trim()) {
+                                handleSaveClaimToDossier(input.value.trim(), undefined, true);
+                                input.value = '';
+                              }
+                            }}
+                            className="px-3 py-2 rounded-lg bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
+                            title="Add claim"
+                            data-testid="button-add-manual-claim"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                      {dossierClaims && dossierClaims.length > 0 && (
+                      <div className="p-4 space-y-3 max-h-[400px] overflow-y-auto">
+                        {dossierClaims.map((claim) => (
+                          <div 
+                            key={claim.id} 
+                            className={`group p-3 rounded-xl border transition-all ${
+                              editingClaimId === claim.id 
+                                ? 'bg-blue-500/[0.05] border-blue-500/30' 
+                                : 'bg-white/[0.02] border-white/[0.05] hover:border-white/[0.1]'
+                            }`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="flex-1">
+                                <div className="flex items-start gap-2">
+                                  {claim.trustLevel && claim.trustLevel !== 'unknown' && (
+                                    <span className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase ${
+                                      claim.trustLevel === 'high' ? 'bg-green-500/20 text-green-400' :
+                                      claim.trustLevel === 'medium' ? 'bg-amber-500/20 text-amber-400' :
+                                      'bg-red-500/20 text-red-400'
+                                    }`}>
+                                      {claim.trustLevel}
+                                    </span>
+                                  )}
+                                  <p className="text-sm text-white/90 leading-relaxed">{claim.claim}</p>
+                                </div>
+                                {claim.sourceNote && !editingClaimId && (
+                                  <p className="text-xs text-gray-500 mt-1.5 pl-0">📎 {claim.sourceNote}</p>
+                                )}
+                                {claim.linkedJournalEntryId && (
+                                  <p className="text-xs text-purple-400/70 mt-1.5 flex items-center gap-1">
+                                    <PenLine className="w-3 h-3" />
+                                    Linked to journal entry
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1 shrink-0">
+                                <button
+                                  onClick={() => handleUpdateClaimStatus(claim.id!, 'verified')}
+                                  className={`p-1.5 rounded-lg transition-all ${
+                                    claim.status === 'verified' 
+                                      ? 'bg-green-500/20 text-green-400' 
+                                      : 'text-gray-500 hover:text-green-400 hover:bg-green-500/10'
+                                  }`}
+                                  title="Mark as verified"
+                                  data-testid={`button-verify-claim-${claim.id}`}
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleUpdateClaimStatus(claim.id!, 'uncertain')}
+                                  className={`p-1.5 rounded-lg transition-all ${
+                                    claim.status === 'uncertain' 
+                                      ? 'bg-amber-500/20 text-amber-400' 
+                                      : 'text-gray-500 hover:text-amber-400 hover:bg-amber-500/10'
+                                  }`}
+                                  title="Mark as uncertain"
+                                  data-testid={`button-uncertain-claim-${claim.id}`}
+                                >
+                                  <AlertCircle className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleUpdateClaimStatus(claim.id!, 'to_check')}
+                                  className={`p-1.5 rounded-lg transition-all ${
+                                    claim.status === 'to_check' 
+                                      ? 'bg-blue-500/20 text-blue-400' 
+                                      : 'text-gray-500 hover:text-blue-400 hover:bg-blue-500/10'
+                                  }`}
+                                  title="Mark as to check"
+                                  data-testid={`button-tocheck-claim-${claim.id}`}
+                                >
+                                  <HelpCircle className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => editingClaimId === claim.id ? setEditingClaimId(null) : handleStartEditClaim(claim)}
+                                  className={`p-1.5 rounded-lg transition-all ${
+                                    editingClaimId === claim.id 
+                                      ? 'bg-blue-500/20 text-blue-400' 
+                                      : 'text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 opacity-0 group-hover:opacity-100'
+                                  }`}
+                                  title="Add source note"
+                                  data-testid={`button-edit-claim-${claim.id}`}
+                                >
+                                  <FileText className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteClaim(claim.id!)}
+                                  className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
+                                  title="Delete claim"
+                                  data-testid={`button-delete-claim-${claim.id}`}
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                            
+                            {/* Inline edit panel for source notes and trust */}
+                            {editingClaimId === claim.id && (
+                              <div className="mt-3 pt-3 border-t border-white/[0.05] space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">Source Note</label>
+                                  <input
+                                    type="text"
+                                    value={claimSourceNote}
+                                    onChange={(e) => setClaimSourceNote(e.target.value)}
+                                    placeholder="Where did you find this? How reliable is it?"
+                                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-blue-500/50"
+                                    data-testid="input-source-note"
+                                  />
+                                </div>
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">Trust Level</label>
+                                  <div className="flex gap-2">
+                                    {(['high', 'medium', 'low', 'unknown'] as TrustLevel[]).map((level) => (
+                                      <button
+                                        key={level}
+                                        onClick={() => setClaimTrustLevel(level)}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                                          claimTrustLevel === level
+                                            ? level === 'high' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                                              level === 'medium' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
+                                              level === 'low' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                                              'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                                            : 'bg-white/5 text-gray-500 border border-white/10 hover:border-white/20'
+                                        }`}
+                                        data-testid={`button-trust-${level}`}
+                                      >
+                                        {level.charAt(0).toUpperCase() + level.slice(1)}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div className="flex justify-end">
+                                  <Button
+                                    onClick={handleSaveClaimEdit}
+                                    className="bg-blue-600 hover:bg-blue-500 h-8 px-4 text-xs"
+                                    data-testid="button-save-claim-edit"
+                                  >
+                                    Save
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Related Journal Entries - Show when research finds related thinking */}
+                  {relatedJournalEntries && relatedJournalEntries.length > 0 && (
+                    <div className="mt-4 rounded-2xl sm:rounded-3xl border border-purple-500/20 bg-purple-500/[0.02] overflow-hidden" data-testid="related-entries-panel">
+                      <div className="p-4 border-b border-purple-500/10">
+                        <div className="flex items-center gap-2">
+                          <PenLine className="w-4 h-4 text-purple-400" />
+                          <p className="text-sm font-medium text-white">Related from your Journal</p>
+                          <span className="text-xs text-gray-500">({relatedJournalEntries.length})</span>
+                        </div>
+                        {editingClaimId && (
+                          <p className="text-[10px] text-purple-400/70 mt-1">Click an entry to link it to the claim you're editing</p>
+                        )}
+                      </div>
+                      <div className="p-4 space-y-3 max-h-[200px] overflow-y-auto">
+                        {relatedJournalEntries.map((entry, idx) => (
+                          <div 
+                            key={entry.id || idx} 
+                            className={`p-3 rounded-xl bg-white/[0.02] border transition-all ${
+                              editingClaimId 
+                                ? 'border-purple-500/20 hover:border-purple-500/40 cursor-pointer' 
+                                : 'border-white/[0.05]'
+                            }`}
+                            onClick={() => {
+                              if (editingClaimId && entry.id) {
+                                handleLinkClaimToJournalEntry(editingClaimId, entry.id);
+                              }
+                            }}
+                          >
+                            <p className="text-sm text-white/80 leading-relaxed line-clamp-3">{entry.text}</p>
+                            <p className="text-[10px] text-gray-500 mt-2">
+                              {new Date(entry.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </p>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
