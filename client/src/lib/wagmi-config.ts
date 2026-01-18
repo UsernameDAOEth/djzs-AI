@@ -30,12 +30,12 @@ export const USDC_ADDRESS: Record<number, `0x${string}`> = {
 export const wagmiConfig = createConfig({
   chains: [base, baseSepolia],
   connectors: [
-    baseAccount({
-      appName: "DJZS",
-    }),
     coinbaseWallet({
       appName: "DJZS",
-      preference: "all",
+      preference: "smartWalletOnly",
+    }),
+    baseAccount({
+      appName: "DJZS",
     }),
     metaMask({
       dappMetadata: {
