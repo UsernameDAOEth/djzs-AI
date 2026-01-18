@@ -1905,7 +1905,7 @@ export default function Chat() {
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <p className="text-xs text-gray-600 italic hidden sm:block">You don't need to resolve this now.</p>
-                          <PinInsightSimple content={agentResponse} />
+                          <PinInsightSimple content={agentResponse.said} />
                         </div>
                         <Button
                           onClick={clearAndReset}
