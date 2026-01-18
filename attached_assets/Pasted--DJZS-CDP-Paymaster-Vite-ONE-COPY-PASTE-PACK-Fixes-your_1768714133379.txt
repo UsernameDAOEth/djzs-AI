@@ -1,0 +1,135 @@
+/* =========================
+DJZS + CDP Paymaster (Vite) — ONE COPY/PASTE PACK
+Fixes your `${ENV_VAR}` interpolation issue by building the URL in code.
+
+✅ What you must do in Replit "Secrets" (or .env):
+VITE_CDP_API_KEY=your_cdp_api_key_here
+VITE_CDP_PAYMASTER_KEY=your_paymaster_and_bundler_token_here   // the <token> part
+VITE_CDP_CHAIN=base-sepolia                                   // or "base"
+
+Then paste the files below.
+========================= */
+
+/* ============================================================
+FILE: client/src/components/OnchainProviders.tsx
+============================================================ */
+import React from "react";
+import { OnchainKitProvider } from "@coinbase/onchainkit";
+import { base, baseSepolia } from "wagmi/chains";
+
+// If you're already using wagmi/rainbowkit in DJZS, keep your existing wrappers.
+// This component only ensures OnchainKit gets the right apiKey + paymaster config.
+export function OnchainProviders({ children }: { children: React.ReactNode }) {
+  const apiKey = import.meta.env.VITE_CDP_API_KEY as string | undefined;
+  const paymasterKey = import.meta.env.VITE_CDP_PAYMASTER_KEY as string | undefined;
+  const chainName = (import.meta.env.VITE_CDP_CHAIN as string | undefined) ?? "base-sepolia";
+
+  if (!apiKey) throw new Error("Missing VITE_CDP_API_KEY");
+  if (!paymasterKey) throw new Error("Missing VITE_CDP_PAYMASTER_KEY");
+
+  // ✅ NO ENV INTERPOLATION. Build it at runtime.
+  // CDP Paymaster/Bundler endpoint format: https://api.developer.coinbase.com/rpc/v1/<network>/<token>
+  const paymasterUrl = `https://api.developer.coinbase.com/rpc/v1/${chainName}/${paymasterKey}`;
+
+  const chain = chainName === "base" ? base : baseSepolia;
+
+  return (
+    <OnchainKitProvider
+      apiKey={apiKey}
+      chain={chain}
+      config={{
+        paymaster: paymasterUrl,
+      }}
+    >
+      {children}
+    </OnchainKitProvider>
+  );
+}
+
+/* ============================================================
+FILE: client/src/main.tsx  (or wherever you mount <App />)
+Wrap your app once.
+============================================================ */
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { OnchainProviders } from "./components/OnchainProviders";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <OnchainProviders>
+      <App />
+    </OnchainProviders>
+  </React.StrictMode>
+);
+
+/* ============================================================
+FILE: client/src/components/PinInsightSponsored.tsx
+A drop-in “Pin onchain” button using OnchainKit Transaction + Paymaster.
+IMPORTANT: Your Paymaster policy must allowlist the contract + function you call.
+Replace CONTRACT + ABI + args with your real “Pin Insight” contract.
+============================================================ */
+import React from "react";
+import {
+  Transaction,
+  TransactionButton,
+  TransactionSponsor,
+  TransactionToast,
+  TransactionToastIcon,
+  TransactionToastLabel,
+  TransactionToastAction,
+} from "@coinbase/onchainkit/transaction";
+import type { ContractFunctionParameters } from "viem";
+import { base, baseSepolia } from "wagmi/chains";
+
+// --- REPLACE THESE ---
+const PIN_CONTRACT = "0x0000000000000000000000000000000000000000" as const; // <-- your contract
+const PIN_ABI = [
+  {
+    type: "function",
+    name: "pinInsight",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "contentHash", type: "bytes32" }],
+    outputs: [],
+  },
+] as const;
+// ---------------------
+
+export function PinInsightSponsored({ contentHash }: { contentHash: `0x${string}` }) {
+  const chainName = (import.meta.env.VITE_CDP_CHAIN as string | undefined) ?? "base-sepolia";
+  const chainId = chainName === "base" ? base.id : baseSepolia.id;
+
+  // OnchainKit Transaction accepts ContractFunctionParameters[]
+  const calls: ContractFunctionParameters[] = [
+    {
+      abi: PIN_ABI,
+      address: PIN_CONTRACT,
+      functionName: "pinInsight",
+      args: [contentHash],
+    },
+  ];
+
+  return (
+    <Transaction
+      chainId={chainId}
+      calls={calls}
+      isSponsored={true} // ✅ this triggers paymaster sponsorship
+      onStatus={(s) => console.log("PinInsight LifecycleStatus:", s)}
+    >
+      <TransactionButton text="Pin onchain (gasless)" />
+      <TransactionSponsor />
+      <TransactionToast>
+        <TransactionToastIcon />
+        <TransactionToastLabel />
+        <TransactionToastAction />
+      </TransactionToast>
+    </Transaction>
+  );
+}
+
+/* ============================================================
+USAGE EXAMPLE (wherever your Journal entry / Insight UI renders)
+You must supply a bytes32 hash. If you already hash journal text, use that.
+============================================================ */
+// import { PinInsightSponsored } from "@/components/PinInsightSponsored";
+// <PinInsightSponsored contentHash={"0x...32bytes..."} />
