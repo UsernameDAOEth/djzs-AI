@@ -35,13 +35,15 @@ const ATTESTATION_ABI = [
 
 export function PinInsight({ content, onSuccess, onError }: PinInsightProps) {
   const { address, isConnected } = useAccount();
+  const { toast } = useToast();
   const [isPinned, setIsPinned] = useState(false);
 
   if (!isConnected || !address) {
     return null;
   }
 
-  const contentHash = keccak256(toHex(content));
+  const contentString = typeof content === 'string' ? content : JSON.stringify(content);
+  const contentHash = keccak256(toHex(contentString));
 
   const calls = [
     {
@@ -54,8 +56,18 @@ export function PinInsight({ content, onSuccess, onError }: PinInsightProps) {
     }
   ];
 
+  const cdpApiKey = import.meta.env.VITE_CDP_API_KEY;
+  const paymasterUrl = cdpApiKey 
+    ? `https://api.developer.coinbase.com/rpc/v1/base/${cdpApiKey}`
+    : undefined;
+  const capabilities = paymasterUrl ? {
+    paymasterService: {
+      url: paymasterUrl
+    }
+  } : undefined;
+
   return (
-    <div className="inline-flex">
+    <div className="inline-flex flex-col gap-1">
       {isPinned ? (
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 text-sm">
           <CheckCircle className="w-4 h-4" />
@@ -65,13 +77,23 @@ export function PinInsight({ content, onSuccess, onError }: PinInsightProps) {
         <Transaction
           chainId={base.id}
           calls={calls}
+          capabilities={capabilities}
           onSuccess={(response) => {
             setIsPinned(true);
             const txHash = response.transactionReceipts?.[0]?.transactionHash;
+            toast({
+              title: "Insight pinned onchain",
+              description: txHash ? `TX: ${txHash.slice(0, 10)}...` : "Successfully recorded",
+            });
             onSuccess?.(txHash || "");
           }}
           onError={(error) => {
             console.error("Pin failed:", error);
+            toast({
+              variant: "destructive",
+              title: "Failed to pin",
+              description: error.message || "Transaction failed. Please try again.",
+            });
             onError?.(new Error(error.message));
           }}
         >

@@ -44,6 +44,9 @@ function App() {
               mode: "dark",
               theme: "default",
             },
+            paymaster: import.meta.env.VITE_CDP_API_KEY 
+              ? `https://api.developer.coinbase.com/rpc/v1/base/${import.meta.env.VITE_CDP_API_KEY}`
+              : undefined,
           }}
         >
           <TooltipProvider>
