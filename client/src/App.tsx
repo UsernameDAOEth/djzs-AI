@@ -13,11 +13,23 @@ import Docs from "@/pages/docs";
 import Terms from "@/pages/terms";
 import NotFound from "@/pages/not-found";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
-import { base } from "wagmi/chains";
+import { base, baseSepolia } from "wagmi/chains";
 
 // Ensure window.ethereum exists to prevent property redefinition errors
 if (typeof window !== "undefined" && !("ethereum" in window)) {
   (window as any).ethereum = undefined;
+}
+
+function getChainConfig() {
+  const chainName = import.meta.env.VITE_CDP_CHAIN || "base-sepolia";
+  return chainName === "base" ? base : baseSepolia;
+}
+
+function getPaymasterUrl() {
+  const paymasterKey = import.meta.env.VITE_CDP_PAYMASTER_KEY;
+  const chainName = import.meta.env.VITE_CDP_CHAIN || "base-sepolia";
+  if (!paymasterKey) return undefined;
+  return `https://api.developer.coinbase.com/rpc/v1/${chainName}/${paymasterKey}`;
 }
 
 function Router() {
@@ -33,20 +45,21 @@ function Router() {
 }
 
 function App() {
+  const chain = getChainConfig();
+  const paymasterUrl = getPaymasterUrl();
+  
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <OnchainKitProvider
           apiKey={import.meta.env.VITE_CDP_API_KEY}
-          chain={base as any}
+          chain={chain as any}
           config={{
             appearance: {
               mode: "dark",
               theme: "default",
             },
-            paymaster: import.meta.env.VITE_CDP_API_KEY 
-              ? `https://api.developer.coinbase.com/rpc/v1/base/${import.meta.env.VITE_CDP_API_KEY}`
-              : undefined,
+            paymaster: paymasterUrl,
           }}
         >
           <TooltipProvider>

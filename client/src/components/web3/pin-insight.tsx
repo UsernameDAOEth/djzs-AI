@@ -9,8 +9,20 @@ import {
 } from "@coinbase/onchainkit/transaction";
 import { Pin, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { encodeFunctionData, keccak256, toHex } from "viem";
-import { base } from "wagmi/chains";
+import { base, baseSepolia } from "wagmi/chains";
 import { useToast } from "@/hooks/use-toast";
+
+function getChainId() {
+  const chainName = import.meta.env.VITE_CDP_CHAIN || "base-sepolia";
+  return chainName === "base" ? base.id : baseSepolia.id;
+}
+
+function getPaymasterUrl() {
+  const paymasterKey = import.meta.env.VITE_CDP_PAYMASTER_KEY;
+  const chainName = import.meta.env.VITE_CDP_CHAIN || "base-sepolia";
+  if (!paymasterKey) return undefined;
+  return `https://api.developer.coinbase.com/rpc/v1/${chainName}/${paymasterKey}`;
+}
 
 interface PinInsightProps {
   content: string;
@@ -56,10 +68,8 @@ export function PinInsight({ content, onSuccess, onError }: PinInsightProps) {
     }
   ];
 
-  const cdpApiKey = import.meta.env.VITE_CDP_API_KEY;
-  const paymasterUrl = cdpApiKey 
-    ? `https://api.developer.coinbase.com/rpc/v1/base/${cdpApiKey}`
-    : undefined;
+  const paymasterUrl = getPaymasterUrl();
+  const chainId = getChainId();
   const capabilities = paymasterUrl ? {
     paymasterService: {
       url: paymasterUrl
@@ -75,7 +85,7 @@ export function PinInsight({ content, onSuccess, onError }: PinInsightProps) {
         </div>
       ) : (
         <Transaction
-          chainId={base.id}
+          chainId={chainId}
           calls={calls}
           capabilities={capabilities}
           onSuccess={(response) => {
