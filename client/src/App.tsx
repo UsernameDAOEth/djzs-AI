@@ -56,8 +56,14 @@ function App() {
           chain={chain as any}
           config={{
             appearance: {
+              name: "DJZS",
               mode: "dark",
               theme: "default",
+            },
+            wallet: {
+              display: "modal",
+              termsUrl: "/terms",
+              privacyUrl: "/terms",
             },
             paymaster: paymasterUrl,
           }}

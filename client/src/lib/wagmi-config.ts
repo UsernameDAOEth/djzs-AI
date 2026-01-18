@@ -1,6 +1,6 @@
 import { createConfig, http } from "wagmi";
 import { base, baseSepolia } from "wagmi/chains";
-import { coinbaseWallet } from "wagmi/connectors";
+import { baseAccount, coinbaseWallet, metaMask, injected } from "wagmi/connectors";
 
 export const MEMBERSHIP_NFT_ADDRESS = (import.meta.env.VITE_MEMBERSHIP_NFT_ADDRESS || "") as `0x${string}`;
 export const CHAIN_ID = parseInt(import.meta.env.VITE_CHAIN_ID || "8453");
@@ -22,16 +22,27 @@ export const USDC_ADDRESS: Record<number, `0x${string}`> = {
   84532: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
 };
 
-// Coinbase Smart Wallet configuration
-// 'smartWalletOnly' forces embedded wallet (no extension needed)
-// 'all' shows both Smart Wallet and mobile app options
+// Wallet configuration for OnchainKit WalletModal
+// - baseAccount: Enables email/social login (passkeys, Google, etc.)
+// - coinbaseWallet: Coinbase Wallet app and extension
+// - metaMask: MetaMask browser extension
+// - injected: Other injected wallets (Phantom, Rabby, etc.)
 export const wagmiConfig = createConfig({
   chains: [base, baseSepolia],
   connectors: [
+    baseAccount({
+      appName: "DJZS",
+    }),
     coinbaseWallet({
       appName: "DJZS",
-      preference: "smartWalletOnly",
+      preference: "all",
     }),
+    metaMask({
+      dappMetadata: {
+        name: "DJZS",
+      },
+    }),
+    injected(),
   ],
   transports: {
     [base.id]: http(import.meta.env.VITE_RPC_URL || undefined),
