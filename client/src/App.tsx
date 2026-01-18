@@ -1,8 +1,8 @@
 import { Switch, Route } from "wouter";
 import { WagmiProvider } from "wagmi";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
-import "@rainbow-me/rainbowkit/styles.css";
+import { OnchainKitProvider } from "@coinbase/onchainkit";
+import "@coinbase/onchainkit/styles.css";
 import { queryClient } from "./lib/queryClient";
 import { wagmiConfig } from "./lib/wagmi-config";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,6 +13,7 @@ import Docs from "@/pages/docs";
 import Terms from "@/pages/terms";
 import NotFound from "@/pages/not-found";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { base } from "wagmi/chains";
 
 // Ensure window.ethereum exists to prevent property redefinition errors
 if (typeof window !== "undefined" && !("ethereum" in window)) {
@@ -35,20 +36,22 @@ function App() {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          coolMode
-          theme={darkTheme({
-            accentColor: "hsl(270, 80%, 60%)",
-            accentColorForeground: "white",
-            borderRadius: "medium",
-          })}
+        <OnchainKitProvider
+          apiKey={import.meta.env.VITE_CDP_API_KEY}
+          chain={base as any}
+          config={{
+            appearance: {
+              mode: "dark",
+              theme: "default",
+            },
+          }}
         >
           <TooltipProvider>
             <Toaster />
             <Router />
             <InstallPrompt />
           </TooltipProvider>
-        </RainbowKitProvider>
+        </OnchainKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

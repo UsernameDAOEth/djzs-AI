@@ -1,6 +1,6 @@
-import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { createConfig, http } from "wagmi";
 import { base, baseSepolia } from "wagmi/chains";
-import { http } from "wagmi";
+import { coinbaseWallet } from "wagmi/connectors";
 
 export const MEMBERSHIP_NFT_ADDRESS = (import.meta.env.VITE_MEMBERSHIP_NFT_ADDRESS || "") as `0x${string}`;
 export const CHAIN_ID = parseInt(import.meta.env.VITE_CHAIN_ID || "8453");
@@ -22,16 +22,17 @@ export const USDC_ADDRESS: Record<number, `0x${string}`> = {
   84532: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
 };
 
-// Get WalletConnect projectId - required for WalletConnect to work
-const walletConnectProjectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
-if (!walletConnectProjectId) {
-  console.warn("VITE_WALLETCONNECT_PROJECT_ID not set - WalletConnect may not work properly");
-}
-
-export const wagmiConfig = getDefaultConfig({
-  appName: "DJZS Chat",
-  projectId: walletConnectProjectId || "placeholder-project-id",
+// Coinbase Smart Wallet configuration
+// 'smartWalletOnly' forces embedded wallet (no extension needed)
+// 'all' shows both Smart Wallet and mobile app options
+export const wagmiConfig = createConfig({
   chains: [base, baseSepolia],
+  connectors: [
+    coinbaseWallet({
+      appName: "DJZS",
+      preference: "smartWalletOnly",
+    }),
+  ],
   transports: {
     [base.id]: http(import.meta.env.VITE_RPC_URL || undefined),
     [baseSepolia.id]: http(),

@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { WalletConnectButton } from "@/components/web3/connect-button";
 import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
@@ -207,7 +207,7 @@ export default function Home() {
                   </motion.button>
                 </Link>
                 <div className="scale-110">
-                  <ConnectButton showBalance={false} />
+                  <WalletConnectButton />
                 </div>
               </div>
             )}
@@ -219,15 +219,15 @@ export default function Home() {
             >
               <div className="flex items-center gap-2">
                 <Smartphone className="w-4 h-4 text-green-500/70" />
-                <span>Your notes stay on your device</span>
+                <span>No extension needed</span>
               </div>
               <div className="flex items-center gap-2">
-                <Download className="w-4 h-4 text-blue-400/70" />
-                <span>Export anytime</span>
+                <Lock className="w-4 h-4 text-blue-400/70" />
+                <span>No seed phrase to remember</span>
               </div>
               <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-purple-400/70" />
-                <span>AI insights without data retention</span>
+                <Download className="w-4 h-4 text-purple-400/70" />
+                <span>Your data stays local</span>
               </div>
             </motion.div>
           </motion.div>
@@ -671,7 +671,7 @@ export default function Home() {
               </button>
             </Link>
             <div className="flex-1">
-              <ConnectButton />
+              <WalletConnectButton />
             </div>
           </div>
         </div>

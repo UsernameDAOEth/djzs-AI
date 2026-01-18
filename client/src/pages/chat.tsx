@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useAccount, useSignMessage, useDisconnect } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { WalletConnectButton } from "@/components/web3/connect-button";
+import { PinInsightSimple } from "@/components/web3/pin-insight";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { Link } from "wouter";
@@ -765,7 +766,7 @@ export default function Chat() {
           <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Access Locked</h2>
           <p className="text-gray-400 mb-8 leading-relaxed">DJZS requires a cryptographic identity to ensure absolute privacy for your Journal.</p>
           <div className="flex justify-center">
-            <ConnectButton />
+            <WalletConnectButton />
           </div>
         </div>
       </div>
@@ -1902,7 +1903,10 @@ export default function Chat() {
 
                       {/* Footer */}
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <p className="text-xs text-gray-600 italic">You don't need to resolve this now.</p>
+                        <div className="flex items-center gap-3">
+                          <p className="text-xs text-gray-600 italic hidden sm:block">You don't need to resolve this now.</p>
+                          <PinInsightSimple content={agentResponse} />
+                        </div>
                         <Button
                           onClick={clearAndReset}
                           variant="ghost"
@@ -2032,7 +2036,10 @@ export default function Chat() {
 
                       {/* Footer */}
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <p className="text-xs text-gray-600 italic">You don't need to resolve this now.</p>
+                        <div className="flex items-center gap-3">
+                          <p className="text-xs text-gray-600 italic hidden sm:block">You don't need to resolve this now.</p>
+                          <PinInsightSimple content={JSON.stringify(latestAnalysis.analysis)} />
+                        </div>
                         <Button
                           onClick={clearAnalysis}
                           variant="ghost"
