@@ -15,7 +15,7 @@ export function WalletConnectButton() {
   return (
     <Wallet>
       <ConnectWallet 
-        className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 font-semibold text-white shadow-lg backdrop-blur transition hover:bg-white/20"
+        className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-purple-500 px-6 py-3 font-bold text-white shadow-lg shadow-purple-500/30 transition-all hover:from-purple-500 hover:to-purple-400 hover:shadow-purple-500/50 hover:scale-105"
         data-testid="button-connect-wallet"
       >
         <Avatar className="h-5 w-5" />
