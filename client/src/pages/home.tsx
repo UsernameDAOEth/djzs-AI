@@ -646,13 +646,13 @@ export default function Home() {
             <h2 className="text-2xl font-black text-white tracking-widest mb-2 uppercase">DJZS</h2>
             <p className="text-gray-600 text-sm font-medium uppercase tracking-widest">A thinking system, not a network</p>
           </div>
-          <div className="flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">
-            <Link href="/docs" className="hover:text-purple-400 transition-colors">Docs</Link>
-            <span className="opacity-50 cursor-default">Privacy</span>
-            <Link href="/terms" className="hover:text-purple-400 transition-colors">Terms</Link>
-            <span className="opacity-50 cursor-default">Roadmap</span>
+          <div className="flex items-center gap-8 text-[11px] font-black uppercase tracking-[0.2em]">
+            <Link href="/docs" className="text-gray-500 hover:text-purple-400 transition-all hover:scale-105 active:scale-95 px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.05]">Docs</Link>
+            <span className="text-gray-700 opacity-50 cursor-default px-3 py-1.5">Privacy</span>
+            <Link href="/terms" className="text-gray-500 hover:text-purple-400 transition-all hover:scale-105 active:scale-95 px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.05]">Terms</Link>
+            <span className="text-gray-700 opacity-50 cursor-default px-3 py-1.5">Roadmap</span>
             {isConnected && (
-              <Link href="/chat" className="hover:text-purple-400 transition-colors">Enter</Link>
+              <Link href="/chat" className="text-purple-400 hover:text-purple-300 transition-all hover:scale-110 active:scale-90 px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.15)]">Enter</Link>
             )}
           </div>
         </div>
