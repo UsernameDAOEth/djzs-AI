@@ -1528,6 +1528,31 @@ export default function Chat() {
                           </div>
                         )}
                         
+                        {/* Sources (Web mode only) */}
+                        {researchResult.sources && researchResult.sources.length > 0 && (
+                          <div className="space-y-3">
+                            <p className="text-xs font-medium text-green-400/80 flex items-center gap-2">
+                              <Globe className="w-3.5 h-3.5" />
+                              Sources ({researchResult.sources.length})
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {researchResult.sources.map((source, idx) => (
+                                <a
+                                  key={idx}
+                                  href={source.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/[0.08] border border-green-500/20 text-xs text-green-400 hover:bg-green-500/15 transition-colors"
+                                  data-testid={`link-source-${idx}`}
+                                >
+                                  <ArrowUpRight className="w-3 h-3" />
+                                  {source.title || `Source ${idx + 1}`}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         {/* Confidence */}
                         {researchResult.confidence && (
                           <div className="p-3 rounded-lg bg-amber-500/[0.06] border border-amber-500/15">
@@ -1541,7 +1566,9 @@ export default function Chat() {
 
                       {/* Footer */}
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <p className="text-xs text-gray-600 italic">Based on AI knowledge synthesis</p>
+                        <p className="text-xs text-gray-600 italic">
+                          {researchResult.mode === 'web' ? 'Live web search via Perplexity' : 'Based on AI knowledge synthesis'}
+                        </p>
                         <Button
                           onClick={clearAndReset}
                           variant="ghost"

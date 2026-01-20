@@ -451,7 +451,63 @@ export default function Docs() {
                 </div>
               </div>
 
-              <h3 className="text-lg font-bold text-white mb-4">Research Output</h3>
+              <h3 className="text-lg font-bold text-white mb-4">Web Mode vs Explain Mode</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div className="p-5 rounded-xl bg-green-500/[0.05] border border-green-500/20">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Globe className="w-5 h-5 text-green-400" />
+                    <p className="font-bold text-green-400">Web Mode (Live Search)</p>
+                  </div>
+                  <ul className="text-sm text-gray-400 space-y-2">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      <span>Searches the internet in real-time</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      <span>Provides current prices, news, and data</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      <span>Includes source links for verification</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      <span>Best for: crypto prices, recent events, market data</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="p-5 rounded-xl bg-purple-500/[0.05] border border-purple-500/20">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Bot className="w-5 h-5 text-purple-400" />
+                    <p className="font-bold text-purple-400">Explain Mode (AI Knowledge)</p>
+                  </div>
+                  <ul className="text-sm text-gray-400 space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-400 mt-0.5">•</span>
+                      <span>Uses AI training knowledge only</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-400 mt-0.5">•</span>
+                      <span>May be outdated for fast-moving topics</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-400 mt-0.5">•</span>
+                      <span>Good for concepts and fundamentals</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-400 mt-0.5">•</span>
+                      <span>Best for: definitions, how things work, history</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <InfoBox type="tip">
+                <strong>For current data like crypto prices or recent news, always use Web mode.</strong> Explain mode uses AI knowledge which may be months old.
+              </InfoBox>
+
+              <h3 className="text-lg font-bold text-white mb-4 mt-8">Research Output</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                   <p className="text-sm font-medium text-blue-400 mb-2">Key Takeaways</p>
