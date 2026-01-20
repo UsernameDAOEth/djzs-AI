@@ -261,16 +261,103 @@ IMPORTANT: Respond with valid JSON only. Use this format:
   "synthesisMarkdown": "Brief 2-3 paragraph synthesis of the topic"
 }`;
 
-export async function synthesizeResearch(query: string, webMode: boolean): Promise<ResearchSynthesis> {
+// Perplexity web search for real-time data
+async function searchWithPerplexity(query: string): Promise<ResearchSynthesis> {
+  const perplexityKey = process.env.PERPLEXITY_API_KEY;
+  
+  if (!perplexityKey) {
+    throw new Error("PERPLEXITY_API_KEY not configured");
+  }
+
+  const response = await fetch("https://api.perplexity.ai/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${perplexityKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "llama-3.1-sonar-small-128k-online",
+      messages: [
+        { 
+          role: "system", 
+          content: `You are a research assistant. Provide factual, up-to-date information with clear takeaways. Format your response as JSON:
+{
+  "keyTakeaways": ["key fact 1", "key fact 2", ...],
+  "whatToCheckNext": ["follow-up 1", "follow-up 2"],
+  "confidence": "High/Medium/Low - explanation",
+  "synthesisMarkdown": "2-3 paragraph synthesis"
+}` 
+        },
+        { 
+          role: "user", 
+          content: query 
+        }
+      ],
+      temperature: 0.2,
+      max_tokens: 1500,
+      search_recency_filter: "week",
+      return_related_questions: false,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Perplexity API error:", response.status, errorText);
+    throw new Error(`Perplexity API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+  const citations = data.citations || [];
+  
+  if (!content) {
+    throw new Error("No content in Perplexity response");
+  }
+
+  // Try to parse JSON from response
+  let parsed: { keyTakeaways?: string[]; whatToCheckNext?: string[]; confidence?: string; synthesisMarkdown?: string } = {};
+  try {
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      parsed = JSON.parse(jsonMatch[0]);
+    }
+  } catch {
+    // If JSON parsing fails, use the raw content as synthesis
+    parsed = {
+      keyTakeaways: [],
+      whatToCheckNext: [],
+      confidence: "High - live web search",
+      synthesisMarkdown: content,
+    };
+  }
+
+  // Convert citations to sources
+  const sources = citations.map((url: string, i: number) => ({
+    title: `Source ${i + 1}`,
+    url,
+    snippet: "",
+  }));
+
+  return {
+    query,
+    mode: "web",
+    keyTakeaways: parsed.keyTakeaways || [],
+    whatToCheckNext: parsed.whatToCheckNext || [],
+    sources,
+    confidence: parsed.confidence || "High - live web search",
+    synthesisMarkdown: parsed.synthesisMarkdown || content,
+  };
+}
+
+// Venice AI for explain mode (training knowledge only)
+async function explainWithVenice(query: string): Promise<ResearchSynthesis> {
   const apiKey = process.env.VENICE_API_KEY;
   
   if (!apiKey) {
     throw new Error("VENICE_API_KEY not configured");
   }
 
-  const userPrompt = webMode 
-    ? `Research query: "${query}"\n\nProvide comprehensive information on this topic. Note: You're operating in Explain mode (no live web search). Be clear about any information that may be outdated or require verification.`
-    : `Research query: "${query}"\n\nProvide information based on your training knowledge. Clearly label this as "Explain mode" - no live web data is available.`;
+  const userPrompt = `Research query: "${query}"\n\nProvide information based on your training knowledge. Be clear this is from training data and may be outdated for rapidly changing topics.`;
 
   const response = await fetch(`${VENICE_API_BASE}/chat/completions`, {
     method: "POST",
@@ -302,7 +389,6 @@ export async function synthesizeResearch(query: string, webMode: boolean): Promi
     throw new Error("No content in Venice response");
   }
 
-  // Extract JSON from response
   const jsonMatch = content.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     throw new Error("No JSON found in response");
@@ -312,11 +398,26 @@ export async function synthesizeResearch(query: string, webMode: boolean): Promi
   
   return {
     query,
-    mode: webMode ? "web" : "explain",
+    mode: "explain",
     keyTakeaways: parsed.keyTakeaways || [],
     whatToCheckNext: parsed.whatToCheckNext || [],
-    sources: [], // No web sources in explain mode
+    sources: [],
     confidence: parsed.confidence || "Medium - based on training data only",
     synthesisMarkdown: parsed.synthesisMarkdown || "",
   };
+}
+
+export async function synthesizeResearch(query: string, webMode: boolean): Promise<ResearchSynthesis> {
+  // If web mode is enabled and Perplexity API key is available, use live search
+  if (webMode && process.env.PERPLEXITY_API_KEY) {
+    try {
+      return await searchWithPerplexity(query);
+    } catch (error) {
+      console.error("Perplexity search failed, falling back to Venice:", error);
+      // Fall back to Venice if Perplexity fails
+    }
+  }
+  
+  // Use Venice AI for explain mode or as fallback
+  return await explainWithVenice(query);
 }
