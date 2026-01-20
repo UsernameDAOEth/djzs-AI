@@ -269,6 +269,8 @@ async function searchWithPerplexity(query: string): Promise<ResearchSynthesis> {
     throw new Error("PERPLEXITY_API_KEY not configured");
   }
 
+  console.log("[Perplexity] Starting web search for:", query);
+
   const response = await fetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: {
@@ -276,16 +278,16 @@ async function searchWithPerplexity(query: string): Promise<ResearchSynthesis> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "llama-3.1-sonar-small-128k-online",
+      model: "sonar",
       messages: [
         { 
           role: "system", 
-          content: `You are a research assistant. Provide factual, up-to-date information with clear takeaways. Format your response as JSON:
+          content: `You are a research assistant with real-time web access. Today is ${new Date().toISOString().split('T')[0]}. Provide factual, up-to-date information with clear takeaways. Always include current dates and recent data. Format your response as JSON:
 {
   "keyTakeaways": ["key fact 1", "key fact 2", ...],
   "whatToCheckNext": ["follow-up 1", "follow-up 2"],
   "confidence": "High/Medium/Low - explanation",
-  "synthesisMarkdown": "2-3 paragraph synthesis"
+  "synthesisMarkdown": "2-3 paragraph synthesis with current data"
 }` 
         },
         { 
@@ -295,24 +297,31 @@ async function searchWithPerplexity(query: string): Promise<ResearchSynthesis> {
       ],
       temperature: 0.2,
       max_tokens: 1500,
-      search_recency_filter: "week",
+      search_recency_filter: "day",
       return_related_questions: false,
     }),
   });
 
+  console.log("[Perplexity] Response status:", response.status);
+
   if (!response.ok) {
     const errorText = await response.text();
-    console.error("Perplexity API error:", response.status, errorText);
+    console.error("[Perplexity] API error:", response.status, errorText);
     throw new Error(`Perplexity API error: ${response.status}`);
   }
 
   const data = await response.json();
+  console.log("[Perplexity] Citations count:", data.citations?.length || 0);
+  
   const content = data.choices?.[0]?.message?.content;
   const citations = data.citations || [];
   
   if (!content) {
+    console.error("[Perplexity] No content in response");
     throw new Error("No content in Perplexity response");
   }
+  
+  console.log("[Perplexity] Got response, content length:", content.length);
 
   // Try to parse JSON from response
   let parsed: { keyTakeaways?: string[]; whatToCheckNext?: string[]; confidence?: string; synthesisMarkdown?: string } = {};
@@ -408,16 +417,23 @@ async function explainWithVenice(query: string): Promise<ResearchSynthesis> {
 }
 
 export async function synthesizeResearch(query: string, webMode: boolean): Promise<ResearchSynthesis> {
+  console.log("[Research] Mode:", webMode ? "WEB" : "EXPLAIN", "| Query:", query.substring(0, 50));
+  console.log("[Research] Perplexity key exists:", !!process.env.PERPLEXITY_API_KEY);
+  
   // If web mode is enabled and Perplexity API key is available, use live search
   if (webMode && process.env.PERPLEXITY_API_KEY) {
     try {
-      return await searchWithPerplexity(query);
+      console.log("[Research] Using Perplexity for live web search");
+      const result = await searchWithPerplexity(query);
+      console.log("[Research] Perplexity success, sources:", result.sources?.length || 0);
+      return result;
     } catch (error) {
-      console.error("Perplexity search failed, falling back to Venice:", error);
+      console.error("[Research] Perplexity failed, falling back to Venice:", error);
       // Fall back to Venice if Perplexity fails
     }
   }
   
   // Use Venice AI for explain mode or as fallback
+  console.log("[Research] Using Venice AI (explain mode or fallback)");
   return await explainWithVenice(query);
 }
