@@ -298,7 +298,7 @@ async function searchWithPerplexity(query: string): Promise<ResearchSynthesis> {
       temperature: 0.2,
       max_tokens: 1500,
       search_recency_filter: "day",
-      return_related_questions: false,
+      return_related_questions: true,
     }),
   });
 
