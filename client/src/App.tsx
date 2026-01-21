@@ -27,7 +27,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <div style={{ isolation: "isolate", position: "relative", zIndex: 0 }}>
+          <Router />
+        </div>
         <InstallPrompt />
       </TooltipProvider>
     </QueryClientProvider>

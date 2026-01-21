@@ -8,7 +8,7 @@ const WORDS = [
 
 export function ZoneFlywheel() {
   return (
-    <div className="relative h-[150px] md:h-[200px] w-full flex items-center justify-center overflow-hidden mb-6 z-0">
+    <div className="relative h-[150px] md:h-[200px] w-full flex items-center justify-center overflow-hidden mb-6" style={{ isolation: "isolate", zIndex: 0 }}>
       <div className="flex flex-col items-center">
         {WORDS.map((word, i) => {
           return (

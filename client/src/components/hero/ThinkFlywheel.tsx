@@ -8,7 +8,7 @@ const WORDS = [
 
 export function ThinkFlywheel() {
   return (
-    <div className="relative h-[200px] md:h-[300px] w-full flex items-center justify-center overflow-hidden mb-8 z-0">
+    <div className="relative h-[200px] md:h-[300px] w-full flex items-center justify-center overflow-hidden mb-8" style={{ isolation: "isolate", zIndex: 0 }}>
       <div className="flex flex-col items-center">
         {WORDS.map((word, i) => {
           return (

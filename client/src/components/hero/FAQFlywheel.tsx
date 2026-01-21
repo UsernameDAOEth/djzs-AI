@@ -8,7 +8,7 @@ const WORDS = [
 
 export function FAQFlywheel() {
   return (
-    <div className="relative h-[120px] md:h-[150px] w-full flex items-center justify-center overflow-hidden mb-4 z-0">
+    <div className="relative h-[120px] md:h-[150px] w-full flex items-center justify-center overflow-hidden mb-4" style={{ isolation: "isolate", zIndex: 0 }}>
       <div className="flex flex-col items-center">
         {WORDS.map((word, i) => {
           return (
