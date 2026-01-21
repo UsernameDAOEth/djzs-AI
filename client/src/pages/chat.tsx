@@ -1213,7 +1213,7 @@ export default function Chat() {
                               ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400' 
                               : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
                           }`}
-                          title={webModeEnabled ? "⚠️ Web search uses centralized API (Perplexity)" : "Explain mode uses Venice AI (privacy-focused)"}
+                          title={webModeEnabled ? "Web search uses Perplexity (centralized API)" : "Explain mode uses Venice AI (privacy-focused)"}
                           data-testid="button-web-toggle"
                         >
                           <Globe className={`w-4 h-4 ${webModeEnabled ? 'text-amber-400' : 'text-gray-500'}`} />
@@ -1571,11 +1571,11 @@ export default function Chat() {
                         <p className="text-xs text-gray-600 italic flex items-center gap-1.5">
                           {researchResult.mode === 'web' ? (
                             <>
-                              <AlertTriangle className="w-3 h-3 text-amber-500" />
-                              <span className="text-amber-500/80">Centralized API (Perplexity)</span>
+                              <Globe className="w-3 h-3 text-amber-500" />
+                              <span className="text-amber-500/80">Search via Perplexity (Centralized)</span>
                             </>
                           ) : (
-                            'Venice AI (privacy-focused)'
+                            'Synthesis via Venice AI (Privacy-focused)'
                           )}
                         </p>
                         <Button
