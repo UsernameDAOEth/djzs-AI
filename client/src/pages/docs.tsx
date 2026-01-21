@@ -453,26 +453,30 @@ export default function Docs() {
 
               <h3 className="text-lg font-bold text-white mb-4">Web Mode vs Explain Mode</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <div className="p-5 rounded-xl bg-green-500/[0.05] border border-green-500/20">
+                <div className="p-5 rounded-xl bg-amber-500/[0.05] border border-amber-500/20">
                   <div className="flex items-center gap-2 mb-3">
-                    <Globe className="w-5 h-5 text-green-400" />
-                    <p className="font-bold text-green-400">Web Mode (Live Search)</p>
+                    <Globe className="w-5 h-5 text-amber-400" />
+                    <p className="font-bold text-amber-400">Web Mode (Live Search)</p>
                   </div>
+                  <p className="text-xs text-amber-500/70 mb-3 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    Powered by Perplexity (Centralized API)
+                  </p>
                   <ul className="text-sm text-gray-400 space-y-2">
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                       <span>Searches the internet in real-time</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                       <span>Provides current prices, news, and data</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                       <span>Includes source links for verification</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                       <span>Best for: crypto prices, recent events, market data</span>
                     </li>
                   </ul>
@@ -482,6 +486,10 @@ export default function Docs() {
                     <Bot className="w-5 h-5 text-purple-400" />
                     <p className="font-bold text-purple-400">Explain Mode (AI Knowledge)</p>
                   </div>
+                  <p className="text-xs text-purple-400/70 mb-3 flex items-center gap-1">
+                    <Shield className="w-3 h-3" />
+                    Powered by Venice AI (Privacy-focused)
+                  </p>
                   <ul className="text-sm text-gray-400 space-y-2">
                     <li className="flex items-start gap-2">
                       <span className="text-purple-400 mt-0.5">•</span>
@@ -502,6 +510,10 @@ export default function Docs() {
                   </ul>
                 </div>
               </div>
+
+              <InfoBox type="warning">
+                <strong>Centralization tradeoff:</strong> Web Mode uses Perplexity, a centralized API service, which means your queries are processed by their servers. For maximum privacy, use Explain Mode which uses Venice AI's privacy-focused infrastructure. Neither stores or trains on your data.
+              </InfoBox>
 
               <InfoBox type="tip">
                 <strong>For current data like crypto prices or recent news, always use Web mode.</strong> Explain mode uses AI knowledge which may be months old.
