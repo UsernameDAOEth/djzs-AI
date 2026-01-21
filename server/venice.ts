@@ -418,7 +418,6 @@ async function explainWithVenice(query: string): Promise<ResearchSynthesis> {
 
 export async function synthesizeResearch(query: string, webMode: boolean): Promise<ResearchSynthesis> {
   console.log("[Research] Mode:", webMode ? "WEB" : "EXPLAIN", "| Query:", query.substring(0, 50));
-  console.log("[Research] Perplexity key exists:", !!process.env.PERPLEXITY_API_KEY);
   
   // If web mode is enabled and Perplexity API key is available, use live search
   if (webMode && process.env.PERPLEXITY_API_KEY) {
