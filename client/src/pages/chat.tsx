@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { useAccount, useSignMessage, useDisconnect } from "wagmi";
+import { useIsSignedIn, useEvmAddress } from "@coinbase/cdp-hooks";
 import { WalletConnectButton } from "@/components/web3/connect-button";
 import { PinInsightSimple } from "@/components/web3/pin-insight";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -181,12 +181,13 @@ interface ResearchResult {
 }
 
 export default function Chat() {
-  const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
+  const { isSignedIn } = useIsSignedIn();
+  const { evmAddress } = useEvmAddress();
+  const address = evmAddress as `0x${string}` | undefined;
+  const isConnected = isSignedIn && !!evmAddress;
   const { toast } = useToast();
   const { displayName, ensName } = useDisplayName(address);
   const { client: xmtpClient, isConnecting: xmtpConnecting, connect: connectXmtp } = useXmtp();
-  const { signMessageAsync } = useSignMessage();
   const { data: web3Profiles, isLoading: profileLoading } = useWeb3Profile(address);
   
   const primaryProfile = useMemo(() => getPrimaryProfile(web3Profiles || []), [web3Profiles]);
@@ -959,14 +960,12 @@ export default function Chat() {
                 </div>
               )}
               
-              <button
-                onClick={() => disconnect()}
+              <div
                 className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-white/[0.02] hover:bg-red-500/10 text-gray-500 hover:text-red-400 transition-colors border border-white/[0.03] hover:border-red-500/20"
                 data-testid="button-disconnect-wallet"
               >
-                <LogOut className="w-3 h-3" />
-                <span className="text-[9px] font-black uppercase tracking-widest">Disconnect</span>
-              </button>
+                <WalletConnectButton />
+              </div>
             </div>
           </div>
         </aside>

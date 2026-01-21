@@ -1,28 +1,10 @@
 import { useState } from "react";
-import { useAccount } from "wagmi";
-import { 
-  Transaction, 
-  TransactionButton, 
-  TransactionStatus, 
-  TransactionStatusLabel, 
-  TransactionStatusAction 
-} from "@coinbase/onchainkit/transaction";
+import { useIsSignedIn, useEvmSmartAccounts } from "@coinbase/cdp-hooks";
 import { Pin, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { encodeFunctionData, keccak256, toHex } from "viem";
-import { base, baseSepolia } from "wagmi/chains";
 import { useToast } from "@/hooks/use-toast";
-
-function getChainId() {
-  const chainName = import.meta.env.VITE_CDP_CHAIN || "base-sepolia";
-  return chainName === "base" ? base.id : baseSepolia.id;
-}
-
-function getPaymasterUrl() {
-  const paymasterKey = import.meta.env.VITE_CDP_PAYMASTER_KEY;
-  const chainName = import.meta.env.VITE_CDP_CHAIN || "base-sepolia";
-  if (!paymasterKey) return undefined;
-  return `https://api.developer.coinbase.com/rpc/v1/${chainName}/${paymasterKey}`;
-}
+import { SendUserOperationButton } from "./send-user-operation-button";
+import type { EvmCall } from "@coinbase/cdp-core";
 
 interface PinInsightProps {
   content: string;
@@ -46,54 +28,52 @@ const ATTESTATION_ABI = [
 ] as const;
 
 export function PinInsight({ content, onSuccess, onError }: PinInsightProps) {
-  const { address, isConnected } = useAccount();
+  const { isSignedIn } = useIsSignedIn();
+  const { evmSmartAccounts } = useEvmSmartAccounts();
+  const smartAccount = evmSmartAccounts?.[0];
   const { toast } = useToast();
   const [isPinned, setIsPinned] = useState(false);
+  
+  const chainName = import.meta.env.VITE_CDP_CHAIN || "base-sepolia";
+  const network = chainName === "base" ? "base" : "base-sepolia";
 
-  if (!isConnected || !address) {
+  if (!isSignedIn || !smartAccount) {
     return null;
   }
 
   const contentString = typeof content === 'string' ? content : JSON.stringify(content);
   const contentHash = keccak256(toHex(contentString));
 
-  const calls = [
+  const transactionData = encodeFunctionData({
+    abi: ATTESTATION_ABI,
+    functionName: "attest",
+    args: [smartAccount.address as `0x${string}`, contentHash]
+  });
+
+  const calls: EvmCall[] = [
     {
       to: ATTESTATION_REGISTRY,
-      data: encodeFunctionData({
-        abi: ATTESTATION_ABI,
-        functionName: "attest",
-        args: [address, contentHash]
-      })
+      data: transactionData,
+      value: BigInt(0),
     }
   ];
-
-  const paymasterUrl = getPaymasterUrl();
-  const chainId = getChainId();
-  const capabilities = paymasterUrl ? {
-    paymasterService: {
-      url: paymasterUrl
-    }
-  } : undefined;
 
   return (
     <div className="inline-flex flex-col gap-1">
       {isPinned ? (
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 text-sm">
           <CheckCircle className="w-4 h-4" />
-          <span>Pinned onchain</span>
+          <span>Pinned onchain (gasless)</span>
         </div>
       ) : (
-        <Transaction
-          chainId={chainId}
+        <SendUserOperationButton
+          network={network}
           calls={calls}
-          capabilities={capabilities}
-          onSuccess={(response) => {
+          onSuccess={(txHash) => {
             setIsPinned(true);
-            const txHash = response.transactionReceipts?.[0]?.transactionHash;
             toast({
               title: "Insight pinned onchain",
-              description: txHash ? `TX: ${txHash.slice(0, 10)}...` : "Successfully recorded",
+              description: txHash ? `TX: ${txHash.slice(0, 10)}... (gasless)` : "Successfully recorded",
             });
             onSuccess?.(txHash || "");
           }}
@@ -104,25 +84,22 @@ export function PinInsight({ content, onSuccess, onError }: PinInsightProps) {
               title: "Failed to pin",
               description: error.message || "Transaction failed. Please try again.",
             });
-            onError?.(new Error(error.message));
+            onError?.(error);
           }}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors text-sm font-medium border border-purple-500/20"
+          pendingLabel="Pinning..."
         >
-          <TransactionButton 
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors text-sm font-medium border border-purple-500/20"
-            text="Pin onchain"
-          />
-          <TransactionStatus>
-            <TransactionStatusLabel className="text-xs text-gray-400" />
-            <TransactionStatusAction className="text-xs text-purple-400" />
-          </TransactionStatus>
-        </Transaction>
+          <Pin className="w-4 h-4" />
+          <span>Pin onchain</span>
+        </SendUserOperationButton>
       )}
     </div>
   );
 }
 
 export function PinInsightSimple({ content, onPin }: { content: string; onPin?: () => void }) {
-  const { isConnected } = useAccount();
+  const { isSignedIn } = useIsSignedIn();
+  const isConnected = isSignedIn;
   const { toast } = useToast();
   const [isPinning, setIsPinning] = useState(false);
   const [isPinned, setIsPinned] = useState(false);

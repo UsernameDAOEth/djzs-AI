@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { useAccount } from "wagmi";
+import { useIsSignedIn, useEvmAddress } from "@coinbase/cdp-hooks";
 import { WalletConnectButton } from "@/components/web3/connect-button";
 import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
@@ -9,7 +9,8 @@ import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, 
 import { Helmet } from "react-helmet";
 
 export default function Home() {
-  const { isConnected } = useAccount();
+  const { isSignedIn } = useIsSignedIn();
+  const isConnected = isSignedIn;
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden selection:bg-purple-500/30">

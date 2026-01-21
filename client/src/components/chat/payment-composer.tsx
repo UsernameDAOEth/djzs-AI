@@ -1,15 +1,18 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
+import { useIsSignedIn, useEvmSmartAccounts } from "@coinbase/cdp-hooks";
 import { parseEther, isAddress } from "viem";
-import { Send, Loader2, Check } from "lucide-react";
+import { Send, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
+import { SendUserOperationButton } from "@/components/web3/send-user-operation-button";
+import type { EvmCall } from "@coinbase/cdp-core";
 
 const paymentFormSchema = z.object({
   to: z.string().min(1, "Address is required"),
@@ -30,10 +33,17 @@ interface PaymentComposerProps {
 }
 
 export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
-  const { address } = useAccount();
+  const { isSignedIn } = useIsSignedIn();
+  const { evmSmartAccounts } = useEvmSmartAccounts();
+  const smartAccount = evmSmartAccounts?.[0];
   const { toast } = useToast();
-  const { sendTransaction, data: txHash, isPending: isSending } = useSendTransaction();
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showSendButton, setShowSendButton] = useState(false);
+  const [pendingPayment, setPendingPayment] = useState<PaymentFormData | null>(null);
+  
+  const chainName = import.meta.env.VITE_CDP_CHAIN || "base-sepolia";
+  const network = chainName === "base" ? "base" : "base-sepolia";
 
   const form = useForm({
     resolver: zodResolver(paymentFormSchema),
@@ -45,8 +55,8 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
     },
   });
 
-  const handleSubmit = async (data: PaymentFormData) => {
-    if (!address) {
+  const handleValidate = (data: PaymentFormData) => {
+    if (!smartAccount) {
       toast({
         title: "Error",
         description: "Please connect your wallet",
@@ -74,25 +84,27 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
       return;
     }
 
-    try {
-      if (data.token === "ETH") {
-        sendTransaction({
-          to: data.to as `0x${string}`,
-          value: parseEther(data.amount),
-        });
-      } else {
-        toast({
-          title: "Coming Soon",
-          description: "USDC payments will be available soon",
-        });
-      }
-    } catch (error) {
+    if (data.token === "USDC") {
       toast({
-        title: "Transaction Failed",
-        description: error instanceof Error ? error.message : "Unknown error",
-        variant: "destructive",
+        title: "Coming Soon",
+        description: "USDC payments will be available soon",
       });
+      return;
     }
+
+    setPendingPayment(data);
+    setShowSendButton(true);
+  };
+
+  const getCalls = (): EvmCall[] => {
+    if (!pendingPayment) return [];
+    return [
+      {
+        to: pendingPayment.to as `0x${string}`,
+        value: parseEther(pendingPayment.amount),
+        data: "0x" as `0x${string}`,
+      }
+    ];
   };
 
   if (isSuccess && txHash) {
@@ -100,6 +112,10 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
     setTimeout(() => {
       onSuccess?.(txHash, { to: formData.to, amount: formData.amount, token: formData.token, note: formData.note });
       form.reset();
+      setIsSuccess(false);
+      setTxHash(null);
+      setShowSendButton(false);
+      setPendingPayment(null);
     }, 1000);
     
     return (
@@ -107,14 +123,17 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
         <div className="w-12 h-12 rounded-full bg-green-600/30 flex items-center justify-center mx-auto mb-3">
           <Check className="w-6 h-6 text-green-400" />
         </div>
-        <h3 className="text-white font-semibold mb-2">Payment Sent!</h3>
+        <h3 className="text-white font-semibold mb-2">Payment Confirmed (gasless)</h3>
+        <p className="text-gray-400 text-xs mb-2">
+          TX: {txHash.slice(0, 10)}...{txHash.slice(-6)}
+        </p>
         <a
-          href={`https://basescan.org/tx/${txHash}`}
+          href={`https://${chainName === "base" ? "basescan.org" : "sepolia.basescan.org"}/tx/${txHash}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm text-blue-400 hover:underline"
         >
-          View transaction →
+          View on Basescan →
         </a>
       </div>
     );
@@ -123,7 +142,7 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
   return (
     <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(handleValidate)} className="space-y-4">
           <FormField
             control={form.control}
             name="to"
@@ -205,24 +224,43 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
             )}
           />
 
-          <Button
-            type="submit"
-            disabled={isSending || isConfirming}
-            className="w-full bg-green-600 hover:bg-green-700"
-            data-testid="button-submit-payment"
-          >
-            {isSending || isConfirming ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {isSending ? "Confirm in Wallet..." : "Confirming..."}
-              </>
-            ) : (
-              <>
-                <Send className="w-4 h-4 mr-2" />
-                Send Payment
-              </>
-            )}
-          </Button>
+          {showSendButton && pendingPayment && smartAccount ? (
+            <SendUserOperationButton
+              network={network}
+              calls={getCalls()}
+              onSuccess={(hash) => {
+                setTxHash(hash);
+                setIsSuccess(true);
+                toast({
+                  title: "Payment sent!",
+                  description: `TX: ${hash.slice(0, 10)}... (gasless)`,
+                });
+              }}
+              onError={(error) => {
+                toast({
+                  title: "Transaction Failed",
+                  description: error.message || "Unknown error",
+                  variant: "destructive",
+                });
+                setShowSendButton(false);
+                setPendingPayment(null);
+              }}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md flex items-center justify-center gap-2"
+              pendingLabel="Sending..."
+            >
+              <Send className="w-4 h-4" />
+              Confirm & Send Payment (gasless)
+            </SendUserOperationButton>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full bg-green-600 hover:bg-green-700"
+              data-testid="button-submit-payment"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              Prepare Payment
+            </Button>
+          )}
         </form>
       </Form>
     </div>
