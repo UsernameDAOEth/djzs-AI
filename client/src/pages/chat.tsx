@@ -52,6 +52,7 @@ import {
   Trash2,
   Check,
   AlertCircle,
+  AlertTriangle,
   HelpCircle,
   Plus
 } from "lucide-react";
@@ -1209,14 +1210,15 @@ export default function Chat() {
                           onClick={() => setWebModeEnabled(!webModeEnabled)}
                           className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                             webModeEnabled 
-                              ? 'bg-green-500/10 border border-green-500/30 text-green-400' 
+                              ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400' 
                               : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
                           }`}
-                          title={webModeEnabled ? "Web search enabled (uses live data)" : "Explain mode (AI knowledge only)"}
+                          title={webModeEnabled ? "⚠️ Web search uses centralized API (Perplexity)" : "Explain mode uses Venice AI (privacy-focused)"}
                           data-testid="button-web-toggle"
                         >
-                          <Globe className={`w-4 h-4 ${webModeEnabled ? 'text-green-400' : 'text-gray-500'}`} />
+                          <Globe className={`w-4 h-4 ${webModeEnabled ? 'text-amber-400' : 'text-gray-500'}`} />
                           <span className="hidden sm:inline">{webModeEnabled ? 'Web' : 'Explain'}</span>
+                          {webModeEnabled && <AlertTriangle className="w-3 h-3 text-amber-400" />}
                         </button>
                       </div>
                       
@@ -1566,8 +1568,15 @@ export default function Chat() {
 
                       {/* Footer */}
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <p className="text-xs text-gray-600 italic">
-                          {researchResult.mode === 'web' ? 'Live web search via Perplexity' : 'Based on AI knowledge synthesis'}
+                        <p className="text-xs text-gray-600 italic flex items-center gap-1.5">
+                          {researchResult.mode === 'web' ? (
+                            <>
+                              <AlertTriangle className="w-3 h-3 text-amber-500" />
+                              <span className="text-amber-500/80">Centralized API (Perplexity)</span>
+                            </>
+                          ) : (
+                            'Venice AI (privacy-focused)'
+                          )}
                         </p>
                         <Button
                           onClick={clearAndReset}
