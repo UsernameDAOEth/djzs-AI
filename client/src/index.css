@@ -274,4 +274,18 @@
   .marquee-reverse .marquee-content {
     animation-direction: reverse;
   }
+
+  /* Coinbase CDP Auth Modal z-index override to ensure it appears above all hero elements */
+  /* Target only the Coinbase CDP auth modal overlay, not other Radix dialogs */
+  .cdp-auth-button-wrapper ~ [data-state],
+  [class*="cdp-"] [role="dialog"],
+  [class*="cdp-"] [data-state="open"],
+  body > div[style*="position: fixed"][style*="z-index"]:not([data-radix-portal]) {
+    z-index: 9999 !important;
+  }
+  
+  /* Ensure Radix portals (our dialogs/modals) stay on top too */
+  [data-radix-portal] {
+    z-index: 9998 !important;
+  }
 }
