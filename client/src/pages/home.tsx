@@ -196,17 +196,6 @@ export default function Home() {
               <StartWritingButton />
             ) : (
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                <Link href="/chat">
-                  <motion.button
-                    whileHover={{ y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-base font-bold text-black hover:bg-gray-100 transition-colors min-h-[52px]"
-                    data-testid="button-try-demo"
-                  >
-                    Try the demo
-                    <ArrowRight className="w-4 h-4" />
-                  </motion.button>
-                </Link>
                 <div className="scale-110">
                   <WalletConnectButton />
                 </div>
@@ -399,8 +388,7 @@ export default function Home() {
                 backItems={[
                   "Your wallet is your identity",
                   "No email harvesting or password resets",
-                  "You can try the demo without connecting",
-                  "Privacy by design, not by policy"
+                  "Private by design, not by policy"
                 ]}
               />
             </div>
