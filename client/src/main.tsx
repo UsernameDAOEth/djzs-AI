@@ -8,7 +8,7 @@ const cdpConfig: Config = {
   projectId: import.meta.env.VITE_CDP_PROJECT_ID,
   appName: "DJZS",
   ethereum: { createOnLogin: "smart" },
-  authMethods: ["email", "oauth:google", "oauth:apple"],
+  authMethods: ["email"],
 };
 
 createRoot(document.getElementById("root")!).render(
