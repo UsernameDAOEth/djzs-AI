@@ -290,11 +290,11 @@
 }
 
 /* Coinbase CDP Modal Dark Theme Overrides */
+/* Note: If CDP renders modal in an iframe, CSS cannot style it due to browser security */
+/* These selectors target CDP-specific data attributes when modal renders in DOM */
 [data-coinbase-cdp-modal],
 [data-testid="coinbase-cdp-modal"],
-.cdp-modal,
-[class*="CoinbaseModal"],
-[class*="coinbase-modal"] {
+.cdp-modal {
   --cdp-bg-default: #0a0a0a !important;
   --cdp-bg-primary: #9333ea !important;
   --cdp-bg-secondary: #1a1a1a !important;
@@ -302,73 +302,39 @@
   --cdp-fg-secondary: #a1a1aa !important;
 }
 
-/* Dark styling for CDP auth modal overlay and container */
+/* CDP modal dialog */
 [data-coinbase-cdp-modal] [role="dialog"],
-[class*="CoinbaseModal"] [role="dialog"],
-iframe[src*="coinbase"],
-div[class*="modal"][class*="coinbase"] {
+.cdp-modal [role="dialog"] {
   background: #0a0a0a !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-radius: 1rem !important;
 }
 
 /* CDP modal backdrop */
 [data-coinbase-cdp-modal]::before,
-[class*="CoinbaseModal"]::before {
+.cdp-modal::before {
   background: rgba(0, 0, 0, 0.85) !important;
 }
 
-/* CDP buttons primary */
-[data-coinbase-cdp-modal] button[class*="primary"],
-[class*="CoinbaseModal"] button[class*="primary"] {
-  background: #9333ea !important;
-  color: #ffffff !important;
-  border: none !important;
-}
-
-/* CDP buttons hover */
-[data-coinbase-cdp-modal] button[class*="primary"]:hover,
-[class*="CoinbaseModal"] button[class*="primary"]:hover {
-  background: #7e22ce !important;
-}
-
-/* CDP input fields */
-[data-coinbase-cdp-modal] input,
-[class*="CoinbaseModal"] input {
-  background: #1a1a1a !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: #ffffff !important;
-}
-
-/* CDP input focus */
-[data-coinbase-cdp-modal] input:focus,
-[class*="CoinbaseModal"] input:focus {
-  border-color: #9333ea !important;
-  outline: none !important;
-  box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2) !important;
-}
-
-/* CDP text colors */
+/* CDP text */
 [data-coinbase-cdp-modal] h1,
 [data-coinbase-cdp-modal] h2,
-[data-coinbase-cdp-modal] h3,
 [data-coinbase-cdp-modal] p,
 [data-coinbase-cdp-modal] span,
-[data-coinbase-cdp-modal] label,
-[class*="CoinbaseModal"] h1,
-[class*="CoinbaseModal"] h2,
-[class*="CoinbaseModal"] h3,
-[class*="CoinbaseModal"] p,
-[class*="CoinbaseModal"] span,
-[class*="CoinbaseModal"] label {
+[data-coinbase-cdp-modal] label {
   color: #ffffff !important;
 }
 
-/* CDP secondary text */
-[data-coinbase-cdp-modal] [class*="secondary"],
-[data-coinbase-cdp-modal] [class*="muted"],
-[class*="CoinbaseModal"] [class*="secondary"],
-[class*="CoinbaseModal"] [class*="muted"] {
-  color: #a1a1aa !important;
+/* CDP inputs */
+[data-coinbase-cdp-modal] input {
+  background: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+/* CDP buttons */
+[data-coinbase-cdp-modal] button[type="submit"] {
+  background: #2563eb !important;
+  color: #ffffff !important;
 }
