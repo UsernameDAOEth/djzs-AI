@@ -8,7 +8,7 @@ const WORDS = [
 
 export function FAQFlywheel() {
   return (
-    <div className="relative h-[120px] md:h-[150px] w-full flex items-center justify-center overflow-hidden mb-4" style={{ isolation: "isolate", zIndex: 0 }}>
+    <div className="relative h-[120px] md:h-[150px] w-full flex items-center justify-center overflow-hidden mb-4">
       <div className="flex flex-col items-center">
         {WORDS.map((word, i) => {
           return (
@@ -29,7 +29,7 @@ export function FAQFlywheel() {
               }}
               className="absolute text-4xl md:text-6xl font-extrabold tracking-tight uppercase pointer-events-none select-none text-white whitespace-nowrap drop-shadow-[0_0_20px_rgba(168,85,247,0.4)]"
               style={{
-                zIndex: 1,
+                zIndex: 10 - i,
               }}
             >
               {word === "SYSTEM" ? (

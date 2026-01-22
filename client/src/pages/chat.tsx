@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { useIsSignedIn, useEvmAddress } from "@coinbase/cdp-hooks";
-import { WalletConnectButton } from "@/components/web3/connect-button";
-import { PinInsightSimple } from "@/components/web3/pin-insight";
+import { useAccount, useSignMessage, useDisconnect } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { Link } from "wouter";
@@ -52,7 +51,6 @@ import {
   Trash2,
   Check,
   AlertCircle,
-  AlertTriangle,
   HelpCircle,
   Plus
 } from "lucide-react";
@@ -181,13 +179,12 @@ interface ResearchResult {
 }
 
 export default function Chat() {
-  const { isSignedIn } = useIsSignedIn();
-  const { evmAddress } = useEvmAddress();
-  const address = evmAddress as `0x${string}` | undefined;
-  const isConnected = isSignedIn && !!evmAddress;
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
   const { toast } = useToast();
   const { displayName, ensName } = useDisplayName(address);
   const { client: xmtpClient, isConnecting: xmtpConnecting, connect: connectXmtp } = useXmtp();
+  const { signMessageAsync } = useSignMessage();
   const { data: web3Profiles, isLoading: profileLoading } = useWeb3Profile(address);
   
   const primaryProfile = useMemo(() => getPrimaryProfile(web3Profiles || []), [web3Profiles]);
@@ -768,7 +765,7 @@ export default function Chat() {
           <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Access Locked</h2>
           <p className="text-gray-400 mb-8 leading-relaxed">DJZS requires a cryptographic identity to ensure absolute privacy for your Journal.</p>
           <div className="flex justify-center">
-            <WalletConnectButton />
+            <ConnectButton />
           </div>
         </div>
       </div>
@@ -960,12 +957,14 @@ export default function Chat() {
                 </div>
               )}
               
-              <div
+              <button
+                onClick={() => disconnect()}
                 className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-white/[0.02] hover:bg-red-500/10 text-gray-500 hover:text-red-400 transition-colors border border-white/[0.03] hover:border-red-500/20"
                 data-testid="button-disconnect-wallet"
               >
-                <WalletConnectButton />
-              </div>
+                <LogOut className="w-3 h-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">Disconnect</span>
+              </button>
             </div>
           </div>
         </aside>
@@ -1209,15 +1208,14 @@ export default function Chat() {
                           onClick={() => setWebModeEnabled(!webModeEnabled)}
                           className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                             webModeEnabled 
-                              ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400' 
+                              ? 'bg-green-500/10 border border-green-500/30 text-green-400' 
                               : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
                           }`}
-                          title={webModeEnabled ? "Web search uses Perplexity (centralized API)" : "Explain mode uses Venice AI (privacy-focused)"}
+                          title={webModeEnabled ? "Web search enabled (uses live data)" : "Explain mode (AI knowledge only)"}
                           data-testid="button-web-toggle"
                         >
-                          <Globe className={`w-4 h-4 ${webModeEnabled ? 'text-amber-400' : 'text-gray-500'}`} />
+                          <Globe className={`w-4 h-4 ${webModeEnabled ? 'text-green-400' : 'text-gray-500'}`} />
                           <span className="hidden sm:inline">{webModeEnabled ? 'Web' : 'Explain'}</span>
-                          {webModeEnabled && <AlertTriangle className="w-3 h-3 text-amber-400" />}
                         </button>
                       </div>
                       
@@ -1529,31 +1527,6 @@ export default function Chat() {
                           </div>
                         )}
                         
-                        {/* Sources (Web mode only) */}
-                        {researchResult.sources && researchResult.sources.length > 0 && (
-                          <div className="space-y-3">
-                            <p className="text-xs font-medium text-green-400/80 flex items-center gap-2">
-                              <Globe className="w-3.5 h-3.5" />
-                              Sources ({researchResult.sources.length})
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                              {researchResult.sources.map((source, idx) => (
-                                <a
-                                  key={idx}
-                                  href={source.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/[0.08] border border-green-500/20 text-xs text-green-400 hover:bg-green-500/15 transition-colors"
-                                  data-testid={`link-source-${idx}`}
-                                >
-                                  <ArrowUpRight className="w-3 h-3" />
-                                  {source.title || `Source ${idx + 1}`}
-                                </a>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
                         {/* Confidence */}
                         {researchResult.confidence && (
                           <div className="p-3 rounded-lg bg-amber-500/[0.06] border border-amber-500/15">
@@ -1567,16 +1540,7 @@ export default function Chat() {
 
                       {/* Footer */}
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <p className="text-xs text-gray-600 italic flex items-center gap-1.5">
-                          {researchResult.mode === 'web' ? (
-                            <>
-                              <Globe className="w-3 h-3 text-amber-500" />
-                              <span className="text-amber-500/80">Search via Perplexity (Centralized)</span>
-                            </>
-                          ) : (
-                            'Synthesis via Venice AI (Privacy-focused)'
-                          )}
-                        </p>
+                        <p className="text-xs text-gray-600 italic">Based on AI knowledge synthesis</p>
                         <Button
                           onClick={clearAndReset}
                           variant="ghost"
@@ -1938,10 +1902,7 @@ export default function Chat() {
 
                       {/* Footer */}
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <p className="text-xs text-gray-600 italic hidden sm:block">You don't need to resolve this now.</p>
-                          <PinInsightSimple content={agentResponse.said} />
-                        </div>
+                        <p className="text-xs text-gray-600 italic">You don't need to resolve this now.</p>
                         <Button
                           onClick={clearAndReset}
                           variant="ghost"
@@ -2071,10 +2032,7 @@ export default function Chat() {
 
                       {/* Footer */}
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <p className="text-xs text-gray-600 italic hidden sm:block">You don't need to resolve this now.</p>
-                          <PinInsightSimple content={JSON.stringify(latestAnalysis.analysis)} />
-                        </div>
+                        <p className="text-xs text-gray-600 italic">You don't need to resolve this now.</p>
                         <Button
                           onClick={clearAnalysis}
                           variant="ghost"

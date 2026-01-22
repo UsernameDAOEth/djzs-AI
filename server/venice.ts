@@ -261,112 +261,16 @@ IMPORTANT: Respond with valid JSON only. Use this format:
   "synthesisMarkdown": "Brief 2-3 paragraph synthesis of the topic"
 }`;
 
-// Perplexity web search for real-time data
-async function searchWithPerplexity(query: string): Promise<ResearchSynthesis> {
-  const perplexityKey = process.env.PERPLEXITY_API_KEY;
-  
-  if (!perplexityKey) {
-    throw new Error("PERPLEXITY_API_KEY not configured");
-  }
-
-  console.log("[Perplexity] Starting web search for:", query);
-
-  const response = await fetch("https://api.perplexity.ai/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${perplexityKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "sonar",
-      messages: [
-        { 
-          role: "system", 
-          content: `You are a research assistant with real-time web access. Today is ${new Date().toISOString().split('T')[0]}. Provide factual, up-to-date information with clear takeaways. Always include current dates and recent data. Format your response as JSON:
-{
-  "keyTakeaways": ["key fact 1", "key fact 2", ...],
-  "whatToCheckNext": ["follow-up 1", "follow-up 2"],
-  "confidence": "High/Medium/Low - explanation",
-  "synthesisMarkdown": "2-3 paragraph synthesis with current data"
-}` 
-        },
-        { 
-          role: "user", 
-          content: query 
-        }
-      ],
-      temperature: 0.2,
-      max_tokens: 1500,
-      search_recency_filter: "day",
-      return_related_questions: true,
-    }),
-  });
-
-  console.log("[Perplexity] Response status:", response.status);
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("[Perplexity] API error:", response.status, errorText);
-    throw new Error(`Perplexity API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-  console.log("[Perplexity] Citations count:", data.citations?.length || 0);
-  
-  const content = data.choices?.[0]?.message?.content;
-  const citations = data.citations || [];
-  
-  if (!content) {
-    console.error("[Perplexity] No content in response");
-    throw new Error("No content in Perplexity response");
-  }
-  
-  console.log("[Perplexity] Got response, content length:", content.length);
-
-  // Try to parse JSON from response
-  let parsed: { keyTakeaways?: string[]; whatToCheckNext?: string[]; confidence?: string; synthesisMarkdown?: string } = {};
-  try {
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      parsed = JSON.parse(jsonMatch[0]);
-    }
-  } catch {
-    // If JSON parsing fails, use the raw content as synthesis
-    parsed = {
-      keyTakeaways: [],
-      whatToCheckNext: [],
-      confidence: "High - live web search",
-      synthesisMarkdown: content,
-    };
-  }
-
-  // Convert citations to sources
-  const sources = citations.map((url: string, i: number) => ({
-    title: `Source ${i + 1}`,
-    url,
-    snippet: "",
-  }));
-
-  return {
-    query,
-    mode: "web",
-    keyTakeaways: parsed.keyTakeaways || [],
-    whatToCheckNext: parsed.whatToCheckNext || [],
-    sources,
-    confidence: parsed.confidence || "High - live web search",
-    synthesisMarkdown: parsed.synthesisMarkdown || content,
-  };
-}
-
-// Venice AI for explain mode (training knowledge only)
-async function explainWithVenice(query: string): Promise<ResearchSynthesis> {
+export async function synthesizeResearch(query: string, webMode: boolean): Promise<ResearchSynthesis> {
   const apiKey = process.env.VENICE_API_KEY;
   
   if (!apiKey) {
     throw new Error("VENICE_API_KEY not configured");
   }
 
-  const userPrompt = `Research query: "${query}"\n\nProvide information based on your training knowledge. Be clear this is from training data and may be outdated for rapidly changing topics.`;
+  const userPrompt = webMode 
+    ? `Research query: "${query}"\n\nProvide comprehensive information on this topic. Note: You're operating in Explain mode (no live web search). Be clear about any information that may be outdated or require verification.`
+    : `Research query: "${query}"\n\nProvide information based on your training knowledge. Clearly label this as "Explain mode" - no live web data is available.`;
 
   const response = await fetch(`${VENICE_API_BASE}/chat/completions`, {
     method: "POST",
@@ -398,6 +302,7 @@ async function explainWithVenice(query: string): Promise<ResearchSynthesis> {
     throw new Error("No content in Venice response");
   }
 
+  // Extract JSON from response
   const jsonMatch = content.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     throw new Error("No JSON found in response");
@@ -407,32 +312,11 @@ async function explainWithVenice(query: string): Promise<ResearchSynthesis> {
   
   return {
     query,
-    mode: "explain",
+    mode: webMode ? "web" : "explain",
     keyTakeaways: parsed.keyTakeaways || [],
     whatToCheckNext: parsed.whatToCheckNext || [],
-    sources: [],
+    sources: [], // No web sources in explain mode
     confidence: parsed.confidence || "Medium - based on training data only",
     synthesisMarkdown: parsed.synthesisMarkdown || "",
   };
-}
-
-export async function synthesizeResearch(query: string, webMode: boolean): Promise<ResearchSynthesis> {
-  console.log("[Research] Mode:", webMode ? "WEB" : "EXPLAIN", "| Query:", query.substring(0, 50));
-  
-  // If web mode is enabled and Perplexity API key is available, use live search
-  if (webMode && process.env.PERPLEXITY_API_KEY) {
-    try {
-      console.log("[Research] Using Perplexity for live web search");
-      const result = await searchWithPerplexity(query);
-      console.log("[Research] Perplexity success, sources:", result.sources?.length || 0);
-      return result;
-    } catch (error) {
-      console.error("[Research] Perplexity failed, falling back to Venice:", error);
-      // Fall back to Venice if Perplexity fails
-    }
-  }
-  
-  // Use Venice AI for explain mode or as fallback
-  console.log("[Research] Using Venice AI (explain mode or fallback)");
-  return await explainWithVenice(query);
 }

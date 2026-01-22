@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
-import { useIsSignedIn, useEvmAddress } from "@coinbase/cdp-hooks";
-import { WalletConnectButton } from "@/components/web3/connect-button";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
@@ -9,8 +9,7 @@ import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, 
 import { Helmet } from "react-helmet";
 
 export default function Home() {
-  const { isSignedIn } = useIsSignedIn();
-  const isConnected = isSignedIn;
+  const { isConnected } = useAccount();
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden selection:bg-purple-500/30">
@@ -196,8 +195,19 @@ export default function Home() {
               <StartWritingButton />
             ) : (
               <div className="flex flex-col sm:flex-row items-center gap-4">
+                <Link href="/chat">
+                  <motion.button
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-base font-bold text-black hover:bg-gray-100 transition-colors min-h-[52px]"
+                    data-testid="button-try-demo"
+                  >
+                    Try the demo
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </Link>
                 <div className="scale-110">
-                  <WalletConnectButton />
+                  <ConnectButton showBalance={false} />
                 </div>
               </div>
             )}
@@ -209,15 +219,15 @@ export default function Home() {
             >
               <div className="flex items-center gap-2">
                 <Smartphone className="w-4 h-4 text-green-500/70" />
-                <span>No extension needed</span>
+                <span>Your notes stay on your device</span>
               </div>
               <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-blue-400/70" />
-                <span>No seed phrase to remember</span>
+                <Download className="w-4 h-4 text-blue-400/70" />
+                <span>Export anytime</span>
               </div>
               <div className="flex items-center gap-2">
-                <Download className="w-4 h-4 text-purple-400/70" />
-                <span>Your data stays local</span>
+                <Lock className="w-4 h-4 text-purple-400/70" />
+                <span>AI insights without data retention</span>
               </div>
             </motion.div>
           </motion.div>
@@ -388,7 +398,8 @@ export default function Home() {
                 backItems={[
                   "Your wallet is your identity",
                   "No email harvesting or password resets",
-                  "Private by design, not by policy"
+                  "You can try the demo without connecting",
+                  "Privacy by design, not by policy"
                 ]}
               />
             </div>
@@ -635,17 +646,36 @@ export default function Home() {
             <h2 className="text-2xl font-black text-white tracking-widest mb-2 uppercase">DJZS</h2>
             <p className="text-gray-600 text-sm font-medium uppercase tracking-widest">A thinking system, not a network</p>
           </div>
-          <div className="flex items-center gap-8 text-[11px] font-black uppercase tracking-[0.2em]">
-            <Link href="/docs" className="text-gray-500 hover:text-purple-400 transition-all hover:scale-105 active:scale-95 px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.05]">Docs</Link>
-            <span className="text-gray-700 opacity-50 cursor-default px-3 py-1.5">Privacy</span>
-            <Link href="/terms" className="text-gray-500 hover:text-purple-400 transition-all hover:scale-105 active:scale-95 px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.05]">Terms</Link>
-            <span className="text-gray-700 opacity-50 cursor-default px-3 py-1.5">Roadmap</span>
+          <div className="flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">
+            <Link href="/docs" className="hover:text-purple-400 transition-colors">Docs</Link>
+            <span className="opacity-50 cursor-default">Privacy</span>
+            <Link href="/terms" className="hover:text-purple-400 transition-colors">Terms</Link>
+            <span className="opacity-50 cursor-default">Roadmap</span>
             {isConnected && (
-              <Link href="/chat" className="text-purple-400 hover:text-purple-300 transition-all hover:scale-110 active:scale-90 px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.15)]">Enter</Link>
+              <Link href="/chat" className="hover:text-purple-400 transition-colors">Enter</Link>
             )}
           </div>
         </div>
       </footer>
+      {/* Mobile Sticky CTA Bar */}
+      {!isConnected && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black/95 backdrop-blur-xl border-t border-white/[0.05] p-4 safe-area-inset-bottom">
+          <div className="flex items-center gap-3 max-w-lg mx-auto">
+            <Link href="/chat" className="flex-1">
+              <button 
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-bold text-black hover:bg-gray-100 transition-colors min-h-[48px]"
+                data-testid="button-mobile-try-demo"
+              >
+                Try demo
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </Link>
+            <div className="flex-1">
+              <ConnectButton />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

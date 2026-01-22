@@ -8,7 +8,7 @@ const WORDS = [
 
 export function ThinkFlywheel() {
   return (
-    <div className="relative h-[200px] md:h-[300px] w-full flex items-center justify-center overflow-hidden mb-8" style={{ isolation: "isolate", zIndex: 0 }}>
+    <div className="relative h-[200px] md:h-[300px] w-full flex items-center justify-center overflow-hidden mb-8">
       <div className="flex flex-col items-center">
         {WORDS.map((word, i) => {
           return (
@@ -29,7 +29,7 @@ export function ThinkFlywheel() {
               }}
               className={`absolute text-5xl md:text-8xl font-extrabold tracking-tight uppercase pointer-events-none select-none whitespace-nowrap ${word === "DECENTRALIZED" ? "text-purple-400" : "text-white"} drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]`}
               style={{
-                zIndex: 1,
+                zIndex: 10 - i,
               }}
             >
               {word}

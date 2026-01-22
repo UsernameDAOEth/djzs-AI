@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema, insertJournalEntrySchema, insertPinnedMemorySchema } from "@shared/schema";
 import { z } from "zod";
 import { verifyMessage } from "viem";
-import { analyzeJournalEntry, analyzeResearchEntry, synthesizeResearch, type ResearchSynthesis } from "./venice";
+import { analyzeJournalEntry, analyzeResearchEntry, synthesizeResearch } from "./venice";
 import { analyzeWithAgent, agentInputSchema } from "./agent.api";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
@@ -133,7 +133,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ==================== RESEARCH ZONE ====================
   // Research synthesis endpoint - provides AI-powered explanations
   // In "Explain" mode (no web search), uses Venice AI for knowledge synthesis
-  const researchCache = new Map<string, { result: ResearchSynthesis; timestamp: number }>();
+  const researchCache = new Map<string, { result: unknown; timestamp: number }>();
   const RESEARCH_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
   
   app.get("/api/research/search", async (req, res) => {
