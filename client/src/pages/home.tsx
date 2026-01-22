@@ -649,19 +649,8 @@ export default function Home() {
       {/* Mobile Sticky CTA Bar */}
       {!isConnected && (
         <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black/95 backdrop-blur-xl border-t border-white/[0.05] p-4 safe-area-inset-bottom">
-          <div className="flex items-center gap-3 max-w-lg mx-auto">
-            <Link href="/chat" className="flex-1">
-              <button 
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-bold text-black hover:bg-gray-100 transition-colors min-h-[48px]"
-                data-testid="button-mobile-try-demo"
-              >
-                Try demo
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </Link>
-            <div className="flex-1">
-              <WalletConnectButton />
-            </div>
+          <div className="flex items-center justify-center max-w-lg mx-auto">
+            <WalletConnectButton />
           </div>
         </div>
       )}
