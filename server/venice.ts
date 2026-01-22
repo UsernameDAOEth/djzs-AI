@@ -63,14 +63,27 @@ const DJZS_RESEARCH_SCHEMA = {
 };
 
 function buildJournalSystemPrompt(): string {
-  return `You are a calm, precise Thinking Partner for DJZS. Your role is to help users think clearly by:
+  return `You are a calm, wise Thinking Partner for DJZS - an AI companion that helps people achieve clarity in their thinking.
 
-1. Summarizing their entry concisely (what they said)
-2. Identifying one meaningful insight (what it means)
-3. Asking one question worth sitting with (what to think about next)
-4. Suggesting 0-2 facts worth remembering long-term
+Your role is to act as an "intelligence companion" that:
 
-Be warm but not sycophantic. Be insightful but not preachy. Say less than you could. If you can't add value, return only a summary.
+1. SUMMARY: Reflect back what the user expressed, capturing the emotional undertone and core message (what they said and felt)
+
+2. INSIGHT: Identify one meaningful pattern, connection, or reframe that the user might not have considered. Look for:
+   - Connections between this entry and their previous thoughts
+   - Underlying values or beliefs driving their thinking
+   - Tensions or contradictions worth examining
+   - Shifts in perspective from their recent entries
+
+3. QUESTION: Ask one powerful question designed to deepen their reflection. Good questions:
+   - Open up new angles rather than seeking specific answers
+   - Connect to their stated values and goals
+   - Are worth sitting with for a while
+   - Help them see blind spots or assumptions
+
+4. MEMORY CANDIDATES: Suggest 0-2 facts, decisions, or realizations worth remembering long-term
+
+Be warm but not sycophantic. Be insightful but not preachy. Say less than you could. If you can't add value, return only a summary. Honor their voice - you're a thinking partner, not a therapist.
 
 IMPORTANT: You must respond with valid JSON only. No markdown, no explanation. Use this exact format:
 {"summary": "...", "insight": "...", "question": "...", "memoryCandidates": ["...", "..."]}`;
@@ -243,7 +256,26 @@ export interface ResearchSynthesis {
   synthesisMarkdown: string;
 }
 
-const RESEARCH_SYNTHESIS_PROMPT = `You are a research synthesizer for DJZS. Your role is to provide clear, accurate information on any topic.
+const RESEARCH_SYNTHESIS_PROMPT_WEB = `You are a research synthesizer for DJZS with access to real-time web data. Your role is to provide current, accurate information on any topic.
+
+When given a research query:
+1. Provide 3-5 key takeaways based on the latest web data
+2. Suggest 2-3 things to check or explore next
+3. Rate your confidence based on source quality
+4. Write a brief synthesis paragraph with current information
+5. IMPORTANT: Cite your sources using [REF]0[/REF], [REF]1[/REF] format inline
+
+Be factual, concise, and cite sources for claims. Include the date or recency of information when relevant.
+
+IMPORTANT: Respond with valid JSON only. Use this format:
+{
+  "keyTakeaways": ["fact 1 [REF]0[/REF]", "fact 2 [REF]1[/REF]", ...],
+  "whatToCheckNext": ["next step 1", "next step 2", ...],
+  "confidence": "High/Medium/Low - brief explanation based on source quality",
+  "synthesisMarkdown": "Brief 2-3 paragraph synthesis with [REF]N[/REF] citations"
+}`;
+
+const RESEARCH_SYNTHESIS_PROMPT_EXPLAIN = `You are a research synthesizer for DJZS. Your role is to provide clear, accurate information from your training knowledge.
 
 When given a research query:
 1. Provide 3-5 key takeaways (bullet points of the most important facts)
@@ -251,13 +283,13 @@ When given a research query:
 3. Rate your confidence and explain any limitations
 4. Write a brief synthesis paragraph
 
-Be factual, concise, and honest about what you don't know. If the topic requires current data you don't have, say so explicitly.
+Be factual, concise, and honest about what you don't know. Note that this is EXPLAIN MODE - you do not have access to live web data, so be clear about any information that may be outdated.
 
 IMPORTANT: Respond with valid JSON only. Use this format:
 {
   "keyTakeaways": ["fact 1", "fact 2", ...],
   "whatToCheckNext": ["next step 1", "next step 2", ...],
-  "confidence": "High/Medium/Low - brief explanation of limitations",
+  "confidence": "High/Medium/Low - note: based on training data only",
   "synthesisMarkdown": "Brief 2-3 paragraph synthesis of the topic"
 }`;
 
@@ -268,9 +300,19 @@ export async function synthesizeResearch(query: string, webMode: boolean): Promi
     throw new Error("VENICE_API_KEY not configured");
   }
 
+  const systemPrompt = webMode ? RESEARCH_SYNTHESIS_PROMPT_WEB : RESEARCH_SYNTHESIS_PROMPT_EXPLAIN;
   const userPrompt = webMode 
-    ? `Research query: "${query}"\n\nProvide comprehensive information on this topic. Note: You're operating in Explain mode (no live web search). Be clear about any information that may be outdated or require verification.`
-    : `Research query: "${query}"\n\nProvide information based on your training knowledge. Clearly label this as "Explain mode" - no live web data is available.`;
+    ? `Research query: "${query}"\n\nSearch the web for the latest information and provide a comprehensive synthesis. Cite your sources inline using [REF]N[/REF] format.`
+    : `Research query: "${query}"\n\nProvide information based on your training knowledge. This is EXPLAIN mode - no live web data is available.`;
+
+  // Build Venice-specific parameters for web search
+  const veniceParameters = webMode ? {
+    enable_web_search: "on",
+    enable_web_citations: true,
+    include_venice_system_prompt: false,
+  } : {
+    include_venice_system_prompt: false,
+  };
 
   const response = await fetch(`${VENICE_API_BASE}/chat/completions`, {
     method: "POST",
@@ -281,11 +323,12 @@ export async function synthesizeResearch(query: string, webMode: boolean): Promi
     body: JSON.stringify({
       model: "llama-3.3-70b",
       messages: [
-        { role: "system", content: RESEARCH_SYNTHESIS_PROMPT },
+        { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
       temperature: 0.7,
-      max_tokens: 1500,
+      max_tokens: 2000,
+      venice_parameters: veniceParameters,
     }),
   });
 
@@ -310,13 +353,23 @@ export async function synthesizeResearch(query: string, webMode: boolean): Promi
   
   const parsed = JSON.parse(jsonMatch[0]);
   
+  // Parse web search citations from Venice response if available
+  let sources: { title: string; url: string; snippet: string }[] = [];
+  if (webMode && data.citations) {
+    sources = data.citations.map((c: { title?: string; url?: string; snippet?: string }) => ({
+      title: c.title || "Source",
+      url: c.url || "",
+      snippet: c.snippet || "",
+    }));
+  }
+  
   return {
     query,
     mode: webMode ? "web" : "explain",
     keyTakeaways: parsed.keyTakeaways || [],
     whatToCheckNext: parsed.whatToCheckNext || [],
-    sources: [], // No web sources in explain mode
-    confidence: parsed.confidence || "Medium - based on training data only",
+    sources,
+    confidence: parsed.confidence || (webMode ? "Based on web search results" : "Based on training data only"),
     synthesisMarkdown: parsed.synthesisMarkdown || "",
   };
 }
