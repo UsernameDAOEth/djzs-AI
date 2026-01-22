@@ -217,11 +217,17 @@ export async function exportVault(): Promise<{
   entries: VaultEntry[];
   insights: VaultInsight[];
   memories: MemoryPin[];
+  researchDossiers: ResearchDossier[];
+  researchQueries: ResearchQuery[];
+  researchClaims: ResearchClaim[];
 }> {
   const entries = await vault.entries.toArray();
   const insights = await vault.insights.toArray();
   const memories = await vault.memoryPins.where('isActive').equals(1).toArray();
-  return { entries, insights, memories };
+  const researchDossiers = await vault.researchDossiers.toArray();
+  const researchQueries = await vault.researchQueries.toArray();
+  const researchClaims = await vault.researchClaims.toArray();
+  return { entries, insights, memories, researchDossiers, researchQueries, researchClaims };
 }
 
 export async function saveTradeRecord(record: Omit<TradeRecord, 'id' | 'createdAt'>): Promise<number> {
