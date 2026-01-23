@@ -195,22 +195,26 @@ export default function Docs() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Journal</h3>
-                  <p className="text-xs text-purple-400/80">Private reflection</p>
+                  <p className="text-xs text-purple-400/80">AI thinking partner</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Your private space to think, reflect, and extract insight from your daily experiences.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Your private space to think, reflect, and achieve clarity with an AI thinking partner that helps you see patterns.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span>Daily reflection prompts that rotate</span>
+                  <span><strong className="text-purple-300">Deep Reasoning</strong> - AI analyzes patterns, connections, and blind spots</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span>AI analysis with Summary / Insight / Reflection format</span>
+                  <span><strong className="text-purple-300">Reflective Questions</strong> - Powerful questions to deepen your thinking</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span>Pattern pinning for recurring themes</span>
+                  <span><strong className="text-purple-300">Memory Pinning</strong> - Save insights worth remembering long-term</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Context Awareness</strong> - AI considers your recent entries and pinned memories</span>
                 </li>
               </ul>
             </div>
@@ -221,22 +225,30 @@ export default function Docs() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Research</h3>
-                  <p className="text-xs text-blue-400/80">Structured analysis</p>
+                  <p className="text-xs text-blue-400/80">AI-powered knowledge synthesis</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Gather claims, track evidence, and surface questions worth investigating.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Search the web for real-time data or use AI knowledge to synthesize information and track claims.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span>Key Claims / Evidence / Unknowns format</span>
+                  <span><strong className="text-blue-300">Web Mode</strong> - Real-time web search via Venice AI with source citations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span>Track what you know vs. what you assume</span>
+                  <span><strong className="text-blue-300">Explain Mode</strong> - AI knowledge synthesis without live data</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span>Surface questions worth investigating</span>
+                  <span><strong className="text-blue-300">Dossiers</strong> - Organize research into named folders</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-blue-300">Claim Tracking</strong> - Save key takeaways with trust levels and status</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-blue-300">Cross-Zone Linking</strong> - Connect research claims to journal entries</span>
                 </li>
               </ul>
             </div>
@@ -264,7 +276,7 @@ export default function Docs() {
             />
             <TechStackItem 
               category="AI"
-              items={["Venice AI", "Structured JSON Responses"]}
+              items={["Venice AI", "Web Search API", "Web Citations", "Reasoning Models", "Structured JSON"]}
             />
             <TechStackItem 
               category="Storage"
