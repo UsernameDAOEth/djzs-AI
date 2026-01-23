@@ -648,9 +648,9 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">
             <Link href="/docs" className="hover:text-purple-400 transition-colors">Docs</Link>
-            <span className="opacity-50 cursor-default">Privacy</span>
+            <Link href="/privacy" className="hover:text-purple-400 transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-purple-400 transition-colors">Terms</Link>
-            <span className="opacity-50 cursor-default">Roadmap</span>
+            <Link href="/roadmap" className="hover:text-purple-400 transition-colors">Roadmap</Link>
             {isConnected && (
               <Link href="/chat" className="hover:text-purple-400 transition-colors">Enter</Link>
             )}

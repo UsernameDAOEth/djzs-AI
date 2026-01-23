@@ -11,6 +11,8 @@ import Home from "@/pages/home";
 import Chat from "@/pages/chat";
 import Docs from "@/pages/docs";
 import Terms from "@/pages/terms";
+import Privacy from "@/pages/privacy";
+import Roadmap from "@/pages/roadmap";
 import NotFound from "@/pages/not-found";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
@@ -26,6 +28,8 @@ function Router() {
       <Route path="/chat" component={Chat} />
       <Route path="/docs" component={Docs} />
       <Route path="/terms" component={Terms} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/roadmap" component={Roadmap} />
       <Route component={NotFound} />
     </Switch>
   );
