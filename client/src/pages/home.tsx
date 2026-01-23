@@ -641,20 +641,43 @@ export default function Home() {
           <div className="h-10" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-10 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div>
-            <h2 className="text-2xl font-black text-white tracking-widest mb-2 uppercase">DJZS</h2>
-            <p className="text-gray-600 text-sm font-medium uppercase tracking-widest">A thinking system, not a network</p>
+        <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-8">
+          {/* Glowing Logo Section */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-purple-500/20 blur-3xl rounded-full" />
+            <h2 className="relative text-4xl md:text-5xl font-black text-white tracking-widest uppercase bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
+              DJZS
+            </h2>
           </div>
-          <div className="flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">
-            <Link href="/docs" className="hover:text-purple-400 transition-colors">Docs</Link>
-            <Link href="/privacy" className="hover:text-purple-400 transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-purple-400 transition-colors">Terms</Link>
-            <Link href="/roadmap" className="hover:text-purple-400 transition-colors">Roadmap</Link>
+          <p className="text-gray-500 text-sm md:text-base font-medium uppercase tracking-[0.3em]">
+            A thinking system, not a network
+          </p>
+          
+          {/* Navigation Links */}
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 pt-4">
+            <Link href="/docs" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Docs</span>
+            </Link>
+            <Link href="/privacy" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Privacy</span>
+            </Link>
+            <Link href="/terms" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Terms</span>
+            </Link>
+            <Link href="/roadmap" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Roadmap</span>
+            </Link>
             {isConnected && (
-              <Link href="/chat" className="hover:text-purple-400 transition-colors">Enter</Link>
+              <Link href="/chat" className="group px-5 py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 transition-all shadow-lg shadow-purple-500/25">
+                <span className="text-xs font-bold uppercase tracking-widest text-white">Enter</span>
+              </Link>
             )}
           </div>
+          
+          {/* Copyright */}
+          <p className="text-[10px] text-gray-700 uppercase tracking-widest pt-4">
+            © 2026 DJZS System
+          </p>
         </div>
       </footer>
       {/* Mobile Sticky CTA Bar */}
