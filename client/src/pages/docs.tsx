@@ -10,7 +10,13 @@ import {
   Search, 
   ArrowRight,
   Key,
-  ExternalLink
+  ExternalLink,
+  Building2,
+  Network,
+  Users,
+  Database,
+  Fingerprint,
+  Globe
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -146,6 +152,149 @@ export default function Docs() {
                 The AI doesn't generate content or save memory automatically. It helps you reflect on your own thinking and build insight through daily habit.
               </p>
             </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-8">Web2 vs Web3: Why It Matters</h2>
+          <p className="text-gray-400 mb-8 max-w-3xl">
+            The internet has evolved through distinct eras. Understanding the difference between Web2 and Web3 helps explain why DJZS is built the way it is.
+          </p>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+            {/* Web2 Card */}
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/[0.05] to-transparent border border-red-500/20">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-12 h-12 rounded-xl bg-red-600/20 flex items-center justify-center">
+                  <Building2 className="w-6 h-6 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Web2: Centralized</h3>
+                  <p className="text-xs text-red-400/80">The current internet model</p>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-5 leading-relaxed">
+                Web2 emerged in the 2000s with social media and mobile. Companies built platforms where users create content, but the platforms own and control everything.
+              </p>
+              <ul className="space-y-3 text-sm text-gray-500">
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">Company-owned data</strong> — Your notes, messages, and history belong to the platform</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">Separate accounts everywhere</strong> — Username/password for each website</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">Single point of failure</strong> — If the company shuts down, your data disappears</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">Targeted advertising</strong> — Your data is monetized to show you ads</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">Walled gardens</strong> — Hard to move your data between platforms</span>
+                </li>
+              </ul>
+            </div>
+            
+            {/* Web3 Card */}
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/[0.05] to-transparent border border-green-500/20">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-12 h-12 rounded-xl bg-green-600/20 flex items-center justify-center">
+                  <Network className="w-6 h-6 text-green-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Web3: Decentralized</h3>
+                  <p className="text-xs text-green-400/80">The emerging model</p>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-5 leading-relaxed">
+                Web3 uses blockchain technology to give users control over their data and identity. No single company controls the system.
+              </p>
+              <ul className="space-y-3 text-sm text-gray-500">
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-green-300">User-owned data</strong> — Your information stays with you, not corporations</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-green-300">One wallet, everywhere</strong> — Sign in to any app with your wallet</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-green-300">No single point of failure</strong> — Distributed systems can't be shut down</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-green-300">No surveillance</strong> — No tracking, no targeted ads, no data harvesting</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-green-300">Interoperable</strong> — Take your identity and assets anywhere</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Comparison Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="py-4 px-4 text-left text-gray-400 font-bold"></th>
+                  <th className="py-4 px-4 text-left text-red-400 font-bold uppercase text-xs tracking-wide">Web2 (Centralized)</th>
+                  <th className="py-4 px-4 text-left text-green-400 font-bold uppercase text-xs tracking-wide">Web3 (Decentralized)</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-400">
+                <tr className="border-b border-white/5">
+                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
+                    <Fingerprint className="w-4 h-4 text-purple-400" /> Identity
+                  </td>
+                  <td className="py-4 px-4">Username + password for each site</td>
+                  <td className="py-4 px-4 text-green-300">1 wallet = universal identity</td>
+                </tr>
+                <tr className="border-b border-white/5">
+                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
+                    <Database className="w-4 h-4 text-purple-400" /> Data
+                  </td>
+                  <td className="py-4 px-4">Stored on company servers</td>
+                  <td className="py-4 px-4 text-green-300">Stored locally or on-chain (you own it)</td>
+                </tr>
+                <tr className="border-b border-white/5">
+                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
+                    <Users className="w-4 h-4 text-purple-400" /> Control
+                  </td>
+                  <td className="py-4 px-4">Platform decides rules & access</td>
+                  <td className="py-4 px-4 text-green-300">You control your keys, you control access</td>
+                </tr>
+                <tr className="border-b border-white/5">
+                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-purple-400" /> Portability
+                  </td>
+                  <td className="py-4 px-4">Data trapped in walled gardens</td>
+                  <td className="py-4 px-4 text-green-300">Take your data anywhere</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-purple-400" /> Privacy
+                  </td>
+                  <td className="py-4 px-4">Tracked, analyzed, sold to advertisers</td>
+                  <td className="py-4 px-4 text-green-300">Private by default, pseudonymous</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Why DJZS uses Web3 */}
+          <div className="mt-10 p-6 rounded-2xl bg-purple-500/[0.08] border border-purple-500/20">
+            <h3 className="text-lg font-bold text-white mb-3">Why DJZS Uses Web3 Principles</h3>
+            <p className="text-gray-400 leading-relaxed">
+              Your private thoughts deserve better than Web2. DJZS combines Web3's decentralized identity (wallet login) with local-first storage (your device). This means your journal entries, research, and memories are never stored on our servers. You authenticate with your wallet—no email, no password, no account to hack. Your thinking stays yours.
+            </p>
           </div>
         </motion.section>
 
