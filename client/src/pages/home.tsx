@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight } from "lucide-react";
+import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight, ShieldCheck } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -406,6 +406,73 @@ export default function Home() {
           </div>
         </section>
       </RevealSection>
+
+      {/* Quantum-Resistant Security Section */}
+      <RevealSection>
+        <section className="relative py-16 bg-[#030303] border-t border-white/[0.03] overflow-hidden">
+          <div className="relative z-10 max-w-4xl mx-auto px-6">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 mb-6">
+                <ShieldCheck className="w-4 h-4 text-green-400" />
+                <span className="text-xs font-bold text-green-400 uppercase tracking-wider">Quantum-Resistant Security</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tight">
+                End-to-End Encrypted with Post-Quantum Protection
+              </h2>
+              <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                DJZS uses XMTP's end-to-end encrypted messaging with built-in quantum-resistant cryptography, protecting conversations against future "harvest now, decrypt later" attacks.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mb-10">
+              <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
+                  <Lock className="w-6 h-6 text-purple-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Hybrid Encryption</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  XMTP uses a hybrid encryption approach, combining post-quantum algorithms with proven conventional cryptography. This protects conversations today while ensuring long-term security.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-blue-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">HNDL Protection</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  "Harvest now, decrypt later" attacks store encrypted data today to decrypt with future quantum computers. Our post-quantum cryptography defeats this threat.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/[0.05] to-blue-500/[0.05] border border-white/[0.08]">
+              <p className="text-center text-gray-300 leading-relaxed">
+                Your conversations are end-to-end encrypted and protected with quantum-resistant security, meaning even if someone records encrypted messages today, they won't be able to decrypt them in the future as quantum computers advance.
+              </p>
+              <p className="text-center text-[10px] text-gray-600 mt-4 uppercase tracking-wider">
+                Messages are E2E encrypted by default — only participants can read them, not DJZS or any intermediary.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-3 mt-8">
+              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
+                <span className="text-xs font-medium text-gray-400">End-to-end encryption</span>
+              </div>
+              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
+                <span className="text-xs font-medium text-gray-400">Post-quantum cryptography</span>
+              </div>
+              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
+                <span className="text-xs font-medium text-gray-400">XMTP-secured</span>
+              </div>
+              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
+                <span className="text-xs font-medium text-gray-400">Hybrid cryptographic design</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
       <RevealSection>
         <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="faq" />

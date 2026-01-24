@@ -578,6 +578,7 @@ export default function Chat() {
   };
 
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
+  const [securityDialogOpen, setSecurityDialogOpen] = useState(false);
   const [selectedPinKind, setSelectedPinKind] = useState<string>("pattern");
   
   const handleManualPin = async () => {
@@ -989,18 +990,66 @@ export default function Chat() {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Status badges - hidden on mobile */}
-              <div className="hidden lg:flex items-center gap-4 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.04]">
-                <div className="flex items-center gap-2">
-                  <Lock className="w-3 h-3 text-green-500/50" />
-                  <span className="text-[10px] font-medium text-gray-500">E2E Private</span>
-                </div>
-                <div className="w-px h-3 bg-white/10"></div>
-                <div className="flex items-center gap-2">
-                  <Bot className="w-3 h-3 text-purple-500/50" />
-                  <span className="text-[10px] font-medium text-gray-500">Thinking Partner</span>
-                </div>
-              </div>
+              {/* Status badges - hidden on mobile, E2E badge is clickable */}
+              <Dialog open={securityDialogOpen} onOpenChange={setSecurityDialogOpen}>
+                <DialogTrigger asChild>
+                  <button className="hidden lg:flex items-center gap-4 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-white/[0.08] transition-all cursor-pointer" data-testid="button-security-info">
+                    <div className="flex items-center gap-2">
+                      <Lock className="w-3 h-3 text-green-500/50" />
+                      <span className="text-[10px] font-medium text-gray-500">E2E Private</span>
+                    </div>
+                    <div className="w-px h-3 bg-white/10"></div>
+                    <div className="flex items-center gap-2">
+                      <Bot className="w-3 h-3 text-purple-500/50" />
+                      <span className="text-[10px] font-medium text-gray-500">Thinking Partner</span>
+                    </div>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="bg-[#0a0a0a] border-white/10 max-w-lg p-8 rounded-[2rem] shadow-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                        <Lock className="w-5 h-5 text-green-400" />
+                      </div>
+                      Quantum-Resistant Security
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-6 py-4">
+                    <p className="text-sm text-gray-300 leading-relaxed">
+                      Your conversations are end-to-end encrypted and protected with quantum-resistant security, meaning even if someone records encrypted messages today, they won't be able to decrypt them in the future as quantum computers advance.
+                    </p>
+                    
+                    <div className="p-4 rounded-xl bg-purple-500/[0.05] border border-purple-500/20">
+                      <p className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">Hybrid Encryption</p>
+                      <p className="text-sm text-gray-400 leading-relaxed">
+                        XMTP uses a hybrid encryption approach, combining post-quantum algorithms with proven conventional cryptography. This protects conversations today while ensuring long-term security against "harvest now, decrypt later" (HNDL) threats.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">What We Protect Against</p>
+                      <ul className="space-y-2 text-sm text-gray-400">
+                        <li className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                          End-to-end encryption by default
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                          Protection against future quantum attacks
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                          Only you can read your messages
+                        </li>
+                      </ul>
+                    </div>
+
+                    <p className="text-[10px] text-gray-600 text-center uppercase tracking-wider">
+                      Built on XMTP protocol with post-quantum cryptography
+                    </p>
+                  </div>
+                </DialogContent>
+              </Dialog>
               
               {/* Memory/Insights toggle button - more visible on mobile */}
               <button 
