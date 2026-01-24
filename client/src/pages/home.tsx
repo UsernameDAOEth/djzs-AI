@@ -187,7 +187,7 @@ export default function Home() {
             Private AI journaling + research capture + a Thinking Partner.
           </motion.p>
           <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-500 max-w-2xl mx-auto font-medium mb-8">
-            Local-first + end-to-end encrypted. No centralized journal database.
+            Local-first, quantum-resistant end-to-end encryption, and decentralized AI.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4">
