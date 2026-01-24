@@ -1002,13 +1002,14 @@ export default function Chat() {
                 </div>
               </div>
               
-              {/* Memory/Insights toggle button */}
+              {/* Memory/Insights toggle button - more visible on mobile */}
               <button 
                 onClick={() => setMemoryDrawerOpen(!memoryDrawerOpen)}
-                className={`p-2.5 rounded-xl transition-all touch-target ${memoryDrawerOpen ? 'bg-purple-600/15 text-purple-400' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all touch-target ${memoryDrawerOpen ? 'bg-purple-600/15 text-purple-400' : 'text-gray-400 hover:text-white hover:bg-white/5 bg-white/[0.03]'}`}
                 data-testid="button-toggle-memory"
               >
-                <Zap className="w-5 h-5" />
+                <Zap className="w-4 h-4" />
+                <span className="text-xs font-medium sm:hidden">Memory</span>
               </button>
             </div>
           </header>
@@ -1017,9 +1018,9 @@ export default function Chat() {
           <div className={`flex-1 overflow-y-auto scroll-smooth ${selectedZone === 'journal' ? 'zone-journal' : 'zone-research'}`}>
             <div className="flex flex-col max-w-2xl w-full mx-auto px-4 sm:px-8">
               {/* Writing Area - vertically centered */}
-              <div className={`flex-1 flex flex-col justify-center py-8 sm:py-12 ${
+              <div className={`flex-1 flex flex-col justify-center py-4 sm:py-12 ${
                 selectedZone === 'research' 
-                  ? 'min-h-[50vh] sm:min-h-[60vh]' 
+                  ? 'min-h-[40vh] sm:min-h-[60vh]' 
                   : 'min-h-[60vh] sm:min-h-[70vh]'
               }`}>
                 {/* Stats bar - streak, last entry, total (Journal only) */}
@@ -1096,9 +1097,9 @@ export default function Chat() {
                 ) : (
                   <>
                     {/* Research: Search bar style - centered */}
-                    <div className="space-y-4 text-center">
+                    <div className="space-y-3 sm:space-y-4 text-center">
                       {/* Dossier selector */}
-                      <div className="flex items-center justify-center gap-2 mb-4">
+                      <div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
                         <div className="relative">
                           <button
                             onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
@@ -1110,7 +1111,7 @@ export default function Chat() {
                             data-testid="button-dossier-selector"
                           >
                             <FolderOpen className="w-4 h-4" />
-                            <span className="max-w-[120px] truncate">
+                            <span className="max-w-[100px] sm:max-w-[120px] truncate">
                               {activeDossierId && dossiers?.find(d => d.id === activeDossierId)?.name || "No dossier"}
                             </span>
                             <ChevronDown className={`w-3 h-3 transition-transform ${dossierDropdownOpen ? 'rotate-180' : ''}`} />
@@ -1219,19 +1220,19 @@ export default function Chat() {
                         </button>
                       </div>
                       
-                      {/* Rotating prompt - centered */}
-                      <div className="flex items-center justify-center gap-3 mb-2">
-                        <Search className="w-5 h-5 text-purple-400/60" />
-                        <span className="text-sm font-medium text-purple-300/70">{currentPrompts[currentPromptIndex]}</span>
+                      {/* Rotating prompt - centered, truncated on mobile */}
+                      <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 px-2">
+                        <Search className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400/60 shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-purple-300/70 truncate">{currentPrompts[currentPromptIndex]}</span>
                       </div>
                       
                       <div className={`relative transition-all duration-500 rounded-2xl ${isFocused ? 'zone-glow' : ''}`}>
-                        <div className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3 px-4 sm:px-5 py-4 rounded-2xl border transition-all ${
+                        <div className={`flex flex-col gap-3 px-3 sm:px-5 py-3 sm:py-4 rounded-2xl border transition-all ${
                           isFocused 
                             ? 'border-purple-500/40 bg-purple-500/[0.03]' 
                             : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.12]'
                         }`}>
-                          <div className="flex items-center gap-3 flex-1">
+                          <div className="flex items-center gap-3">
                             <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-purple-400' : 'text-gray-500'}`} />
                             <input
                               type="text"
@@ -1253,7 +1254,7 @@ export default function Chat() {
                           <Button
                             onClick={handleAnalyze}
                             disabled={!messageInput.trim() || searchResearch.isPending}
-                            className="w-full sm:w-auto shrink-0 bg-purple-600 hover:bg-purple-500 h-12 sm:h-10 px-5 rounded-xl font-medium text-sm shadow-lg shadow-purple-900/30 transition-all active:scale-95 touch-target"
+                            className="w-full bg-purple-600 hover:bg-purple-500 h-11 px-5 rounded-xl font-medium text-sm shadow-lg shadow-purple-900/30 transition-all active:scale-95 touch-target"
                             data-testid="button-search"
                           >
                             {searchResearch.isPending ? (
