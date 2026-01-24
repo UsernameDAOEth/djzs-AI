@@ -1,0 +1,72 @@
+Perfect — since DJZS is actually built on XMTP, you are allowed to use quantum-resistant language without over-claiming. The key is to mirror XMTP’s exact framing.
+
+Below is approved, accurate, copy-paste language you can safely use for DJZS.
+
+⸻
+
+✅ The ONE sentence you can confidently use everywhere
+
+DJZS uses XMTP’s end-to-end encrypted messaging with built-in quantum-resistant cryptography, protecting conversations against future “harvest now, decrypt later” attacks.
+
+This is technically correct, defensible, and aligned with XMTP docs.
+
+⸻
+
+🔐 DJZS Security / Privacy Section (Recommended)
+
+Quantum-resistant end-to-end encryption
+
+DJZS is built on XMTP’s secure messaging protocol, which implements quantum-resistant cryptography to protect against future quantum computer attacks.
+
+XMTP uses a hybrid encryption approach, combining post-quantum algorithms with proven conventional cryptography. This protects conversations today while ensuring long-term security against “harvest now, decrypt later” (HNDL) threats.
+
+Messages are end-to-end encrypted by default — only participants can read them, not DJZS or any intermediary.
+
+⸻
+
+🧠 Simple In-App Explanation (Human-Readable)
+
+Your conversations are end-to-end encrypted and protected with quantum-resistant security, meaning even if someone records encrypted messages today, they won’t be able to decrypt them in the future as quantum computers advance.
+
+⸻
+
+🏷️ Short Taglines (Use one)
+	•	End-to-end encrypted, with quantum-resistant security built in
+	•	Private by default — quantum-resistant conversations
+	•	Built on XMTP: E2EE messaging with post-quantum protection
+
+⸻
+
+⚠️ What NOT to say (important)
+
+❌ “Quantum-encrypted”
+❌ “Quantum cryptography”
+❌ “Quantum-safe blockchain”
+
+Those imply QKD or quantum hardware, which XMTP does not claim.
+
+⸻
+
+✅ What you ARE correctly claiming
+
+✔ End-to-end encryption
+✔ Quantum-resistant / post-quantum cryptography
+✔ Protection against HNDL attacks
+✔ Hybrid cryptographic design
+✔ XMTP-secured conversations
+
+⸻
+
+🔑 If you want a legal-safe footnote (optional)
+
+Quantum-resistant refers to post-quantum cryptographic algorithms designed to remain secure against future quantum computer attacks.
+
+⸻
+
+If you want, I can:
+	•	Rewrite this for App Store / Play Store bios
+	•	Turn it into a 1-sentence pitch for decks
+	•	Add a DJZS “Security” page layout
+	•	Align it with Livepeer + XMTP language for streaming + chat
+
+Just tell me where this text is going.
