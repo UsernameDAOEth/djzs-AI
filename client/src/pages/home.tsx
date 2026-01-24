@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight, ShieldCheck } from "lucide-react";
+import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -186,8 +186,11 @@ export default function Home() {
           <motion.p variants={fadeUp} className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-semibold mb-2">
             Private AI journaling + research capture + a Thinking Partner.
           </motion.p>
-          <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-500 max-w-2xl mx-auto font-medium mb-8">
+          <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-500 max-w-2xl mx-auto font-medium mb-2">
             Local-first, quantum-resistant end-to-end encryption, and decentralized AI.
+          </motion.p>
+          <motion.p variants={fadeUp} className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-bold mb-8">
+            Saved instantly. Even offline.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4">
@@ -219,15 +222,15 @@ export default function Home() {
             >
               <div className="flex items-center gap-2">
                 <Smartphone className="w-4 h-4 text-green-500/70" />
-                <span>Your notes stay on your device</span>
+                <span>If you typed it, you own it</span>
               </div>
               <div className="flex items-center gap-2">
-                <Download className="w-4 h-4 text-blue-400/70" />
-                <span>Export anytime</span>
+                <Zap className="w-4 h-4 text-yellow-400/70" />
+                <span>No spinner while typing</span>
               </div>
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4 text-purple-400/70" />
-                <span>AI insights without data retention</span>
+                <span>No fear of losing drafts</span>
               </div>
             </motion.div>
           </motion.div>
@@ -258,10 +261,10 @@ export default function Home() {
                 <div className="absolute top-8 left-1/2 right-0 hidden md:block border-t border-dashed border-white/10 -z-10" style={{ width: "calc(50% + 2rem)", left: "50%" }} />
                 <h3 className="text-lg font-bold text-white mb-2">1. Write & Save</h3>
                 <p className="text-gray-500 text-sm">
-                  Your entries are saved to IndexedDB on your device. Works fully offline.
+                  Saved instantly to your device. Edits never block on a server. Your entry is safe before AI even runs.
                 </p>
                 <div className="mt-3 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
-                  <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">Local-first</span>
+                  <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">Saved instantly</span>
                 </div>
               </div>
 
@@ -369,12 +372,12 @@ export default function Home() {
               <FlipFeatureCard 
                 icon={<HardDrive className="w-6 h-6 text-purple-400" />}
                 title="Local-first"
-                frontText="Your journal lives on your device. No central database."
+                frontText="If you typed it, you own it. It's saved."
                 status="aligned"
                 backItems={[
-                  "Writes to IndexedDB — no network required",
-                  "Works fully offline: journaling, pins, history",
-                  "You can export anytime in open formats",
+                  "Saved instantly — no spinner while typing",
+                  "Works fully offline, even on airplane mode",
+                  "Sync is optional. Your thoughts are not.",
                   "If DJZS disappears, your thinking remains"
                 ]}
               />
