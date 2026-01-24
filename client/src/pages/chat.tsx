@@ -1095,16 +1095,16 @@ export default function Chat() {
                   </>
                 ) : (
                   <>
-                    {/* Research: Search bar style - centered on mobile */}
-                    <div className="space-y-4 text-center sm:text-left">
+                    {/* Research: Search bar style - centered */}
+                    <div className="space-y-4 text-center">
                       {/* Dossier selector */}
-                      <div className="flex items-center justify-center sm:justify-start gap-2 mb-4">
+                      <div className="flex items-center justify-center gap-2 mb-4">
                         <div className="relative">
                           <button
                             onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
                             className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                               activeDossierId 
-                                ? 'bg-blue-500/10 border border-blue-500/30 text-blue-400' 
+                                ? 'bg-purple-500/10 border border-purple-500/30 text-purple-400' 
                                 : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
                             }`}
                             data-testid="button-dossier-selector"
@@ -1122,7 +1122,7 @@ export default function Chat() {
                                 <button
                                   onClick={() => handleSelectDossier(null)}
                                   className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                    !activeDossierId ? 'bg-blue-500/10 text-blue-400' : 'text-gray-400 hover:bg-white/5'
+                                    !activeDossierId ? 'bg-purple-500/10 text-purple-400' : 'text-gray-400 hover:bg-white/5'
                                   }`}
                                   data-testid="button-no-dossier"
                                 >
@@ -1138,7 +1138,7 @@ export default function Chat() {
                                       <button
                                         onClick={() => handleSelectDossier(dossier.id!)}
                                         className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                          activeDossierId === dossier.id ? 'bg-blue-500/10 text-blue-400' : 'text-gray-400 hover:bg-white/5'
+                                          activeDossierId === dossier.id ? 'bg-purple-500/10 text-purple-400' : 'text-gray-400 hover:bg-white/5'
                                         }`}
                                         data-testid={`button-dossier-${dossier.id}`}
                                       >
@@ -1169,14 +1169,14 @@ export default function Chat() {
                                         if (e.key === 'Escape') { setShowNewDossierInput(false); setDossierName(''); }
                                       }}
                                       placeholder="Dossier name..."
-                                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-gray-500 outline-none focus:border-blue-500/50"
+                                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-gray-500 outline-none focus:border-purple-500/50"
                                       autoFocus
                                       data-testid="input-new-dossier"
                                     />
                                     <button
                                       onClick={handleCreateDossier}
                                       disabled={!dossierName.trim()}
-                                      className="p-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                      className="p-2 rounded-lg bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                       data-testid="button-create-dossier"
                                     >
                                       <Check className="w-3.5 h-3.5 text-white" />
@@ -1219,22 +1219,20 @@ export default function Chat() {
                         </button>
                       </div>
                       
-                      {/* Rotating prompt - hidden on mobile for cleaner look */}
-                      <div className="hidden sm:flex items-center gap-3 mb-2">
-                        <Search className="w-5 h-5 text-blue-400/60" />
-                        <span className="text-sm font-medium text-blue-300/70">{currentPrompts[currentPromptIndex]}</span>
+                      {/* Rotating prompt - centered */}
+                      <div className="flex items-center justify-center gap-3 mb-2">
+                        <Search className="w-5 h-5 text-purple-400/60" />
+                        <span className="text-sm font-medium text-purple-300/70">{currentPrompts[currentPromptIndex]}</span>
                       </div>
-                      {/* Mobile-only heading */}
-                      <p className="sm:hidden text-lg font-medium text-blue-300/80 mb-4">What do you want to know?</p>
                       
                       <div className={`relative transition-all duration-500 rounded-2xl ${isFocused ? 'zone-glow' : ''}`}>
                         <div className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3 px-4 sm:px-5 py-4 rounded-2xl border transition-all ${
                           isFocused 
-                            ? 'border-blue-500/40 bg-blue-500/[0.03]' 
+                            ? 'border-purple-500/40 bg-purple-500/[0.03]' 
                             : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.12]'
                         }`}>
                           <div className="flex items-center gap-3 flex-1">
-                            <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-blue-400' : 'text-gray-500'}`} />
+                            <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-purple-400' : 'text-gray-500'}`} />
                             <input
                               type="text"
                               value={messageInput}
@@ -1255,7 +1253,7 @@ export default function Chat() {
                           <Button
                             onClick={handleAnalyze}
                             disabled={!messageInput.trim() || searchResearch.isPending}
-                            className="w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-500 h-12 sm:h-10 px-5 rounded-xl font-medium text-sm shadow-lg shadow-blue-900/30 transition-all active:scale-95 touch-target"
+                            className="w-full sm:w-auto shrink-0 bg-purple-600 hover:bg-purple-500 h-12 sm:h-10 px-5 rounded-xl font-medium text-sm shadow-lg shadow-purple-900/30 transition-all active:scale-95 touch-target"
                             data-testid="button-search"
                           >
                             {searchResearch.isPending ? (
@@ -1277,7 +1275,7 @@ export default function Chat() {
                             <button
                               key={idx}
                               onClick={() => setMessageInput(suggestion)}
-                              className="px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-blue-500/30 hover:text-blue-400 hover:bg-blue-500/[0.05] transition-all whitespace-nowrap touch-target"
+                              className="px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-purple-500/30 hover:text-purple-400 hover:bg-purple-500/[0.05] transition-all whitespace-nowrap touch-target"
                               data-testid={`button-suggestion-${idx}`}
                             >
                               {suggestion}
@@ -1422,11 +1420,11 @@ export default function Chat() {
                   {isAnalyzing && !agentResponse && !researchResult && !latestAnalysis && (
                     <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl thinking-card" data-testid="analyzing-loader">
                       <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center ${selectedZone === 'research' ? 'bg-blue-600/20' : 'bg-purple-600/20'}`}>
-                          <Loader2 className={`w-5 h-5 sm:w-6 sm:h-6 animate-spin ${selectedZone === 'research' ? 'text-blue-400' : 'text-purple-400'}`} />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center bg-purple-600/20">
+                          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-purple-400" />
                         </div>
                         <div>
-                          <p className={`text-xs font-semibold mb-1 ${selectedZone === 'research' ? 'text-blue-400' : 'text-purple-400'}`}>
+                          <p className="text-xs font-semibold mb-1 text-purple-400">
                             {selectedZone === 'research' ? 'Researching...' : 'Thinking...'}
                           </p>
                           <p className="text-sm text-gray-500">
@@ -1443,11 +1441,11 @@ export default function Chat() {
                       {/* Header */}
                       <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-600/20">
-                            <Search className="w-5 h-5 text-blue-400" />
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-purple-600/20">
+                            <Search className="w-5 h-5 text-purple-400" />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-blue-400">Research Results</p>
+                            <p className="text-sm font-semibold text-purple-400">Research Results</p>
                             <p className="text-xs text-gray-600">
                               {researchResult.mode === 'explain' ? 'Explain mode' : 'Web search'} 
                               {researchResult.cached && ' • cached'}
@@ -1470,18 +1468,18 @@ export default function Chat() {
                             <div className="flex items-center justify-between">
                               <p className="text-xs font-medium text-gray-500">Key takeaways</p>
                               {activeDossierId && (
-                                <p className="text-[10px] text-blue-400/60">Click + to save as claim</p>
+                                <p className="text-[10px] text-purple-400/60">Click + to save as claim</p>
                               )}
                             </div>
                             <ul className="space-y-2">
                               {researchResult.keyTakeaways.map((takeaway, idx) => (
                                 <li key={idx} className="flex items-start gap-3 group">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
                                   <p className="text-white/90 leading-relaxed flex-1">{takeaway}</p>
                                   {activeDossierId && (
                                     <button
                                       onClick={() => handleSaveClaimToDossier(takeaway, undefined, true)}
-                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 transition-all shrink-0"
+                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all shrink-0"
                                       title="Save as claim and add details"
                                       data-testid={`button-save-claim-${idx}`}
                                     >
@@ -1496,8 +1494,8 @@ export default function Chat() {
                         
                         {/* Synthesis */}
                         {researchResult.synthesisMarkdown && (
-                          <div className="p-4 rounded-xl bg-blue-500/[0.06] border border-blue-500/20">
-                            <p className="text-xs font-medium text-blue-400/80 mb-3">Synthesis</p>
+                          <div className="p-4 rounded-xl bg-purple-500/[0.06] border border-purple-500/20">
+                            <p className="text-xs font-medium text-purple-400/80 mb-3">Synthesis</p>
                             <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{researchResult.synthesisMarkdown}</p>
                           </div>
                         )}
@@ -1516,7 +1514,7 @@ export default function Chat() {
                                       setAgentResponse(null);
                                       setMessageInput(item);
                                     }}
-                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-blue-500/[0.08] border border-blue-500/20 text-blue-200/80 hover:bg-blue-500/15 hover:border-blue-500/30 hover:text-blue-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-purple-500/[0.08] border border-purple-500/20 text-purple-200/80 hover:bg-purple-500/15 hover:border-purple-500/30 hover:text-purple-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
                                     data-testid={`button-next-check-${idx}`}
                                   >
                                     {item}
@@ -1559,7 +1557,7 @@ export default function Chat() {
                       <div className="p-4 border-b border-white/[0.05]">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <FolderOpen className="w-4 h-4 text-blue-400" />
+                            <FolderOpen className="w-4 h-4 text-purple-400" />
                             <p className="text-sm font-medium text-white">
                               {dossiers?.find(d => d.id === activeDossierId)?.name} Claims
                             </p>
@@ -1573,7 +1571,7 @@ export default function Chat() {
                           <input
                             type="text"
                             placeholder="Add a claim manually..."
-                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-blue-500/50"
+                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-purple-500/50"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' && e.currentTarget.value.trim()) {
                                 handleSaveClaimToDossier(e.currentTarget.value.trim(), undefined, true);
@@ -1590,7 +1588,7 @@ export default function Chat() {
                                 input.value = '';
                               }
                             }}
-                            className="px-3 py-2 rounded-lg bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
+                            className="px-3 py-2 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-colors"
                             title="Add claim"
                             data-testid="button-add-manual-claim"
                           >
@@ -1605,7 +1603,7 @@ export default function Chat() {
                             key={claim.id} 
                             className={`group p-3 rounded-xl border transition-all ${
                               editingClaimId === claim.id 
-                                ? 'bg-blue-500/[0.05] border-blue-500/30' 
+                                ? 'bg-purple-500/[0.05] border-purple-500/30' 
                                 : 'bg-white/[0.02] border-white/[0.05] hover:border-white/[0.1]'
                             }`}
                           >
@@ -1662,8 +1660,8 @@ export default function Chat() {
                                   onClick={() => handleUpdateClaimStatus(claim.id!, 'to_check')}
                                   className={`p-1.5 rounded-lg transition-all ${
                                     claim.status === 'to_check' 
-                                      ? 'bg-blue-500/20 text-blue-400' 
-                                      : 'text-gray-500 hover:text-blue-400 hover:bg-blue-500/10'
+                                      ? 'bg-purple-500/20 text-purple-400' 
+                                      : 'text-gray-500 hover:text-purple-400 hover:bg-purple-500/10'
                                   }`}
                                   title="Mark as to check"
                                   data-testid={`button-tocheck-claim-${claim.id}`}
@@ -1674,8 +1672,8 @@ export default function Chat() {
                                   onClick={() => editingClaimId === claim.id ? setEditingClaimId(null) : handleStartEditClaim(claim)}
                                   className={`p-1.5 rounded-lg transition-all ${
                                     editingClaimId === claim.id 
-                                      ? 'bg-blue-500/20 text-blue-400' 
-                                      : 'text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 opacity-0 group-hover:opacity-100'
+                                      ? 'bg-purple-500/20 text-purple-400' 
+                                      : 'text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 opacity-0 group-hover:opacity-100'
                                   }`}
                                   title="Add source note"
                                   data-testid={`button-edit-claim-${claim.id}`}
@@ -1703,7 +1701,7 @@ export default function Chat() {
                                     value={claimSourceNote}
                                     onChange={(e) => setClaimSourceNote(e.target.value)}
                                     placeholder="Where did you find this? How reliable is it?"
-                                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-blue-500/50"
+                                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-purple-500/50"
                                     data-testid="input-source-note"
                                   />
                                 </div>
@@ -1732,7 +1730,7 @@ export default function Chat() {
                                 <div className="flex justify-end">
                                   <Button
                                     onClick={handleSaveClaimEdit}
-                                    className="bg-blue-600 hover:bg-blue-500 h-8 px-4 text-xs"
+                                    className="bg-purple-600 hover:bg-purple-500 h-8 px-4 text-xs"
                                     data-testid="button-save-claim-edit"
                                   >
                                     Save
@@ -1791,11 +1789,11 @@ export default function Chat() {
                       {/* Header */}
                       <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${selectedZone === 'research' ? 'bg-blue-600/20' : 'bg-purple-600/20'}`}>
-                            <Bot className={`w-5 h-5 ${selectedZone === 'research' ? 'text-blue-400' : 'text-purple-400'}`} />
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-purple-600/20">
+                            <Bot className="w-5 h-5 text-purple-400" />
                           </div>
                           <div>
-                            <p className={`text-sm font-semibold ${selectedZone === 'research' ? 'text-blue-400' : 'text-purple-400'}`}>Thinking Partner</p>
+                            <p className="text-sm font-semibold text-purple-400">Thinking Partner</p>
                             <p className="text-xs text-gray-600">Just now</p>
                           </div>
                         </div>
@@ -1823,9 +1821,9 @@ export default function Chat() {
                         
                         {/* Connection to prior thinking */}
                         {agentResponse.connectionToPrior && (
-                          <div className="p-4 rounded-xl bg-blue-500/[0.08] border border-blue-500/20">
-                            <p className="text-xs font-medium text-blue-400/80 mb-2">Connected to your earlier thinking</p>
-                            <p className="text-blue-200/80 leading-relaxed text-sm">{agentResponse.connectionToPrior}</p>
+                          <div className="p-4 rounded-xl bg-purple-500/[0.08] border border-purple-500/20">
+                            <p className="text-xs font-medium text-purple-400/80 mb-2">Connected to your earlier thinking</p>
+                            <p className="text-purple-200/80 leading-relaxed text-sm">{agentResponse.connectionToPrior}</p>
                           </div>
                         )}
                         
@@ -1838,9 +1836,9 @@ export default function Chat() {
                         )}
                         
                         {/* Question to sit with - highlighted */}
-                        <div className={`p-4 rounded-xl border ${selectedZone === 'research' ? 'bg-blue-500/[0.06] border-blue-500/20' : 'bg-purple-500/[0.06] border-purple-500/20'}`}>
-                          <p className={`text-xs font-medium mb-2 ${selectedZone === 'research' ? 'text-blue-400/80' : 'text-purple-400/80'}`}>Question to sit with</p>
-                          <p className={`font-medium italic leading-relaxed ${selectedZone === 'research' ? 'text-blue-200' : 'text-purple-200'}`}>{agentResponse.question}</p>
+                        <div className="p-4 rounded-xl border bg-purple-500/[0.06] border-purple-500/20">
+                          <p className="text-xs font-medium mb-2 text-purple-400/80">Question to sit with</p>
+                          <p className="font-medium italic leading-relaxed text-purple-200">{agentResponse.question}</p>
                         </div>
 
                         {/* Reflective questions for Journal mode - horizontal scroll on mobile */}
@@ -1920,11 +1918,11 @@ export default function Chat() {
                       {/* Header */}
                       <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${latestAnalysis.zone === 'research' ? 'bg-blue-600/20' : 'bg-purple-600/20'}`}>
-                            <Sparkles className={`w-5 h-5 ${latestAnalysis.zone === 'research' ? 'text-blue-400' : 'text-purple-400'}`} />
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-purple-600/20">
+                            <Sparkles className="w-5 h-5 text-purple-400" />
                           </div>
                           <div>
-                            <p className={`text-sm font-semibold ${latestAnalysis.zone === 'research' ? 'text-blue-400' : 'text-purple-400'}`}>
+                            <p className="text-sm font-semibold text-purple-400">
                               {latestAnalysis.zone === "research" ? "Research Analysis" : "Insight"}
                             </p>
                             <p className="text-xs text-gray-600">Just now</p>
@@ -1987,7 +1985,7 @@ export default function Chat() {
                               <ul className="space-y-2">
                                 {latestAnalysis.analysis.keyClaims.map((claim, idx) => (
                                   <li key={idx} className="flex items-start gap-3">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
                                     <p className="text-white/90 leading-relaxed">{claim}</p>
                                   </li>
                                 ))}
@@ -2022,9 +2020,9 @@ export default function Chat() {
                               </div>
                             )}
                               
-                            <div className="p-4 rounded-xl bg-blue-500/[0.06] border border-blue-500/20">
-                              <p className="text-xs font-medium text-blue-400/80 mb-2">Next Question</p>
-                              <p className="text-blue-200 font-medium leading-relaxed">{latestAnalysis.analysis.nextQuestion}</p>
+                            <div className="p-4 rounded-xl bg-purple-500/[0.06] border border-purple-500/20">
+                              <p className="text-xs font-medium text-purple-400/80 mb-2">Next Question</p>
+                              <p className="text-purple-200 font-medium leading-relaxed">{latestAnalysis.analysis.nextQuestion}</p>
                             </div>
                           </>
                         )}
