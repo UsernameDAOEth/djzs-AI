@@ -49,8 +49,33 @@ Preferred communication style: Simple, everyday language.
 - **Payments**: In-chat ETH transfers with automatic receipt generation and Basescan links.
 - **Membership**: Wallet-based identity, admin/allowlist tiers, self-registration.
 
+## Security & Privacy
+
+### Privacy Stack
+DJZS is built on three pillars of privacy:
+
+1. **Local-first Storage**: All journal entries and research are stored in IndexedDB on the user's device. Works fully offline. No centralized database.
+
+2. **Quantum-Resistant End-to-End Encryption (XMTP)**:
+   - Hybrid encryption combining post-quantum algorithms with proven conventional cryptography
+   - Protection against "harvest now, decrypt later" (HNDL) attacks from future quantum computers
+   - Messages are E2E encrypted by default — only participants can read them
+
+3. **Decentralized AI (Venice AI)**:
+   - Privacy-first AI infrastructure with no data retention
+   - User prompts are never stored or used to train models
+   - No content filtering, uncensored responses
+   - OpenAI-compatible API
+
+### Data Flow
+- User writes entry → stored locally in IndexedDB
+- "Think with me" → current entry + memory pins sent to Venice AI
+- AI response → stored locally as insight
+- Nothing syncs unless user explicitly chooses
+
 ## External Dependencies
-- **XMTP Protocol**: For end-to-end encrypted messaging.
+- **XMTP Protocol**: For quantum-resistant end-to-end encrypted messaging.
+- **Venice AI**: For privacy-first, decentralized AI processing with no data retention.
 - **RainbowKit**: For wallet connection UI.
 - **wagmi**: For blockchain interactions and sending transactions.
 - **Zod**: For schema validation of structured messages.
