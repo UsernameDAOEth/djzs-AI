@@ -424,14 +424,14 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-10">
+            <div className="grid md:grid-cols-3 gap-6 mb-10">
               <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
                 <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
                   <Lock className="w-6 h-6 text-purple-400" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">Hybrid Encryption</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  XMTP uses a hybrid encryption approach, combining post-quantum algorithms with proven conventional cryptography. This protects conversations today while ensuring long-term security.
+                  XMTP uses a hybrid encryption approach, combining post-quantum algorithms with proven conventional cryptography.
                 </p>
               </div>
 
@@ -441,7 +441,17 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">HNDL Protection</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  "Harvest now, decrypt later" attacks store encrypted data today to decrypt with future quantum computers. Our post-quantum cryptography defeats this threat.
+                  Protection against "harvest now, decrypt later" attacks from future quantum computers.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-4">
+                  <Bot className="w-6 h-6 text-orange-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Decentralized AI</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Powered by Venice AI — privacy-first AI infrastructure with no data retention or training on your content.
                 </p>
               </div>
             </div>
@@ -466,7 +476,10 @@ export default function Home() {
                 <span className="text-xs font-medium text-gray-400">XMTP-secured</span>
               </div>
               <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
-                <span className="text-xs font-medium text-gray-400">Hybrid cryptographic design</span>
+                <span className="text-xs font-medium text-gray-400">Venice AI</span>
+              </div>
+              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
+                <span className="text-xs font-medium text-gray-400">No data retention</span>
               </div>
             </div>
           </div>

@@ -1026,26 +1026,37 @@ export default function Chat() {
                       </p>
                     </div>
 
+                    <div className="p-4 rounded-xl bg-orange-500/[0.05] border border-orange-500/20">
+                      <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Decentralized AI</p>
+                      <p className="text-sm text-gray-400 leading-relaxed">
+                        Your Thinking Partner is powered by Venice AI — privacy-first AI infrastructure with no data retention. Your prompts are never stored or used to train models.
+                      </p>
+                    </div>
+
                     <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">What We Protect Against</p>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Privacy Stack</p>
                       <ul className="space-y-2 text-sm text-gray-400">
                         <li className="flex items-start gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                          End-to-end encryption by default
+                          End-to-end encryption via XMTP
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                          Protection against future quantum attacks
+                          Post-quantum cryptography protection
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                          Only you can read your messages
+                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                          Venice AI — no data retention
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                          Local-first storage on your device
                         </li>
                       </ul>
                     </div>
 
                     <p className="text-[10px] text-gray-600 text-center uppercase tracking-wider">
-                      Built on XMTP protocol with post-quantum cryptography
+                      Built on XMTP + Venice AI for complete privacy
                     </p>
                   </div>
                 </DialogContent>
