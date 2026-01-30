@@ -49,6 +49,21 @@ Preferred communication style: Simple, everyday language.
 - **Payments**: In-chat ETH transfers with automatic receipt generation and Basescan links.
 - **Membership**: Wallet-based identity, admin/allowlist tiers, self-registration.
 
+## Project Roadmap & PMF Strategy
+
+### Core Product Promise
+"Private, local-first journal + research vault that only calls AI when you ask."
+
+### Immediate Priorities (PMF Growth)
+1.  **Proof of Value**: Add a 60-90 second demo video or GIF showing the "Write → Ask → Insight → Save" loop. Highlight the "Saved instantly / Offline" moment as key differentiation.
+2.  **Frictionless Onboarding**: Implement a "Try it in 2 minutes" flow that bypasses lore/setup for immediate utility.
+3.  **Retention Metric**: Track "3 entries in 7 days" as the primary early signal for Product-Market Fit.
+
+### Future Tasks
+- [ ] Create GitHub repository (Remind user later)
+- [ ] Implement demo video/GIF on landing page
+- [ ] Build "Try it in 2 minutes" entry point
+
 ## Security & Privacy
 
 ### Privacy Stack
