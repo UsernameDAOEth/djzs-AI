@@ -380,6 +380,10 @@ export default function Docs() {
               <p className="text-gray-400 mb-5 leading-relaxed">Search the web for real-time data or use AI knowledge to synthesize information and track claims.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-orange-300">Brave Mode</strong> - Privacy-first web search with no tracking or profiling, synthesized by Venice AI</span>
+                </li>
+                <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
                   <span><strong className="text-blue-300">Web Mode</strong> - Real-time web search via Venice AI with source citations</span>
                 </li>
@@ -425,7 +429,7 @@ export default function Docs() {
             />
             <TechStackItem 
               category="AI"
-              items={["Venice AI", "Web Search API", "Web Citations", "Reasoning Models", "Structured JSON"]}
+              items={["Venice AI", "Brave Search API", "Web Search API", "Web Citations", "Reasoning Models", "Structured JSON"]}
             />
             <TechStackItem 
               category="Storage"
