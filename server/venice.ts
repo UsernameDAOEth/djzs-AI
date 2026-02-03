@@ -248,7 +248,7 @@ export async function analyzeResearchEntry(
 // Research synthesis for Research Zone search
 export interface ResearchSynthesis {
   query: string;
-  mode: "web" | "explain";
+  mode: "web" | "explain" | "brave";
   keyTakeaways: string[];
   whatToCheckNext: string[];
   sources?: { title: string; url: string; snippet: string }[];
@@ -370,6 +370,129 @@ export async function synthesizeResearch(query: string, webMode: boolean): Promi
     whatToCheckNext: parsed.whatToCheckNext || [],
     sources,
     confidence: parsed.confidence || (webMode ? "Based on web search results" : "Based on training data only"),
+    synthesisMarkdown: parsed.synthesisMarkdown || "",
+  };
+}
+
+export interface BraveResult {
+  title: string;
+  url: string;
+  description: string;
+  extra_snippets?: string[];
+}
+
+export async function synthesizeWithBraveResults(
+  query: string,
+  braveResults: BraveResult[]
+): Promise<ResearchSynthesis> {
+  const apiKey = process.env.VENICE_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("VENICE_API_KEY not configured");
+  }
+
+  const formattedResults = braveResults.map((r, i) => 
+    `[${i + 1}] ${r.title}\nURL: ${r.url}\n${r.description}${r.extra_snippets?.length ? "\n" + r.extra_snippets.join("\n") : ""}`
+  ).join("\n\n");
+
+  const systemPrompt = `You are a privacy-focused research synthesis assistant for DJZS.
+
+Your role is to synthesize web search results into clear, actionable knowledge. The user's search was performed via Brave Search (privacy-first, no tracking).
+
+ALWAYS respond with valid JSON matching this exact schema:
+{
+  "keyTakeaways": ["3-5 main points from the search results"],
+  "whatToCheckNext": ["2-3 follow-up questions worth exploring"],
+  "confidence": "A brief note on the reliability of these findings",
+  "synthesisMarkdown": "A 2-3 paragraph synthesis of the key information"
+}
+
+Be precise. Cite sources by number [1], [2], etc. Flag conflicting information. Do not hallucinate - only use information from the provided search results.`;
+
+  const userPrompt = `Research query: "${query}"
+
+Search results from Brave (privacy-first web search):
+
+${formattedResults}
+
+Synthesize these results into actionable knowledge.`;
+
+  const response = await fetch(`${VENICE_API_BASE}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "llama-3.3-70b",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.5,
+      max_tokens: 2000,
+      venice_parameters: {
+        include_venice_system_prompt: false,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Venice API error:", response.status, errorText);
+    throw new Error(`Venice API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+  
+  if (!content) {
+    throw new Error("No content in Venice response");
+  }
+
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    console.error("No JSON found in Brave synthesis response, using fallback");
+    return {
+      query,
+      mode: "brave" as const,
+      keyTakeaways: braveResults.slice(0, 5).map(r => r.description.slice(0, 200)),
+      whatToCheckNext: [],
+      sources: braveResults.map(r => ({ title: r.title, url: r.url, snippet: r.description })),
+      confidence: "Raw search results (AI synthesis failed)",
+      synthesisMarkdown: "",
+    };
+  }
+  
+  let parsed: { keyTakeaways?: string[]; whatToCheckNext?: string[]; confidence?: string; synthesisMarkdown?: string };
+  try {
+    parsed = JSON.parse(jsonMatch[0]);
+  } catch (parseError) {
+    console.error("JSON parse error in Brave synthesis:", parseError);
+    return {
+      query,
+      mode: "brave" as const,
+      keyTakeaways: braveResults.slice(0, 5).map(r => r.description.slice(0, 200)),
+      whatToCheckNext: [],
+      sources: braveResults.map(r => ({ title: r.title, url: r.url, snippet: r.description })),
+      confidence: "Raw search results (AI synthesis failed)",
+      synthesisMarkdown: "",
+    };
+  }
+  
+  const sources = braveResults.map(r => ({
+    title: r.title,
+    url: r.url,
+    snippet: r.description,
+  }));
+  
+  return {
+    query,
+    mode: "brave" as const,
+    keyTakeaways: parsed.keyTakeaways || [],
+    whatToCheckNext: parsed.whatToCheckNext || [],
+    sources,
+    confidence: parsed.confidence || "Based on Brave Search results (privacy-first)",
     synthesisMarkdown: parsed.synthesisMarkdown || "",
   };
 }

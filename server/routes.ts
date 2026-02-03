@@ -4,11 +4,12 @@ import { storage } from "./storage";
 import { insertMemberSchema, insertRoomSchema, insertPaymentReceiptSchema, insertStoredMessageSchema, insertJournalEntrySchema, insertPinnedMemorySchema } from "@shared/schema";
 import { z } from "zod";
 import { verifyMessage } from "viem";
-import { analyzeJournalEntry, analyzeResearchEntry, synthesizeResearch, type ResearchSynthesis } from "./venice";
+import { analyzeJournalEntry, analyzeResearchEntry, synthesizeResearch, synthesizeWithBraveResults, type ResearchSynthesis } from "./venice";
 import { analyzeWithAgent, agentInputSchema } from "./agent.api";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
 import { HTTPFacilitatorClient } from "@x402/core/server";
+import { searchBrave, type BraveSearchResult } from "./brave";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -127,7 +128,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   app.get("/api/health", (_req, res) => {
-    res.json({ ok: true, timestamp: Date.now(), service: "DJZS Chat API" });
+    res.json({ 
+      ok: true, 
+      timestamp: Date.now(), 
+      service: "DJZS Chat API",
+      capabilities: {
+        braveSearch: !!process.env.BRAVE_API_KEY,
+        redpillAI: !!process.env.REDPILL_API_KEY,
+        veniceAI: !!process.env.VENICE_API_KEY,
+      }
+    });
   });
 
   // ==================== RESEARCH ZONE ====================
@@ -141,21 +151,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const query = String(req.query.q ?? "").trim();
       const webMode = req.query.web !== "false"; // Default web mode on, but fallback to explain
+      const useBrave = req.query.brave === "true"; // Use Brave Search for privacy-first web search
       
       if (!query || query.length < 3) {
         return res.status(400).json({ error: "Query must be at least 3 characters" });
       }
       
       // Check cache first
-      const cacheKey = `${query}:${webMode}`;
+      const cacheKey = `${query}:${webMode}:${useBrave}`;
       const cached = researchCache.get(cacheKey);
       if (cached && Date.now() - cached.timestamp < RESEARCH_CACHE_TTL) {
         return res.json({ ...cached.result, cached: true });
       }
       
-      // For now, use Venice AI to synthesize knowledge (Explain mode)
-      // Web search integration can be added later
-      const synthesisResult = await synthesizeResearch(query, webMode);
+      let synthesisResult;
+      
+      // If Brave mode is enabled and we have an API key, use Brave Search
+      if (useBrave && webMode && process.env.BRAVE_API_KEY) {
+        try {
+          const braveResults = await searchBrave(query, { count: 8, extra_snippets: true });
+          if (braveResults.length > 0) {
+            synthesisResult = await synthesizeWithBraveResults(query, braveResults);
+          } else {
+            // Fallback to Venice web search if Brave returns no results
+            synthesisResult = await synthesizeResearch(query, true);
+          }
+        } catch (braveError) {
+          console.error("Brave Search error, falling back to Venice:", braveError);
+          synthesisResult = await synthesizeResearch(query, webMode);
+        }
+      } else {
+        // Use Venice AI for synthesis (with or without its built-in web search)
+        synthesisResult = await synthesizeResearch(query, webMode);
+      }
       
       // Cache the result
       researchCache.set(cacheKey, { result: synthesisResult, timestamp: Date.now() });

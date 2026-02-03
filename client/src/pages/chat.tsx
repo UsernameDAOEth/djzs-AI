@@ -169,7 +169,7 @@ interface AgentResponse {
 
 interface ResearchResult {
   query: string;
-  mode: "web" | "explain";
+  mode: "web" | "explain" | "brave";
   keyTakeaways: string[];
   whatToCheckNext: string[];
   sources?: { title: string; url: string; snippet: string }[];
@@ -214,7 +214,21 @@ export default function Chat() {
   const [lastEntryId, setLastEntryId] = useState<number | null>(null);
   const [researchResult, setResearchResult] = useState<ResearchResult | null>(null);
   const [webModeEnabled, setWebModeEnabled] = useState(true);
+  const [braveSearchEnabled, setBraveSearchEnabled] = useState(false);
+  const [braveSearchAvailable, setBraveSearchAvailable] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Check capabilities on mount
+  useEffect(() => {
+    fetch('/api/health')
+      .then(res => res.json())
+      .then(data => {
+        if (data.capabilities?.braveSearch) {
+          setBraveSearchAvailable(true);
+        }
+      })
+      .catch(() => {});
+  }, []);
   
   // Dossier state for Research zone
   const [activeDossierId, setActiveDossierId] = useState<number | null>(null);
@@ -478,7 +492,12 @@ export default function Chat() {
   // Research Zone search mutation
   const searchResearch = useMutation({
     mutationFn: async (query: string) => {
-      const res = await fetch(`/api/research/search?q=${encodeURIComponent(query)}&web=${webModeEnabled}`);
+      const params = new URLSearchParams({
+        q: query,
+        web: String(webModeEnabled),
+        brave: String(braveSearchEnabled),
+      });
+      const res = await fetch(`/api/research/search?${params}`);
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || "Research failed");
@@ -1278,6 +1297,23 @@ export default function Chat() {
                           <Globe className={`w-4 h-4 ${webModeEnabled ? 'text-green-400' : 'text-gray-500'}`} />
                           <span className="hidden sm:inline">{webModeEnabled ? 'Web' : 'Explain'}</span>
                         </button>
+                        
+                        {/* Brave Search toggle (privacy-first) - only show when available */}
+                        {webModeEnabled && braveSearchAvailable && (
+                          <button
+                            onClick={() => setBraveSearchEnabled(!braveSearchEnabled)}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                              braveSearchEnabled 
+                                ? 'bg-orange-500/10 border border-orange-500/30 text-orange-400' 
+                                : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
+                            }`}
+                            title={braveSearchEnabled ? "Brave Search (privacy-first, no tracking)" : "Use default web search"}
+                            data-testid="button-brave-toggle"
+                          >
+                            <Shield className={`w-4 h-4 ${braveSearchEnabled ? 'text-orange-400' : 'text-gray-500'}`} />
+                            <span className="hidden sm:inline">{braveSearchEnabled ? 'Brave' : 'Default'}</span>
+                          </button>
+                        )}
                       </div>
                       
                       {/* Rotating prompt - centered, truncated on mobile */}
@@ -1508,7 +1544,7 @@ export default function Chat() {
                           <div>
                             <p className="text-sm font-semibold text-purple-400">Research Results</p>
                             <p className="text-xs text-gray-600">
-                              {researchResult.mode === 'explain' ? 'Explain mode' : 'Web search'} 
+                              {researchResult.mode === 'explain' ? 'Explain mode' : researchResult.mode === 'brave' ? 'Brave Search (private)' : 'Web search'} 
                               {researchResult.cached && ' • cached'}
                             </p>
                           </div>

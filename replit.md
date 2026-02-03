@@ -82,6 +82,19 @@ DJZS is built on three pillars of privacy:
    - No content filtering, uncensored responses
    - OpenAI-compatible API
 
+4. **Privacy-First Web Search (Brave Search)**:
+   - No user tracking or profiling
+   - Independent search index (not dependent on Google/Bing)
+   - Used in Research zone for privacy-preserving web search
+   - Requires `BRAVE_API_KEY` secret
+
+5. **Advanced AI Provider (Redpill AI)** *(Optional)*:
+   - TEE-protected gateway for privacy
+   - Access to 60+ models (GPT-5, Claude, Llama, etc.)
+   - Cryptographic attestation for verifiable private execution
+   - Phala confidential GPU enclaves for sensitive data
+   - Requires `REDPILL_API_KEY` secret
+
 ### Data Flow
 - User writes entry → stored locally in IndexedDB
 - "Think with me" → current entry + memory pins sent to Venice AI
