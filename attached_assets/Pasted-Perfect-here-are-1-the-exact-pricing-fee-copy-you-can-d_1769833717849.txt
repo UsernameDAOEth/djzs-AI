@@ -1,0 +1,141 @@
+Perfect — here are (1) the exact pricing/fee copy you can drop into DJZS, and (2) the contract/API shape that lets you show an exact “you will pay” number before the wallet pop-up.
+
+⸻
+
+What the user pays (your Box UI should show this)
+
+A) Storage plan cost (recurring)
+
+Jackal Vault advertises: $15/month per 1TB of usable storage, and says no hidden fees and no transfer (egress) charges. It also says each 1TB includes 2TB of additional backups (so “3TB total capacity” in their wording).  ￼
+
+In your UI, treat this as:
+	•	“You need an active Jackal storage plan (or free capacity) to upload.”
+
+B) Network fees (small, per transaction)
+
+On Box Backup, the user will typically sign:
+	•	Allowance tx (one-time per storage contract) — addAllowance
+	•	Upload tx (every backup) — upload
+
+That allowance + upload flow is exactly what the EVM Outpost quickstart shows.  ￼
+Network fees are just Base gas (varies by moment).
+
+C) Contract upload fee (the “value” you pass)
+
+The Outpost quickstart shows upload(..., value: [user fee to contract]) but doesn’t define the formula on that page.  ￼
+
+So your product needs a quote function (read-only) so DJZS can display an exact fee before the user signs.
+
+⸻
+
+Copy-paste UI copy for the pricing modal
+
+Modal title
+
+Cost to create this Box Backup
+
+Line items (exact text)
+
+Storage plan (Jackal)
+	•	“Requires an active Jackal plan. Jackal Vault pricing is $15/month per 1TB of usable storage (no hidden fees, no transfer charges).”  ￼
+
+Network fee (Base gas)
+	•	“You’ll pay Base network gas for transactions (varies).”
+
+Upload fee (contract)
+	•	“Calculated now from the Outpost contract based on your backup size.”
+
+Buttons
+	•	Estimate cost
+	•	Continue to upload
+
+After “Estimate cost” succeeds (example output formatting)
+	•	Storage plan: “Covered by your plan” or “Plan required”
+	•	Base gas (est.): “Shown in wallet”
+	•	Upload fee: “0.00X ETH” (or whatever currency the contract uses)
+	•	Total today: “Upload fee + gas”
+
+Small print (keep it honest)
+
+“Outposts are currently available only on Base mainnet and are in open beta; details may change.”  ￼
+
+⸻
+
+Contract / API shape you should implement (so fees are exact)
+
+Because the quickstart requires you to provide value on upload, you want a view quote that returns the required msg.value for a given file size.
+
+Minimal interface (recommended)
+
+You can implement this either in:
+	1.	your own “BoxStorage” contract, or
+	2.	a thin wrapper contract that reads whatever the underlying Outpost/bridge needs.
+
+Here’s the simplest ABI shape that makes your frontend clean:
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+/// @notice Minimal fee-quote + upload interface for DJZS "Box Backups"
+interface IBoxOutpostStorage {
+    /// @dev Return the exact msg.value required to upload `fileSizeBytes`
+    function quoteUploadFee(uint256 fileSizeBytes) external view returns (uint256 feeWei);
+
+    /// @dev Optional: expose allowance check in the same surface area
+    function getAllowance(address storageContract, address user) external view returns (bool);
+
+    /// @dev Optional: one-time authorization step (matches Jackal quickstart)
+    function addAllowance(address[] calldata storageContracts) external;
+
+    /// @dev Upload call (matches the quickstart pattern: args + msg.value)
+    function upload(bytes calldata fileContent, uint256 fileSizeBytes) external payable;
+}
+
+Why this shape works:
+	•	Your UI can call quoteUploadFee(fileSizeBytes) first → show an exact number → then pass it as value in upload.
+	•	It directly matches the Outpost quickstart’s “allowance → upload with value” flow.  ￼
+
+Frontend wagmi/viem flow (exact steps)
+	1.	Build the encrypted archive locally → get fileSizeBytes
+	2.	feeWei = quoteUploadFee(fileSizeBytes)
+	3.	Check getAllowance(...)
+	4.	If needed, call addAllowance([storageContract])
+	5.	Call upload(fileContent, fileSizeBytes, { value: feeWei })
+
+That’s the same sequence shown in the Jackal EVM Outpost quickstart (they use getAllowance, addAllowance, then upload with value).  ￼
+
+⸻
+
+“Estimate cost” logic you should use in DJZS
+
+If user has no plan / capacity
+
+Show:
+	•	“Plan required — open Jackal Vault to purchase storage.”  ￼
+Button: Open Jackal Vault
+
+If quote fails (edge case)
+
+Show:
+	•	“Unable to calculate upload fee right now. You can still try upload and confirm the final cost in your wallet.”
+
+(But your goal is to avoid this by controlling the quote function.)
+
+⸻
+
+Bonus: provider/status copy (post-transaction)
+
+When the user asks “why is it still uploading?” your UI should say:
+
+“Transaction confirmed. Now uploading to a storage provider…”
+The quickstart shows a websocket watch on Jackal and then a provider upload + status polling, plus a public “active providers” endpoint you can link to.  ￼
+
+⸻
+
+Next step (no delay, just tell me what you want)
+
+Do you want me to generate:
+	•	A ready-to-paste BoxBackupsSettings.tsx UI (React + Tailwind + wagmi hooks), or
+	•	The smart contract wrapper (Solidity) that implements quoteUploadFee() cleanly?
+
+If you pick one, I’ll output it as a single copy-paste block.

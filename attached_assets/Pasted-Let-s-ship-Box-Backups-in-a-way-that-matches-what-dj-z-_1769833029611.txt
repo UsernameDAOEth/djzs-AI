@@ -1,0 +1,178 @@
+Let’s ship Box Backups in a way that matches what dj-z-s.box already promises (local-first + user-controlled) and also matches how Jackal Protocol Outposts actually work on EVM.  ￼
+
+⸻
+
+Landing page section you can paste into dj-z-s.box
+
+Box Backups
+
+Encrypted backups you control. Restore anytime.
+
+DJZS is local-first: your device stays the source of truth. Box Backups are an optional way to export an encrypted snapshot of your vault to decentralized storage.
+
+What you get
+	•	Local-first by default — your vault lives on your device  ￼
+	•	Encrypted before upload — you hold the key (always)
+	•	Verifiable receipts — export includes a hash/root so you can prove what was backed up (without exposing your journal)
+
+Buttons (CTAs)
+	•	Create a Box Backup
+	•	How Box Works
+
+Footnote (important)
+Box Backups currently use Base mainnet via Jackal EVM Outposts (beta).  ￼
+
+⸻
+
+In-app Settings copy and flow
+
+Settings → Data → Export & Backups → Box Backups (Jackal)
+
+Description (under the title)
+“Create an encrypted snapshot of your DJZS vault and store it to Box. Your device stays the source of truth.”  ￼
+
+Primary toggle
+	•	Enable Box Backups (optional)
+Helper text: “Backups run only when you press ‘Create Backup’. DJZS does not auto-sync your journal.”
+
+Beta badge text
+	•	“Uses Jackal EVM Outpost on Base (beta).”  ￼
+
+⸻
+
+“Create Backup” modal copy (step-by-step)
+
+Step 1 — Choose what to include
+
+Title: Choose backup contents
+	•	✅ Journal entries
+	•	✅ Research items
+	•	✅ Insights & Memory Pins
+	•	☐ Attachments (larger uploads)
+
+Button: Continue
+
+Step 2 — Encrypt locally
+
+Title: Encrypt your backup
+Body:
+“Your backup is encrypted on your device before upload. No one can read it without your key.”
+
+Options:
+	•	Password (recommended)
+Placeholder: “Create a strong password”
+	•	Advanced: wallet-based encryption
+
+Checkbox:
+	•	☐ “I understand: if I lose this key/password, I cannot restore this backup.”
+
+Button: Encrypt & Continue
+
+Step 3 — Connect wallet
+
+Title: Connect wallet
+Body:
+“Box Backups currently run on Base mainnet.”
+
+Button:
+	•	Connect on Base
+
+(If wrong network)
+Toast: “Switch to Base to continue.”
+
+Step 4 — Storage authorization (Allowance)
+
+Title: Authorize storage
+Body:
+“To store data through the Outpost, you may need to set a one-time allowance.”
+
+Buttons:
+	•	Set allowance (if needed)
+	•	Continue (if allowance already exists)
+
+This matches the Outpost quickstart flow (getAllowance → addAllowance).  ￼
+
+Step 5 — Upload
+
+Title: Upload to Box
+Body (compact):
+“You’ll sign a transaction to post your encrypted file. Then DJZS will upload it to a storage provider.”
+
+Button:
+	•	Upload backup
+
+Progress states (exact strings)
+	•	“Preparing encrypted archive…”
+	•	“Waiting for wallet signature…”
+	•	“Posting storage transaction…”
+	•	“Confirming on Jackal…”
+	•	“Uploading to provider…”
+	•	“Finalizing…”
+These map to the Outpost quickstart: tx on EVM → watch Jackal websocket → upload to provider endpoint → poll status until complete.  ￼
+
+Success screen
+
+Title: Backup complete
+Body:
+“Your encrypted Box backup is stored. Save this receipt.”
+
+Receipt fields:
+	•	Backup date
+	•	Size
+	•	Merkle root / hash
+	•	Provider
+	•	Backup ID / CID
+
+Why these fields: the quickstart uses a Merkle root and provider upload/status workflow.  ￼
+
+Buttons:
+	•	Download receipt
+	•	Restore test (recommended)
+
+⸻
+
+Restore flow copy
+
+“Restore from Box”
+
+Title: Restore a backup
+Body:
+“Select a backup receipt. DJZS will download the encrypted archive, decrypt locally, and restore your vault.”
+
+Steps:
+	•	“Downloading encrypted backup…”
+	•	“Decrypting locally…”
+	•	“Restoring vault data…”
+	•	“Done.”
+
+Error states:
+	•	Wrong password/key: “Decryption failed. Check your password or key.”
+	•	Network/provider issue: “Provider unavailable. Try again or choose another backup.”
+
+⸻
+
+The “fits the brand” constraints you should keep
+
+These are the rules that keep Box consistent with dj-z-s.box’s current promise:
+	1.	Always say “optional backup,” never “sync.”
+Your homepage is clearly “local-first / you write first.” Keep that intact.  ￼
+	2.	Be explicit about Base-only + beta.
+Jackal’s EVM Outpost docs say Base mainnet only and “open beta.”  ￼
+	3.	Show a provider list link in Advanced.
+The docs point to an active providers endpoint; you can even surface it as “View active providers.”  ￼
+
+⸻
+
+Optional “Advanced” panel (copy)
+
+Advanced
+	•	“Provider: Auto-select (recommended)”
+	•	Link: “View active providers”
+	•	“Export format: Encrypted archive (.box)”
+	•	“Keep local copy after upload” (toggle)
+
+Active providers endpoint is public and listed in the Outpost quickstart.  ￼
+
+⸻
+
+If you want, next step I’ll give you copy-paste React component text constants (all labels, toasts, and error strings) so your UI stays consistent everywhere—no drifting tone.
