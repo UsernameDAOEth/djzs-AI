@@ -101,9 +101,28 @@ DJZS is built on three pillars of privacy:
 - AI response → stored locally as insight
 - Nothing syncs unless user explicitly chooses
 
+## Research Zone Modes
+
+The Research zone supports three search modes:
+
+1. **Brave Mode** (Orange toggle): Privacy-first web search using Brave Search API
+   - No user tracking or profiling
+   - Independent search index (not dependent on Google/Bing)
+   - Results synthesized by Venice AI
+   - Requires `BRAVE_API_KEY` secret
+
+2. **Web Mode** (Green toggle): Venice AI's built-in web search
+   - Real-time web search with source citations
+   - Venice AI handles both search and synthesis
+
+3. **Explain Mode** (Toggle off): AI knowledge only
+   - No web search, uses Venice AI's training knowledge
+   - Good for conceptual explanations and summaries
+
 ## External Dependencies
 - **XMTP Protocol**: For quantum-resistant end-to-end encrypted messaging.
 - **Venice AI**: For privacy-first, decentralized AI processing with no data retention.
+- **Brave Search API**: For privacy-first web search with no tracking (requires `BRAVE_API_KEY`).
 - **RainbowKit**: For wallet connection UI.
 - **wagmi**: For blockchain interactions and sending transactions.
 - **Zod**: For schema validation of structured messages.
