@@ -737,12 +737,18 @@ export default function Home() {
           </p>
           
           {/* Navigation Links */}
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 pt-4">
+            <Link href="/about" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">About</span>
+            </Link>
             <Link href="/docs" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
               <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Docs</span>
             </Link>
             <Link href="/privacy" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
               <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Privacy</span>
+            </Link>
+            <Link href="/security" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Security</span>
             </Link>
             <Link href="/terms" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
               <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Terms</span>
@@ -755,6 +761,21 @@ export default function Home() {
                 <span className="text-xs font-bold uppercase tracking-widest text-white">Enter</span>
               </Link>
             )}
+          </div>
+          
+          {/* External Links - Identity Signals */}
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-gray-600">
+            <a href="https://github.com/djzs" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition-colors text-[10px] font-bold uppercase tracking-widest">
+              GitHub
+            </a>
+            <span className="text-gray-800">·</span>
+            <a href="https://x.com/djzs_box" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition-colors text-[10px] font-bold uppercase tracking-widest">
+              X / Twitter
+            </a>
+            <span className="text-gray-800">·</span>
+            <a href="mailto:hello@dj-z-s.box" className="hover:text-purple-400 transition-colors text-[10px] font-bold uppercase tracking-widest">
+              Contact
+            </a>
           </div>
           
           {/* Copyright */}

@@ -29,6 +29,13 @@ export default function Privacy() {
           </h1>
           <p className="text-sm text-gray-500 mb-12 font-mono">Last updated: January 23, 2026</p>
 
+          {/* Security Commitment Banner */}
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 mb-12">
+            <p className="text-sm leading-relaxed">
+              <strong className="text-white">DJ-Z-S.box does not store private keys, custody assets, or initiate transactions on behalf of users.</strong> Wallet connections are used only with explicit user consent for authentication purposes. No funds are accessed or moved.
+            </p>
+          </div>
+
           <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
@@ -37,7 +44,8 @@ export default function Privacy() {
               <p>
                 DJZS is built on a fundamental principle: your thoughts belong to you. 
                 We operate as a local-first thinking system, meaning your data stays on 
-                your device unless you explicitly choose otherwise.
+                your device unless you explicitly choose otherwise. This application currently runs 
+                without on-chain transactions—wallet connection is used only for identity.
               </p>
             </section>
 

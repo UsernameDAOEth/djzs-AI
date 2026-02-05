@@ -14,6 +14,8 @@ import Docs from "@/pages/docs";
 import Terms from "@/pages/terms";
 import Privacy from "@/pages/privacy";
 import Roadmap from "@/pages/roadmap";
+import About from "@/pages/about";
+import Security from "@/pages/security";
 import NotFound from "@/pages/not-found";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
@@ -43,6 +45,8 @@ function Router() {
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/roadmap" component={Roadmap} />
+        <Route path="/about" component={About} />
+        <Route path="/security" component={Security} />
         <Route component={NotFound} />
       </Switch>
     </>
