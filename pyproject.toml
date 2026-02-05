@@ -4,12 +4,13 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.11"
 dependencies = [
-    "aiohttp>=3.12.15",
+    "aiohttp>=3.13.3",
     "avantis-trader-sdk>=0.8.5",
     "fastapi==0.111.0",
-    "protobuf>=6.32.2",
-    "pyasn1>=0.6.1",
+    "protobuf>=6.33.5",
+    "pyasn1>=0.6.2",
     "python-dotenv==1.0.1",
-    "urllib3>=2.5.0",
+    "python-multipart>=0.0.22",
+    "urllib3>=2.6.0",
     "uvicorn==0.30.0",
 ]
