@@ -423,7 +423,7 @@ export default function Home() {
                 End-to-End Encrypted with Post-Quantum Protection
               </h2>
               <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                DJZS uses XMTP's end-to-end encrypted messaging with built-in quantum-resistant cryptography, protecting conversations against future "harvest now, decrypt later" attacks.
+                DJZS uses end-to-end encryption with built-in quantum-resistant cryptography, protecting your journal and research against future "harvest now, decrypt later" attacks.
               </p>
             </div>
 
@@ -461,10 +461,10 @@ export default function Home() {
 
             <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/[0.05] to-blue-500/[0.05] border border-white/[0.08]">
               <p className="text-center text-gray-300 leading-relaxed">
-                Your conversations are end-to-end encrypted and protected with quantum-resistant security, meaning even if someone records encrypted messages today, they won't be able to decrypt them in the future as quantum computers advance.
+                Your journal entries and research are protected with quantum-resistant encryption, meaning even if someone captures your data today, they won't be able to decrypt it as quantum computers advance.
               </p>
               <p className="text-center text-[10px] text-gray-600 mt-4 uppercase tracking-wider">
-                Messages are E2E encrypted by default — only participants can read them, not DJZS or any intermediary.
+                Your data is encrypted by default — only you can read it, not DJZS or any intermediary.
               </p>
             </div>
 
@@ -476,7 +476,7 @@ export default function Home() {
                 <span className="text-xs font-medium text-gray-400">Post-quantum cryptography</span>
               </div>
               <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
-                <span className="text-xs font-medium text-gray-400">XMTP-secured</span>
+                <span className="text-xs font-medium text-gray-400">Local-first storage</span>
               </div>
               <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
                 <span className="text-xs font-medium text-gray-400">Venice AI</span>
