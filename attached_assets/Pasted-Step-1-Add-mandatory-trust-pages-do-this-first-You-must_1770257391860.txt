@@ -1,0 +1,156 @@
+Step 1 — Add mandatory trust pages (do this first)
+
+You must have real, linked pages, not placeholders.
+
+Required routes
+	•	/about
+	•	/privacy
+	•	/terms
+
+Optional but recommended:
+	•	/security
+
+Privacy page must clearly state:
+	•	No custody of funds
+	•	No automatic transactions
+	•	Wallet used only for authentication or signing
+	•	User owns their data
+
+Example language (you can reuse):
+
+DJ-Z-S.box does not store private keys, custody assets, or initiate transactions on behalf of users.
+Wallet connections are used only with explicit user consent.
+
+This alone removes most “phishing shell” flags.
+
+⸻
+
+Step 2 — Remove automatic wallet behavior
+
+Never trigger wallet actions on page load.
+
+Fixes:
+	•	❌ No auto-connect
+	•	❌ No silent permission requests
+	•	❌ No hidden contract calls
+
+Correct pattern:
+	•	Wallet connects only after user clicks a button
+	•	Show why the wallet is needed before connecting
+
+Button copy example:
+
+Connect wallet to access your local DJZS Box
+
+Under it:
+
+No funds are accessed or moved.
+
+⸻
+
+Step 3 — Make transaction intent explicit (or remove it)
+
+If your app does not use transactions yet:
+	•	Remove all sendTransaction calls
+	•	Remove contract imports
+	•	Say this clearly in UI
+
+Example:
+
+This application currently runs without on-chain transactions.
+
+If it does use transactions:
+	•	Show transaction details before execution
+	•	Require a second explicit confirmation
+	•	Link to the contract address publicly
+
+⸻
+
+Step 4 — Verify or eliminate contract references
+
+Security systems flag:
+	•	Unverified contracts
+	•	Mismatched ABI calls
+	•	Placeholder addresses
+
+You must either:
+	•	Verify every referenced contract
+or
+	•	Remove all contract logic until ready
+
+If no contracts exist yet:
+	•	Do not reference Ethereum beyond wallet identity
+
+⸻
+
+Step 5 — Add visible identity signals
+
+A real project leaves fingerprints.
+
+Add at least two of the following:
+	•	GitHub repository
+	•	Documentation site
+	•	Public roadmap
+	•	X / Twitter link
+	•	Contact email
+
+Put them in the footer of every page.
+
+Example:
+
+Built by DJZS
+Docs · GitHub · Roadmap
+
+This massively reduces “anonymous phishing dApp” scoring.
+
+⸻
+
+Step 6 — Allow read-only access
+
+This is a strong legitimacy signal.
+
+Before wallet connection, users should be able to:
+	•	Read what DJ-Z-S.box is
+	•	See how it works
+	•	Understand what happens when connecting
+
+Security engines trust apps that don’t force wallets.
+
+⸻
+
+Step 7 — Add a security disclosure page (recommended)
+
+Create /security explaining:
+	•	Local-first storage
+	•	No custodial risk
+	•	User-initiated actions only
+	•	Optional offline usage
+
+This aligns with DJZS philosophy and reduces automated suspicion.
+
+⸻
+
+Step 8 — Redeploy + clear cache
+
+After changes:
+	•	Redeploy the site
+	•	Ensure old builds aren’t cached
+	•	Confirm pages are reachable publicly
+
+Some scanners re-check automatically within days.
+
+⸻
+
+Reality check (important)
+
+Early Web3 apps are flagged by default when they:
+	•	Are new
+	•	Ask for wallet access
+	•	Lack legitimacy signals
+
+They stop being flagged when they:
+	•	Explain intent
+	•	Minimize permissions
+	•	Look like real software
+
+This is not a failure — it’s a maturity checkpoint.
