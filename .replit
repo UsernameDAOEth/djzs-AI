@@ -44,3 +44,6 @@ waitForPort = 5000
 [userenv.production]
 REPLIT_KEEP_DEV_DEPENDENCIES = "1"
 REPLIT_SKIP_PACKAGE_CACHE = "1"
+
+[agent]
+integrations = ["github:1.0.0"]

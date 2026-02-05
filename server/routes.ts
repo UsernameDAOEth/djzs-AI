@@ -10,6 +10,7 @@ import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
 import { HTTPFacilitatorClient } from "@x402/core/server";
 import { searchBrave, type BraveSearchResult } from "./brave";
+import { getUncachableGitHubClient } from "./github";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -138,6 +139,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         veniceAI: !!process.env.VENICE_API_KEY,
       }
     });
+  });
+
+  // GitHub Integration - check connection and list repos
+  app.get("/api/github/status", async (_req, res) => {
+    try {
+      const octokit = await getUncachableGitHubClient();
+      const { data: user } = await octokit.users.getAuthenticated();
+      res.json({
+        connected: true,
+        username: user.login,
+        name: user.name,
+        avatarUrl: user.avatar_url,
+      });
+    } catch (error) {
+      console.error("GitHub status error:", error);
+      res.status(500).json({ 
+        connected: false, 
+        error: error instanceof Error ? error.message : "GitHub connection failed" 
+      });
+    }
+  });
+
+  app.get("/api/github/repos", async (_req, res) => {
+    try {
+      const octokit = await getUncachableGitHubClient();
+      const { data: repos } = await octokit.repos.listForAuthenticatedUser({
+        sort: "updated",
+        per_page: 20,
+      });
+      res.json(repos.map(r => ({
+        id: r.id,
+        name: r.name,
+        fullName: r.full_name,
+        private: r.private,
+        url: r.html_url,
+        description: r.description,
+        updatedAt: r.updated_at,
+      })));
+    } catch (error) {
+      console.error("GitHub repos error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch repos" });
+    }
   });
 
   // ==================== RESEARCH ZONE ====================
