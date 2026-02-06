@@ -53,11 +53,8 @@ export class MemStorage implements IStorage {
 
   private seedDefaultRooms() {
     const defaultRooms = [
-      { name: "Members Lounge", description: "General discussion", isDefault: true },
-      { name: "Trades", description: "Trade signals and setups", isDefault: true },
-      { name: "Predictions", description: "Market predictions", isDefault: true },
-      { name: "Events", description: "Community events", isDefault: true },
-      { name: "Payments", description: "Payment receipts", isDefault: true },
+      { name: "Journal", description: "Daily reflections with AI thinking partner", isDefault: true },
+      { name: "Research", description: "Gather claims, track evidence, surface unknowns", isDefault: true },
     ];
 
     defaultRooms.forEach((room) => {
