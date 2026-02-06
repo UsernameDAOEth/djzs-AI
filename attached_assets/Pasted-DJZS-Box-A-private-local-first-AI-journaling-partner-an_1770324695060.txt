@@ -1,0 +1,75 @@
+DJZS Box
+A private, local-first AI journaling partner and members-only encrypted chat platform on Base blockchain. Your data stays on your device with end-to-end, quantum-resistant encryption via XMTP.
+
+Overview
+DJZS Box combines two core experiences:
+
+1. Private Journaling & Research
+
+Write journal entries with AI-powered insights via Venice AI
+Privacy-first web research with Brave Search integration
+Local-first storage in IndexedDB - works fully offline
+2. Members-Only Encrypted Chat
+
+E2E encrypted messaging via XMTP protocol
+Wallet-based identity with ENS name resolution
+NFT/allowlist gated access on Base blockchain
+Structured message cards for trade signals, predictions, events, and payments
+Features
+Journaling Zone
+Local-First Storage - All entries stored in IndexedDB on your device
+Venice AI Integration - Privacy-first AI thinking partner with no data retention
+Memory Pins - Pin important insights for context in future conversations
+Offline Support - Works without internet connection
+Research Zone
+Brave Search - Privacy-preserving web search (no tracking)
+Web Mode - Venice AI's built-in web search with source citations
+Explain Mode - AI knowledge synthesis without web search
+Chat Zone
+Trade Signals - Post long/short setups with entry, stop-loss, TP targets
+Predictions - YES/NO voting with deadlines and member tracking
+Events - Calendar events with RSVP functionality
+Payments - In-chat ETH transfers with automatic receipt generation
+Membership & Access
+Wallet Authentication - Sign in via RainbowKit (Base mainnet & Sepolia)
+NFT Gating - Optional NFT ownership verification for access
+Allowlist - Admin-managed member allowlist
+Quick Start
+Prerequisites
+Node.js 18+
+npm or yarn
+MetaMask or another Web3 wallet
+Installation
+Clone the repository: git clone https://github.com/UsernameDAOEth/djzs-box.git cd djzs-box
+
+Install dependencies: npm install
+
+Set up environment variables (copy .env.example to .env)
+
+Start the development server: npm run dev
+
+The app will be available at http://localhost:5000
+
+Environment Variables
+Required - Venice AI for journaling insights
+VENICE_API_KEY=your_venice_api_key
+
+Optional - Privacy-first web search
+BRAVE_API_KEY=your_brave_api_key
+
+Web3 Configuration
+BASE_RPC_URL=https://mainnet.base.org
+
+Tech Stack
+Frontend: React 18 + TypeScript + Vite + Radix UI + Tailwind CSS
+Backend: Express.js + TypeScript
+Web3: RainbowKit + wagmi + Base blockchain
+Messaging: XMTP (E2E encrypted)
+AI: Venice AI (privacy-first, no data retention)
+Search: Brave Search API (no tracking)
+Security & Privacy
+Built on three pillars of privacy:
+
+Local-First - Data stored on your device, not servers
+E2E Encryption - XMTP's quantum-resistant encryption
+Privacy-First AI - Venice AI with zero data retention
