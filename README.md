@@ -1,6 +1,10 @@
 # DJZS Box
 
+[![GitHub](https://img.shields.io/badge/GitHub-UsernameDAOEth%2Fdjzs--box-purple?logo=github)](https://github.com/UsernameDAOEth/djzs-box)
+
 A private, local-first AI journaling partner and research vault. Your data stays on your device with end-to-end, quantum-resistant encryption.
+
+**Repository:** [github.com/UsernameDAOEth/djzs-box](https://github.com/UsernameDAOEth/djzs-box)
 
 ## Overview
 
