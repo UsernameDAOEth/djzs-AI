@@ -1015,7 +1015,7 @@ export default function Chat() {
                   <button className="hidden lg:flex items-center gap-4 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-white/[0.08] transition-all cursor-pointer" data-testid="button-security-info">
                     <div className="flex items-center gap-2">
                       <Lock className="w-3 h-3 text-green-500/50" />
-                      <span className="text-[10px] font-medium text-gray-500">E2E Private</span>
+                      <span className="text-[10px] font-medium text-gray-500">Local-First</span>
                     </div>
                     <div className="w-px h-3 bg-white/10"></div>
                     <div className="flex items-center gap-2">
@@ -1030,23 +1030,23 @@ export default function Chat() {
                       <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
                         <Lock className="w-5 h-5 text-green-400" />
                       </div>
-                      Quantum-Resistant Security
+                      Privacy Architecture
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6 py-4">
                     <p className="text-sm text-gray-300 leading-relaxed">
-                      Your conversations are end-to-end encrypted and protected with quantum-resistant security, meaning even if someone records encrypted messages today, they won't be able to decrypt them in the future as quantum computers advance.
+                      Your journal and research data is stored locally on your device using IndexedDB. AI only sees what you explicitly share by clicking "Think with me" or running a research query.
                     </p>
                     
                     <div className="p-4 rounded-xl bg-purple-500/[0.05] border border-purple-500/20">
-                      <p className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">Hybrid Encryption</p>
+                      <p className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">Local-First Storage</p>
                       <p className="text-sm text-gray-400 leading-relaxed">
-                        XMTP uses a hybrid encryption approach, combining post-quantum algorithms with proven conventional cryptography. This protects conversations today while ensuring long-term security against "harvest now, decrypt later" (HNDL) threats.
+                        All entries, insights, and memories are stored in your browser's IndexedDB. This data stays on your device and works offline for writing and browsing.
                       </p>
                     </div>
 
                     <div className="p-4 rounded-xl bg-orange-500/[0.05] border border-orange-500/20">
-                      <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Decentralized AI</p>
+                      <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Privacy-Focused AI</p>
                       <p className="text-sm text-gray-400 leading-relaxed">
                         Your Thinking Partner is powered by Venice AI — privacy-first AI infrastructure with no data retention. Your prompts are never stored or used to train models.
                       </p>
@@ -1056,20 +1056,20 @@ export default function Chat() {
                       <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Privacy Stack</p>
                       <ul className="space-y-2 text-sm text-gray-400">
                         <li className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                          End-to-end encryption via XMTP
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                          Local-first storage (IndexedDB on your device)
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                          Post-quantum cryptography protection
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                          User-controlled AI (only sends when you ask)
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
                           Venice AI — no data retention
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                          Local-first storage on your device
+                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                          Brave Search — no tracking or profiling
                         </li>
                       </ul>
                     </div>

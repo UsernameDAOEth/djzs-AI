@@ -161,7 +161,7 @@ export default function Home() {
       {/* SEO */}
       <Helmet>
         <title>DJZS - Private AI Journaling + Research | Local-First Thinking System</title>
-        <meta name="description" content="Private AI journaling and research capture with a Thinking Partner. Local-first, end-to-end encrypted. No centralized journal database. Your notes stay on your device." />
+        <meta name="description" content="Private AI journaling and research capture with a Thinking Partner. Local-first storage. Your notes stay on your device." />
         <meta property="og:title" content="DJZS - Private AI Journaling + Research" />
         <meta property="og:description" content="Local-first AI journaling and research. Memory that stays yours. No feeds. No surveillance." />
         <meta property="og:type" content="website" />
@@ -187,7 +187,7 @@ export default function Home() {
             Private AI journaling + research capture + a Thinking Partner.
           </motion.p>
           <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-500 max-w-2xl mx-auto font-medium mb-2">
-            Local-first, quantum-resistant end-to-end encryption, and decentralized AI.
+            Local-first storage, privacy-focused AI, and offline journaling.
           </motion.p>
           <motion.p variants={fadeUp} className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-bold mb-8">
             Saved instantly. Even offline.
@@ -290,7 +290,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">3. You Control Storage</h3>
                 <p className="text-gray-500 text-sm">
-                  Export, clear, or back up anytime. Optional encrypted sync. Your data, your rules.
+                  Export, clear, or back up anytime. Your data, your rules.
                 </p>
                 <div className="mt-3 px-3 py-1 rounded-full bg-gray-500/10 border border-gray-500/20">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Yours forever</span>
@@ -307,7 +307,7 @@ export default function Home() {
               <ArrowRight className="w-4 h-4 text-gray-700" />
               <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
                 <Lock className="w-4 h-4" />
-                <span>Encrypted</span>
+                <span>Sent to AI</span>
               </div>
               <ArrowRight className="w-4 h-4 text-gray-700" />
               <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
@@ -410,79 +410,78 @@ export default function Home() {
         </section>
       </RevealSection>
 
-      {/* Quantum-Resistant Security Section */}
       <RevealSection>
         <section className="relative py-16 bg-[#030303] border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 mb-6">
-                <ShieldCheck className="w-4 h-4 text-green-400" />
-                <span className="text-xs font-bold text-green-400 uppercase tracking-wider">Quantum-Resistant Security</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
+                <ShieldCheck className="w-4 h-4 text-purple-400" />
+                <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">Privacy Architecture</span>
               </div>
               <h2 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tight">
-                End-to-End Encrypted with Post-Quantum Protection
+                How DJZS Handles Your Data — Honestly
               </h2>
               <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                DJZS uses end-to-end encryption with built-in quantum-resistant cryptography, protecting your journal and research against future "harvest now, decrypt later" attacks.
+                Your journal and research data is stored locally on your device. AI analysis only happens when you explicitly request it.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-10">
               <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
                 <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
-                  <Lock className="w-6 h-6 text-purple-400" />
+                  <HardDrive className="w-6 h-6 text-purple-400" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Hybrid Encryption</h3>
+                <h3 className="text-lg font-bold text-white mb-2">Local-First Storage</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  XMTP uses a hybrid encryption approach, combining post-quantum algorithms with proven conventional cryptography.
+                  All journal entries, research notes, and memories are stored in your browser's IndexedDB. Works offline. No cloud database.
                 </p>
               </div>
 
               <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
                 <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
-                  <Shield className="w-6 h-6 text-blue-400" />
+                  <Bot className="w-6 h-6 text-blue-400" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">HNDL Protection</h3>
+                <h3 className="text-lg font-bold text-white mb-2">User-Controlled AI</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  Protection against "harvest now, decrypt later" attacks from future quantum computers.
+                  AI only sees your data when you click "Think with me." Nothing is sent automatically. You control what the AI receives.
                 </p>
               </div>
 
               <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
                 <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-4">
-                  <Bot className="w-6 h-6 text-orange-400" />
+                  <Shield className="w-6 h-6 text-orange-400" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Decentralized AI</h3>
+                <h3 className="text-lg font-bold text-white mb-2">Privacy-Focused Providers</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  Powered by Venice AI — privacy-first AI infrastructure with no data retention or training on your content.
+                  Powered by Venice AI (no data retention) and Brave Search (no tracking). Your queries are not stored or used for training.
                 </p>
               </div>
             </div>
 
             <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/[0.05] to-blue-500/[0.05] border border-white/[0.08]">
               <p className="text-center text-gray-300 leading-relaxed">
-                Your journal entries and research are protected with quantum-resistant encryption, meaning even if someone captures your data today, they won't be able to decrypt it as quantum computers advance.
+                When you request AI insights, only the text you select is sent to privacy-focused AI providers. The response is saved locally on your device. We do not permanently store your data on any server.
               </p>
               <p className="text-center text-[10px] text-gray-600 mt-4 uppercase tracking-wider">
-                Your data is encrypted by default — only you can read it, not DJZS or any intermediary.
+                Planned: encryption-at-rest for local storage · E2E encrypted AI requests
               </p>
             </div>
 
             <div className="flex flex-wrap justify-center gap-3 mt-8">
               <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
-                <span className="text-xs font-medium text-gray-400">End-to-end encryption</span>
-              </div>
-              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
-                <span className="text-xs font-medium text-gray-400">Post-quantum cryptography</span>
-              </div>
-              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
                 <span className="text-xs font-medium text-gray-400">Local-first storage</span>
+              </div>
+              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
+                <span className="text-xs font-medium text-gray-400">User-controlled AI</span>
               </div>
               <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
                 <span className="text-xs font-medium text-gray-400">Venice AI</span>
               </div>
               <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
                 <span className="text-xs font-medium text-gray-400">No data retention</span>
+              </div>
+              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
+                <span className="text-xs font-medium text-gray-400">Brave Search</span>
               </div>
             </div>
           </div>
@@ -531,7 +530,7 @@ export default function Home() {
                 <p className="text-white font-semibold">Yes — by design.</p>
                 <ul className="list-disc list-inside ml-2 mt-2">
                   <li>Your journal and research live on your device first</li>
-                  <li>Data is encrypted end-to-end before it ever leaves your machine</li>
+                  <li>When you ask AI for insights, only your selected text is sent to privacy-focused providers</li>
                   <li>DJZS does not scan, profile, or monetize your journaling.</li>
                   <li>Nothing syncs unless you choose to sync it</li>
                 </ul>

@@ -17,14 +17,14 @@ const roadmapPhases = [
   },
   {
     phase: "02",
-    title: "Trade Integration",
+    title: "Research & Dossiers",
     status: "completed",
     quarter: "Q1 2026",
     items: [
-      { text: "Trade Zone with x402 protocol", done: true },
-      { text: "Real-time market data feeds", done: true },
-      { text: "AI-powered trade insights", done: true },
-      { text: "On-chain transaction execution", done: true },
+      { text: "Research Zone with multi-source search", done: true },
+      { text: "Brave Mode privacy-first search", done: true },
+      { text: "Dossier management and claim tracking", done: true },
+      { text: "Cross-zone linking (claims to journal)", done: true },
     ],
   },
   {
@@ -34,21 +34,21 @@ const roadmapPhases = [
     quarter: "Q2 2026",
     items: [
       { text: "Cross-zone pattern recognition", done: true },
-      { text: "Personalized AI agent tuning", done: false },
-      { text: "Advanced market sentiment analysis", done: false },
-      { text: "Automated journal-to-trade correlation", done: false },
+      { text: "Personalized AI thinking partner tuning", done: false },
+      { text: "Advanced context-aware insights", done: false },
+      { text: "Journal-to-research correlation", done: false },
     ],
   },
   {
     phase: "04",
-    title: "Decentralization",
+    title: "Privacy & Sync",
     status: "upcoming",
     quarter: "Q3 2026",
     items: [
-      { text: "Encrypted cloud backup (optional)", done: false },
+      { text: "Encryption-at-rest for local vault", done: false },
+      { text: "Optional encrypted cloud backup", done: false },
       { text: "Cross-device vault sync", done: false },
-      { text: "XMTP messaging integration", done: false },
-      { text: "Community governance framework", done: false },
+      { text: "Export and portability tools", done: false },
     ],
   },
   {
@@ -60,7 +60,7 @@ const roadmapPhases = [
       { text: "Plugin architecture for extensions", done: false },
       { text: "API access for developers", done: false },
       { text: "Mobile-native applications", done: false },
-      { text: "Institutional-grade features", done: false },
+      { text: "Community governance framework", done: false },
     ],
   },
 ];
@@ -174,10 +174,10 @@ export default function Roadmap() {
             </h3>
             <p className="text-sm text-gray-500 leading-relaxed">
               Our vision extends beyond this roadmap. We're building a thinking system that 
-              evolves with its users—adapting to new market conditions, integrating emerging 
-              technologies, and continuously improving the relationship between human insight 
-              and machine intelligence. The future is not a destination; it's a process of 
-              becoming.
+              evolves with its users—integrating emerging privacy technologies, improving 
+              AI reflection capabilities, and continuously strengthening the relationship 
+              between human insight and machine intelligence. The future is not a destination; 
+              it's a process of becoming.
             </p>
           </div>
 

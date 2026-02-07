@@ -48,7 +48,7 @@ export default function Terms() {
               <ul className="space-y-3 list-none">
                 <li><span className="text-white">1. Service</span> refers to the DJZS interface, local-first vaults, and associated AI agents.</li>
                 <li><span className="text-white">2. User</span> means any individual accessing the Service via a cryptographic wallet.</li>
-                <li><span className="text-white">3. Zone</span> refers to specific functional environments (Journal, Research, Trade).</li>
+                <li><span className="text-white">3. Zone</span> refers to specific functional environments (Journal, Research).</li>
               </ul>
             </section>
 
@@ -61,9 +61,8 @@ export default function Terms() {
               </p>
               <ul className="space-y-3 list-disc pl-4">
                 <li>Journaling and research data is stored locally in your browser's IndexedDB.</li>
-                <li>Trading via the Trade Zone involves significant risk of loss.</li>
-                <li>Blockchain transactions are irreversible.</li>
                 <li>AI analysis is for informational purposes and does not constitute advice.</li>
+                <li>Clearing your browser data will permanently delete locally stored information.</li>
               </ul>
             </section>
 
@@ -72,8 +71,8 @@ export default function Terms() {
                 <span className="text-purple-500 font-mono text-xs">04</span> Access and Restrictions
               </h2>
               <p>
-                DJZS reserves the right to restrict access to certain Zones or features for users 
-                violating system integrity, engaging in market manipulation, or bypassing 
+                DJZS reserves the right to restrict access to certain features for users 
+                violating system integrity or bypassing 
                 standard interface protocols.
               </p>
             </section>
@@ -95,7 +94,7 @@ export default function Terms() {
               </h2>
               <p>
                 All information provided through the Service—including AI-generated insights 
-                and trading data—is for informational purposes only. Seek independent 
+                and research synthesis—is for informational purposes only. Seek independent 
                 advice from qualified professionals before making decisions.
               </p>
             </section>

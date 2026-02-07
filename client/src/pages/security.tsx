@@ -84,7 +84,7 @@ export default function Security() {
                   <HardDrive className="w-5 h-5 text-purple-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-1">Data Stays on Your Device</h3>
-                    <p className="text-xs">All journal entries, research notes, and memories are stored in your browser's IndexedDB. This data never leaves your device unless you explicitly export it.</p>
+                    <p className="text-xs">All journal entries, research notes, and memories are stored in your browser's IndexedDB. This data never leaves your device unless you explicitly ask the AI for insights or export it.</p>
                   </div>
                 </div>
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] flex gap-4">
@@ -98,7 +98,7 @@ export default function Security() {
                   <Server className="w-5 h-5 text-purple-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-1">No Server-Side Storage</h3>
-                    <p className="text-xs">We do not store your personal data, journal entries, or research on any centralized server. There's nothing to breach because we don't have it.</p>
+                    <p className="text-xs">We do not permanently store your personal data, journal entries, or research on any server. When you request AI insights, your selected text is sent to privacy-focused AI providers (Venice AI) which claim no data retention.</p>
                   </div>
                 </div>
               </div>

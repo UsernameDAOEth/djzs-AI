@@ -1,7 +1,7 @@
-# DJZS Chat - E2E Encrypted Web3 Community Platform
+# DJZS Box - Private, Local-First AI Journaling & Research Vault
 
 ## Overview
-DJZS Chat is a members-only, end-to-end encrypted chat application leveraging ENS domains for user identities on the Base blockchain. It utilizes the XMTP protocol for secure messaging and supports structured message cards for various functionalities like trade signals, prediction markets, event coordination, and payment receipts. Access is governed by NFT ownership or allowlist membership. The project aims to be a private, local-first AI journaling partner that helps users achieve clarity in their thinking, acting as a "thinking partner" or "intelligence companion."
+DJZS Box is a private, local-first AI journaling partner and research vault. Your writing is stored locally on your device by default (IndexedDB via Dexie), and you control what gets sent to AI. The AI supports reflection through prompts, pattern spotting, and synthesis — and you decide what to keep. The 2026 scope focuses exclusively on journal + research functionality (not chat/messaging/trading).
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -11,127 +11,81 @@ Preferred communication style: Simple, everyday language.
 ### Frontend
 - **Technology Stack**: React 18 with TypeScript, Vite.
 - **UI**: Radix UI components with Tailwind CSS (dark theme, purple accents).
-- **Routing**: Wouter for client-side navigation (`/`, `/chat`, `/docs`, `*`).
-- **State Management**: React hooks for local state, TanStack Query for server state.
-- **Component Structure**: Organized by pages (Home, Chat, NotFound) and specific chat/UI components.
+- **Routing**: Wouter for client-side navigation (`/`, `/chat`, `/docs`, `/privacy`, `/security`, `/about`, `/terms`, `/roadmap`, `*`).
+- **State Management**: React hooks for local state, TanStack Query for server state, Dexie (IndexedDB) for local-first vault.
+- **Component Structure**: Organized by pages (Home, Chat, Docs, Privacy, Security, About, Terms, Roadmap, NotFound) and specific UI components.
 
 ### Backend
 - **Framework**: Express.js with TypeScript.
-- **API**: RESTful endpoints (`/api/members`, `/api/rooms`, `/api/payments`).
-- **Storage**: In-memory storage for members, rooms, and payment receipts, pre-seeded with default rooms.
+- **API**: RESTful endpoints (`/api/members`, `/api/rooms`, `/api/messages`, `/api/journal/*`, `/api/memories/*`, `/api/research/*`, `/api/agent/analyze`, `/api/github/*`, `/api/paragraph/*`).
+- **Storage**: In-memory storage for members, rooms, and messages, pre-seeded with "Journal" and "Research" rooms.
 
-### Messaging Layer (XMTP)
-- **Protocol**: XMTP browser-sdk for E2E encrypted messaging.
-- **Identity**: Wallet address as XMTP identity; ENS names displayed.
-- **Message Types**: Structured JSON messages with Zod validation, including `text`, `trade_signal`, `prediction`, `event`, `payment_receipt`, `announcement`, and `newsletter`.
+### Local-First Vault (IndexedDB/Dexie)
+- **entries**: Journal and research entries stored on-device.
+- **insights**: AI-generated insights linked to entries.
+- **memoryPins**: User-pinned memories (goals, patterns, preferences, etc.).
+- **researchDossiers**: Named research folders.
+- **researchQueries**: Search queries within dossiers.
+- **researchClaims**: Claims with trust levels, status, and optional journal links.
 
 ### Web3 Integration
 - **Wallet Connection**: RainbowKit (Base mainnet and Base Sepolia).
 - **ENS Resolution**: Custom hook (`useDisplayName`) resolves ENS names via public RPC.
-- **Payment Integration**: Direct ETH transfers via wagmi's `useSendTransaction`.
-- **Membership Gating**: Checks `isAllowlisted` or `isAdmin` flags, with optional NFT ownership verification.
+- **Wallet Identity**: Optional wallet-based authentication (no email/password).
 
-### Database Schema (Conceptual)
-- **Members**: `id`, `address`, `ensName`, `isAdmin`, `isAllowlisted`, `createdAt`.
-- **Rooms**: `id`, `name`, `description`, `xmtpGroupId`, `isDefault`, `createdAt`.
-- **Payment Receipts**: `id`, `chainId`, `tokenSymbol`, `amount`, `fromAddress`, `toAddress`, `txHash`, `roomId`, `note`, `verified`, `createdAt`.
-
-### XMTP Agent Integration
+### XMTP Agent
 - **SDK**: `@xmtp/agent-sdk` for autonomous agents.
-- **Agent File**: `server/agent.ts` listens to XMTP messages and responds to commands.
-- **Commands**: `/help`, `/zones`, `/format signal`, `/summarize`.
-- **Trade Zone Commands**: `/price ETH`, `/portfolio 0x...`, `/balance 0x...`, `/analyze 0x...`, `/pnl 0x... [30d]`, `/quote 100 USDC to ETH`.
+- **Agent File**: `server/agent.ts` listens to XMTP messages.
+- **Commands**: `/help`, `/zones`.
 
 ### Key Features
-- **Trade Signals**: Post long/short setups with entry, stop-loss, TP targets, timeframe, leverage, and status updates.
-- **Predictions**: YES/NO voting with deadlines and member tracking.
-- **Events**: Calendar events with RSVP functionality.
-- **Payments**: In-chat ETH transfers with automatic receipt generation and Basescan links.
-- **Membership**: Wallet-based identity, admin/allowlist tiers, self-registration.
+- **Journal Zone**: Daily reflections with AI thinking partner, memory pinning, context-aware insights.
+- **Research Zone**: Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking to journal entries.
+- **Local-First Storage**: All data stored in browser IndexedDB. Works offline for writing/browsing.
+- **Offline Support**: Service worker caches static assets.
 
-## Project Roadmap & PMF Strategy
+## Privacy Claims (What's True)
 
-### Core Product Promise
-"Private, local-first journal + research vault that only calls AI when you ask."
+### Implemented
+- Local-first storage via IndexedDB (Dexie)
+- User control over AI (only sent when you click "Think with me")
+- Offline-capable journaling (AI/research requires internet)
+- Venice AI claims no data retention
+- Brave Search claims no tracking/profiling
 
-### Immediate Priorities (PMF Growth)
-1.  **Proof of Value**: Add a 60-90 second demo video or GIF showing the "Write → Ask → Insight → Save" loop. Highlight the "Saved instantly / Offline" moment as key differentiation.
-2.  **Frictionless Onboarding**: Implement a "Try it in 2 minutes" flow that bypasses lore/setup for immediate utility.
-3.  **Retention Metric**: Track "3 entries in 7 days" as the primary early signal for Product-Market Fit.
+### NOT Implemented (Do Not Claim)
+- Encryption-at-rest for IndexedDB vault (planned)
+- End-to-end encryption for AI requests (not E2EE)
+- "Quantum-resistant encryption" (not implemented)
+- "Your data never leaves your device" (it does when you send text for AI)
 
-### Future Tasks
-- [ ] Create GitHub repository (Remind user later)
-- [ ] Implement demo video/GIF on landing page
-- [ ] Build "Try it in 2 minutes" entry point
-
-## Security & Privacy
-
-### Privacy Stack
-DJZS is built on three pillars of privacy:
-
-1. **Local-first Storage**: All journal entries and research are stored in IndexedDB on the user's device. Works fully offline. No centralized database.
-
-2. **Quantum-Resistant End-to-End Encryption (XMTP)**:
-   - Hybrid encryption combining post-quantum algorithms with proven conventional cryptography
-   - Protection against "harvest now, decrypt later" (HNDL) attacks from future quantum computers
-   - Messages are E2E encrypted by default — only participants can read them
-
-3. **Decentralized AI (Venice AI)**:
-   - Privacy-first AI infrastructure with no data retention
-   - User prompts are never stored or used to train models
-   - No content filtering, uncensored responses
-   - OpenAI-compatible API
-
-4. **Privacy-First Web Search (Brave Search)**:
-   - No user tracking or profiling
-   - Independent search index (not dependent on Google/Bing)
-   - Used in Research zone for privacy-preserving web search
-   - Requires `BRAVE_API_KEY` secret
-
-5. **Advanced AI Provider (Redpill AI)** *(Optional)*:
-   - TEE-protected gateway for privacy
-   - Access to 60+ models (GPT-5, Claude, Llama, etc.)
-   - Cryptographic attestation for verifiable private execution
-   - Phala confidential GPU enclaves for sensitive data
-   - Requires `REDPILL_API_KEY` secret
-
-### Data Flow
-- User writes entry → stored locally in IndexedDB
-- "Think with me" → current entry + memory pins sent to Venice AI
-- AI response → stored locally as insight
-- Nothing syncs unless user explicitly chooses
+## Data Flow
+1. User writes entry → saved locally in IndexedDB (instant)
+2. User clicks "Think with me" → selected entry + pins sent to server → forwarded to Venice AI
+3. AI response → returned to client → saved locally
+4. Nothing syncs by default unless user exports
 
 ## Research Zone Modes
-
-The Research zone supports three search modes:
-
-1. **Brave Mode** (Orange toggle): Privacy-first web search using Brave Search API
-   - No user tracking or profiling
-   - Independent search index (not dependent on Google/Bing)
-   - Results synthesized by Venice AI
-   - Requires `BRAVE_API_KEY` secret
-
-2. **Web Mode** (Green toggle): Venice AI's built-in web search
-   - Real-time web search with source citations
-   - Venice AI handles both search and synthesis
-
-3. **Explain Mode** (Toggle off): AI knowledge only
-   - No web search, uses Venice AI's training knowledge
-   - Good for conceptual explanations and summaries
+1. **Brave Mode**: Privacy-first web search via Brave API, synthesized by Venice AI. Requires `BRAVE_API_KEY` secret.
+2. **Web Mode**: Venice AI's built-in web search with source citations.
+3. **Explain Mode**: AI knowledge synthesis without live web search.
 
 ## External Dependencies
-- **XMTP Protocol**: For quantum-resistant end-to-end encrypted messaging.
-- **Venice AI**: For privacy-first, decentralized AI processing with no data retention.
-- **Brave Search API**: For privacy-first web search with no tracking (requires `BRAVE_API_KEY`).
-- **RainbowKit**: For wallet connection UI.
-- **wagmi**: For blockchain interactions and sending transactions.
-- **Zod**: For schema validation of structured messages.
+- **Venice AI**: Privacy-first AI processing with no data retention.
+- **Brave Search API**: Privacy-first web search (requires `BRAVE_API_KEY`).
+- **RainbowKit**: Wallet connection UI.
+- **wagmi/viem**: Blockchain interactions.
+- **Dexie**: IndexedDB wrapper for local-first storage.
+- **Zod**: Schema validation.
 - **Radix UI**: Frontend component library.
-- **Tailwind CSS**: For styling.
+- **Tailwind CSS**: Styling.
 - **Vite**: Frontend build tool.
-- **Express.js**: Backend web application framework.
-- **TanStack Query**: For server state management.
-- **Wouter**: Client-side routing library.
-- **@xmtp/agent-sdk**: For building autonomous agents.
-- **@paragraph-com/sdk**: For integrating Paragraph newsletter data.
-- **x402 protocol**: For user-pays micropayment model in the Trade Zone.
+- **Express.js**: Backend web framework.
+- **TanStack Query**: Server state management.
+- **Wouter**: Client-side routing.
+- **@xmtp/agent-sdk**: XMTP agent.
+- **@paragraph-com/sdk**: Paragraph newsletter integration.
+- **Framer Motion**: Animations.
+
+## GitHub Repository
+`github.com/UsernameDAOEth/djzs-box`

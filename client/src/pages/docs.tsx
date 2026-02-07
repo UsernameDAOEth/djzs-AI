@@ -308,8 +308,8 @@ export default function Docs() {
             />
             <FeatureCard 
               icon={Shield}
-              title="E2E Private"
-              description="Cryptographic identity via wallet connection. Your data is encrypted and only accessible to you."
+              title="Privacy-First"
+              description="Wallet-based identity. Your data is stored locally and only accessible on your device."
             />
             <FeatureCard 
               icon={Bot}

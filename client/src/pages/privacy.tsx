@@ -56,8 +56,7 @@ export default function Privacy() {
               <ul className="space-y-3 list-none">
                 <li><span className="text-white">• Personal Information:</span> We do not collect names, emails, phone numbers, or any personally identifiable information.</li>
                 <li><span className="text-white">• Journal Entries:</span> Your thoughts, reflections, and journal content remain stored locally in your browser's IndexedDB.</li>
-                <li><span className="text-white">• Research Data:</span> Any research, analysis, or notes you create are never transmitted to our servers.</li>
-                <li><span className="text-white">• Trading History:</span> Your trading decisions and portfolio allocations are processed client-side only.</li>
+                <li><span className="text-white">• Research Data:</span> Your research notes and dossiers are stored locally. When you run a research query, the query text is sent to AI providers for synthesis.</li>
               </ul>
             </section>
 
@@ -81,8 +80,8 @@ export default function Privacy() {
               </h2>
               <p>
                 DJZS uses IndexedDB for persistent local storage. All vault data, journal entries, 
-                and research notes are encrypted and stored directly in your browser. This data 
-                persists across sessions but never leaves your device. Clearing browser data 
+                and research notes are stored directly in your browser's IndexedDB. This data 
+                persists across sessions but never leaves your device unless you request AI analysis. Clearing browser data 
                 will permanently delete this information.
               </p>
             </section>
@@ -103,13 +102,13 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="text-purple-500 font-mono text-xs">06</span> Blockchain Transactions
+                <span className="text-purple-500 font-mono text-xs">06</span> Data When Using AI
               </h2>
               <p>
-                Any on-chain transactions you initiate through the Trade Zone are recorded 
-                on the public blockchain. These transactions are immutable and publicly visible 
-                by nature of blockchain technology. DJZS does not control or have the ability 
-                to modify blockchain records.
+                When you click "Think with me" or run a research query, the text you selected 
+                is sent to AI providers (Venice AI, Brave Search). These providers claim no data 
+                retention and do not train on your inputs. The AI response is saved locally 
+                on your device in IndexedDB.
               </p>
             </section>
 
