@@ -1,145 +1,135 @@
-# DJZS Box
+# DJZS Box (GitHub)
 
-[![GitHub](https://img.shields.io/badge/GitHub-UsernameDAOEth%2Fdjzs--box-purple?logo=github)](https://github.com/UsernameDAOEth/djzs-box)
+**A private, local-first AI journaling partner and research vault.**  
+Your writing is stored locally on your device by default, and you control what gets sent to AI.
 
-A private, local-first AI journaling partner and research vault. Your data stays on your device with end-to-end, quantum-resistant encryption.
+Repository: `github.com/UsernameDAOEth/djzs-box`
 
-**Repository:** [github.com/UsernameDAOEth/djzs-box](https://github.com/UsernameDAOEth/djzs-box)
+---
 
 ## Overview
 
-DJZS Box is an **AI journaling partner for thinking and research**. It creates a private space where you can process ideas, track patterns in your thinking, and develop clarity — without the AI taking over.
+DJZS Box is an AI journaling partner for thinking and research. It creates a private space where you can process ideas, track patterns in your thinking, and develop clarity — without the AI taking over.
 
-Unlike traditional journaling apps that store your data on remote servers, or AI assistants that generate content for you, DJZS is built on a different philosophy: **your thinking should stay yours**.
+Unlike traditional journaling apps that store your data on remote servers, or AI assistants that generate content for you, DJZS Box is built on a different philosophy:
 
-The AI doesn't generate content or save memory automatically. It helps you reflect on your own thinking and build insight through daily habit.
+**Your thinking should stay yours.**
+
+The AI doesn't auto-generate your life or silently build a shadow profile. It supports reflection through prompts, pattern spotting, and synthesis — and **you decide what to keep**.
+
+---
+
+## What's true today (privacy-first claims)
+
+DJZS Box is designed around privacy, but we only claim what is implemented and verifiable:
+
+### We DO claim (implemented)
+- **Local-first storage:** Journal and research data is stored in your browser using **IndexedDB (Dexie)**.
+- **User control over AI:** Content is only sent to AI when you explicitly run a "Think with me" / research action.
+- **Offline-capable journaling:** You can write and browse your vault without an internet connection (AI/research requires internet).
+
+### We do NOT claim (unless implemented)
+- **Encryption-at-rest** for your IndexedDB vault (planned).
+- **End-to-end encryption for AI** (AI requests are not E2EE).
+- **"Quantum-resistant encryption"** (requires specific PQ cryptography and documentation).
+- **"Your data never leaves your device"** (it does when you send text for AI analysis).
+
+If you want these stronger claims, implement them first and document them clearly.
+
+---
 
 ## Features
 
 ### Journal Zone
-
 Your private space to think, reflect, and achieve clarity with an AI thinking partner.
 
-- **Deep Reasoning** — AI analyzes patterns, connections, and blind spots
-- **Reflective Questions** — Powerful questions to deepen your thinking
-- **Memory Pinning** — Save insights worth remembering long-term
-- **Context Awareness** — AI considers your recent entries and pinned memories
-- **Local-First Storage** — All entries stored in IndexedDB on your device
-- **Venice AI Integration** — Privacy-first AI thinking partner with no data retention
-- **Offline Support** — Works without internet connection
+- **Deep Reasoning:** AI helps surface patterns, connections, and blind spots
+- **Reflective Questions:** prompts designed to deepen your thinking
+- **Memory Pinning:** save insights worth keeping long-term
+- **Context Awareness:** AI can consider recent entries + pinned memories (client-selected context)
+- **Local-First Storage:** stored locally in **IndexedDB** on your device
+- **Offline Support:** write and browse locally without internet
 
 ### Research Zone
+Search and synthesize information, then track claims over time.
 
-Search the web for real-time data or use AI knowledge to synthesize information and track claims.
+- **Brave Mode:** privacy-oriented search via Brave API (when configured)
+- **Web Mode:** live web-style synthesis (provider dependent)
+- **Explain Mode:** knowledge synthesis without live browsing
+- **Dossiers:** organize research into named folders
+- **Claim Tracking:** save key takeaways with trust levels and status
+- **Cross-Zone Linking:** connect claims to journal entries and pins
 
-- **Brave Mode** — Privacy-first web search with no tracking or profiling, synthesized by Venice AI
-- **Web Mode** — Real-time web search via Venice AI with source citations
-- **Explain Mode** — AI knowledge synthesis without live data
-- **Dossiers** — Organize research into named folders
-- **Claim Tracking** — Save key takeaways with trust levels and status
-- **Cross-Zone Linking** — Connect research claims to journal entries
+---
 
 ## Core Principles
 
 | Principle | Description |
-|-----------|-------------|
-| **Local-First** | Your entries and memories are stored on your device using IndexedDB. No server-side storage of your private thoughts. |
-| **E2E Private** | Cryptographic identity via wallet connection. Your data is encrypted and only accessible to you. |
-| **Thinking Partner** | The AI helps you think, not think for you. It surfaces patterns and asks questions rather than generating answers. |
-| **No Surveillance** | No feeds, no tracking, no centralized memory. A tool for thinking, not a network for sharing. |
-| **Memory Control** | You decide what to remember. Pin patterns worth keeping, forget what doesn't serve you. |
-| **Wallet Identity** | Your wallet address is your identity. ENS names displayed for readability. No email, no password. |
+|---|---|
+| Local-First | Your vault lives on your device (IndexedDB). Sync is optional/future, not required. |
+| User-Controlled AI | The AI only sees what you intentionally submit for analysis. |
+| Thinking Partner | Helps you think — spots patterns and asks questions rather than replacing your voice. |
+| No Surveillance | No feeds, no attention loops, no social graph. A tool for thinking, not a network. |
+| Memory Control | You decide what to pin and keep. Nothing is auto-saved as "memory" without you. |
+| Wallet Identity (optional) | Wallet-based identity can be used for auth/gating where enabled. |
 
-## Security & Privacy
+---
 
-Built on three pillars of privacy:
+## Data Flow (clear + accurate)
 
-1. **Local-First Storage** — Data stored on your device, not servers. Works fully offline.
-2. **E2E Encryption** — Quantum-resistant encryption protects your data against future threats.
-3. **Privacy-First AI** — Venice AI with zero data retention. Your prompts are never stored or used for training.
+1. **You write** → saved locally (instant)
+2. **You click "Think with me"** → selected entry + selected pins/context sent to the server `/api/*` → forwarded to AI provider(s)
+3. **AI responds** → returned to client → saved locally
+4. **Nothing syncs by default** unless you export or enable an optional sync feature
 
-### Data Flow
+> AI actions require internet. Local journaling does not.
 
-```
-You write → Saved locally (instant)
-You click "Think with me" → Entry + pins sent to Venice AI
-AI responds → Saved locally
-Nothing syncs unless you export
-```
+---
 
-## Web2 vs Web3: Why It Matters
+## Web2 vs "User-Owned" Thinking
 
-Your private thoughts deserve better than Web2. DJZS combines Web3's decentralized identity (wallet login) with local-first storage (your device). Your journal entries, research, and memories are never stored on our servers. You authenticate with your wallet — no email, no password, no account to hack. Your thinking stays yours.
+Your private thoughts deserve better than default Web2 patterns.
 
-| | Web2 (Centralized) | Web3 (Decentralized) |
+- Web2 apps tend to store journals on remote servers and monetize behavior.
+- DJZS Box is built to keep your vault local and give you control over what gets shared.
+
+| | Web2 (Centralized) | DJZS Box posture (Local-first) |
 |---|---|---|
-| **Identity** | Username + password for each site | 1 wallet = universal identity |
-| **Data** | Stored on company servers | Stored locally or on-chain (you own it) |
-| **Control** | Platform decides rules & access | You control your keys, you control access |
-| **Portability** | Data trapped in walled gardens | Take your data anywhere |
-| **Privacy** | Tracked, analyzed, sold to advertisers | Private by default, pseudonymous |
+| Identity | Email/password accounts | Wallet login optional (where enabled) |
+| Data | Stored on company servers | Stored locally by default |
+| Control | Platform decides access | You control export + local data |
+| Portability | Walled gardens | Export-first direction |
+| Privacy | Tracking + profiling incentives | Minimize data collection |
 
-## Philosophy
+---
 
-**What DJZS Is:**
-- An AI journaling partner
-- A thinking partner
-- A tool for clarity
-- Local-first and private
+## What DJZS Box is / isn't
 
-**What DJZS Is Not:**
-- AI therapist
-- AI coach
-- Memory system or "second brain"
-- Content generator
+**DJZS Box is:**
+- an AI journaling partner
+- a thinking partner
+- a tool for clarity
+- local-first and privacy-minded
+
+**DJZS Box is not:**
+- an AI therapist
+- an "AI coach" making life decisions for you
+- a surveillance-based "second brain"
+- a content generator
+
+---
 
 ## Quick Start
 
 ### Prerequisites
-
 - Node.js 18+
-- npm or yarn
-- MetaMask or another Web3 wallet
+- npm (or yarn)
+- Wallet (optional, only if using wallet-gated features)
 
-### Installation
-
+### Install
 ```bash
 git clone https://github.com/UsernameDAOEth/djzs-box.git
 cd djzs-box
 npm install
 npm run dev
 ```
-
-The app will be available at `http://localhost:5000`
-
-## Environment Variables
-
-```env
-# Required — Venice AI for journaling insights
-VENICE_API_KEY=your_venice_api_key
-
-# Optional — Privacy-first web search
-BRAVE_API_KEY=your_brave_api_key
-
-# Web3 Configuration
-BASE_RPC_URL=https://mainnet.base.org
-```
-
-## Tech Stack
-
-| Category | Technologies |
-|----------|-------------|
-| **Frontend** | React 18, TypeScript, Vite, Tailwind CSS, Radix UI, Framer Motion |
-| **State & Data** | TanStack Query, Dexie (IndexedDB), Zod Validation |
-| **Web3** | wagmi, viem, RainbowKit, ENS Resolution |
-| **Backend** | Express.js, TypeScript, Drizzle ORM |
-| **AI** | Venice AI, Brave Search API, Web Search, Reasoning Models |
-| **Storage** | IndexedDB (local), PostgreSQL (optional), In-memory |
-
-## License
-
-MIT
-
----
-
-Built with privacy in mind. Your thinking stays yours.
