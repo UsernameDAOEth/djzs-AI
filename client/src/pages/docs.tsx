@@ -16,7 +16,8 @@ import {
   Users,
   Database,
   Fingerprint,
-  Globe
+  Globe,
+  Video
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -405,6 +406,41 @@ export default function Docs() {
                 </li>
               </ul>
             </div>
+
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/[0.08] to-transparent border border-red-500/20 hover:border-red-500/30 transition-all md:col-span-2">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-red-600/20 flex items-center justify-center">
+                  <Video className="w-6 h-6 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Video Journal</h3>
+                  <p className="text-xs text-red-400/80">Decentralized video entries via Livepeer</p>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-5 leading-relaxed">Record or upload video directly within your journal entries. Videos are stored on Livepeer's decentralized network and playback IDs are saved locally.</p>
+              <ul className="space-y-3 text-sm text-gray-500">
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">In-Browser Recording</strong> - Record video journals using your device camera</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">File Upload</strong> - Upload existing video files up to 500MB</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">Resumable Uploads</strong> - TUS protocol ensures reliable uploads even on slow connections</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">Decentralized Storage</strong> - Videos stored on Livepeer's network, not centralized servers</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-red-300">Playback & Download</strong> - Watch past entries inline and download anytime</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </motion.section>
 
@@ -430,6 +466,10 @@ export default function Docs() {
             <TechStackItem 
               category="AI"
               items={["Venice AI", "Brave Search API", "Web Search API", "Web Citations", "Reasoning Models", "Structured JSON"]}
+            />
+            <TechStackItem 
+              category="Video"
+              items={["Livepeer", "MediaRecorder API", "TUS Uploads"]}
             />
             <TechStackItem 
               category="Storage"
