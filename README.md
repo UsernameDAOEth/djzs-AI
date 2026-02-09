@@ -60,6 +60,16 @@ Search and synthesize information, then track claims over time.
 - **Claim Tracking:** save key takeaways with trust levels and status
 - **Cross-Zone Linking:** connect claims to journal entries and pins
 
+### Video Journal
+Record or upload video directly within your journal entries, stored on decentralized infrastructure.
+
+- **In-Browser Recording:** record video journals using your device camera
+- **File Upload:** upload existing video files (up to 500MB)
+- **Resumable Uploads:** TUS protocol ensures reliable uploads even on slow connections
+- **Decentralized Storage:** videos stored on Livepeer's decentralized network
+- **Playback:** watch past video journal entries inline with your written reflections
+- **Download:** download your videos anytime from past entries
+
 ---
 
 ## Core Principles
