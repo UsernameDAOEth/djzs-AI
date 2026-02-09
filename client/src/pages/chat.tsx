@@ -1430,18 +1430,18 @@ export default function Chat() {
 
                 {/* Action bar - Journal zone only */}
                 {selectedZone === 'journal' && (
-                <div className={`flex items-center justify-between gap-3 mt-4 sm:mt-6 py-3 px-1 transition-all duration-300 ${isFocused ? 'opacity-100' : 'opacity-80 hover:opacity-100'}`}>
+                <div className="flex items-center justify-between gap-3 mt-4 sm:mt-6 py-3 sm:py-4 px-1">
                   {/* Left side: secondary tools + character count */}
-                  <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
                       <DialogTrigger asChild>
                         <button
                           disabled={!messageInput.trim()}
-                          className="group relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-90"
+                          className="group relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
                           title="Pin to vault"
                           data-testid="button-pin"
                         >
-                          <Pin className="w-4 h-4" />
+                          <Pin className="w-[18px] h-[18px]" />
                         </button>
                       </DialogTrigger>
                       <DialogContent className="bg-[#0a0a0a] border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl">
@@ -1491,48 +1491,48 @@ export default function Chat() {
 
                     <button
                       onClick={() => setShowVideoUpload(!showVideoUpload)}
-                      className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
+                      className={`relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border transition-all active:scale-95 ${
                         showVideoUpload
-                          ? 'text-purple-400 bg-purple-500/15'
+                          ? 'text-purple-400 bg-purple-500/15 border-purple-500/30'
                           : pendingVideoAssetId
-                            ? 'text-purple-400 hover:bg-purple-500/10'
-                            : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                            ? 'text-purple-400 bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/15'
+                            : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
                       }`}
                       title={pendingVideoAssetId ? 'Video attached' : 'Add video'}
                       data-testid="button-video-journal"
                     >
-                      <Video className="w-4 h-4" />
+                      <Video className="w-[18px] h-[18px]" />
                       {pendingVideoAssetId && (
-                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-purple-500 border-2 border-[#0a0a0a]" />
+                        <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-purple-500 border-2 border-[#0a0a0a] shadow-[0_0_6px_rgba(168,85,247,0.6)]" />
                       )}
                     </button>
 
-                    <div className="hidden sm:flex items-center gap-1.5 ml-1">
-                      <div className="h-5 w-px bg-white/[0.06]" />
-                      <span className={`text-[11px] font-medium tabular-nums ml-1.5 transition-colors ${messageInput.length > 0 ? 'text-gray-500' : 'text-gray-700'}`}>
-                        {messageInput.length > 0 ? messageInput.length.toLocaleString() : '0'}
+                    <div className="hidden sm:flex items-center gap-2 ml-2">
+                      <div className="h-6 w-px bg-white/[0.1]" />
+                      <span className={`text-xs font-medium tabular-nums ml-1 transition-colors ${messageInput.length > 0 ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {messageInput.length > 0 ? `${messageInput.length.toLocaleString()} chars` : '0 chars'}
                       </span>
                     </div>
 
-                    <span className={`sm:hidden text-[10px] font-medium tabular-nums ml-1 transition-colors ${messageInput.length > 0 ? 'text-gray-500' : 'text-gray-700'}`}>
-                      {messageInput.length > 0 ? messageInput.length.toLocaleString() : ''}
+                    <span className={`sm:hidden text-[11px] font-medium tabular-nums ml-1 transition-colors ${messageInput.length > 0 ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {messageInput.length > 0 ? messageInput.length.toLocaleString() : '0'}
                     </span>
                   </div>
 
                   {/* Right side: primary actions */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     <Button
                       onClick={handleSendText}
                       disabled={!messageInput.trim() || sendMessage.isPending}
                       variant="ghost"
-                      className="h-9 sm:h-10 px-3 sm:px-5 rounded-xl font-medium text-sm text-gray-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.12] disabled:opacity-30 disabled:border-transparent transition-all active:scale-95"
+                      className="h-11 sm:h-12 px-4 sm:px-6 rounded-xl font-semibold text-sm text-gray-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] disabled:opacity-30 disabled:border-transparent transition-all active:scale-95"
                       data-testid="button-save"
                     >
                       {sendMessage.isPending ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
                         <>
-                          <FileText className="w-3.5 h-3.5 mr-1.5 sm:mr-2 opacity-60" />
+                          <FileText className="w-4 h-4 mr-2" />
                           Save
                         </>
                       )}
@@ -1541,18 +1541,18 @@ export default function Chat() {
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className="h-9 sm:h-10 px-4 sm:px-6 rounded-xl font-semibold text-sm shadow-lg transition-all active:scale-95 bg-purple-600 hover:bg-purple-500 shadow-purple-900/30 disabled:opacity-30 disabled:shadow-none"
+                      className="h-11 sm:h-12 px-5 sm:px-8 rounded-xl font-bold text-sm shadow-lg shadow-purple-900/40 transition-all active:scale-95 bg-purple-600 hover:bg-purple-500 disabled:opacity-30 disabled:shadow-none"
                       data-testid="button-analyze"
                     >
                       {isAnalyzing ? (
                         <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
                           <span className="hidden sm:inline">Thinking...</span>
                           <span className="sm:hidden">...</span>
                         </>
                       ) : (
                         <>
-                          <Bot className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
+                          <Bot className="w-4 h-4 mr-2" />
                           <span className="hidden sm:inline">Think with me</span>
                           <span className="sm:hidden">Think</span>
                         </>
