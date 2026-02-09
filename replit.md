@@ -38,7 +38,7 @@ Preferred communication style: Simple, everyday language.
 - **Agent File**: `server/agent.ts` listens to XMTP messages.
 - **Commands**: `/help`, `/zones`.
 
-### Video Diary (Livepeer)
+### Video Journal (Livepeer)
 - **Recording**: In-browser video recording via MediaRecorder API.
 - **Upload**: TUS resumable uploads to Livepeer for reliability with large files.
 - **Storage**: Video asset IDs and playback IDs stored locally in IndexedDB with journal entries.
@@ -47,9 +47,9 @@ Preferred communication style: Simple, everyday language.
 - **Component**: `client/src/components/video-diary.tsx` (VideoUpload + VideoPlayer).
 
 ### Key Features
-- **Journal Zone**: Daily reflections with AI thinking partner, memory pinning, context-aware insights, video diary entries.
+- **Journal Zone**: Daily reflections with AI thinking partner, memory pinning, context-aware insights, video journal entries.
 - **Research Zone**: Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking to journal entries.
-- **Video Diary**: Record or upload video directly in journal entries. Stored on Livepeer (decentralized). Playback IDs saved locally.
+- **Video Journal**: Record or upload video directly in journal entries. Stored on Livepeer (decentralized). Playback IDs saved locally.
 - **Local-First Storage**: All data stored in browser IndexedDB. Works offline for writing/browsing.
 - **Offline Support**: Service worker caches static assets.
 

@@ -221,7 +221,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Video className="w-4 h-4 text-purple-400" />
-            <span className="text-xs font-semibold text-purple-400 uppercase tracking-wider">Video Diary</span>
+            <span className="text-xs font-semibold text-purple-400 uppercase tracking-wider">Video Journal</span>
           </div>
           {state !== "uploading" && state !== "processing" && (
             <button onClick={() => { cleanup(); onCancel(); }} className="p-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all" data-testid="button-close-video">
@@ -242,7 +242,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
                 Upload
               </Button>
             </div>
-            <p className="text-xs text-gray-500">Record a video diary or upload one (max 500MB)</p>
+            <p className="text-xs text-gray-500">Record a video journal or upload one (max 500MB)</p>
             <input ref={fileInputRef} type="file" accept="video/*" onChange={handleFileSelect} className="hidden" data-testid="input-video-file" />
           </div>
         )}
