@@ -19,6 +19,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [cameraReady, setCameraReady] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const previewVideoRef = useRef<HTMLVideoElement>(null);
@@ -46,24 +47,34 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
     return cleanup;
   }, [cleanup]);
 
+  const pendingStreamRef = useRef<MediaStream | null>(null);
+
   const startRecording = async () => {
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setErrorMsg("Your browser doesn't support camera access. Try opening in a full browser tab.");
+        setState("error");
+        return;
+      }
+
+      setState("recording");
+      setRecordingTime(0);
+      setCameraReady(false);
+
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } }, 
         audio: true 
       });
       streamRef.current = stream;
+      pendingStreamRef.current = stream;
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
+      const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus") 
+        ? "video/webm;codecs=vp9,opus" 
+        : MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")
+          ? "video/webm;codecs=vp8,opus"
+          : "video/webm";
 
-      const mediaRecorder = new MediaRecorder(stream, { 
-        mimeType: MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus") 
-          ? "video/webm;codecs=vp9,opus" 
-          : "video/webm" 
-      });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
@@ -72,35 +83,95 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "video/webm" });
+        const blob = new Blob(chunksRef.current, { type: mimeType });
         setRecordedBlob(blob);
         const url = URL.createObjectURL(blob);
         setPreviewUrl(url);
         setState("preview");
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(t => t.stop());
+          streamRef.current = null;
+        }
+      };
+
+      mediaRecorder.onerror = () => {
+        setErrorMsg("Recording failed. Please try again.");
+        setState("error");
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(t => t.stop());
+          streamRef.current = null;
         }
       };
 
       mediaRecorder.start(1000);
-      setState("recording");
-      setRecordingTime(0);
+      setCameraReady(true);
       timerRef.current = setInterval(() => {
         setRecordingTime(t => t + 1);
       }, 1000);
-    } catch (err) {
-      setErrorMsg("Could not access camera/microphone. Please grant permission.");
+    } catch (err: any) {
+      const name = err?.name || "";
+      if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+        setErrorMsg("Camera permission denied. Please allow camera access in your browser settings and try again.");
+      } else if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+        setErrorMsg("No camera or microphone found. Please connect a camera and try again.");
+      } else if (name === "NotReadableError" || name === "TrackStartError") {
+        setErrorMsg("Camera is already in use by another app. Close other apps using the camera and try again.");
+      } else if (name === "OverconstrainedError") {
+        setErrorMsg("Camera doesn't support the requested settings. Please try again.");
+      } else {
+        setErrorMsg("Could not access camera/microphone. Try opening in a full browser tab (not the preview panel).");
+      }
       setState("error");
     }
   };
 
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      mediaRecorderRef.current.stop();
+  useEffect(() => {
+    if (state === "recording" && pendingStreamRef.current && videoRef.current) {
+      videoRef.current.srcObject = pendingStreamRef.current;
+      videoRef.current.play().catch(() => {});
+      pendingStreamRef.current = null;
     }
+  }, [state]);
+
+  const stopRecording = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
+    }
+
+    try {
+      if (mediaRecorderRef.current) {
+        const recorderState = mediaRecorderRef.current.state;
+        if (recorderState === "recording" || recorderState === "paused") {
+          mediaRecorderRef.current.stop();
+        } else {
+          if (streamRef.current) {
+            streamRef.current.getTracks().forEach(t => t.stop());
+            streamRef.current = null;
+          }
+          if (chunksRef.current.length > 0) {
+            const blob = new Blob(chunksRef.current, { type: "video/webm" });
+            setRecordedBlob(blob);
+            const url = URL.createObjectURL(blob);
+            setPreviewUrl(url);
+            setState("preview");
+          } else {
+            setState("idle");
+          }
+        }
+      } else {
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(t => t.stop());
+          streamRef.current = null;
+        }
+        setState("idle");
+      }
+    } catch {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
+      }
+      setState("idle");
     }
   };
 
@@ -210,6 +281,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
     setRecordedBlob(null);
     setPreviewUrl(null);
     setRecordingTime(0);
+    setCameraReady(false);
     setState("idle");
   };
 
@@ -251,12 +323,21 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
           <div className="space-y-4">
             <div className="relative rounded-xl overflow-hidden bg-black aspect-video">
               <video ref={videoRef} muted playsInline className="w-full h-full object-cover" style={{ transform: "scaleX(-1)" }} />
-              <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-600/90 backdrop-blur-sm">
-                <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                <span className="text-xs font-semibold text-white">{formatTime(recordingTime)}</span>
-              </div>
+              {!cameraReady && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80">
+                  <Loader2 className="w-8 h-8 animate-spin text-purple-400 mb-3" />
+                  <p className="text-sm text-gray-400 font-medium">Connecting camera...</p>
+                  <p className="text-xs text-gray-600 mt-1">Allow access if prompted</p>
+                </div>
+              )}
+              {cameraReady && (
+                <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-600/90 backdrop-blur-sm">
+                  <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  <span className="text-xs font-semibold text-white">{formatTime(recordingTime)}</span>
+                </div>
+              )}
             </div>
-            <Button onClick={stopRecording} className="w-full h-11 rounded-xl bg-red-600 hover:bg-red-500 text-white font-medium text-sm" data-testid="button-stop-recording">
+            <Button onClick={stopRecording} className="w-full h-12 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm shadow-lg shadow-red-900/30" data-testid="button-stop-recording">
               <Square className="w-4 h-4 mr-2 fill-current" />
               Stop Recording
             </Button>
