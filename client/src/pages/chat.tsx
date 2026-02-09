@@ -52,7 +52,8 @@ import {
   Check,
   AlertCircle,
   HelpCircle,
-  Plus
+  Plus,
+  Video
 } from "lucide-react";
 import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
@@ -71,10 +72,12 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
 import { format } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
+import { VideoUpload, VideoPlayer } from "@/components/video-diary";
 import { 
   vault, 
   saveEntry, 
   saveInsight, 
+  updateEntryVideo,
   getActiveMemories, 
   getMemoriesForAgent, 
   pinMemory as pinLocalMemory, 
@@ -239,6 +242,9 @@ export default function Chat() {
   const [claimSourceNote, setClaimSourceNote] = useState("");
   const [claimTrustLevel, setClaimTrustLevel] = useState<TrustLevel>("unknown");
   const [relatedJournalEntries, setRelatedJournalEntries] = useState<Array<{ id?: number; text: string; createdAt: Date }>>([]);
+  const [showVideoUpload, setShowVideoUpload] = useState(false);
+  const [pendingVideoAssetId, setPendingVideoAssetId] = useState<string | null>(null);
+  const [pendingVideoPlaybackId, setPendingVideoPlaybackId] = useState<string | null>(null);
 
   // Local-first: Query memories from IndexedDB
   const localMemories = useLiveQuery(() => getActiveMemories(10), []);
@@ -448,8 +454,8 @@ export default function Chat() {
       // 2. Get pinned memories for context
       const memories = await getMemoriesForAgent();
       
-      // 3. Save entry locally
-      const entryId = await saveEntry(mode, content);
+      // 3. Save entry locally (with optional video)
+      const entryId = await saveEntry(mode, content, [], pendingVideoAssetId || undefined, pendingVideoPlaybackId || undefined);
       setLastEntryId(entryId);
       
       // 4. Call agent API with prior entries (excludes current entry)
@@ -619,8 +625,13 @@ export default function Chat() {
     }
   };
 
-  const handleSendText = () => {
+  const handleSendText = async () => {
     if (!messageInput.trim() || !address || sendMessage.isPending) return;
+    
+    if (selectedZone === 'journal' || selectedZone === 'research') {
+      await saveEntry(selectedZone as EntryType, messageInput, [], pendingVideoAssetId || undefined, pendingVideoPlaybackId || undefined);
+    }
+    
     const message: ChatMessage = {
       type: "text",
       content: messageInput,
@@ -629,6 +640,9 @@ export default function Chat() {
     };
     sendMessage.mutate(message);
     setMessageInput("");
+    setPendingVideoAssetId(null);
+    setPendingVideoPlaybackId(null);
+    setShowVideoUpload(false);
   };
 
   const handleAnalyze = () => {
@@ -661,6 +675,9 @@ export default function Chat() {
     setLatestAnalysis(null);
     setFrozenHeight(null);
     setRelatedJournalEntries([]);
+    setShowVideoUpload(false);
+    setPendingVideoAssetId(null);
+    setPendingVideoPlaybackId(null);
     textareaRef.current?.focus();
   };
   
@@ -1172,6 +1189,33 @@ export default function Chat() {
                         data-testid="textarea-journal"
                       />
                     </div>
+
+                    {showVideoUpload && (
+                      <div className="mt-4">
+                        <VideoUpload
+                          onVideoReady={(assetId, playbackId) => {
+                            setPendingVideoAssetId(assetId);
+                            setPendingVideoPlaybackId(playbackId);
+                            setShowVideoUpload(false);
+                          }}
+                          onCancel={() => setShowVideoUpload(false)}
+                        />
+                      </div>
+                    )}
+
+                    {pendingVideoAssetId && !showVideoUpload && (
+                      <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                        <Video className="w-4 h-4 text-purple-400" />
+                        <span className="text-xs text-purple-300 font-medium">Video attached</span>
+                        <button
+                          onClick={() => { setPendingVideoAssetId(null); setPendingVideoPlaybackId(null); }}
+                          className="ml-auto p-1 rounded-lg text-gray-500 hover:text-red-400 transition-colors"
+                          data-testid="button-remove-video"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
                   </>
                 ) : (
                   <>
@@ -1470,6 +1514,18 @@ export default function Chat() {
                         </div>
                       </DialogContent>
                     </Dialog>
+
+                      <Button
+                        onClick={() => setShowVideoUpload(!showVideoUpload)}
+                        variant="ghost"
+                        className={`flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm transition-all active:scale-95 touch-target ${
+                          pendingVideoAssetId ? 'text-purple-400 hover:text-purple-300 hover:bg-purple-500/10' : 'text-gray-500 hover:text-red-400 hover:bg-red-500/10'
+                        }`}
+                        data-testid="button-video-diary"
+                      >
+                        <Video className="w-4 h-4 mr-2" />
+                        {pendingVideoAssetId ? 'Video' : 'Video'}
+                      </Button>
 
                       <Button
                         onClick={handleSendText}
@@ -2166,10 +2222,18 @@ export default function Chat() {
                               <p className="text-sm text-gray-400 leading-relaxed line-clamp-3">
                                 {entry.text}
                               </p>
+                              {entry.videoPlaybackId && entry.videoAssetId && (
+                                <VideoPlayer playbackId={entry.videoPlaybackId} assetId={entry.videoAssetId} compact />
+                              )}
                             </div>
-                            <span className="text-xs font-medium text-gray-600 shrink-0">
-                              {format(new Date(entry.createdAt), "MMM d")}
-                            </span>
+                            <div className="flex items-center gap-2 shrink-0">
+                              {entry.videoAssetId && (
+                                <Video className="w-3.5 h-3.5 text-purple-400" />
+                              )}
+                              <span className="text-xs font-medium text-gray-600">
+                                {format(new Date(entry.createdAt), "MMM d")}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       ))}

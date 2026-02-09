@@ -7,6 +7,7 @@ import { analyzeJournalEntry, analyzeResearchEntry, synthesizeResearch, synthesi
 import { analyzeWithAgent, agentInputSchema } from "./agent.api";
 import { searchBrave, type BraveSearchResult } from "./brave";
 import { getUncachableGitHubClient } from "./github";
+import { createUploadUrl, getAssetStatus, getPlaybackInfo, deleteAsset } from "./livepeer";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -35,6 +36,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         braveSearch: !!process.env.BRAVE_API_KEY,
         redpillAI: !!process.env.REDPILL_API_KEY,
         veniceAI: !!process.env.VENICE_API_KEY,
+        livepeerVideo: !!process.env.LIVEPEER_API_KEY,
       }
     });
   });
@@ -488,6 +490,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(503).json({ error: "AI service not configured" });
       }
       res.status(500).json({ error: "Failed to analyze entry" });
+    }
+  });
+
+  // ==================== LIVEPEER VIDEO API ====================
+
+  app.post("/api/video/upload", async (req, res) => {
+    try {
+      const { name } = req.body;
+      if (!name || typeof name !== "string") {
+        return res.status(400).json({ error: "Video name is required" });
+      }
+      const result = await createUploadUrl(name);
+      res.json(result);
+    } catch (error) {
+      console.error("Error creating video upload URL:", error);
+      if (error instanceof Error && error.message.includes("LIVEPEER_API_KEY")) {
+        return res.status(503).json({ error: "Video service not configured" });
+      }
+      res.status(500).json({ error: "Failed to create upload URL" });
+    }
+  });
+
+  app.get("/api/video/asset/:assetId", async (req, res) => {
+    try {
+      const result = await getAssetStatus(req.params.assetId);
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching asset status:", error);
+      res.status(500).json({ error: "Failed to fetch asset status" });
+    }
+  });
+
+  app.get("/api/video/playback/:playbackId", async (req, res) => {
+    try {
+      const result = await getPlaybackInfo(req.params.playbackId);
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching playback info:", error);
+      res.status(500).json({ error: "Failed to fetch playback info" });
+    }
+  });
+
+  app.delete("/api/video/asset/:assetId", async (req, res) => {
+    try {
+      await deleteAsset(req.params.assetId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting video asset:", error);
+      res.status(500).json({ error: "Failed to delete video" });
     }
   });
 

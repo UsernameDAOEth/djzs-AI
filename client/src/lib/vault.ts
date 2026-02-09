@@ -12,6 +12,8 @@ export interface VaultEntry {
   createdAt: Date;
   updatedAt: Date;
   tags: string[];
+  videoAssetId?: string;
+  videoPlaybackId?: string;
 }
 
 export interface VaultInsight {
@@ -101,21 +103,48 @@ class VaultDatabase extends Dexie {
       researchQueries: '++id, dossierId, createdAt',
       researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
     });
+
+    this.version(4).stores({
+      entries: '++id, type, createdAt, updatedAt, videoAssetId',
+      insights: '++id, entryId, type, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
+      tradeRecords: '++id, action, status, createdAt',
+      researchDossiers: '++id, name, isArchived, createdAt, updatedAt',
+      researchQueries: '++id, dossierId, createdAt',
+      researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
+    });
   }
 }
 
 export const vault = new VaultDatabase();
 
-export async function saveEntry(type: EntryType, text: string, tags: string[] = []): Promise<number> {
+export async function saveEntry(
+  type: EntryType,
+  text: string,
+  tags: string[] = [],
+  videoAssetId?: string,
+  videoPlaybackId?: string
+): Promise<number> {
   const now = new Date();
-  const id = await vault.entries.add({
+  const entry: Omit<VaultEntry, 'id'> = {
     type,
     text,
     createdAt: now,
     updatedAt: now,
     tags,
-  });
+  };
+  if (videoAssetId) entry.videoAssetId = videoAssetId;
+  if (videoPlaybackId) entry.videoPlaybackId = videoPlaybackId;
+  const id = await vault.entries.add(entry);
   return id as number;
+}
+
+export async function updateEntryVideo(
+  entryId: number,
+  videoAssetId: string,
+  videoPlaybackId: string
+): Promise<void> {
+  await vault.entries.update(entryId, { videoAssetId, videoPlaybackId, updatedAt: new Date() });
 }
 
 export async function saveInsight(
