@@ -1430,46 +1430,20 @@ export default function Chat() {
 
                 {/* Action bar - Journal zone only */}
                 {selectedZone === 'journal' && (
-                <div className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-6 sm:mt-8 py-4 transition-all duration-500 ${isFocused ? 'opacity-100' : 'opacity-60'}`}>
-                  {/* Character count and shortcuts - hidden on mobile */}
-                  <div className="hidden sm:flex items-center gap-6">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2 group cursor-default">
-                        <kbd className="px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[9px] font-semibold text-gray-500 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">Enter</kbd>
-                        <span className="text-[10px] font-medium text-gray-600 group-hover:text-gray-400 transition-colors">Save</span>
-                      </div>
-                      <div className="flex items-center gap-2 group cursor-default">
-                        <kbd className="px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[9px] font-semibold text-gray-500 group-hover:border-purple-500/30 group-hover:text-purple-400 transition-colors">⌘ Enter</kbd>
-                        <span className="text-[10px] font-medium text-gray-600 group-hover:text-gray-400 transition-colors">Think</span>
-                      </div>
-                    </div>
-                    
-                    <div className="h-4 w-px bg-white/10" />
-                    
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full transition-colors duration-500 ${messageInput.length > 0 ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'bg-gray-800'}`} />
-                      <span className={`text-xs font-medium tabular-nums transition-colors ${messageInput.length > 0 ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {messageInput.length.toLocaleString()} chars
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Action buttons - stacked on mobile */}
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
-                    {/* Secondary actions row on mobile */}
-                    <div className="flex gap-2 sm:contents">
-                      <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
-                        <DialogTrigger asChild>
-                          <Button
-                            disabled={!messageInput.trim()}
-                            variant="ghost"
-                            className="flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all active:scale-95 touch-target"
-                            data-testid="button-pin"
-                          >
-                            <Pin className="w-4 h-4 mr-2" />
-                            Pin
-                          </Button>
-                        </DialogTrigger>
+                <div className={`flex items-center justify-between gap-3 mt-4 sm:mt-6 py-3 px-1 transition-all duration-300 ${isFocused ? 'opacity-100' : 'opacity-80 hover:opacity-100'}`}>
+                  {/* Left side: secondary tools + character count */}
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
+                      <DialogTrigger asChild>
+                        <button
+                          disabled={!messageInput.trim()}
+                          className="group relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-90"
+                          title="Pin to vault"
+                          data-testid="button-pin"
+                        >
+                          <Pin className="w-4 h-4" />
+                        </button>
+                      </DialogTrigger>
                       <DialogContent className="bg-[#0a0a0a] border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl">
                         <DialogHeader>
                           <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">Pin Memory</DialogTitle>
@@ -1515,50 +1489,72 @@ export default function Chat() {
                       </DialogContent>
                     </Dialog>
 
-                      <Button
-                        onClick={() => setShowVideoUpload(!showVideoUpload)}
-                        variant="ghost"
-                        className={`flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm transition-all active:scale-95 touch-target ${
-                          pendingVideoAssetId ? 'text-purple-400 hover:text-purple-300 hover:bg-purple-500/10' : 'text-gray-500 hover:text-red-400 hover:bg-red-500/10'
-                        }`}
-                        data-testid="button-video-diary"
-                      >
-                        <Video className="w-4 h-4 mr-2" />
-                        {pendingVideoAssetId ? 'Video' : 'Video'}
-                      </Button>
+                    <button
+                      onClick={() => setShowVideoUpload(!showVideoUpload)}
+                      className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
+                        showVideoUpload
+                          ? 'text-purple-400 bg-purple-500/15'
+                          : pendingVideoAssetId
+                            ? 'text-purple-400 hover:bg-purple-500/10'
+                            : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                      }`}
+                      title={pendingVideoAssetId ? 'Video attached' : 'Add video'}
+                      data-testid="button-video-journal"
+                    >
+                      <Video className="w-4 h-4" />
+                      {pendingVideoAssetId && (
+                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-purple-500 border-2 border-[#0a0a0a]" />
+                      )}
+                    </button>
 
-                      <Button
-                        onClick={handleSendText}
-                        disabled={!messageInput.trim() || sendMessage.isPending}
-                        variant="ghost"
-                        className="flex-1 sm:flex-none h-11 sm:h-10 px-4 rounded-xl font-medium text-sm text-gray-500 hover:text-white hover:bg-white/5 transition-all active:scale-95 touch-target"
-                        data-testid="button-save"
-                      >
-                        {sendMessage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-                          <>
-                            <FileText className="w-4 h-4 mr-2 opacity-50" />
-                            Save
-                          </>
-                        )}
-                      </Button>
+                    <div className="hidden sm:flex items-center gap-1.5 ml-1">
+                      <div className="h-5 w-px bg-white/[0.06]" />
+                      <span className={`text-[11px] font-medium tabular-nums ml-1.5 transition-colors ${messageInput.length > 0 ? 'text-gray-500' : 'text-gray-700'}`}>
+                        {messageInput.length > 0 ? messageInput.length.toLocaleString() : '0'}
+                      </span>
                     </div>
 
-                    {/* Primary action - full width on mobile */}
+                    <span className={`sm:hidden text-[10px] font-medium tabular-nums ml-1 transition-colors ${messageInput.length > 0 ? 'text-gray-500' : 'text-gray-700'}`}>
+                      {messageInput.length > 0 ? messageInput.length.toLocaleString() : ''}
+                    </span>
+                  </div>
+
+                  {/* Right side: primary actions */}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={handleSendText}
+                      disabled={!messageInput.trim() || sendMessage.isPending}
+                      variant="ghost"
+                      className="h-9 sm:h-10 px-3 sm:px-5 rounded-xl font-medium text-sm text-gray-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.12] disabled:opacity-30 disabled:border-transparent transition-all active:scale-95"
+                      data-testid="button-save"
+                    >
+                      {sendMessage.isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          <FileText className="w-3.5 h-3.5 mr-1.5 sm:mr-2 opacity-60" />
+                          Save
+                        </>
+                      )}
+                    </Button>
+
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className="w-full sm:w-auto h-12 sm:h-11 px-6 sm:px-8 rounded-xl sm:rounded-2xl font-semibold text-sm shadow-lg transition-all active:scale-95 action-btn-glow touch-target bg-purple-600 hover:bg-purple-500 shadow-purple-900/40"
+                      className="h-9 sm:h-10 px-4 sm:px-6 rounded-xl font-semibold text-sm shadow-lg transition-all active:scale-95 bg-purple-600 hover:bg-purple-500 shadow-purple-900/30 disabled:opacity-30 disabled:shadow-none"
                       data-testid="button-analyze"
                     >
                       {isAnalyzing ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                          Thinking...
+                          <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                          <span className="hidden sm:inline">Thinking...</span>
+                          <span className="sm:hidden">...</span>
                         </>
                       ) : (
                         <>
-                          <Bot className="w-4 h-4 mr-2" />
-                          Think with me
+                          <Bot className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
+                          <span className="hidden sm:inline">Think with me</span>
+                          <span className="sm:hidden">Think</span>
                         </>
                       )}
                     </Button>
