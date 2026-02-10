@@ -47,7 +47,6 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
     return cleanup;
   }, [cleanup]);
 
-  const pendingStreamRef = useRef<MediaStream | null>(null);
 
   const startRecording = async () => {
     try {
@@ -66,7 +65,6 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
         audio: true 
       });
       streamRef.current = stream;
-      pendingStreamRef.current = stream;
 
       const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus") 
         ? "video/webm;codecs=vp9,opus" 
@@ -104,7 +102,20 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
       };
 
       mediaRecorder.start(1000);
-      setCameraReady(true);
+
+      const attachStream = (retries = 10) => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(() => {});
+          setCameraReady(true);
+        } else if (retries > 0) {
+          requestAnimationFrame(() => attachStream(retries - 1));
+        } else {
+          setCameraReady(true);
+        }
+      };
+      requestAnimationFrame(() => attachStream());
+
       timerRef.current = setInterval(() => {
         setRecordingTime(t => t + 1);
       }, 1000);
@@ -125,13 +136,6 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
     }
   };
 
-  useEffect(() => {
-    if (state === "recording" && pendingStreamRef.current && videoRef.current) {
-      videoRef.current.srcObject = pendingStreamRef.current;
-      videoRef.current.play().catch(() => {});
-      pendingStreamRef.current = null;
-    }
-  }, [state]);
 
   const stopRecording = () => {
     if (timerRef.current) {
@@ -322,7 +326,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
         {state === "recording" && (
           <div className="space-y-4">
             <div className="relative rounded-xl overflow-hidden bg-black aspect-video">
-              <video ref={videoRef} muted playsInline className="w-full h-full object-cover" style={{ transform: "scaleX(-1)" }} />
+              <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" style={{ transform: "scaleX(-1)" }} />
               {!cameraReady && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80">
                   <Loader2 className="w-8 h-8 animate-spin text-purple-400 mb-3" />
