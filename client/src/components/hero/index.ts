@@ -6,6 +6,5 @@ export { RevealSection } from "./RevealSection";
 export { AnimatedBackground } from "./AnimatedBackground";
 export { CursorSpotlight } from "./CursorSpotlight";
 export { ThinkFlywheel } from "./ThinkFlywheel";
-export { ZoneFlywheel } from "./ZoneFlywheel";
 export { PortalBackground } from "./PortalBackground";
 export { FlipFeatureCard } from "./FlipFeatureCard";

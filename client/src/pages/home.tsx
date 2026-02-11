@@ -5,7 +5,7 @@ import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight, S
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, PortalBackground, FlipFeatureCard } from "@/components/hero";
+import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, PortalBackground, FlipFeatureCard } from "@/components/hero";
 import { Helmet } from "react-helmet";
 
 export default function Home() {
@@ -326,7 +326,6 @@ export default function Home() {
           <PortalBackground variant="zone" />
           <div className="relative z-10 max-w-6xl mx-auto px-10">
             <div className="text-center mb-8">
-              <ZoneFlywheel />
               <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-medium">
                 Your thinking lives on your device. Sync only when you choose. A tool, not a network.
               </p>
