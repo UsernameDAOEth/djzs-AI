@@ -61,6 +61,7 @@
     "@xmtp/browser-sdk": "^5.1.0",
     "@xmtp/content-type-text": "^2.0.2",
     "autoprefixer": "^10.4.23",
+    "axios": "^1.13.5",
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
