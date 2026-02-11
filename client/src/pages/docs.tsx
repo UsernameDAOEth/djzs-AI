@@ -38,9 +38,9 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
   return (
-    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-purple-500/20 transition-all group">
-      <div className="w-10 h-10 rounded-xl bg-purple-600/10 flex items-center justify-center mb-4 group-hover:bg-purple-600/20 transition-colors">
-        <Icon className="w-5 h-5 text-purple-400" />
+    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/20 transition-all group">
+      <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4 group-hover:bg-orange-500/20 transition-colors">
+        <Icon className="w-5 h-5 text-orange-400" />
       </div>
       <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
       <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
@@ -57,13 +57,13 @@ interface QuickLinkProps {
 
 function QuickLink({ href, title, description, external }: QuickLinkProps) {
   const content = (
-    <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-purple-500/30 hover:bg-purple-500/[0.03] transition-all group cursor-pointer">
+    <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/30 hover:bg-orange-500/[0.03] transition-all group cursor-pointer">
       <div className="flex items-center justify-between mb-2">
-        <h4 className="font-bold text-white group-hover:text-purple-300 transition-colors">{title}</h4>
+        <h4 className="font-bold text-white group-hover:text-orange-300 transition-colors">{title}</h4>
         {external ? (
-          <ExternalLink className="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" />
+          <ExternalLink className="w-4 h-4 text-gray-600 group-hover:text-orange-400 transition-colors" />
         ) : (
-          <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
+          <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
         )}
       </div>
       <p className="text-xs text-gray-500">{description}</p>
@@ -84,7 +84,7 @@ interface TechStackItemProps {
 function TechStackItem({ category, items }: TechStackItemProps) {
   return (
     <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.03]">
-      <h4 className="text-[10px] font-bold text-purple-400 uppercase tracking-wide mb-3">{category}</h4>
+      <h4 className="text-[10px] font-bold text-orange-400 uppercase tracking-wide mb-3">{category}</h4>
       <div className="flex flex-wrap gap-2">
         {items.map((item, i) => (
           <span key={i} className="px-2.5 py-1 rounded-lg bg-white/[0.03] text-xs text-gray-400 font-medium">
@@ -98,11 +98,11 @@ function TechStackItem({ category, items }: TechStackItemProps) {
 
 export default function Docs() {
   return (
-    <div className="min-h-screen bg-[#050505] text-gray-300 selection:bg-purple-500/30">
-      <header className="sticky top-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/[0.02]">
+    <div className="min-h-screen text-gray-300 selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
+      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.02]" style={{ background: 'rgba(26,29,46,0.8)' }}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
-            <button className="flex items-center gap-2 text-sm font-bold text-white tracking-wide uppercase opacity-60 hover:opacity-100 hover:text-purple-400 transition-all group">
+            <button className="flex items-center gap-2 text-sm font-bold text-white tracking-wide uppercase opacity-60 hover:opacity-100 hover:text-orange-400 transition-all group">
               <Home className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
               <span>DJZS</span>
             </button>
@@ -132,7 +132,7 @@ export default function Docs() {
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
-              <button className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold transition-colors" data-testid="button-start-writing">
+              <button className="px-6 py-3 rounded-xl text-white font-bold transition-colors" style={{ background: '#E8842C' }} data-testid="button-start-writing">
                 Start Writing
               </button>
             </Link>
@@ -140,14 +140,14 @@ export default function Docs() {
         </motion.div>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20">
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
             <h2 className="text-2xl font-bold text-white mb-4">What is DJZS?</h2>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p className="text-lg">
                 DJZS is an <strong className="text-white">AI journaling partner for thinking and research</strong>. It creates a private space where you can process ideas, track patterns in your thinking, and develop clarity—without the AI taking over.
               </p>
               <p>
-                Unlike traditional journaling apps that store your data on remote servers, or AI assistants that generate content for you, DJZS is built on a different philosophy: <strong className="text-purple-300">your thinking should stay yours</strong>.
+                Unlike traditional journaling apps that store your data on remote servers, or AI assistants that generate content for you, DJZS is built on a different philosophy: <strong className="text-orange-300">your thinking should stay yours</strong>.
               </p>
               <p>
                 The AI doesn't generate content or save memory automatically. It helps you reflect on your own thinking and build insight through daily habit.
@@ -253,35 +253,35 @@ export default function Docs() {
               <tbody className="text-gray-400">
                 <tr className="border-b border-white/5">
                   <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Fingerprint className="w-4 h-4 text-purple-400" /> Identity
+                    <Fingerprint className="w-4 h-4 text-orange-400" /> Identity
                   </td>
                   <td className="py-4 px-4">Username + password for each site</td>
                   <td className="py-4 px-4 text-green-300">1 wallet = universal identity</td>
                 </tr>
                 <tr className="border-b border-white/5">
                   <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Database className="w-4 h-4 text-purple-400" /> Data
+                    <Database className="w-4 h-4 text-orange-400" /> Data
                   </td>
                   <td className="py-4 px-4">Stored on company servers</td>
                   <td className="py-4 px-4 text-green-300">Stored locally or on-chain (you own it)</td>
                 </tr>
                 <tr className="border-b border-white/5">
                   <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Users className="w-4 h-4 text-purple-400" /> Control
+                    <Users className="w-4 h-4 text-orange-400" /> Control
                   </td>
                   <td className="py-4 px-4">Platform decides rules & access</td>
                   <td className="py-4 px-4 text-green-300">You control your keys, you control access</td>
                 </tr>
                 <tr className="border-b border-white/5">
                   <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-purple-400" /> Portability
+                    <Globe className="w-4 h-4 text-orange-400" /> Portability
                   </td>
                   <td className="py-4 px-4">Data trapped in walled gardens</td>
                   <td className="py-4 px-4 text-green-300">Take your data anywhere</td>
                 </tr>
                 <tr>
                   <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-purple-400" /> Privacy
+                    <Shield className="w-4 h-4 text-orange-400" /> Privacy
                   </td>
                   <td className="py-4 px-4">Tracked, analyzed, sold to advertisers</td>
                   <td className="py-4 px-4 text-green-300">Private by default, pseudonymous</td>
@@ -291,7 +291,7 @@ export default function Docs() {
           </div>
 
           {/* Why DJZS uses Web3 */}
-          <div className="mt-10 p-6 rounded-2xl bg-purple-500/[0.08] border border-purple-500/20">
+          <div className="mt-10 p-6 rounded-2xl bg-orange-500/[0.08] border border-orange-500/20">
             <h3 className="text-lg font-bold text-white mb-3">Why DJZS Uses Web3 Principles</h3>
             <p className="text-gray-400 leading-relaxed">
               Your private thoughts deserve better than Web2. DJZS combines Web3's decentralized identity (wallet login) with local-first storage (your device). This means your journal entries, research, and memories are never stored on our servers. You authenticate with your wallet—no email, no password, no account to hack. Your thinking stays yours.
@@ -338,44 +338,44 @@ export default function Docs() {
         <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-white mb-8">Zones</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20 hover:border-purple-500/30 transition-all">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-purple-400" />
+                <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                  <BookOpen className="w-6 h-6 text-orange-400" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Journal</h3>
-                  <p className="text-xs text-purple-400/80">AI thinking partner</p>
+                  <p className="text-xs text-orange-400/80">AI thinking partner</p>
                 </div>
               </div>
               <p className="text-gray-400 mb-5 leading-relaxed">Your private space to think, reflect, and achieve clarity with an AI thinking partner that helps you see patterns.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Deep Reasoning</strong> - AI analyzes patterns, connections, and blind spots</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-orange-300">Deep Reasoning</strong> - AI analyzes patterns, connections, and blind spots</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Reflective Questions</strong> - Powerful questions to deepen your thinking</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-orange-300">Reflective Questions</strong> - Powerful questions to deepen your thinking</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Memory Pinning</strong> - Save insights worth remembering long-term</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-orange-300">Memory Pinning</strong> - Save insights worth remembering long-term</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Context Awareness</strong> - AI considers your recent entries and pinned memories</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-orange-300">Context Awareness</strong> - AI considers your recent entries and pinned memories</span>
                 </li>
               </ul>
             </div>
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/[0.08] to-transparent border border-blue-500/20 hover:border-blue-500/30 transition-all">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20 hover:border-teal-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center">
-                  <Search className="w-6 h-6 text-blue-400" />
+                <div className="w-12 h-12 rounded-xl bg-teal-600/20 flex items-center justify-center">
+                  <Search className="w-6 h-6 text-teal-400" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Research</h3>
-                  <p className="text-xs text-blue-400/80">AI-powered knowledge synthesis</p>
+                  <p className="text-xs text-teal-400/80">AI-powered knowledge synthesis</p>
                 </div>
               </div>
               <p className="text-gray-400 mb-5 leading-relaxed">Search the web for real-time data or use AI knowledge to synthesize information and track claims.</p>
@@ -385,24 +385,24 @@ export default function Docs() {
                   <span><strong className="text-orange-300">Brave Mode</strong> - Privacy-first web search with no tracking or profiling, synthesized by Venice AI</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-blue-300">Web Mode</strong> - Real-time web search via Venice AI with source citations</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-teal-300">Web Mode</strong> - Real-time web search via Venice AI with source citations</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-blue-300">Explain Mode</strong> - AI knowledge synthesis without live data</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-teal-300">Explain Mode</strong> - AI knowledge synthesis without live data</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-blue-300">Dossiers</strong> - Organize research into named folders</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-teal-300">Dossiers</strong> - Organize research into named folders</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-blue-300">Claim Tracking</strong> - Save key takeaways with trust levels and status</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-teal-300">Claim Tracking</strong> - Save key takeaways with trust levels and status</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-blue-300">Cross-Zone Linking</strong> - Connect research claims to journal entries</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-teal-300">Cross-Zone Linking</strong> - Connect research claims to journal entries</span>
                 </li>
               </ul>
             </div>
@@ -509,7 +509,7 @@ export default function Docs() {
             <h2 className="text-2xl font-bold text-white mb-6">Philosophy</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xs font-bold text-purple-400 uppercase tracking-wide mb-3">What DJZS Is</h3>
+                <h3 className="text-xs font-bold text-orange-400 uppercase tracking-wide mb-3">What DJZS Is</h3>
                 <ul className="space-y-2 text-gray-400">
                   <li className="flex items-start gap-2">
                     <span className="text-green-500 mt-1">✓</span>

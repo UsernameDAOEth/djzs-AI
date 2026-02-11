@@ -794,10 +794,10 @@ export default function Chat() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#1a1d2e' }}>
         <div className="text-center max-w-sm">
-          <div className="w-20 h-20 rounded-3xl bg-purple-600/10 flex items-center justify-center mx-auto mb-8 border border-purple-500/20">
-            <Shield className="w-10 h-10 text-purple-400" />
+          <div className="w-20 h-20 rounded-3xl bg-orange-600/10 flex items-center justify-center mx-auto mb-8 border border-orange-500/20">
+            <Shield className="w-10 h-10 text-orange-400" />
           </div>
           <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Access Locked</h2>
           <p className="text-gray-400 mb-8 leading-relaxed">DJZS requires a cryptographic identity to ensure absolute privacy for your Journal.</p>
@@ -811,8 +811,8 @@ export default function Chat() {
 
   if (memberLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-purple-600 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#1a1d2e' }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#E8842C' }} />
       </div>
     );
   }
@@ -845,7 +845,7 @@ export default function Chat() {
 
   return (
     <TooltipProvider>
-      <div className="h-screen bg-[#050505] text-gray-300 flex overflow-hidden font-sans selection:bg-purple-500/30">
+      <div className="h-screen text-gray-300 flex overflow-hidden font-sans selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
         {/* Mobile sidebar overlay */}
         {mobileSidebarOpen && (
           <div 
@@ -859,13 +859,13 @@ export default function Chat() {
           ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
           md:translate-x-0
           fixed md:relative z-50 md:z-auto
-          w-64 h-full border-r border-white/[0.03] flex flex-col bg-[#050505] md:bg-black/20 
+          w-64 h-full border-r border-white/[0.03] flex flex-col bg-[#151828] md:bg-[#151828]/80 
           transition-all duration-300 
           ${isFocused && !mobileSidebarOpen ? 'md:opacity-40' : 'opacity-100'}
         `}>
           <div className="p-8 pb-4 flex items-center justify-between">
             <Link href="/">
-              <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-purple-400 transition-all group">
+              <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-orange-400 transition-all group">
                 <Home className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                 <span>DJZS v1</span>
               </button>
@@ -897,9 +897,9 @@ export default function Chat() {
                       : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-purple-400" : "text-gray-600 group-hover:text-gray-400"}`} />
+                  <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-orange-400" : "text-gray-600 group-hover:text-gray-400"}`} />
                   <span className="text-sm font-bold tracking-tight">{zone.name}</span>
-                  {isActive && <div className="ml-auto w-1 h-1 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]"></div>}
+                  {isActive && <div className="ml-auto w-1 h-1 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(232,132,44,0.5)]"></div>}
                 </button>
               );
             })}
@@ -912,13 +912,13 @@ export default function Chat() {
                   <img 
                     src={primaryProfile.avatar} 
                     alt={primaryProfile.displayName} 
-                    className="w-10 h-10 rounded-full border border-purple-500/20 object-cover"
+                    className="w-10 h-10 rounded-full border border-orange-500/20 object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none';
                     }}
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center text-sm font-black text-purple-400 border border-purple-500/20">
+                  <div className="w-10 h-10 rounded-full bg-orange-600/20 flex items-center justify-center text-sm font-black text-orange-400 border border-orange-500/20">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -973,7 +973,7 @@ export default function Chat() {
                       href={profileLinks.farcaster.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-purple-400 transition-colors"
+                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-orange-400 transition-colors"
                       title={profileLinks.farcaster.handle}
                       data-testid="link-farcaster"
                     >
@@ -1010,7 +1010,7 @@ export default function Chat() {
         {/* Main Interface */}
         <main className="flex-1 flex flex-col relative">
           {/* Transparent Glassy Header */}
-          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 bg-[#050505]/80 backdrop-blur-xl border-b border-white/[0.03] sticky top-0 z-30">
+          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 backdrop-blur-xl border-b border-white/[0.03] sticky top-0 z-30" style={{ background: 'rgba(26,29,46,0.8)' }}>
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Hamburger menu for mobile */}
               <button 
@@ -1037,12 +1037,12 @@ export default function Chat() {
                     </div>
                     <div className="w-px h-3 bg-white/10"></div>
                     <div className="flex items-center gap-2">
-                      <Bot className="w-3 h-3 text-purple-500/50" />
+                      <Bot className="w-3 h-3 text-orange-500/50" />
                       <span className="text-[10px] font-medium text-gray-500">Thinking Partner</span>
                     </div>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="bg-[#0a0a0a] border-white/10 max-w-lg p-8 rounded-[2rem] shadow-2xl">
+                <DialogContent className="border-white/10 max-w-lg p-8 rounded-[2rem] shadow-2xl" style={{ background: '#151828' }}>
                   <DialogHeader>
                     <DialogTitle className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
@@ -1056,8 +1056,8 @@ export default function Chat() {
                       Your journal and research data is stored locally on your device using IndexedDB. AI only sees what you explicitly share by clicking "Think with me" or running a research query.
                     </p>
                     
-                    <div className="p-4 rounded-xl bg-purple-500/[0.05] border border-purple-500/20">
-                      <p className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">Local-First Storage</p>
+                    <div className="p-4 rounded-xl bg-orange-500/[0.05] border border-orange-500/20">
+                      <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Local-First Storage</p>
                       <p className="text-sm text-gray-400 leading-relaxed">
                         All entries, insights, and memories are stored in your browser's IndexedDB. This data stays on your device and works offline for writing and browsing.
                       </p>
@@ -1074,11 +1074,11 @@ export default function Chat() {
                       <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Privacy Stack</p>
                       <ul className="space-y-2 text-sm text-gray-400">
                         <li className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
                           Local-first storage (IndexedDB on your device)
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
                           User-controlled AI (only sends when you ask)
                         </li>
                         <li className="flex items-start gap-2">
@@ -1102,7 +1102,7 @@ export default function Chat() {
               {/* Memory/Insights toggle button - more visible on mobile */}
               <button 
                 onClick={() => setMemoryDrawerOpen(!memoryDrawerOpen)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all touch-target ${memoryDrawerOpen ? 'bg-purple-600/15 text-purple-400' : 'text-gray-400 hover:text-white hover:bg-white/5 bg-white/[0.03]'}`}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all touch-target ${memoryDrawerOpen ? 'bg-orange-600/15 text-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5 bg-white/[0.03]'}`}
                 data-testid="button-toggle-memory"
               >
                 <Zap className="w-4 h-4" />
@@ -1152,8 +1152,8 @@ export default function Chat() {
                 
                 {/* First time welcome (Journal only) */}
                 {selectedZone === 'journal' && entryStats && entryStats.totalEntries === 0 && (
-                  <div className="mb-6 sm:mb-8 p-3 sm:p-4 rounded-2xl bg-purple-500/[0.03] border border-purple-500/10 animate-in fade-in duration-700" data-testid="first-time-welcome">
-                    <p className="text-[10px] sm:text-[11px] font-black text-purple-400/70 uppercase tracking-widest mb-2">First entry</p>
+                  <div className="mb-6 sm:mb-8 p-3 sm:p-4 rounded-2xl bg-orange-500/[0.03] border border-orange-500/10 animate-in fade-in duration-700" data-testid="first-time-welcome">
+                    <p className="text-[10px] sm:text-[11px] font-black text-orange-400/70 uppercase tracking-widest mb-2">First entry</p>
                     <p className="text-xs sm:text-sm text-gray-400 leading-relaxed break-words">
                       Write whatever's on your mind. The more you return, the more this becomes yours.
                     </p>
@@ -1164,7 +1164,7 @@ export default function Chat() {
                 {selectedZone === 'journal' ? (
                   <>
                     {/* Journal: Prompt hint */}
-                    <p className={`text-sm sm:text-base font-medium mb-4 transition-all duration-500 break-words ${isFocused ? 'opacity-100 text-purple-300/70' : 'opacity-60 text-gray-400'}`}>
+                    <p className={`text-sm sm:text-base font-medium mb-4 transition-all duration-500 break-words ${isFocused ? 'opacity-100 text-orange-300/70' : 'opacity-60 text-gray-400'}`}>
                       {currentPrompts[currentPromptIndex]}
                     </p>
                     
@@ -1205,9 +1205,9 @@ export default function Chat() {
                     )}
 
                     {pendingVideoAssetId && !showVideoUpload && (
-                      <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                        <Video className="w-4 h-4 text-purple-400" />
-                        <span className="text-xs text-purple-300 font-medium">Video attached</span>
+                      <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                        <Video className="w-4 h-4 text-orange-400" />
+                        <span className="text-xs text-orange-300 font-medium">Video attached</span>
                         <button
                           onClick={() => { setPendingVideoAssetId(null); setPendingVideoPlaybackId(null); }}
                           className="ml-auto p-1 rounded-lg text-gray-500 hover:text-red-400 transition-colors"
@@ -1229,7 +1229,7 @@ export default function Chat() {
                             onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
                             className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                               activeDossierId 
-                                ? 'bg-purple-500/10 border border-purple-500/30 text-purple-400' 
+                                ? 'bg-orange-500/10 border border-orange-500/30 text-orange-400' 
                                 : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
                             }`}
                             data-testid="button-dossier-selector"
@@ -1242,12 +1242,12 @@ export default function Chat() {
                           </button>
                           
                           {dossierDropdownOpen && (
-                            <div className="absolute top-full left-0 mt-1 w-64 bg-[#0a0a0a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden" data-testid="dossier-dropdown">
+                            <div className="absolute top-full left-0 mt-1 w-64 border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden" style={{ background: '#151828' }} data-testid="dossier-dropdown">
                               <div className="p-2 border-b border-white/5">
                                 <button
                                   onClick={() => handleSelectDossier(null)}
                                   className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                    !activeDossierId ? 'bg-purple-500/10 text-purple-400' : 'text-gray-400 hover:bg-white/5'
+                                    !activeDossierId ? 'bg-orange-500/10 text-orange-400' : 'text-gray-400 hover:bg-white/5'
                                   }`}
                                   data-testid="button-no-dossier"
                                 >
@@ -1263,7 +1263,7 @@ export default function Chat() {
                                       <button
                                         onClick={() => handleSelectDossier(dossier.id!)}
                                         className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                          activeDossierId === dossier.id ? 'bg-purple-500/10 text-purple-400' : 'text-gray-400 hover:bg-white/5'
+                                          activeDossierId === dossier.id ? 'bg-orange-500/10 text-orange-400' : 'text-gray-400 hover:bg-white/5'
                                         }`}
                                         data-testid={`button-dossier-${dossier.id}`}
                                       >
@@ -1294,14 +1294,15 @@ export default function Chat() {
                                         if (e.key === 'Escape') { setShowNewDossierInput(false); setDossierName(''); }
                                       }}
                                       placeholder="Dossier name..."
-                                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-gray-500 outline-none focus:border-purple-500/50"
+                                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-gray-500 outline-none focus:border-orange-500/50"
                                       autoFocus
                                       data-testid="input-new-dossier"
                                     />
                                     <button
                                       onClick={handleCreateDossier}
                                       disabled={!dossierName.trim()}
-                                      className="p-2 rounded-lg bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                      className="p-2 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                      style={{ background: '#E8842C' }}
                                       data-testid="button-create-dossier"
                                     >
                                       <Check className="w-3.5 h-3.5 text-white" />
@@ -1363,18 +1364,18 @@ export default function Chat() {
                       
                       {/* Rotating prompt - centered, truncated on mobile */}
                       <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 px-2">
-                        <Search className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400/60 shrink-0" />
-                        <span className="text-xs sm:text-sm font-medium text-purple-300/70 truncate">{currentPrompts[currentPromptIndex]}</span>
+                        <Search className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400/60 shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-orange-300/70 truncate">{currentPrompts[currentPromptIndex]}</span>
                       </div>
                       
                       <div className={`relative transition-all duration-500 rounded-2xl ${isFocused ? 'zone-glow' : ''}`}>
                         <div className={`flex flex-col gap-3 px-3 sm:px-5 py-3 sm:py-4 rounded-2xl border transition-all ${
                           isFocused 
-                            ? 'border-purple-500/40 bg-purple-500/[0.03]' 
+                            ? 'border-orange-500/40 bg-orange-500/[0.03]' 
                             : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.12]'
                         }`}>
                           <div className="flex items-center gap-3">
-                            <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-purple-400' : 'text-gray-500'}`} />
+                            <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-orange-400' : 'text-gray-500'}`} />
                             <input
                               type="text"
                               value={messageInput}
@@ -1395,7 +1396,8 @@ export default function Chat() {
                           <Button
                             onClick={handleAnalyze}
                             disabled={!messageInput.trim() || searchResearch.isPending}
-                            className="w-full bg-purple-600 hover:bg-purple-500 h-11 px-5 rounded-xl font-medium text-sm shadow-lg shadow-purple-900/30 transition-all active:scale-95 touch-target"
+                            className="w-full hover:opacity-90 h-11 px-5 rounded-xl font-medium text-sm shadow-lg shadow-orange-900/30 transition-all active:scale-95 touch-target"
+                            style={{ background: '#E8842C' }}
                             data-testid="button-search"
                           >
                             {searchResearch.isPending ? (
@@ -1417,7 +1419,7 @@ export default function Chat() {
                             <button
                               key={idx}
                               onClick={() => setMessageInput(suggestion)}
-                              className="px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-purple-500/30 hover:text-purple-400 hover:bg-purple-500/[0.05] transition-all whitespace-nowrap touch-target"
+                              className="px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-orange-500/30 hover:text-orange-400 hover:bg-orange-500/[0.05] transition-all whitespace-nowrap touch-target"
                               data-testid={`button-suggestion-${idx}`}
                             >
                               {suggestion}
@@ -1438,7 +1440,7 @@ export default function Chat() {
                       <DialogTrigger asChild>
                         <button
                           disabled={!messageInput.trim()}
-                          className="group relative h-11 sm:h-12 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-2 bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
+                          className="group relative h-11 sm:h-12 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-2 bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
                           title="Pin to vault"
                           data-testid="button-pin"
                         >
@@ -1446,7 +1448,7 @@ export default function Chat() {
                           <span className="text-sm font-medium">Pin</span>
                         </button>
                       </DialogTrigger>
-                      <DialogContent className="bg-[#0a0a0a] border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl">
+                      <DialogContent className="border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl" style={{ background: '#151828' }}>
                         <DialogHeader>
                           <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">Pin Memory</DialogTitle>
                         </DialogHeader>
@@ -1454,7 +1456,7 @@ export default function Chat() {
                           <p className="text-sm text-gray-500 leading-relaxed font-medium">This thought will be stored in your local vault and used as context for future thinking partners.</p>
                           
                           <div className="relative group">
-                            <div className="absolute -inset-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute -inset-2 bg-gradient-to-r from-orange-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="relative p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] shadow-inner">
                               <p className="text-sm text-gray-300 leading-relaxed line-clamp-4 font-medium italic">"{messageInput}"</p>
                             </div>
@@ -1469,7 +1471,7 @@ export default function Chat() {
                                   onClick={() => setSelectedPinKind(kind)}
                                   className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${
                                     selectedPinKind === kind 
-                                      ? "bg-purple-600 text-white shadow-lg shadow-purple-900/40 border-transparent" 
+                                      ? "text-white shadow-lg shadow-orange-900/40 border-transparent [background:#E8842C]" 
                                       : "bg-white/[0.02] text-gray-500 hover:text-white hover:bg-white/5 border border-white/[0.05]"
                                   }`}
                                   data-testid={`button-kind-${kind}`}
@@ -1481,7 +1483,8 @@ export default function Chat() {
                           </div>
                           <Button
                             onClick={handleManualPin}
-                            className="w-full bg-purple-600 hover:bg-purple-500 h-14 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-purple-900/20 transition-all active:scale-[0.98]"
+                            className="w-full hover:opacity-90 h-14 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-orange-900/20 transition-all active:scale-[0.98]"
+                            style={{ background: '#E8842C' }}
                             data-testid="button-confirm-pin"
                           >
                             <Pin className="w-4 h-4 mr-2" />
@@ -1495,9 +1498,9 @@ export default function Chat() {
                       onClick={() => setShowVideoUpload(!showVideoUpload)}
                       className={`relative h-11 sm:h-12 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
                         showVideoUpload
-                          ? 'text-purple-400 bg-purple-500/15 border-purple-500/30'
+                          ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
                           : pendingVideoAssetId
-                            ? 'text-purple-400 bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/15'
+                            ? 'text-orange-400 bg-orange-500/10 border-orange-500/20 hover:bg-orange-500/15'
                             : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
                       }`}
                       title={pendingVideoAssetId ? 'Video attached' : 'Add video'}
@@ -1506,7 +1509,7 @@ export default function Chat() {
                       <Video className="w-4 h-4" />
                       <span className="text-sm font-medium">Video</span>
                       {pendingVideoAssetId && (
-                        <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-purple-500 border-2 border-[#0a0a0a] shadow-[0_0_6px_rgba(168,85,247,0.6)]" />
+                        <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-orange-500 border-2 border-[#151828] shadow-[0_0_6px_rgba(232,132,44,0.6)]" />
                       )}
                     </button>
                   </div>
@@ -1533,7 +1536,8 @@ export default function Chat() {
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className="h-11 sm:h-12 px-5 sm:px-8 rounded-xl font-bold text-sm shadow-lg shadow-purple-900/40 transition-all active:scale-95 bg-purple-600 hover:bg-purple-500 disabled:opacity-30 disabled:shadow-none"
+                      className="h-11 sm:h-12 px-5 sm:px-8 rounded-xl font-bold text-sm shadow-lg shadow-orange-900/40 transition-all active:scale-95 hover:opacity-90 disabled:opacity-30 disabled:shadow-none"
+                      style={{ background: '#E8842C' }}
                       data-testid="button-analyze"
                     >
                       {isAnalyzing ? (
@@ -1561,11 +1565,11 @@ export default function Chat() {
                   {isAnalyzing && !agentResponse && !researchResult && !latestAnalysis && (
                     <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl thinking-card" data-testid="analyzing-loader">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center bg-purple-600/20">
-                          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-purple-400" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center bg-orange-600/20">
+                          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-orange-400" />
                         </div>
                         <div>
-                          <p className="text-xs font-semibold mb-1 text-purple-400">
+                          <p className="text-xs font-semibold mb-1 text-orange-400">
                             {selectedZone === 'research' ? 'Researching...' : 'Thinking...'}
                           </p>
                           <p className="text-sm text-gray-500">
@@ -1582,11 +1586,11 @@ export default function Chat() {
                       {/* Header */}
                       <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-purple-600/20">
-                            <Search className="w-5 h-5 text-purple-400" />
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-orange-600/20">
+                            <Search className="w-5 h-5 text-orange-400" />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-purple-400">Research Results</p>
+                            <p className="text-sm font-semibold text-orange-400">Research Results</p>
                             <p className="text-xs text-gray-600">
                               {researchResult.mode === 'explain' ? 'Explain mode' : researchResult.mode === 'brave' ? 'Brave Search (private)' : 'Web search'} 
                               {researchResult.cached && ' • cached'}
@@ -1609,18 +1613,18 @@ export default function Chat() {
                             <div className="flex items-center justify-between">
                               <p className="text-xs font-medium text-gray-500">Key takeaways</p>
                               {activeDossierId && (
-                                <p className="text-[10px] text-purple-400/60">Click + to save as claim</p>
+                                <p className="text-[10px] text-orange-400/60">Click + to save as claim</p>
                               )}
                             </div>
                             <ul className="space-y-2">
                               {researchResult.keyTakeaways.map((takeaway, idx) => (
                                 <li key={idx} className="flex items-start gap-3 group">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
                                   <p className="text-white/90 leading-relaxed flex-1">{takeaway}</p>
                                   {activeDossierId && (
                                     <button
                                       onClick={() => handleSaveClaimToDossier(takeaway, undefined, true)}
-                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-all shrink-0"
+                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-orange-400 hover:bg-orange-500/10 transition-all shrink-0"
                                       title="Save as claim and add details"
                                       data-testid={`button-save-claim-${idx}`}
                                     >
@@ -1635,8 +1639,8 @@ export default function Chat() {
                         
                         {/* Synthesis */}
                         {researchResult.synthesisMarkdown && (
-                          <div className="p-4 rounded-xl bg-purple-500/[0.06] border border-purple-500/20">
-                            <p className="text-xs font-medium text-purple-400/80 mb-3">Synthesis</p>
+                          <div className="p-4 rounded-xl bg-orange-500/[0.06] border border-orange-500/20">
+                            <p className="text-xs font-medium text-orange-400/80 mb-3">Synthesis</p>
                             <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{researchResult.synthesisMarkdown}</p>
                           </div>
                         )}
@@ -1655,7 +1659,7 @@ export default function Chat() {
                                       setAgentResponse(null);
                                       setMessageInput(item);
                                     }}
-                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-purple-500/[0.08] border border-purple-500/20 text-purple-200/80 hover:bg-purple-500/15 hover:border-purple-500/30 hover:text-purple-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-orange-500/[0.08] border border-orange-500/20 text-orange-200/80 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-orange-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
                                     data-testid={`button-next-check-${idx}`}
                                   >
                                     {item}
@@ -1698,7 +1702,7 @@ export default function Chat() {
                       <div className="p-4 border-b border-white/[0.05]">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <FolderOpen className="w-4 h-4 text-purple-400" />
+                            <FolderOpen className="w-4 h-4 text-orange-400" />
                             <p className="text-sm font-medium text-white">
                               {dossiers?.find(d => d.id === activeDossierId)?.name} Claims
                             </p>
@@ -1712,7 +1716,7 @@ export default function Chat() {
                           <input
                             type="text"
                             placeholder="Add a claim manually..."
-                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-purple-500/50"
+                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-orange-500/50"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' && e.currentTarget.value.trim()) {
                                 handleSaveClaimToDossier(e.currentTarget.value.trim(), undefined, true);
@@ -1729,7 +1733,7 @@ export default function Chat() {
                                 input.value = '';
                               }
                             }}
-                            className="px-3 py-2 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-colors"
+                            className="px-3 py-2 rounded-lg bg-orange-500/20 text-orange-400 hover:bg-orange-500/30 transition-colors"
                             title="Add claim"
                             data-testid="button-add-manual-claim"
                           >
@@ -1744,7 +1748,7 @@ export default function Chat() {
                             key={claim.id} 
                             className={`group p-3 rounded-xl border transition-all ${
                               editingClaimId === claim.id 
-                                ? 'bg-purple-500/[0.05] border-purple-500/30' 
+                                ? 'bg-orange-500/[0.05] border-orange-500/30' 
                                 : 'bg-white/[0.02] border-white/[0.05] hover:border-white/[0.1]'
                             }`}
                           >
@@ -1766,7 +1770,7 @@ export default function Chat() {
                                   <p className="text-xs text-gray-500 mt-1.5 pl-0">📎 {claim.sourceNote}</p>
                                 )}
                                 {claim.linkedJournalEntryId && (
-                                  <p className="text-xs text-purple-400/70 mt-1.5 flex items-center gap-1">
+                                  <p className="text-xs text-orange-400/70 mt-1.5 flex items-center gap-1">
                                     <PenLine className="w-3 h-3" />
                                     Linked to journal entry
                                   </p>
@@ -1801,8 +1805,8 @@ export default function Chat() {
                                   onClick={() => handleUpdateClaimStatus(claim.id!, 'to_check')}
                                   className={`p-1.5 rounded-lg transition-all ${
                                     claim.status === 'to_check' 
-                                      ? 'bg-purple-500/20 text-purple-400' 
-                                      : 'text-gray-500 hover:text-purple-400 hover:bg-purple-500/10'
+                                      ? 'bg-orange-500/20 text-orange-400' 
+                                      : 'text-gray-500 hover:text-orange-400 hover:bg-orange-500/10'
                                   }`}
                                   title="Mark as to check"
                                   data-testid={`button-tocheck-claim-${claim.id}`}
@@ -1813,8 +1817,8 @@ export default function Chat() {
                                   onClick={() => editingClaimId === claim.id ? setEditingClaimId(null) : handleStartEditClaim(claim)}
                                   className={`p-1.5 rounded-lg transition-all ${
                                     editingClaimId === claim.id 
-                                      ? 'bg-purple-500/20 text-purple-400' 
-                                      : 'text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 opacity-0 group-hover:opacity-100'
+                                      ? 'bg-orange-500/20 text-orange-400' 
+                                      : 'text-gray-500 hover:text-orange-400 hover:bg-orange-500/10 opacity-0 group-hover:opacity-100'
                                   }`}
                                   title="Add source note"
                                   data-testid={`button-edit-claim-${claim.id}`}
@@ -1842,7 +1846,7 @@ export default function Chat() {
                                     value={claimSourceNote}
                                     onChange={(e) => setClaimSourceNote(e.target.value)}
                                     placeholder="Where did you find this? How reliable is it?"
-                                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-purple-500/50"
+                                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-orange-500/50"
                                     data-testid="input-source-note"
                                   />
                                 </div>
@@ -1871,7 +1875,8 @@ export default function Chat() {
                                 <div className="flex justify-end">
                                   <Button
                                     onClick={handleSaveClaimEdit}
-                                    className="bg-purple-600 hover:bg-purple-500 h-8 px-4 text-xs"
+                                    className="hover:opacity-90 h-8 px-4 text-xs"
+                                    style={{ background: '#E8842C' }}
                                     data-testid="button-save-claim-edit"
                                   >
                                     Save
@@ -1888,15 +1893,15 @@ export default function Chat() {
                   
                   {/* Related Journal Entries - Show when research finds related thinking */}
                   {relatedJournalEntries && relatedJournalEntries.length > 0 && (
-                    <div className="mt-4 rounded-2xl sm:rounded-3xl border border-purple-500/20 bg-purple-500/[0.02] overflow-hidden" data-testid="related-entries-panel">
-                      <div className="p-4 border-b border-purple-500/10">
+                    <div className="mt-4 rounded-2xl sm:rounded-3xl border border-orange-500/20 bg-orange-500/[0.02] overflow-hidden" data-testid="related-entries-panel">
+                      <div className="p-4 border-b border-orange-500/10">
                         <div className="flex items-center gap-2">
-                          <PenLine className="w-4 h-4 text-purple-400" />
+                          <PenLine className="w-4 h-4 text-orange-400" />
                           <p className="text-sm font-medium text-white">Related from your Journal</p>
                           <span className="text-xs text-gray-500">({relatedJournalEntries.length})</span>
                         </div>
                         {editingClaimId && (
-                          <p className="text-[10px] text-purple-400/70 mt-1">Click an entry to link it to the claim you're editing</p>
+                          <p className="text-[10px] text-orange-400/70 mt-1">Click an entry to link it to the claim you're editing</p>
                         )}
                       </div>
                       <div className="p-4 space-y-3 max-h-[200px] overflow-y-auto">
@@ -1905,7 +1910,7 @@ export default function Chat() {
                             key={entry.id || idx} 
                             className={`p-3 rounded-xl bg-white/[0.02] border transition-all ${
                               editingClaimId 
-                                ? 'border-purple-500/20 hover:border-purple-500/40 cursor-pointer' 
+                                ? 'border-orange-500/20 hover:border-orange-500/40 cursor-pointer' 
                                 : 'border-white/[0.05]'
                             }`}
                             onClick={() => {
@@ -1930,11 +1935,11 @@ export default function Chat() {
                       {/* Header */}
                       <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-purple-600/20">
-                            <Bot className="w-5 h-5 text-purple-400" />
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-orange-600/20">
+                            <Bot className="w-5 h-5 text-orange-400" />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-purple-400">Thinking Partner</p>
+                            <p className="text-sm font-semibold text-orange-400">Thinking Partner</p>
                             <p className="text-xs text-gray-600">Just now</p>
                           </div>
                         </div>
@@ -1962,9 +1967,9 @@ export default function Chat() {
                         
                         {/* Connection to prior thinking */}
                         {agentResponse.connectionToPrior && (
-                          <div className="p-4 rounded-xl bg-purple-500/[0.08] border border-purple-500/20">
-                            <p className="text-xs font-medium text-purple-400/80 mb-2">Connected to your earlier thinking</p>
-                            <p className="text-purple-200/80 leading-relaxed text-sm">{agentResponse.connectionToPrior}</p>
+                          <div className="p-4 rounded-xl bg-orange-500/[0.08] border border-orange-500/20">
+                            <p className="text-xs font-medium text-orange-400/80 mb-2">Connected to your earlier thinking</p>
+                            <p className="text-orange-200/80 leading-relaxed text-sm">{agentResponse.connectionToPrior}</p>
                           </div>
                         )}
                         
@@ -1977,9 +1982,9 @@ export default function Chat() {
                         )}
                         
                         {/* Question to sit with - highlighted */}
-                        <div className="p-4 rounded-xl border bg-purple-500/[0.06] border-purple-500/20">
-                          <p className="text-xs font-medium mb-2 text-purple-400/80">Question to sit with</p>
-                          <p className="font-medium italic leading-relaxed text-purple-200">{agentResponse.question}</p>
+                        <div className="p-4 rounded-xl border bg-orange-500/[0.06] border-orange-500/20">
+                          <p className="text-xs font-medium mb-2 text-orange-400/80">Question to sit with</p>
+                          <p className="font-medium italic leading-relaxed text-orange-200">{agentResponse.question}</p>
                         </div>
 
                         {/* Reflective questions for Journal mode - horizontal scroll on mobile */}
@@ -1999,7 +2004,7 @@ export default function Chat() {
                                       setMessageInput(q);
                                       setTimeout(() => textareaRef.current?.focus(), 100);
                                     }}
-                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-purple-500/[0.08] border border-purple-500/20 text-purple-200/80 hover:bg-purple-500/15 hover:border-purple-500/30 hover:text-purple-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-orange-500/[0.08] border border-orange-500/20 text-orange-200/80 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-orange-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
                                     data-testid={`button-reflective-${idx}`}
                                   >
                                     {q}
@@ -2019,7 +2024,8 @@ export default function Chat() {
                               <Button
                                 size="sm"
                                 onClick={handlePinSuggestion}
-                                className="bg-purple-600 hover:bg-purple-500 h-9 px-4 text-sm touch-target"
+                                className="hover:opacity-90 h-9 px-4 text-sm touch-target"
+                                style={{ background: '#E8842C' }}
                                 data-testid="button-pin-suggestion"
                               >
                                 <Pin className="w-4 h-4 mr-2" />
@@ -2059,11 +2065,11 @@ export default function Chat() {
                       {/* Header */}
                       <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-purple-600/20">
-                            <Sparkles className="w-5 h-5 text-purple-400" />
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-orange-600/20">
+                            <Sparkles className="w-5 h-5 text-orange-400" />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-purple-400">
+                            <p className="text-sm font-semibold text-orange-400">
                               {latestAnalysis.zone === "research" ? "Research Analysis" : "Insight"}
                             </p>
                             <p className="text-xs text-gray-600">Just now</p>
@@ -2091,9 +2097,9 @@ export default function Chat() {
                               <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
                             </div>
                             
-                            <div className="p-4 rounded-xl bg-purple-500/[0.06] border border-purple-500/20">
-                              <p className="text-xs font-medium text-purple-400/80 mb-2">Reflection Question</p>
-                              <p className="text-purple-200 font-medium leading-relaxed">{latestAnalysis.analysis.question}</p>
+                            <div className="p-4 rounded-xl bg-orange-500/[0.06] border border-orange-500/20">
+                              <p className="text-xs font-medium text-orange-400/80 mb-2">Reflection Question</p>
+                              <p className="text-orange-200 font-medium leading-relaxed">{latestAnalysis.analysis.question}</p>
                             </div>
                             
                             {latestAnalysis.analysis.memoryCandidates.length > 0 && (
@@ -2107,7 +2113,8 @@ export default function Chat() {
                                         size="sm"
                                         onClick={() => pinMemory.mutate(memory)}
                                         disabled={pinMemory.isPending}
-                                        className="shrink-0 bg-purple-600/80 hover:bg-purple-500 h-8 px-3 text-xs touch-target"
+                                        className="shrink-0 hover:opacity-90 h-8 px-3 text-xs touch-target"
+                                        style={{ background: 'rgba(232,132,44,0.8)' }}
                                         data-testid={`button-pin-memory-${idx}`}
                                       >
                                         <Pin className="w-3.5 h-3.5 mr-1" />
@@ -2126,7 +2133,7 @@ export default function Chat() {
                               <ul className="space-y-2">
                                 {latestAnalysis.analysis.keyClaims.map((claim, idx) => (
                                   <li key={idx} className="flex items-start gap-3">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
                                     <p className="text-white/90 leading-relaxed">{claim}</p>
                                   </li>
                                 ))}
@@ -2161,9 +2168,9 @@ export default function Chat() {
                               </div>
                             )}
                               
-                            <div className="p-4 rounded-xl bg-purple-500/[0.06] border border-purple-500/20">
-                              <p className="text-xs font-medium text-purple-400/80 mb-2">Next Question</p>
-                              <p className="text-purple-200 font-medium leading-relaxed">{latestAnalysis.analysis.nextQuestion}</p>
+                            <div className="p-4 rounded-xl bg-orange-500/[0.06] border border-orange-500/20">
+                              <p className="text-xs font-medium text-orange-400/80 mb-2">Next Question</p>
+                              <p className="text-orange-200 font-medium leading-relaxed">{latestAnalysis.analysis.nextQuestion}</p>
                             </div>
                           </>
                         )}
@@ -2216,7 +2223,7 @@ export default function Chat() {
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               {entry.videoAssetId && (
-                                <Video className="w-3.5 h-3.5 text-purple-400" />
+                                <Video className="w-3.5 h-3.5 text-orange-400" />
                               )}
                               <span className="text-xs font-medium text-gray-600">
                                 {format(new Date(entry.createdAt), "MMM d")}
@@ -2241,7 +2248,7 @@ export default function Chat() {
               className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden" 
               onClick={() => setMemoryDrawerOpen(false)}
             />
-            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-white/[0.05] flex flex-col bg-[#080808] md:bg-black/20 backdrop-blur-xl animate-in slide-in-from-right duration-300">
+            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-white/[0.05] flex flex-col md:bg-[#151828]/80 backdrop-blur-xl animate-in slide-in-from-right duration-300" style={{ background: '#151828' }}>
               <Tabs defaultValue="memories" className="flex-1 flex flex-col">
                 <div className="px-5 pt-5 pb-4 border-b border-white/[0.04]">
                   <div className="flex items-center justify-between mb-4 md:hidden">
@@ -2255,11 +2262,11 @@ export default function Chat() {
                     </button>
                   </div>
                   <TabsList className="w-full bg-white/[0.03] p-1 rounded-xl h-11">
-                    <TabsTrigger value="memories" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
+                    <TabsTrigger value="memories" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-orange-600/20 data-[state=active]:text-orange-300">
                       <Pin className="w-3.5 h-3.5 mr-2" />
                       Memories
                     </TabsTrigger>
-                    <TabsTrigger value="insights" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-purple-600/20 data-[state=active]:text-purple-300">
+                    <TabsTrigger value="insights" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-orange-600/20 data-[state=active]:text-orange-300">
                       <Sparkles className="w-3.5 h-3.5 mr-2" />
                       Insights
                     </TabsTrigger>
@@ -2284,7 +2291,7 @@ export default function Chat() {
                       localMemories.map((memory) => (
                         <div key={memory.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] entry-card">
                           <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline" className="text-[9px] font-medium border-purple-500/30 text-purple-400/70 px-2 py-0.5">
+                            <Badge variant="outline" className="text-[9px] font-medium border-orange-500/30 text-orange-400/70 px-2 py-0.5">
                               {memory.kind}
                             </Badge>
                           </div>
@@ -2346,17 +2353,17 @@ export default function Chat() {
                 <ScrollArea className="flex-1">
                   <div className="p-4 space-y-3">
                     {agentResponse ? (
-                      <div className="p-4 rounded-xl bg-purple-500/[0.05] border border-purple-500/20">
+                      <div className="p-4 rounded-xl bg-orange-500/[0.05] border border-orange-500/20">
                         <div className="flex items-center gap-2 mb-3">
-                          <Bot className="w-4 h-4 text-purple-400" />
-                          <span className="text-xs font-medium text-purple-400">
+                          <Bot className="w-4 h-4 text-orange-400" />
+                          <span className="text-xs font-medium text-orange-400">
                             Thinking Partner
                           </span>
                         </div>
                         <div className="space-y-3">
                           <p className="text-sm text-white/90 leading-relaxed">{agentResponse.said}</p>
                           <p className="text-xs text-gray-500 leading-relaxed">{agentResponse.matters}</p>
-                          <p className="text-sm text-purple-300 italic leading-relaxed">{agentResponse.question}</p>
+                          <p className="text-sm text-orange-300 italic leading-relaxed">{agentResponse.question}</p>
                         </div>
                         <p className="text-xs text-gray-600 mt-4">Just now</p>
                       </div>
