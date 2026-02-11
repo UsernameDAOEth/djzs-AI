@@ -1,164 +1,53 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, PortalBackground, FlipFeatureCard } from "@/components/hero";
+import { RevealSection } from "@/components/hero";
 import { Helmet } from "react-helmet";
 
 export default function Home() {
   const { isConnected } = useAccount();
 
+  const scrollToHowItWorks = () => {
+    const el = document.getElementById("how-it-works");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden selection:bg-purple-500/30">
-      <CursorSpotlight />
-      {/* Time-of-day animated background */}
-      <AnimatedBackground />
-      {/* Header Banner */}
-      <header className="sticky top-0 z-50">
-        <div style={{ position: "relative", overflow: "hidden", borderRadius: 0 }}>
-          <style>{`
-            @keyframes djzsDrift {
-              0% { transform: translate3d(0,0,0) scale(1); }
-              50% { transform: translate3d(-2%,1.5%,0) scale(1.03); }
-              100% { transform: translate3d(0,0,0) scale(1); }
-            }
-            @keyframes djzsStars {
-              0% { background-position: 0 0, 40px 60px; }
-              100% { background-position: 800px 600px, 900px 720px; }
-            }
-            @keyframes djzsShimmer {
-              0% { transform: translateX(-12%) rotate(0deg); opacity:0; }
-              20% { opacity:.18; }
-              50% { transform: translateX(12%) rotate(8deg); opacity:.10; }
-              100% { transform: translateX(-12%) rotate(0deg); opacity:0; }
-            }
-            @keyframes djzsPulse {
-              0%,100% { opacity:.45; transform: scale(1); }
-              50% { opacity:.7; transform: scale(1.03); }
-            }
-          `}</style>
+      <style>{`
+        @keyframes breathe {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.03); }
+        }
+      `}</style>
 
-          {/* Background */}
-          <div
-            style={{
-              position: "absolute",
-              inset: "-30%",
-              background: `
-                radial-gradient(900px 380px at 15% 35%, rgba(140,80,255,.35), transparent 60%),
-                radial-gradient(900px 420px at 85% 55%, rgba(80,210,255,.28), transparent 60%),
-                radial-gradient(1100px 520px at 50% -10%, rgba(255,255,255,.14), transparent 60%)
-              `,
-              filter: "blur(10px)",
-              animation: "djzsDrift 16s ease-in-out infinite",
-            }}
-          />
-
-          {/* Stars */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: `
-                radial-gradient(rgba(255,255,255,.8) 1px, transparent 1px),
-                radial-gradient(rgba(255,255,255,.45) 1px, transparent 1px)
-              `,
-              backgroundSize: "90px 90px, 140px 140px",
-              backgroundPosition: "0 0, 40px 60px",
-              opacity: 0.25,
-              animation: "djzsStars 40s linear infinite",
-              pointerEvents: "none",
-            }}
-          />
-
-          {/* Shimmer */}
-          <div
-            style={{
-              position: "absolute",
-              inset: "-40%",
-              background:
-                "linear-gradient(110deg, transparent 0%, rgba(255,255,255,.12) 45%, transparent 60%)",
-              filter: "blur(16px)",
-              animation: "djzsShimmer 10s ease-in-out infinite",
-              pointerEvents: "none",
-            }}
-          />
-
-          {/* Glow */}
-          <div
-            style={{
-              position: "absolute",
-              left: "10%",
-              top: "20%",
-              width: "80%",
-              height: "70%",
-              background:
-                "radial-gradient(circle at 30% 40%, rgba(160,110,255,.45), transparent 60%)",
-              filter: "blur(20px)",
-              animation: "djzsPulse 6s ease-in-out infinite",
-              pointerEvents: "none",
-            }}
-          />
-
-          {/* Vignette */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.65))",
-              pointerEvents: "none",
-            }}
-          />
-
-          {/* Full-width Marquee Banner */}
-          <div
-            style={{
-              position: "relative",
-              zIndex: 2,
-              width: "100%",
-              overflow: "hidden",
-              padding: "20px 0",
-            }}
-          >
-            <div className="marquee-banner" style={{ width: "100%" }}>
-              <div className="marquee-content">
-                <span
-                  style={{
-                    fontSize: "clamp(48px, 8vw, 120px)",
-                    fontWeight: 900,
-                    lineHeight: 1,
-                    color: "rgba(255,255,255,.95)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    textShadow:
-                      "0 0 30px rgba(140,80,255,.5), 0 0 60px rgba(80,210,255,.3)",
-                  }}
+      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/[0.05]">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link href="/">
+            <span className="text-lg font-black tracking-widest uppercase text-white" data-testid="link-home-logo">DJZS</span>
+          </Link>
+          <div className="flex items-center gap-4">
+            {isConnected ? (
+              <Link href="/chat">
+                <button
+                  className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-500 transition-colors shadow-md shadow-purple-500/20"
+                  data-testid="button-header-enter"
                 >
-                  DECENTRALIZED JOURNALING ZONE SYSTEM
-                </span>
-                <span
-                  style={{
-                    fontSize: "clamp(48px, 8vw, 120px)",
-                    fontWeight: 900,
-                    lineHeight: 1,
-                    color: "rgba(255,255,255,.95)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    textShadow:
-                      "0 0 30px rgba(140,80,255,.5), 0 0 60px rgba(80,210,255,.3)",
-                  }}
-                >
-                  DECENTRALIZED JOURNALING ZONE SYSTEM
-                </span>
-              </div>
-            </div>
+                  Enter DJZS
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </Link>
+            ) : (
+              <ConnectButton showBalance={false} />
+            )}
           </div>
         </div>
       </header>
-      {/* SEO */}
+
       <Helmet>
         <title>DJZS - Private AI Journaling + Research | Local-First Thinking System</title>
         <meta name="description" content="Private AI journaling and research capture with a Thinking Partner. Local-first storage. Your notes stay on your device." />
@@ -170,250 +59,184 @@ export default function Home() {
         <meta name="twitter:title" content="DJZS - Private AI Journaling" />
         <meta name="twitter:description" content="Local-first AI journaling and research. Your thinking stays yours." />
       </Helmet>
-      {/* Hero Section */}
+
       <motion.section
         variants={pageContainer}
         initial="hidden"
         animate="show"
-        className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-black pb-12"
+        className="relative min-h-[85vh] flex items-center justify-center overflow-hidden"
       >
-        <PortalBackground variant="hero" />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `
+              radial-gradient(800px 400px at 30% 40%, rgba(140,80,255,0.12), transparent 60%),
+              radial-gradient(600px 300px at 70% 60%, rgba(80,130,255,0.08), transparent 60%)
+            `,
+            animation: "breathe 30s ease-in-out infinite",
+          }}
+        />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-12">
-          <ThinkFlywheel />
+        <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
+          <motion.h1
+            variants={fadeUp}
+            className="text-5xl md:text-7xl font-black text-white tracking-tight leading-[1.1] mb-6"
+          >
+            Your thoughts, structured.
+          </motion.h1>
 
-          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-semibold mb-2">
-            Private AI journaling + research capture + a Thinking Partner.
-          </motion.p>
-          <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-500 max-w-2xl mx-auto font-medium mb-2">
-            Local-first storage, privacy-focused AI, and offline journaling.
-          </motion.p>
-          <motion.p variants={fadeUp} className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-bold mb-8">
-            Saved instantly. Even offline.
+          <motion.p
+            variants={fadeUp}
+            className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto leading-relaxed mb-10"
+          >
+            A private system to capture, connect, and deepen your ideas. No noise, just clarity.
           </motion.p>
 
-          <motion.div variants={fadeUp} className="flex flex-col items-center gap-4">
+          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             {isConnected ? (
-              <StartWritingButton />
+              <Link href="/chat">
+                <button
+                  className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-8 py-4 text-base font-bold text-white hover:bg-purple-500 transition-all duration-250 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-0.5"
+                  data-testid="button-start-thinking"
+                >
+                  Start Thinking
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
             ) : (
-              <div className="flex flex-col sm:flex-row items-center gap-4">
+              <>
                 <Link href="/chat">
-                  <motion.button
-                    whileHover={{ y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-base font-bold text-black hover:bg-gray-100 transition-colors min-h-[52px]"
-                    data-testid="button-try-demo"
+                  <button
+                    className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-black hover:bg-gray-100 transition-all duration-250 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                    data-testid="button-start-thinking"
                   >
-                    Try the demo
-                    <ArrowRight className="w-4 h-4" />
-                  </motion.button>
+                    Start Thinking
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
                 </Link>
-                <div className="scale-110">
-                  <ConnectButton showBalance={false} />
-                </div>
-              </div>
+                <button
+                  onClick={scrollToHowItWorks}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-6 py-4 text-base font-semibold text-gray-300 hover:border-white/20 hover:text-white transition-all duration-250"
+                  data-testid="button-see-how-it-works"
+                >
+                  See How It Works
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </>
             )}
-            
-            {/* Trust bullets */}
-            <motion.div 
-              variants={fadeUp}
-              className="mt-6 flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-gray-500 text-sm"
-            >
-              <div className="flex items-center gap-2">
-                <Smartphone className="w-4 h-4 text-green-500/70" />
-                <span>If you typed it, you own it</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-yellow-400/70" />
-                <span>No spinner while typing</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-purple-400/70" />
-                <span>No fear of losing drafts</span>
-              </div>
-            </motion.div>
           </motion.div>
 
-          <motion.div variants={fadeUp} className="mt-12">
-            <ScrollCue />
+          {!isConnected && (
+            <motion.div variants={fadeUp} className="mb-8">
+              <div className="scale-110 inline-block">
+                <ConnectButton showBalance={false} />
+              </div>
+            </motion.div>
+          )}
+
+          <motion.div
+            variants={fadeUp}
+            className="flex flex-col sm:flex-row items-center justify-center gap-6 text-gray-500 text-sm"
+          >
+            <div className="flex items-center gap-2" data-testid="text-trust-local">
+              <HardDrive className="w-4 h-4 text-purple-400/70" />
+              <span>Stored on your device</span>
+            </div>
+            <div className="flex items-center gap-2" data-testid="text-trust-ai">
+              <Bot className="w-4 h-4 text-blue-400/70" />
+              <span>AI only when you ask</span>
+            </div>
+            <div className="flex items-center gap-2" data-testid="text-trust-private">
+              <Shield className="w-4 h-4 text-green-400/70" />
+              <span>Private by default</span>
+            </div>
           </motion.div>
         </div>
       </motion.section>
-      {/* How It Works - 3-step strip */}
+
       <RevealSection>
-        <section className="relative py-16 bg-[#030303] border-t border-white/[0.03] overflow-hidden">
-          <div className="relative z-10 max-w-5xl mx-auto px-6">
-            <h2 className="text-center text-2xl md:text-3xl font-black text-white mb-4 tracking-tight">
-              How It Works
-            </h2>
-            <p className="text-center text-gray-500 mb-12 max-w-2xl mx-auto">
-              Your thinking never leaves your device unless you choose.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4">
-              {/* Step 1 */}
-              <div className="relative flex flex-col items-center text-center p-6">
-                <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
-                  <span className="text-3xl">✍️</span>
-                </div>
-                <div className="absolute top-8 left-1/2 right-0 hidden md:block border-t border-dashed border-white/10 -z-10" style={{ width: "calc(50% + 2rem)", left: "50%" }} />
-                <h3 className="text-lg font-bold text-white mb-2">1. Write & Save</h3>
-                <p className="text-gray-500 text-sm">
-                  Saved instantly to your device. Edits never block on a server. Your entry is safe before AI even runs.
-                </p>
-                <div className="mt-3 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
-                  <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">Saved instantly</span>
-                </div>
-              </div>
-
-              {/* Step 2 */}
-              <div className="relative flex flex-col items-center text-center p-6">
-                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
-                  <Bot className="w-8 h-8 text-blue-400" />
-                </div>
-                <div className="absolute top-8 left-1/2 right-0 hidden md:block border-t border-dashed border-white/10 -z-10" style={{ width: "calc(50% + 2rem)", left: "50%" }} />
-                <h3 className="text-lg font-bold text-white mb-2">2. Think with AI</h3>
-                <p className="text-gray-500 text-sm">
-                  When you click "Think with me", the AI sees only your current entry + your memory pins.
-                </p>
-                <div className="mt-3 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
-                  <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">No retention</span>
-                </div>
-              </div>
-
-              {/* Step 3 */}
-              <div className="flex flex-col items-center text-center p-6">
-                <div className="w-16 h-16 rounded-2xl bg-gray-500/10 border border-gray-500/20 flex items-center justify-center mb-4">
-                  <Shield className="w-8 h-8 text-gray-400" />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">3. You Control Storage</h3>
-                <p className="text-gray-500 text-sm">
-                  Export, clear, or back up anytime. Your data, your rules.
-                </p>
-                <div className="mt-3 px-3 py-1 rounded-full bg-gray-500/10 border border-gray-500/20">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Yours forever</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Visual flow diagram */}
-            <div className="mt-12 flex items-center justify-center gap-4 text-gray-600 text-sm">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
-                <Smartphone className="w-4 h-4" />
-                <span>Your Device</span>
-              </div>
-              <ArrowRight className="w-4 h-4 text-gray-700" />
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
-                <Lock className="w-4 h-4" />
-                <span>Sent to AI</span>
-              </div>
-              <ArrowRight className="w-4 h-4 text-gray-700" />
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
-                <Bot className="w-4 h-4" />
-                <span>AI Insights</span>
-              </div>
-              <ArrowRight className="w-4 h-4 text-gray-700" />
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
-                <Smartphone className="w-4 h-4" />
-                <span>Back to You</span>
-              </div>
-            </div>
-          </div>
-        </section>
-      </RevealSection>
-      <RevealSection>
-        <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
-          <PortalBackground variant="zone" />
-          <div className="relative z-10 max-w-6xl mx-auto px-10">
-            <div className="text-center mb-8">
-              <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-medium">
-                Your thinking lives on your device. Sync only when you choose. A tool, not a network.
+        <section id="how-it-works" className="relative py-24 bg-[#030303] border-t border-white/[0.05]">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight" data-testid="text-zones-headline">
+                Three Zones for Clear Thinking
+              </h2>
+              <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+                DJZS organizes your thoughts into dedicated zones, so you can focus on what matters.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-              <ZoneCard 
-                title="Journal" 
-                desc="Daily reflections with a calm thinking partner" 
-                startHere={isConnected}
-                href={isConnected ? "/chat" : "#"}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <ZoneFeatureCard
+                icon={<BookOpen className="w-7 h-7 text-blue-400" />}
+                color="blue"
+                title="Daily Journaling"
+                description="Capture your thoughts and feelings. Get instant summaries, insights, and emotional signals to understand your patterns."
+                examplePrompt="Journal: Today I felt scattered and distracted..."
+                href={isConnected ? "/chat" : "/chat"}
               />
-              <ZoneCard 
-                title="Research" 
-                desc="Gather claims, track evidence, surface unknowns" 
-                href={isConnected ? "/chat?zone=research" : "#"}
+              <ZoneFeatureCard
+                icon={<Search className="w-7 h-7 text-green-400" />}
+                color="green"
+                title="Deep Research"
+                description="Save links, notes, and clippings. When you're ready, synthesize them into a clear thesis with contradictions and open questions."
+                examplePrompt="Research: Save this link..."
+                href={isConnected ? "/chat?zone=research" : "/chat"}
+              />
+              <ZoneFeatureCard
+                icon={<Brain className="w-7 h-7 text-purple-400" />}
+                color="purple"
+                title="Think Through a Problem"
+                description="Stuck on a tough decision? Your Thinking Partner helps you explore the core tensions and find your next step."
+                examplePrompt="I'm unsure whether to pivot my project toward video diaries."
+                href={isConnected ? "/chat" : "/chat"}
               />
             </div>
-            
-            {!isConnected && (
-              <div className="mt-16 text-center">
-                <div className="inline-block p-[1px] rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
-                  <div className="px-8 py-3 rounded-full bg-black text-xs font-black uppercase tracking-widest text-white">
-                    Connect wallet to enter your zones
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </section>
       </RevealSection>
+
       <RevealSection>
-        <section className="relative py-12 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
-          <PortalBackground variant="clarity" />
-          <div className="relative z-10 max-w-5xl mx-auto px-10 text-center">
-            <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-8 max-w-3xl mx-auto">
-              DJZS is infrastructure for your thinking. Not a platform. Not a network. A tool you own.
-            </p>
-            <div className="grid md:grid-cols-3 gap-8">
-              <FlipFeatureCard 
+        <section className="relative py-24 bg-black border-t border-white/[0.05]">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight" data-testid="text-stability-headline">
+                Built for Stability, Not Hype
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <StabilityCard
                 icon={<HardDrive className="w-6 h-6 text-purple-400" />}
-                title="Local-first"
-                frontText="If you typed it, you own it. It's saved."
-                status="aligned"
-                backItems={[
-                  "Saved instantly — no spinner while typing",
-                  "Works fully offline, even on airplane mode",
-                  "Sync is optional. Your thoughts are not.",
-                  "If DJZS disappears, your thinking remains"
-                ]}
+                title="Local-First & Private"
+                description="Your data is stored on your device, not our servers. Your thinking is yours alone."
               />
-              <FlipFeatureCard 
+              <StabilityCard
                 icon={<Bot className="w-6 h-6 text-blue-400" />}
-                title="AI Memory"
-                frontText="Memory is opt-in: pin what matters, forget what doesn't."
-                status="aligned"
-                backItems={[
-                  "AI sees only your current entry + your pins",
-                  "Memory is explicit, not automatic",
-                  "No silent learning or background retention",
-                  "You control what the AI remembers"
-                ]}
+                title="AI on Your Terms"
+                description="The AI only analyzes what you tell it to, when you tell it to. No passive listening, no data mining."
               />
-              <FlipFeatureCard 
-                icon={<Shield className="w-6 h-6 text-gray-400" />}
-                title="Wallet login"
-                frontText="Login without email/password. No account needed."
-                status="intentional"
-                backItems={[
-                  "Your wallet is your identity",
-                  "No email harvesting or password resets",
-                  "You can try the demo without connecting",
-                  "Privacy by design, not by policy"
-                ]}
+              <StabilityCard
+                icon={<Shield className="w-6 h-6 text-green-400" />}
+                title="Open & Stable"
+                description="Built on a clean, open architecture. This is a tool you can rely on for years, not a disposable app."
               />
             </div>
           </div>
         </section>
       </RevealSection>
+
       <RevealSection>
-        <section className="relative py-16 bg-[#030303] border-t border-white/[0.03] overflow-hidden">
+        <section className="relative py-16 bg-[#030303] border-t border-white/[0.05]">
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
-                <ShieldCheck className="w-4 h-4 text-purple-400" />
+                <Shield className="w-4 h-4 text-purple-400" />
                 <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">Privacy Architecture</span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tight">How DJZS Handles Your Data </h2>
+              <h2 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tight" data-testid="text-privacy-headline">
+                How DJZS Handles Your Data
+              </h2>
               <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
                 Your journal and research data is stored locally on your device. AI analysis only happens when you explicitly request it.
               </p>
@@ -429,7 +252,6 @@ export default function Home() {
                   All journal entries, research notes, and memories are stored in your browser's IndexedDB. Works offline. No cloud database.
                 </p>
               </div>
-
               <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
                 <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
                   <Bot className="w-6 h-6 text-blue-400" />
@@ -439,7 +261,6 @@ export default function Home() {
                   AI only sees your data when you click "Think with me." Nothing is sent automatically. You control what the AI receives.
                 </p>
               </div>
-
               <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
                 <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-4">
                   <Shield className="w-6 h-6 text-orange-400" />
@@ -459,31 +280,13 @@ export default function Home() {
                 Planned: encryption-at-rest for local storage · E2E encrypted AI requests
               </p>
             </div>
-
-            <div className="flex flex-wrap justify-center gap-3 mt-8">
-              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
-                <span className="text-xs font-medium text-gray-400">Local-first storage</span>
-              </div>
-              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
-                <span className="text-xs font-medium text-gray-400">User-controlled AI</span>
-              </div>
-              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
-                <span className="text-xs font-medium text-gray-400">Venice AI</span>
-              </div>
-              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
-                <span className="text-xs font-medium text-gray-400">No data retention</span>
-              </div>
-              <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.06]">
-                <span className="text-xs font-medium text-gray-400">Brave Search</span>
-              </div>
-            </div>
           </div>
         </section>
       </RevealSection>
+
       <RevealSection>
-        <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
-          <PortalBackground variant="faq" />
-          <div className="relative z-10 max-w-4xl mx-auto px-10">
+        <section className="relative py-12 bg-black border-t border-white/[0.05]">
+          <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="divide-y divide-white/[0.05]">
               <FAQItem question="How is DJZS different from ChatGPT or Claude?">
                 <p>DJZS is not a chat app and not a general AI assistant.</p>
@@ -573,39 +376,6 @@ export default function Home() {
                 <p className="mt-3">This allows your thinking to compound over time without creating a centralized memory graph.</p>
               </FAQItem>
 
-              <FAQItem question="Why not store everything on a centralized server or blockchain?">
-                <p className="text-white font-semibold">Because that's not decentralized — it's just outsourced risk.</p>
-                <div className="grid grid-cols-2 gap-4 mt-3">
-                  <div>
-                    <p className="text-gray-400 font-semibold mb-1">Centralized servers:</p>
-                    <ul className="list-disc list-inside ml-2 text-sm">
-                      <li>Attractive targets for breaches</li>
-                      <li>Require trust in a company</li>
-                      <li>Turn private thinking into stored assets</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 font-semibold mb-1">Public blockchains:</p>
-                    <ul className="list-disc list-inside ml-2 text-sm">
-                      <li>Permanent and indexable</li>
-                      <li>Not designed for private cognition</li>
-                      <li>Can expose metadata</li>
-                    </ul>
-                  </div>
-                </div>
-                <p className="mt-3">DJZS uses local-first storage and treats cloud or blockchain as optional, secondary, and user-initiated.</p>
-              </FAQItem>
-
-              <FAQItem question="Can I sync or back up my data?">
-                <p className="text-white font-semibold">Yes — when you choose to.</p>
-                <ul className="list-disc list-inside ml-2 mt-2">
-                  <li>Export your data</li>
-                  <li>Back it up</li>
-                  <li>Timestamp or prove ownership using decentralized networks</li>
-                </ul>
-                <p className="mt-3">But DJZS never requires this. The system works without sync. Sync exists for your convenience, not control.</p>
-              </FAQItem>
-
               <FAQItem question="Who owns my data?">
                 <p className="text-white font-semibold text-lg">You do.</p>
                 <ul className="list-disc list-inside ml-2 mt-2">
@@ -617,171 +387,106 @@ export default function Home() {
                 </ul>
                 <p className="mt-3 text-white font-semibold">DJZS is a tool you own — not a platform that owns you.</p>
               </FAQItem>
-
-              <FAQItem question="What is a 'Zone'?">
-                <p>A Zone is a thinking context.</p>
-                <p className="mt-2">Zones help you separate:</p>
-                <ul className="list-disc list-inside ml-2">
-                  <li>Journaling</li>
-                  <li>Research</li>
-                  <li>Reflection</li>
-                  <li>Long-term memory</li>
-                </ul>
-                <p className="mt-3">Each Zone changes how the AI responds, without mixing your thoughts into a feed or profile.</p>
-                <p className="text-white mt-2 font-semibold">You move through Zones. You don't perform in them.</p>
-              </FAQItem>
             </div>
           </div>
         </section>
       </RevealSection>
-      <footer className="relative border-t border-white/[0.03] pt-0 pb-20 overflow-hidden">
-        <div style={{ position: "relative", overflow: "hidden", borderRadius: 0 }}>
-          {/* Background */}
-          <div
-            style={{
-              position: "absolute",
-              inset: "-30%",
-              background: `
-                radial-gradient(900px 380px at 15% 35%, rgba(140,80,255,.35), transparent 60%),
-                radial-gradient(900px 420px at 85% 55%, rgba(80,210,255,.28), transparent 60%),
-                radial-gradient(1100px 520px at 50% -10%, rgba(255,255,255,.14), transparent 60%)
-              `,
-              filter: "blur(10px)",
-              animation: "djzsDrift 16s ease-in-out infinite",
-            }}
-          />
 
-          {/* Stars */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: `
-                radial-gradient(rgba(255,255,255,.8) 1px, transparent 1px),
-                radial-gradient(rgba(255,255,255,.45) 1px, transparent 1px)
-              `,
-              backgroundSize: "90px 90px, 140px 140px",
-              backgroundPosition: "0 0, 40px 60px",
-              opacity: 0.25,
-              animation: "djzsStars 40s linear infinite",
-              pointerEvents: "none",
-            }}
-          />
+      <RevealSection>
+        <section className="relative py-24 bg-[#030303] border-t border-white/[0.05]">
+          <div className="max-w-3xl mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight" data-testid="text-final-cta-headline">
+              Ready to build a better thinking habit?
+            </h2>
+            <p className="text-lg text-gray-500 mb-10">
+              Start with a single entry.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/chat">
+                <button
+                  className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-8 py-4 text-base font-bold text-white hover:bg-purple-500 transition-all duration-250 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-0.5"
+                  data-testid="button-final-get-started"
+                >
+                  Get Started
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+              {!isConnected && (
+                <div className="scale-110">
+                  <ConnectButton showBalance={false} />
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      </RevealSection>
 
-          {/* Shimmer */}
-          <div
-            style={{
-              position: "absolute",
-              inset: "-40%",
-              background:
-                "linear-gradient(110deg, transparent 0%, rgba(255,255,255,.12) 45%, transparent 60%)",
-              filter: "blur(16px)",
-              animation: "djzsShimmer 10s ease-in-out infinite",
-              pointerEvents: "none",
-            }}
-          />
-
-          {/* Glow */}
-          <div
-            style={{
-              position: "absolute",
-              left: "10%",
-              top: "20%",
-              width: "80%",
-              height: "70%",
-              background:
-                "radial-gradient(circle at 30% 40%, rgba(160,110,255,.45), transparent 60%)",
-              filter: "blur(20px)",
-              animation: "djzsPulse 6s ease-in-out infinite",
-              pointerEvents: "none",
-            }}
-          />
-
-          {/* Vignette */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.65))",
-              pointerEvents: "none",
-            }}
-          />
-
-          {/* Footer Marquee Banner - Removed for brevity */}
-          <div className="h-10" />
-        </div>
-
-        <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-8">
-          {/* Glowing Logo Section */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-purple-500/20 blur-3xl rounded-full" />
-            <h2 className="relative text-4xl md:text-5xl font-black text-white tracking-widest uppercase bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
+      <footer className="border-t border-white/[0.05] py-16 bg-black">
+        <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-8">
+          <div>
+            <h2 className="text-2xl font-black text-white tracking-widest uppercase mb-2">
               DJZS
             </h2>
+            <p className="text-gray-500 text-sm font-medium">
+              A thinking system, not a network
+            </p>
           </div>
-          <p className="text-gray-500 text-sm md:text-base font-medium uppercase tracking-[0.3em]">
-            A thinking system, not a network
-          </p>
-          
-          {/* Navigation Links */}
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 pt-4">
-            <Link href="/about" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">About</span>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
+            <Link href="/about" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-about">
+              About
             </Link>
-            <Link href="/docs" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Docs</span>
+            <Link href="/docs" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-docs">
+              Docs
             </Link>
-            <Link href="/privacy" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Privacy</span>
+            <Link href="/privacy" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-privacy">
+              Privacy
             </Link>
-            <Link href="/security" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Security</span>
+            <Link href="/security" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-security">
+              Security
             </Link>
-            <Link href="/terms" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Terms</span>
+            <Link href="/terms" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-terms">
+              Terms
             </Link>
-            <Link href="/roadmap" className="group px-4 py-2 rounded-full border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-purple-400 transition-colors">Roadmap</span>
+            <Link href="/roadmap" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-roadmap">
+              Roadmap
             </Link>
             {isConnected && (
-              <Link href="/chat" className="group px-5 py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 transition-all shadow-lg shadow-purple-500/25">
-                <span className="text-xs font-bold uppercase tracking-widest text-white">Enter</span>
+              <Link href="/chat" className="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors" data-testid="link-footer-enter">
+                Enter
               </Link>
             )}
           </div>
-          
-          {/* External Links - Identity Signals */}
-          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-gray-600">
-            <a href="https://github.com/djzs" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition-colors text-[10px] font-bold uppercase tracking-widest">
+
+          <div className="flex flex-wrap items-center justify-center gap-6 text-gray-600">
+            <a href="https://github.com/djzs" target="_blank" rel="noopener noreferrer" className="text-xs hover:text-purple-400 transition-colors" data-testid="link-footer-github">
               GitHub
             </a>
             <span className="text-gray-800">·</span>
-            <a href="https://x.com/djzs_box" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition-colors text-[10px] font-bold uppercase tracking-widest">
+            <a href="https://x.com/djzs_box" target="_blank" rel="noopener noreferrer" className="text-xs hover:text-purple-400 transition-colors" data-testid="link-footer-twitter">
               X / Twitter
             </a>
             <span className="text-gray-800">·</span>
-            <a href="mailto:hello@dj-z-s.box" className="hover:text-purple-400 transition-colors text-[10px] font-bold uppercase tracking-widest">
+            <a href="mailto:hello@dj-z-s.box" className="text-xs hover:text-purple-400 transition-colors" data-testid="link-footer-contact">
               Contact
             </a>
           </div>
-          
-          {/* Copyright */}
-          <p className="text-[10px] text-gray-700 uppercase tracking-widest pt-4">
+
+          <p className="text-[10px] text-gray-700 uppercase tracking-widest">
             © 2026 DJZS System
           </p>
         </div>
       </footer>
-      {/* Mobile Sticky CTA Bar */}
+
       {!isConnected && (
         <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black/95 backdrop-blur-xl border-t border-white/[0.05] p-4 safe-area-inset-bottom">
           <div className="flex items-center gap-3 max-w-lg mx-auto">
             <Link href="/chat" className="flex-1">
-              <button 
+              <button
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-bold text-black hover:bg-gray-100 transition-colors min-h-[48px]"
                 data-testid="button-mobile-try-demo"
               >
-                Try demo
+                Start Thinking
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
@@ -795,14 +500,82 @@ export default function Home() {
   );
 }
 
+function ZoneFeatureCard({
+  icon,
+  color,
+  title,
+  description,
+  examplePrompt,
+  href,
+}: {
+  icon: ReactNode;
+  color: "blue" | "green" | "purple";
+  title: string;
+  description: string;
+  examplePrompt: string;
+  href: string;
+}) {
+  const borderColors = {
+    blue: "hover:border-blue-500/30",
+    green: "hover:border-green-500/30",
+    purple: "hover:border-purple-500/30",
+  };
+
+  return (
+    <Link href={href}>
+      <motion.div
+        whileHover={{ y: -4, scale: 1.01 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className={`h-full p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] ${borderColors[color]} transition-colors duration-250 cursor-pointer group`}
+        data-testid={`card-zone-${color}`}
+      >
+        <div className="w-14 h-14 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-6 group-hover:border-white/[0.12] transition-colors">
+          {icon}
+        </div>
+        <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
+        <p className="text-gray-500 text-sm leading-relaxed mb-6">{description}</p>
+        <div className="px-4 py-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+          <p className="text-xs text-gray-600 font-mono italic">"{examplePrompt}"</p>
+        </div>
+      </motion.div>
+    </Link>
+  );
+}
+
+function StabilityCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <motion.div
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.10] transition-colors duration-250"
+      data-testid={`card-stability-${title.toLowerCase().replace(/\s+/g, '-')}`}
+    >
+      <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-5">
+        {icon}
+      </div>
+      <h3 className="text-lg font-bold text-white mb-3">{title}</h3>
+      <p className="text-gray-500 text-sm leading-relaxed">{description}</p>
+    </motion.div>
+  );
+}
+
 function FAQItem({ question, children }: { question: string; children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return (
     <div className="py-6 group">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between gap-4 text-left"
+        data-testid={`button-faq-${question.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}`}
       >
         <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors">{question}</h3>
         <div className="shrink-0 w-10 h-10 rounded-full border border-white/[0.1] flex items-center justify-center group-hover:border-purple-500/30 transition-all">

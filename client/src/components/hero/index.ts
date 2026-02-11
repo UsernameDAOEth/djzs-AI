@@ -1,10 +1,1 @@
-export { StartWritingButton } from "./StartWritingButton";
-export { ScrollCue } from "./ScrollCue";
-export { ZoneCard } from "./ZoneCard";
-export { MarqueeBanner } from "./MarqueeBanner";
 export { RevealSection } from "./RevealSection";
-export { AnimatedBackground } from "./AnimatedBackground";
-export { CursorSpotlight } from "./CursorSpotlight";
-export { ThinkFlywheel } from "./ThinkFlywheel";
-export { PortalBackground } from "./PortalBackground";
-export { FlipFeatureCard } from "./FlipFeatureCard";
