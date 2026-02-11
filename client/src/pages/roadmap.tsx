@@ -67,11 +67,11 @@ const roadmapPhases = [
 
 export default function Roadmap() {
   return (
-    <div className="min-h-screen bg-[#050505] text-gray-400 font-medium selection:bg-purple-500/30">
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-md border-b border-white/[0.05]">
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(26,29,46,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-white hover:text-purple-400 transition-colors group">
+          <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="text-xs font-black uppercase tracking-[0.2em]">Back to System</span>
           </Link>
@@ -111,13 +111,13 @@ export default function Roadmap() {
                   <div className="shrink-0 relative z-10">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                       phase.status === "completed" 
-                        ? "bg-purple-500/20 border border-purple-500/50" 
+                        ? "bg-orange-500/20 border border-orange-500/50" 
                         : phase.status === "active"
-                        ? "bg-purple-500 animate-pulse"
+                        ? "animate-pulse"
                         : "bg-white/5 border border-white/10"
-                    }`}>
+                    }`} style={phase.status === "active" ? { background: '#E8842C' } : undefined}>
                       {phase.status === "completed" ? (
-                        <Check className="w-5 h-5 text-purple-400" />
+                        <Check className="w-5 h-5 text-orange-400" />
                       ) : phase.status === "active" ? (
                         <Rocket className="w-4 h-4 text-white" />
                       ) : (
@@ -129,13 +129,13 @@ export default function Roadmap() {
                   {/* Content */}
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="text-purple-500 font-mono text-xs">{phase.phase}</span>
+                      <span className="font-mono text-xs" style={{ color: '#E8842C' }}>{phase.phase}</span>
                       <h2 className="text-xl font-black text-white uppercase tracking-widest">
                         {phase.title}
                       </h2>
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${
                         phase.status === "completed"
-                          ? "bg-purple-500/20 text-purple-400"
+                          ? "bg-orange-500/20 text-orange-400"
                           : phase.status === "active"
                           ? "bg-green-500/20 text-green-400"
                           : "bg-white/5 text-gray-500"
@@ -151,13 +151,13 @@ export default function Roadmap() {
                           className="flex items-center gap-3 text-sm"
                         >
                           <div className={`w-1.5 h-1.5 rounded-full ${
-                            item.done ? "bg-purple-500" : "bg-gray-700"
+                            item.done ? "bg-orange-500" : "bg-gray-700"
                           }`} />
                           <span className={item.done ? "text-gray-400" : "text-gray-600"}>
                             {item.text}
                           </span>
                           {item.done && (
-                            <Check className="w-3 h-3 text-purple-500" />
+                            <Check className="w-3 h-3 text-orange-500" />
                           )}
                         </div>
                       ))}
@@ -168,7 +168,7 @@ export default function Roadmap() {
             ))}
           </div>
 
-          <div className="mt-12 p-8 rounded-2xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20">
+          <div className="mt-12 p-8 rounded-2xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
             <h3 className="text-white font-black uppercase tracking-widest mb-3">
               Beyond the Horizon
             </h3>

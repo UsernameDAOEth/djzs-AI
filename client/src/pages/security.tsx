@@ -4,11 +4,11 @@ import { ArrowLeft, Shield, HardDrive, Lock, Fingerprint, Eye, Server, Smartphon
 
 export default function Security() {
   return (
-    <div className="min-h-screen bg-[#050505] text-gray-400 font-medium selection:bg-purple-500/30">
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-md border-b border-white/[0.05]">
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(26,29,46,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-white hover:text-purple-400 transition-colors group">
+          <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="text-xs font-black uppercase tracking-[0.2em]">Back to System</span>
           </Link>
@@ -48,7 +48,7 @@ export default function Security() {
           <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="text-purple-500 font-mono text-xs">01</span> No Custody, No Risk
+                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>01</span> No Custody, No Risk
               </h2>
               <div className="space-y-4">
                 <p>
@@ -77,25 +77,25 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="text-purple-500 font-mono text-xs">02</span> Local-First Architecture
+                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>02</span> Local-First Architecture
               </h2>
               <div className="grid gap-4">
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] flex gap-4">
-                  <HardDrive className="w-5 h-5 text-purple-400 shrink-0" />
+                  <HardDrive className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-1">Data Stays on Your Device</h3>
                     <p className="text-xs">All journal entries, research notes, and memories are stored in your browser's IndexedDB. This data never leaves your device unless you explicitly ask the AI for insights or export it.</p>
                   </div>
                 </div>
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] flex gap-4">
-                  <Smartphone className="w-5 h-5 text-purple-400 shrink-0" />
+                  <Smartphone className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-1">Works Offline</h3>
                     <p className="text-xs">The core journaling functionality works without an internet connection. Your thinking doesn't depend on our servers being online.</p>
                   </div>
                 </div>
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] flex gap-4">
-                  <Server className="w-5 h-5 text-purple-400 shrink-0" />
+                  <Server className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-1">No Server-Side Storage</h3>
                     <p className="text-xs">We do not permanently store your personal data, journal entries, or research on any server. When you request AI insights, your selected text is sent to privacy-focused AI providers (Venice AI) which claim no data retention.</p>
@@ -106,26 +106,26 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="text-purple-500 font-mono text-xs">03</span> User-Initiated Actions Only
+                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>03</span> User-Initiated Actions Only
               </h2>
               <p className="mb-4">
                 Every action in DJ-Z-S.box requires your explicit consent:
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
-                  <Lock className="w-4 h-4 text-purple-400 mt-0.5 shrink-0" />
+                  <Lock className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
                   <span><strong className="text-white">Wallet connection</strong> — Only happens when you click "Connect Wallet"</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Lock className="w-4 h-4 text-purple-400 mt-0.5 shrink-0" />
+                  <Lock className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
                   <span><strong className="text-white">AI queries</strong> — Only sent when you explicitly ask for insights</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Lock className="w-4 h-4 text-purple-400 mt-0.5 shrink-0" />
+                  <Lock className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
                   <span><strong className="text-white">Web searches</strong> — Only performed when you initiate a research query</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Lock className="w-4 h-4 text-purple-400 mt-0.5 shrink-0" />
+                  <Lock className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
                   <span><strong className="text-white">No background requests</strong> — Nothing happens without visible user action</span>
                 </li>
               </ul>
@@ -133,11 +133,11 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="text-purple-500 font-mono text-xs">04</span> Wallet Security
+                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>04</span> Wallet Security
               </h2>
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4">
                 <div className="flex items-start gap-3">
-                  <Fingerprint className="w-5 h-5 text-purple-400 shrink-0" />
+                  <Fingerprint className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-2">What Wallet Connection Does</h3>
                     <ul className="space-y-2 text-xs">
@@ -166,7 +166,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="text-purple-500 font-mono text-xs">05</span> AI Privacy
+                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>05</span> AI Privacy
               </h2>
               <p className="mb-4">
                 When you use AI features, we prioritize your privacy:
@@ -189,7 +189,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="text-purple-500 font-mono text-xs">06</span> Security Best Practices
+                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>06</span> Security Best Practices
               </h2>
               <p className="mb-4">
                 To maximize your security while using DJ-Z-S.box:
@@ -205,7 +205,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="text-purple-500 font-mono text-xs">07</span> Report a Vulnerability
+                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>07</span> Report a Vulnerability
               </h2>
               <p>
                 If you discover a security vulnerability, please report it responsibly through our 
