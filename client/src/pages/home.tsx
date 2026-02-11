@@ -170,7 +170,6 @@ export default function Home() {
         <meta name="twitter:title" content="DJZS - Private AI Journaling" />
         <meta name="twitter:description" content="Local-first AI journaling and research. Your thinking stays yours." />
       </Helmet>
-
       {/* Hero Section */}
       <motion.section
         variants={pageContainer}
@@ -240,7 +239,6 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
-
       {/* How It Works - 3-step strip */}
       <RevealSection>
         <section className="relative py-16 bg-[#030303] border-t border-white/[0.03] overflow-hidden">
@@ -409,7 +407,6 @@ export default function Home() {
           </div>
         </section>
       </RevealSection>
-
       <RevealSection>
         <section className="relative py-16 bg-[#030303] border-t border-white/[0.03] overflow-hidden">
           <div className="relative z-10 max-w-4xl mx-auto px-6">
@@ -418,9 +415,7 @@ export default function Home() {
                 <ShieldCheck className="w-4 h-4 text-purple-400" />
                 <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">Privacy Architecture</span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tight">
-                How DJZS Handles Your Data — Honestly
-              </h2>
+              <h2 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tight">How DJZS Handles Your Data </h2>
               <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
                 Your journal and research data is stored locally on your device. AI analysis only happens when you explicitly request it.
               </p>
@@ -487,7 +482,6 @@ export default function Home() {
           </div>
         </section>
       </RevealSection>
-
       <RevealSection>
         <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="faq" />
