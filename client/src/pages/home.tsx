@@ -5,7 +5,7 @@ import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight, S
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, PortalBackground, FlipFeatureCard } from "@/components/hero";
+import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, PortalBackground, FlipFeatureCard } from "@/components/hero";
 import { Helmet } from "react-helmet";
 
 export default function Home() {
@@ -362,7 +362,6 @@ export default function Home() {
         <section className="relative py-12 bg-[#050505] border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="clarity" />
           <div className="relative z-10 max-w-5xl mx-auto px-10 text-center">
-            <ClarityFlywheel />
             <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium mb-8 max-w-3xl mx-auto">
               DJZS is infrastructure for your thinking. Not a platform. Not a network. A tool you own.
             </p>
