@@ -28,13 +28,13 @@ export default function Home() {
       <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/[0.05]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
-            <span className="text-lg font-black tracking-widest uppercase text-white" data-testid="link-home-logo">DJZS</span>
+            <span className="text-xl font-black tracking-widest uppercase text-white" data-testid="link-home-logo">DJZS</span>
           </Link>
           <div className="flex items-center gap-4">
             {isConnected ? (
               <Link href="/chat">
                 <button
-                  className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-500 transition-colors shadow-md shadow-purple-500/20"
+                  className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-2.5 text-base font-semibold text-white hover:bg-purple-500 transition-colors shadow-md shadow-purple-500/20"
                   data-testid="button-header-enter"
                 >
                   Enter DJZS
@@ -64,7 +64,7 @@ export default function Home() {
         variants={pageContainer}
         initial="hidden"
         animate="show"
-        className="relative min-h-[85vh] flex items-center justify-center overflow-hidden"
+        className="relative min-h-[92vh] flex items-center justify-center overflow-hidden"
       >
         <div
           className="absolute inset-0 pointer-events-none"
@@ -77,58 +77,58 @@ export default function Home() {
           }}
         />
 
-        <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <motion.h1
             variants={fadeUp}
-            className="text-5xl md:text-7xl font-black text-white tracking-tight leading-[1.1] mb-6"
+            className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[1] mb-8"
           >
             Your thoughts, structured.
           </motion.h1>
 
           <motion.p
             variants={fadeUp}
-            className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto leading-relaxed mb-10"
+            className="text-2xl md:text-3xl text-gray-400 max-w-4xl mx-auto leading-tight mb-12 font-medium"
           >
             A private system to capture, connect, and deepen your ideas. No noise, just clarity.
           </motion.p>
 
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
             {isConnected ? (
               <Link href="/chat">
                 <button
-                  className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-8 py-4 text-base font-bold text-white hover:bg-purple-500 transition-all duration-250 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-3 rounded-2xl bg-purple-600 px-10 py-5 text-lg font-bold text-white hover:bg-purple-500 transition-all duration-250 shadow-xl shadow-purple-500/25 hover:shadow-2xl hover:shadow-purple-500/30 hover:-translate-y-1"
                   data-testid="button-start-thinking"
                 >
                   Start Thinking
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-6 h-6" />
                 </button>
               </Link>
             ) : (
               <>
                 <Link href="/chat">
                   <button
-                    className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-black hover:bg-gray-100 transition-all duration-250 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                    className="inline-flex items-center gap-3 rounded-2xl bg-white px-10 py-5 text-lg font-bold text-black hover:bg-gray-100 transition-all duration-250 shadow-xl hover:shadow-2xl hover:-translate-y-1"
                     data-testid="button-start-thinking"
                   >
                     Start Thinking
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-6 h-6" />
                   </button>
                 </Link>
                 <button
                   onClick={scrollToHowItWorks}
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-6 py-4 text-base font-semibold text-gray-300 hover:border-white/20 hover:text-white transition-all duration-250"
+                  className="inline-flex items-center gap-3 rounded-2xl border border-white/10 px-8 py-5 text-lg font-bold text-gray-300 hover:border-white/20 hover:text-white transition-all duration-250"
                   data-testid="button-see-how-it-works"
                 >
                   See How It Works
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-5 h-5" />
                 </button>
               </>
             )}
           </motion.div>
 
           {!isConnected && (
-            <motion.div variants={fadeUp} className="mb-8">
-              <div className="scale-110 inline-block">
+            <motion.div variants={fadeUp} className="mb-12">
+              <div className="scale-125 inline-block">
                 <ConnectButton showBalance={false} />
               </div>
             </motion.div>
@@ -136,18 +136,18 @@ export default function Home() {
 
           <motion.div
             variants={fadeUp}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6 text-gray-500 text-sm"
+            className="flex flex-col sm:flex-row items-center justify-center gap-10 text-gray-500 text-base font-medium"
           >
-            <div className="flex items-center gap-2" data-testid="text-trust-local">
-              <HardDrive className="w-4 h-4 text-purple-400/70" />
+            <div className="flex items-center gap-3" data-testid="text-trust-local">
+              <HardDrive className="w-5 h-5 text-purple-400/70" />
               <span>Stored on your device</span>
             </div>
-            <div className="flex items-center gap-2" data-testid="text-trust-ai">
-              <Bot className="w-4 h-4 text-blue-400/70" />
+            <div className="flex items-center gap-3" data-testid="text-trust-ai">
+              <Bot className="w-5 h-5 text-blue-400/70" />
               <span>AI only when you ask</span>
             </div>
-            <div className="flex items-center gap-2" data-testid="text-trust-private">
-              <Shield className="w-4 h-4 text-green-400/70" />
+            <div className="flex items-center gap-3" data-testid="text-trust-private">
+              <Shield className="w-5 h-5 text-green-400/70" />
               <span>Private by default</span>
             </div>
           </motion.div>
@@ -155,13 +155,13 @@ export default function Home() {
       </motion.section>
 
       <RevealSection>
-        <section id="how-it-works" className="relative py-24 bg-[#030303] border-t border-white/[0.05]">
+        <section id="how-it-works" className="relative py-32 bg-[#030303] border-t border-white/[0.05]">
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight" data-testid="text-zones-headline">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-zones-headline">
                 Three Zones for Clear Thinking
               </h2>
-              <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-500 max-w-3xl mx-auto">
                 DJZS organizes your thoughts into dedicated zones, so you can focus on what matters.
               </p>
             </div>
@@ -197,10 +197,10 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 bg-black border-t border-white/[0.05]">
+        <section className="relative py-32 bg-black border-t border-white/[0.05]">
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight" data-testid="text-stability-headline">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-stability-headline">
                 Built for Stability, Not Hype
               </h2>
             </div>
@@ -227,53 +227,53 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-16 bg-[#030303] border-t border-white/[0.05]">
+        <section className="relative py-24 bg-[#030303] border-t border-white/[0.05]">
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
                 <Shield className="w-4 h-4 text-purple-400" />
                 <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">Privacy Architecture</span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tight" data-testid="text-privacy-headline">
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight" data-testid="text-privacy-headline">
                 How DJZS Handles Your Data
               </h2>
-              <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
                 Your journal and research data is stored locally on your device. AI analysis only happens when you explicitly request it.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-10">
-              <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
-                  <HardDrive className="w-6 h-6 text-purple-400" />
+              <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="w-14 h-14 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-6">
+                  <HardDrive className="w-7 h-7 text-purple-400" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Local-First Storage</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Local-First Storage</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
                   All journal entries, research notes, and memories are stored in your browser's IndexedDB. Works offline. No cloud database.
                 </p>
               </div>
-              <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
-                  <Bot className="w-6 h-6 text-blue-400" />
+              <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="w-14 h-14 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6">
+                  <Bot className="w-7 h-7 text-blue-400" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">User-Controlled AI</h3>
+                <h3 className="text-xl font-bold text-white mb-3">User-Controlled AI</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
                   AI only sees your data when you click "Think with me." Nothing is sent automatically. You control what the AI receives.
                 </p>
               </div>
-              <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
-                <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-4">
-                  <Shield className="w-6 h-6 text-orange-400" />
+              <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="w-14 h-14 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-6">
+                  <Shield className="w-7 h-7 text-orange-400" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Privacy-Focused Providers</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Privacy-Focused Providers</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
                   Powered by Venice AI (no data retention) and Brave Search (no tracking). Your queries are not stored or used for training.
                 </p>
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/[0.05] to-blue-500/[0.05] border border-white/[0.08]">
-              <p className="text-center text-gray-300 leading-relaxed">
+            <div className="p-8 rounded-2xl bg-gradient-to-r from-purple-500/[0.05] to-blue-500/[0.05] border border-white/[0.08]">
+              <p className="text-center text-gray-300 text-lg leading-relaxed">
                 When you request AI insights, only the text you select is sent to privacy-focused AI providers. The response is saved locally on your device. We do not permanently store your data on any server.
               </p>
               <p className="text-center text-[10px] text-gray-600 mt-4 uppercase tracking-wider">
@@ -285,7 +285,7 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-12 bg-black border-t border-white/[0.05]">
+        <section className="relative py-24 bg-black border-t border-white/[0.05]">
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="divide-y divide-white/[0.05]">
               <FAQItem question="How is DJZS different from ChatGPT or Claude?">
@@ -393,26 +393,26 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 bg-[#030303] border-t border-white/[0.05]">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight" data-testid="text-final-cta-headline">
+        <section className="relative py-32 bg-[#030303] border-t border-white/[0.05]">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-final-cta-headline">
               Ready to build a better thinking habit?
             </h2>
-            <p className="text-lg text-gray-500 mb-10">
+            <p className="text-xl text-gray-500 mb-12">
               Start with a single entry.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <Link href="/chat">
                 <button
-                  className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-8 py-4 text-base font-bold text-white hover:bg-purple-500 transition-all duration-250 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-3 rounded-2xl bg-purple-600 px-10 py-5 text-lg font-bold text-white hover:bg-purple-500 transition-all duration-250 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-1"
                   data-testid="button-final-get-started"
                 >
                   Get Started
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-6 h-6" />
                 </button>
               </Link>
               {!isConnected && (
-                <div className="scale-110">
+                <div className="scale-125">
                   <ConnectButton showBalance={false} />
                 </div>
               )}
@@ -421,53 +421,53 @@ export default function Home() {
         </section>
       </RevealSection>
 
-      <footer className="border-t border-white/[0.05] py-16 bg-black">
-        <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-8">
+      <footer className="border-t border-white/[0.05] py-24 bg-black">
+        <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-10">
           <div>
-            <h2 className="text-2xl font-black text-white tracking-widest uppercase mb-2">
+            <h2 className="text-3xl font-black text-white tracking-widest uppercase mb-3">
               DJZS
             </h2>
-            <p className="text-gray-500 text-sm font-medium">
+            <p className="text-gray-500 text-base font-medium">
               A thinking system, not a network
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-            <Link href="/about" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-about">
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
+            <Link href="/about" className="text-base text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-about">
               About
             </Link>
-            <Link href="/docs" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-docs">
+            <Link href="/docs" className="text-base text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-docs">
               Docs
             </Link>
-            <Link href="/privacy" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-privacy">
+            <Link href="/privacy" className="text-base text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-privacy">
               Privacy
             </Link>
-            <Link href="/security" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-security">
+            <Link href="/security" className="text-base text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-security">
               Security
             </Link>
-            <Link href="/terms" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-terms">
+            <Link href="/terms" className="text-base text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-terms">
               Terms
             </Link>
-            <Link href="/roadmap" className="text-sm text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-roadmap">
+            <Link href="/roadmap" className="text-base text-gray-400 hover:text-purple-400 transition-colors" data-testid="link-footer-roadmap">
               Roadmap
             </Link>
             {isConnected && (
-              <Link href="/chat" className="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors" data-testid="link-footer-enter">
+              <Link href="/chat" className="text-base font-semibold text-purple-400 hover:text-purple-300 transition-colors" data-testid="link-footer-enter">
                 Enter
               </Link>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 text-gray-600">
-            <a href="https://github.com/djzs" target="_blank" rel="noopener noreferrer" className="text-xs hover:text-purple-400 transition-colors" data-testid="link-footer-github">
+          <div className="flex flex-wrap items-center justify-center gap-8 text-gray-600">
+            <a href="https://github.com/djzs" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-purple-400 transition-colors" data-testid="link-footer-github">
               GitHub
             </a>
             <span className="text-gray-800">·</span>
-            <a href="https://x.com/djzs_box" target="_blank" rel="noopener noreferrer" className="text-xs hover:text-purple-400 transition-colors" data-testid="link-footer-twitter">
+            <a href="https://x.com/djzs_box" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-purple-400 transition-colors" data-testid="link-footer-twitter">
               X / Twitter
             </a>
             <span className="text-gray-800">·</span>
-            <a href="mailto:hello@dj-z-s.box" className="text-xs hover:text-purple-400 transition-colors" data-testid="link-footer-contact">
+            <a href="mailto:hello@dj-z-s.box" className="text-sm hover:text-purple-400 transition-colors" data-testid="link-footer-contact">
               Contact
             </a>
           </div>
@@ -526,16 +526,16 @@ function ZoneFeatureCard({
       <motion.div
         whileHover={{ y: -4, scale: 1.01 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className={`h-full p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] ${borderColors[color]} transition-colors duration-250 cursor-pointer group`}
+        className={`h-full p-10 rounded-2xl bg-white/[0.02] border border-white/[0.06] ${borderColors[color]} transition-colors duration-250 cursor-pointer group`}
         data-testid={`card-zone-${color}`}
       >
-        <div className="w-14 h-14 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-6 group-hover:border-white/[0.12] transition-colors">
+        <div className="w-16 h-16 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-8 group-hover:border-white/[0.12] transition-colors">
           {icon}
         </div>
-        <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
-        <p className="text-gray-500 text-sm leading-relaxed mb-6">{description}</p>
-        <div className="px-4 py-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
-          <p className="text-xs text-gray-600 font-mono italic">"{examplePrompt}"</p>
+        <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
+        <p className="text-gray-500 text-base leading-relaxed mb-8">{description}</p>
+        <div className="px-5 py-4 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+          <p className="text-sm text-gray-600 font-mono italic">"{examplePrompt}"</p>
         </div>
       </motion.div>
     </Link>
@@ -555,14 +555,14 @@ function StabilityCard({
     <motion.div
       whileHover={{ y: -2 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.10] transition-colors duration-250"
+      className="p-10 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.10] transition-colors duration-250"
       data-testid={`card-stability-${title.toLowerCase().replace(/\s+/g, '-')}`}
     >
-      <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-5">
+      <div className="w-14 h-14 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-6">
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-white mb-3">{title}</h3>
-      <p className="text-gray-500 text-sm leading-relaxed">{description}</p>
+      <h3 className="text-xl font-bold text-white mb-4">{title}</h3>
+      <p className="text-gray-500 text-base leading-relaxed">{description}</p>
     </motion.div>
   );
 }
@@ -571,19 +571,19 @@ function FAQItem({ question, children }: { question: string; children: ReactNode
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="py-6 group">
+    <div className="py-8 group">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between gap-4 text-left"
+        className="w-full flex items-center justify-between gap-6 text-left"
         data-testid={`button-faq-${question.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}`}
       >
-        <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors">{question}</h3>
-        <div className="shrink-0 w-10 h-10 rounded-full border border-white/[0.1] flex items-center justify-center group-hover:border-purple-500/30 transition-all">
+        <h3 className="text-2xl md:text-3xl font-bold text-white group-hover:text-purple-300 transition-colors">{question}</h3>
+        <div className="shrink-0 w-12 h-12 rounded-full border border-white/[0.1] flex items-center justify-center group-hover:border-purple-500/30 transition-all">
           <motion.div
             animate={{ rotate: isOpen ? 45 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Plus className="w-5 h-5 text-purple-400" />
+            <Plus className="w-6 h-6 text-purple-400" />
           </motion.div>
         </div>
       </button>
@@ -593,7 +593,7 @@ function FAQItem({ question, children }: { question: string; children: ReactNode
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="overflow-hidden"
       >
-        <div className="text-gray-500 leading-relaxed font-medium text-base pt-4 max-w-2xl space-y-3">{children}</div>
+        <div className="text-gray-500 leading-relaxed font-medium text-lg pt-6 max-w-3xl space-y-4">{children}</div>
       </motion.div>
     </div>
   );
