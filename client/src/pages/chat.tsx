@@ -819,17 +819,18 @@ export default function Chat() {
 
   if (!member) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#1a1d2e' }}>
         <div className="text-center max-w-md">
           <h2 className="text-3xl font-black text-white mb-4 tracking-tight">Initialize Your Zone</h2>
-          <p className="text-gray-400 mb-8">Ready to start extracting insight from your daily thinking?</p>
+          <p className="mb-8" style={{ color: '#9a9bb0' }}>Ready to start extracting insight from your daily thinking?</p>
           <Button
             onClick={() => registerMember.mutate()}
             disabled={registerMember.isPending}
-            className="bg-purple-600 hover:bg-purple-700 h-14 px-10 rounded-2xl font-bold text-lg shadow-xl shadow-purple-900/20"
+            className="h-14 px-10 rounded-2xl font-bold text-lg text-white border-0 hover:opacity-90"
+            style={{ background: '#E8842C', boxShadow: '0 8px 30px rgba(232,132,44,0.25)' }}
           >
             {registerMember.isPending && <Loader2 className="w-5 h-5 mr-3 animate-spin" />}
-            Open Journal
+            Start My First Entry
           </Button>
         </div>
       </div>
