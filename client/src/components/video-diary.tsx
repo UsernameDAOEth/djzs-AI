@@ -296,8 +296,8 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Video className="w-4 h-4 text-purple-400" />
-            <span className="text-xs font-semibold text-purple-400 uppercase tracking-wider">Video Journal</span>
+            <Video className="w-4 h-4 text-orange-400" />
+            <span className="text-xs font-semibold text-orange-400 uppercase tracking-wider">Video Journal</span>
           </div>
           {state !== "uploading" && state !== "processing" && (
             <button onClick={() => { cleanup(); onCancel(); }} className="p-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all" data-testid="button-close-video">
@@ -329,7 +329,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
               <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" style={{ transform: "scaleX(-1)" }} />
               {!cameraReady && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80">
-                  <Loader2 className="w-8 h-8 animate-spin text-purple-400 mb-3" />
+                  <Loader2 className="w-8 h-8 animate-spin text-orange-400 mb-3" />
                   <p className="text-sm text-gray-400 font-medium">Connecting camera...</p>
                   <p className="text-xs text-gray-600 mt-1">Allow access if prompted</p>
                 </div>
@@ -357,7 +357,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
               <Button onClick={retake} variant="outline" className="flex-1 h-11 rounded-xl border-white/10 text-gray-300 hover:text-white font-medium text-sm" data-testid="button-retake">
                 Retake
               </Button>
-              <Button onClick={uploadVideo} className="flex-1 h-11 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-sm shadow-lg" data-testid="button-upload-confirm">
+              <Button onClick={uploadVideo} className="flex-1 h-11 rounded-xl text-white font-medium text-sm shadow-lg" style={{ background: '#E8842C' }} data-testid="button-upload-confirm">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload & Attach
               </Button>
@@ -368,7 +368,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
         {state === "uploading" && (
           <div className="py-6 space-y-4">
             <div className="flex items-center gap-3">
-              <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
+              <Loader2 className="w-5 h-5 animate-spin text-orange-400" />
               <span className="text-sm text-gray-300 font-medium">Uploading... {progress}%</span>
             </div>
             <Progress value={progress} className="h-2" />
@@ -377,7 +377,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
 
         {state === "processing" && (
           <div className="py-6 flex items-center gap-3">
-            <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
+            <Loader2 className="w-5 h-5 animate-spin text-orange-400" />
             <div>
               <p className="text-sm text-gray-300 font-medium">Processing video...</p>
               <p className="text-xs text-gray-500">This may take a minute</p>
@@ -468,7 +468,7 @@ export function VideoPlayer({ playbackId, assetId, compact = false }: VideoPlaye
   if (loading) {
     return (
       <div className={`flex items-center gap-2 ${compact ? 'py-2' : 'py-4'}`}>
-        <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
+        <Loader2 className="w-4 h-4 animate-spin text-orange-400" />
         <span className="text-xs text-gray-500">Loading video...</span>
       </div>
     );
