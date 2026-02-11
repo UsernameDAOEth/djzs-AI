@@ -1,0 +1,65 @@
+Here is a new roadmap for DJZS, rebuilt from the ground up around the single identity of a Cognitive Habit Infrastructure. Every item is filtered by one question: Does this increase daily thinking depth and consistency? If not, it’s out.
+
+---
+
+## DJZS Roadmap: Cognitive Habit Infrastructure
+
+### 01 — Core Ritual Engine
+**Q4 2025**
+- **Journal Zone (Non-Negotiable):** Daily entry → AI reflection → summary → pattern-over-time view. This is the heartbeat. If journaling weakens, the system collapses.
+- **Local-First Vault Architecture:** Your thoughts live on your device first. Sync is optional, encrypted, and secondary.
+- **Wallet-Based Authentication:** Simple, secure ownership. No social logins. One key to rule your vault.
+
+### 02 — Thinking Partner & Depth
+**Q1 2026**
+- **OpenClaw: One Thinking Partner:** A single, evolving AI companion that:
+  - Challenges assumptions in Journal Mode.
+  - Synthesizes contradictions in Research Mode.
+  - Surfaces repeated themes in Pattern Mode.
+- **Research Zone (Purpose-Built):** Only if it feeds journaling and builds long-term insight threads. Multi-source search, Brave Mode privacy-first search, and cross-zone linking (claims to journal entries).
+- **Dossier Management:** Track claims and evidence over time, but only to support your thinking threads.
+
+### 03 — Insight Compounding
+**Q2 2026**
+- **Cross-Zone Pattern Recognition:** Automatically detect repeated themes and unresolved loops across your journal and research.
+- **Journal-to-Research Correlation:** Link your reflections directly to source material to build insight chains.
+- **Personalized AI Tuning:** Subtle adjustments to your Thinking Partner’s style to deepen trust and resonance. No agent multiplicity—just a better partner.
+
+### 04 — Focus & Ritual
+**Q3 2026**
+- **Hardware Ritual Prototypes (Software-First):**
+  - **Minimal E-Ink Writing Slab:** A distraction-free surface for daily entries.
+  - **Physical Vault Key (Thinking Passport):** A tangible token to unlock your journal, reinforcing ritual.
+  - **NFC Unlock Journal Ritual:** Tap your key/device to begin a session—like lighting a candle before writing.
+  - **Docking Mode:** A software focus mode that locks you into reflection sessions.
+- **Encryption-at-Rest & Optional Encrypted Backup:** Strengthen vault ownership and peace of mind.
+
+### 05 — Consolidation & Portability
+**Q4 2026**
+- **Cross-Device Sync (Encrypted, Optional):** Access your vault anywhere, but local-first remains the default.
+- **Export and Portability Tools:** Full ownership of your data. You can leave at any time.
+- **Mobile-Native Application:** Ritual-grade mobile experience, not a feature-light companion app.
+
+---
+
+## What Got Cut (For Now)
+- **Governance Framework:** Ego signaling, not user value. Out.
+- **Plugin Marketplace:** Increases surface area and distraction. Habits require constraint. Out.
+- **Ecosystem Optics (APIs/SDKs/Builder Mode):** Only after retention is undeniable. Out.
+- **Full Hardware Device:** Seductive but focus-killing. Software ritual first. Out.
+
+---
+
+## The Sacred Daily Ritual
+**Morning Reflection → Evening Synthesis.**
+- **Morning Reflection:** A short, sharp Journal Zone entry guided by your Thinking Partner to set the day’s cognitive frame.
+- **Evening Synthesis:** A review of the day’s entry, research hits, and pattern hints to close loops and seed tomorrow’s depth.
+
+If this ritual isn’t sacred, the system won’t anchor. Everything on this roadmap serves to make that ritual deeper, more consistent, and more resonant.
+
+---
+
+## The Real North Star
+By December 2026: If 1,000 people use DJZS daily, and 300 pay for it, and they say, “It helps me think clearer,” we’ve built something real. Not by feature breadth—but by simplicity, ritual, trust, and long-term compounding insight.
+
+Boring but deeply useful wins. Exciting but inconsistent loses.

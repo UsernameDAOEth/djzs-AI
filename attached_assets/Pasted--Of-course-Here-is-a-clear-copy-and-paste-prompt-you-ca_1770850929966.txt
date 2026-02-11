@@ -1,0 +1,56 @@
+
+Of course. Here is a clear, copy-and-paste prompt you can use to explain your DJZS architecture to an AI assistant or collaborator within a Replit environment.
+
+---
+
+### **Copy-and-Paste Prompt**
+
+**Title:** DJZS Architecture: Clean Separation of Concerns
+
+**Context:**
+I am building DJZS, a private, local-first AI journaling and research system. The core principle is a strict separation of roles to ensure stability, privacy, and scalability. We are using Replit for development and OpenClaw as the headless AI engine. I need you to understand this architecture before we write any code.
+
+**The Four Core Components & Strict Roles:**
+
+1.  **DJZS Core (The Orchestrator):**
+    *   **Role:** The central brain of the application. It manages the user's local data (in IndexedDB), handles the UI, and routes requests.
+    *   **Responsibilities:** Storing/retrieving journal entries, research notes, and "Memory Pins". Managing the UI state. Calling the XMTP Builder Agent.
+    *   **Boundary:** It does not perform AI reasoning itself. It delegates all "thinking" to OpenClaw.
+
+2.  **XMTP Builder Agent (The Dispatcher):**
+    *   **Role:** A non-thinking, stateless router and formatter. It is the bridge between the user's intent and the thinking engine.
+    *   **Responsibilities:**
+        *   Receives a message from the DJZS Core.
+        *   Detects the user's intent (e.g., `journal_entry`, `research_synthesize`).
+        *   Calls the correct OpenClaw agent with a structured JSON payload.
+        *   Receives the structured JSON output from OpenClaw and formats it into a clean, human-readable reply for the DJZS Core.
+    *   **Boundary:** It does **NOT** reason, synthesize insights, or create its own data. It is purely a dispatcher.
+
+3.  **OpenClaw Agents (The Headless Workers):**
+    *   **Role:** The "thinking engine." These are private, headless workers that perform all AI-related tasks.
+    *   **Responsibilities:**
+        *   Take a structured JSON payload from the XMTP Builder Agent.
+        *   Perform a specific task (e.g., analyze a journal entry, synthesize research).
+        *   Return a structured JSON output.
+    *   **Boundary:** They are headless. They never speak directly to the network (XMTP), handle encryption, or store data. They only process structured inputs and outputs.
+
+4.  **XMTP Network (The Transport Layer):**
+    *   **Role:** The secure, decentralized message bus for communication.
+    *   **Responsibilities:** Transmitting messages between the user's client and the system.
+    *   **Boundary:** It is a transport layer only. It does not do reasoning, create summaries, or generate synthesis.
+
+**Critical Rule: Do Not Blur the Boundaries!**
+*   If XMTP "thinks," the system becomes inconsistent and impossible to debug.
+*   If the Builder Agent "reasons," it breaks the clean data flow and creates a single point of failure.
+*   If OpenClaw agents handle network traffic, they are no longer secure, headless workers.
+
+**The Clean Data Flow:**
+`User Message` → `XMTP Network` → `XMTP Builder Agent (detects intent)` → `DJZS Core Router` → `OpenClaw Agent Runner` → `Structured Output (JSON)` → `XMTP Builder Agent (formats reply)` → `User`
+
+**Goal:**
+This architecture allows us to version, test, and independently upgrade each component. For example, we can swap a better AI model into the OpenClaw layer without ever touching the DJZS Core UI or the XMTP transport. This is long-term leverage.
+
+**Your Task:**
+Acknowledge that you understand this strict separation of roles. When I ask you to build a component, you must adhere to these boundaries. For example, if I ask you to build the "XMTP Builder Agent," you will only build the routing and formatting logic, not the AI reasoning itself.
+
+---
