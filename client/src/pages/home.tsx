@@ -5,7 +5,7 @@ import { HardDrive, Shield, Bot, Plus, Smartphone, Lock, Download, ArrowRight, S
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
-import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, FAQFlywheel, PortalBackground, FlipFeatureCard } from "@/components/hero";
+import { StartWritingButton, ScrollCue, ZoneCard, MarqueeBanner, RevealSection, AnimatedBackground, CursorSpotlight, ThinkFlywheel, ZoneFlywheel, ClarityFlywheel, PortalBackground, FlipFeatureCard } from "@/components/hero";
 import { Helmet } from "react-helmet";
 
 export default function Home() {
@@ -486,9 +486,6 @@ export default function Home() {
         <section className="relative py-12 bg-black border-t border-white/[0.03] overflow-hidden">
           <PortalBackground variant="faq" />
           <div className="relative z-10 max-w-4xl mx-auto px-10">
-            <div className="text-center mb-8">
-              <FAQFlywheel />
-            </div>
             <div className="divide-y divide-white/[0.05]">
               <FAQItem question="How is DJZS different from ChatGPT or Claude?">
                 <p>DJZS is not a chat app and not a general AI assistant.</p>
