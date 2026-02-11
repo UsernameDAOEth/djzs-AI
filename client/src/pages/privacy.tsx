@@ -17,7 +17,6 @@ export default function Privacy() {
           </div>
         </div>
       </nav>
-
       <main className="max-w-3xl mx-auto px-6 pt-32 pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -32,7 +31,7 @@ export default function Privacy() {
           {/* Security Commitment Banner */}
           <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 mb-12">
             <p className="text-sm leading-relaxed">
-              <strong className="text-white">DJ-Z-S.box does not store private keys, custody assets, or initiate transactions on behalf of users.</strong> Wallet connections are used only with explicit user consent for authentication purposes. No funds are accessed or moved.
+              <strong className="text-white">DJ-Z-S does not store private keys, custody assets, or initiate transactions on behalf of users.</strong> Wallet connections are used only with explicit user consent for authentication purposes. No funds are accessed or moved.
             </p>
           </div>
 
