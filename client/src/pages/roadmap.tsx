@@ -92,10 +92,10 @@ export default function Roadmap() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase">
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase" data-testid="text-roadmap-title">
             Roadmap
           </h1>
-          <p className="text-sm text-gray-500 mb-12 font-mono">What's built. What's next. What got cut.</p>
+          <p className="text-sm text-gray-500 mb-12 font-mono" data-testid="text-roadmap-subtitle">What's built. What's next. What got cut.</p>
 
           <div className="space-y-0">
             {roadmapPhases.map((phase, index) => (
@@ -224,10 +224,10 @@ export default function Roadmap() {
 
             <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
               {/* Morning */}
-              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(212,168,67,0.06)' }}>
+              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(212,168,67,0.06)' }} data-testid="card-morning-reflection">
                 <div className="flex items-center gap-2 mb-3">
                   <Sun className="w-4 h-4" style={{ color: '#D4A843' }} />
-                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#D4A843' }}>Morning Reflection</span>
+                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#D4A843' }} data-testid="text-morning-title">Morning Reflection</span>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed">
                   Open your journal. Write what's on your mind. Let the Thinking Partner challenge your assumptions 
@@ -241,10 +241,10 @@ export default function Roadmap() {
               </div>
 
               {/* Evening */}
-              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(59,168,160,0.06)' }}>
+              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(59,168,160,0.06)' }} data-testid="card-evening-synthesis">
                 <div className="flex items-center gap-2 mb-3">
                   <Moon className="w-4 h-4" style={{ color: '#3BA8A0' }} />
-                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#3BA8A0' }}>Evening Synthesis</span>
+                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#3BA8A0' }} data-testid="text-evening-title">Evening Synthesis</span>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed">
                   Review what you wrote. See connections between your journal and research. 
@@ -268,14 +268,14 @@ export default function Roadmap() {
               </h3>
             </div>
             <div className="space-y-4">
-              <p className="text-sm text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-400 leading-relaxed" data-testid="text-north-star-context">
                 1,000 people use DJZS daily. 300 of them pay for it. When you ask them why, 
                 they don't talk about features or encryption or decentralization.
               </p>
-              <p className="text-sm leading-relaxed" style={{ color: '#D4A843' }}>
+              <p className="text-sm leading-relaxed" style={{ color: '#D4A843' }} data-testid="text-north-star-quote">
                 They say: "It helps me think clearer."
               </p>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-sm text-gray-500 leading-relaxed" data-testid="text-north-star-mission">
                 That's the metric. That's the mission. Everything on this roadmap either 
                 serves that sentence or gets cut.
               </p>
@@ -283,7 +283,7 @@ export default function Roadmap() {
           </motion.div>
 
           <div className="mt-20 pt-12 border-t border-white/[0.05] text-center">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600" data-testid="text-roadmap-footer">
               © 2026 DJZS SYSTEM / EVOLVING
             </p>
           </div>
