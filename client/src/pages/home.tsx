@@ -436,47 +436,47 @@ export default function Home() {
             <h2 className="text-3xl font-black tracking-widest uppercase mb-3" style={{ color: '#E8842C' }}>
               DJZS
             </h2>
-            <p className="text-base font-medium" style={{ color: '#7a7b90' }}>
+            <p className="text-xs font-medium uppercase tracking-[0.3em]" style={{ color: '#7a7b90' }}>
               A thinking system, not a network
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
-            <Link href="/about" className="text-base transition-colors" style={{ color: '#7a7b90' }} data-testid="link-footer-about">
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+            <Link href="/about" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-about">
               About
             </Link>
-            <Link href="/docs" className="text-base transition-colors" style={{ color: '#7a7b90' }} data-testid="link-footer-docs">
+            <Link href="/docs" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-docs">
               Docs
             </Link>
-            <Link href="/privacy" className="text-base transition-colors" style={{ color: '#7a7b90' }} data-testid="link-footer-privacy">
+            <Link href="/privacy" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-privacy">
               Privacy
             </Link>
-            <Link href="/security" className="text-base transition-colors" style={{ color: '#7a7b90' }} data-testid="link-footer-security">
+            <Link href="/security" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-security">
               Security
             </Link>
-            <Link href="/terms" className="text-base transition-colors" style={{ color: '#7a7b90' }} data-testid="link-footer-terms">
+            <Link href="/terms" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-terms">
               Terms
             </Link>
-            <Link href="/roadmap" className="text-base transition-colors" style={{ color: '#7a7b90' }} data-testid="link-footer-roadmap">
+            <Link href="/roadmap" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-roadmap">
               Roadmap
             </Link>
             {isConnected && (
-              <Link href="/chat" className="text-base font-semibold transition-colors" style={{ color: '#E8842C' }} data-testid="link-footer-enter">
+              <Link href="/chat" className="px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-white transition-all hover:opacity-90" style={{ background: '#E8842C' }} data-testid="link-footer-enter">
                 Enter
               </Link>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-8" style={{ color: '#555668' }}>
-            <a href="https://github.com/djzs" target="_blank" rel="noopener noreferrer" className="text-sm transition-colors hover:opacity-80" data-testid="link-footer-github">
+          <div className="flex flex-wrap items-center justify-center gap-6" style={{ color: '#555668' }}>
+            <a href="https://github.com/djzs" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-github">
               GitHub
             </a>
             <span style={{ color: '#333445' }}>·</span>
-            <a href="https://x.com/djzs_box" target="_blank" rel="noopener noreferrer" className="text-sm transition-colors hover:opacity-80" data-testid="link-footer-twitter">
+            <a href="https://x.com/djzs_box" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-twitter">
               X / Twitter
             </a>
             <span style={{ color: '#333445' }}>·</span>
-            <a href="mailto:hello@dj-z-s.box" className="text-sm transition-colors hover:opacity-80" data-testid="link-footer-contact">
+            <a href="mailto:hello@dj-z-s.box" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-contact">
               Contact
             </a>
           </div>
