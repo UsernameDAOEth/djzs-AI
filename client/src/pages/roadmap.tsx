@@ -1,68 +1,73 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ArrowLeft, Check, Circle, Rocket } from "lucide-react";
+import { ArrowLeft, Check, Circle, Rocket, Scissors, Sun, Moon, Compass } from "lucide-react";
 
 const roadmapPhases = [
   {
     phase: "01",
-    title: "Foundation",
+    title: "Core Ritual Engine",
     status: "completed",
     quarter: "Q4 2025",
     items: [
-      { text: "Local-first vault architecture", done: true },
-      { text: "Wallet-based authentication", done: true },
-      { text: "Journal Zone with AI reflection", done: true },
-      { text: "Research Zone with multi-source analysis", done: true },
+      { text: "Journal Zone: daily entry → AI reflection → summary → pattern-over-time", done: true },
+      { text: "Local-first vault architecture (IndexedDB / Dexie)", done: true },
+      { text: "Wallet-based authentication (RainbowKit / Base)", done: true },
+      { text: "Video journal: record & playback via Livepeer", done: true },
     ],
   },
   {
     phase: "02",
-    title: "Research & Dossiers",
+    title: "Thinking Partner & Depth",
     status: "completed",
     quarter: "Q1 2026",
     items: [
-      { text: "Research Zone with multi-source search", done: true },
-      { text: "Brave Mode privacy-first search", done: true },
-      { text: "Dossier management and claim tracking", done: true },
-      { text: "Cross-zone linking (claims to journal)", done: true },
+      { text: "Thinking Partner: challenges assumptions in Journal, synthesizes in Research", done: true },
+      { text: "Research Zone: Brave Mode privacy-first search + Web Mode + Explain Mode", done: true },
+      { text: "Dossier management & claim tracking with trust levels", done: true },
+      { text: "Cross-zone linking (claims ↔ journal entries)", done: true },
+      { text: "Vault export & data portability", done: true },
     ],
   },
   {
     phase: "03",
-    title: "Intelligence Layer",
+    title: "Insight Compounding",
     status: "active",
     quarter: "Q2 2026",
     items: [
-      { text: "Cross-zone pattern recognition", done: true },
-      { text: "Personalized AI thinking partner tuning", done: false },
-      { text: "Advanced context-aware insights", done: false },
-      { text: "Journal-to-research correlation", done: false },
+      { text: "OpenClaw headless AI architecture — replacing direct AI calls with proper agent layer", done: false },
+      { text: "XMTP Builder Agent as clean dispatcher (intent detection → structured JSON → formatted reply)", done: false },
+      { text: "Cross-zone pattern recognition", done: false },
+      { text: "Journal-to-research correlation & personalized AI tuning", done: false },
     ],
   },
   {
     phase: "04",
-    title: "Privacy & Sync",
+    title: "Focus & Ritual",
     status: "upcoming",
     quarter: "Q3 2026",
     items: [
+      { text: "Hardware ritual prototypes (software-first): e-ink slab, vault key, NFC unlock, docking mode", done: false },
       { text: "Encryption-at-rest for local vault", done: false },
       { text: "Optional encrypted cloud backup", done: false },
-      { text: "Cross-device vault sync", done: false },
-      { text: "Export and portability tools", done: false },
     ],
   },
   {
     phase: "05",
-    title: "Ecosystem",
+    title: "Consolidation & Portability",
     status: "upcoming",
     quarter: "Q4 2026",
     items: [
-      { text: "Plugin architecture for extensions", done: false },
-      { text: "API access for developers", done: false },
-      { text: "Mobile-native applications", done: false },
-      { text: "Community governance framework", done: false },
+      { text: "Cross-device sync (encrypted, optional)", done: false },
+      { text: "Mobile-native application", done: false },
     ],
   },
+];
+
+const cutItems = [
+  { text: "Community governance framework", reason: "Ritual over governance — focus on helping individuals think, not building committees." },
+  { text: "Plugin marketplace", reason: "Depth over breadth — one tool that works deeply beats a platform that does everything shallowly." },
+  { text: "Ecosystem APIs for developers", reason: "Too early — build the ritual first, open the platform later." },
+  { text: "Full hardware device", reason: "Software-first prototypes let us learn what rituals stick before investing in atoms." },
 ];
 
 export default function Roadmap() {
@@ -71,7 +76,7 @@ export default function Roadmap() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(26,29,46,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
+          <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group" data-testid="link-back-to-system">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="text-xs font-black uppercase tracking-[0.2em]">Back to System</span>
           </Link>
@@ -90,7 +95,7 @@ export default function Roadmap() {
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase">
             Roadmap
           </h1>
-          <p className="text-sm text-gray-500 mb-12 font-mono">Building the future of decentralized thinking</p>
+          <p className="text-sm text-gray-500 mb-12 font-mono">What's built. What's next. What got cut.</p>
 
           <div className="space-y-0">
             {roadmapPhases.map((phase, index) => (
@@ -130,7 +135,7 @@ export default function Roadmap() {
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-4">
                       <span className="font-mono text-xs" style={{ color: '#E8842C' }}>{phase.phase}</span>
-                      <h2 className="text-xl font-black text-white uppercase tracking-widest">
+                      <h2 className="text-xl font-black text-white uppercase tracking-widest" data-testid={`text-phase-title-${phase.phase}`}>
                         {phase.title}
                       </h2>
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${
@@ -139,7 +144,7 @@ export default function Roadmap() {
                           : phase.status === "active"
                           ? "bg-green-500/20 text-green-400"
                           : "bg-white/5 text-gray-500"
-                      }`}>
+                      }`} data-testid={`status-phase-${phase.phase}`}>
                         {phase.quarter}
                       </span>
                     </div>
@@ -149,6 +154,7 @@ export default function Roadmap() {
                         <div 
                           key={itemIndex}
                           className="flex items-center gap-3 text-sm"
+                          data-testid={`text-phase-${phase.phase}-item-${itemIndex}`}
                         >
                           <div className={`w-1.5 h-1.5 rounded-full ${
                             item.done ? "bg-orange-500" : "bg-gray-700"
@@ -168,18 +174,113 @@ export default function Roadmap() {
             ))}
           </div>
 
-          <div className="mt-12 p-8 rounded-2xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
-            <h3 className="text-white font-black uppercase tracking-widest mb-3">
-              Beyond the Horizon
-            </h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              Our vision extends beyond this roadmap. We're building a thinking system that 
-              evolves with its users—integrating emerging privacy technologies, improving 
-              AI reflection capabilities, and continuously strengthening the relationship 
-              between human insight and machine intelligence. The future is not a destination; 
-              it's a process of becoming.
+          {/* What Got Cut */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="mt-16 p-8 rounded-2xl border border-white/[0.05]"
+            style={{ background: 'rgba(26,29,46,0.6)' }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Scissors className="w-5 h-5 text-gray-500" />
+              <h3 className="text-white font-black uppercase tracking-widest" data-testid="text-what-got-cut-title">
+                What Got Cut
+              </h3>
+            </div>
+            <p className="text-xs text-gray-600 mb-6 font-mono">
+              Not every good idea belongs in v1. These were cut deliberately, not forgotten.
             </p>
-          </div>
+            <div className="space-y-4">
+              {cutItems.map((item, index) => (
+                <div key={index} className="flex gap-3" data-testid={`card-cut-item-${index}`}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 mt-2 shrink-0" />
+                  <div>
+                    <span className="text-sm text-gray-400 line-through">{item.text}</span>
+                    <p className="text-xs text-gray-600 mt-1">{item.reason}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* The Sacred Daily Ritual */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            className="mt-8 p-8 rounded-2xl border border-orange-500/20"
+            style={{ background: 'linear-gradient(135deg, rgba(232,132,44,0.08) 0%, rgba(26,29,46,0.6) 100%)' }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Sun className="w-5 h-5" style={{ color: '#D4A843' }} />
+              <h3 className="text-white font-black uppercase tracking-widest" data-testid="text-sacred-ritual-title">
+                The Sacred Daily Ritual
+              </h3>
+            </div>
+            <p className="text-xs text-gray-500 mb-8 font-mono">
+              The core loop that everything else serves.
+            </p>
+
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
+              {/* Morning */}
+              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(212,168,67,0.06)' }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <Sun className="w-4 h-4" style={{ color: '#D4A843' }} />
+                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#D4A843' }}>Morning Reflection</span>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Open your journal. Write what's on your mind. Let the Thinking Partner challenge your assumptions 
+                  and surface patterns you missed. Pin what matters.
+                </p>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex items-center justify-center text-gray-600 text-2xl font-thin md:rotate-0 rotate-90">
+                →
+              </div>
+
+              {/* Evening */}
+              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(59,168,160,0.06)' }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <Moon className="w-4 h-4" style={{ color: '#3BA8A0' }} />
+                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#3BA8A0' }}>Evening Synthesis</span>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Review what you wrote. See connections between your journal and research. 
+                  Let insights compound over time. Export what you want to keep forever.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* The Real North Star */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="mt-8 p-8 rounded-2xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <Compass className="w-5 h-5" style={{ color: '#E8842C' }} />
+              <h3 className="text-white font-black uppercase tracking-widest" data-testid="text-north-star-title">
+                The Real North Star
+              </h3>
+            </div>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-400 leading-relaxed">
+                1,000 people use DJZS daily. 300 of them pay for it. When you ask them why, 
+                they don't talk about features or encryption or decentralization.
+              </p>
+              <p className="text-sm leading-relaxed" style={{ color: '#D4A843' }}>
+                They say: "It helps me think clearer."
+              </p>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                That's the metric. That's the mission. Everything on this roadmap either 
+                serves that sentence or gets cut.
+              </p>
+            </div>
+          </motion.div>
 
           <div className="mt-20 pt-12 border-t border-white/[0.05] text-center">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600">
