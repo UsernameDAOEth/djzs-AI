@@ -230,12 +230,42 @@ export default function Chat() {
 
   const speechSupported = typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
-  const toggleVoiceInput = useCallback(() => {
-    if (!speechSupported) return;
+  const toggleVoiceInput = useCallback(async () => {
+    if (!speechSupported) {
+      toast({ title: 'Voice Input', description: 'Your browser does not support voice input. Try Chrome or Edge.', variant: 'destructive' });
+      return;
+    }
 
     if (isListening && recognitionRef.current) {
       recognitionRef.current.stop();
       setIsListening(false);
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+    } catch (err: any) {
+      const isEmbedded = window.self !== window.top;
+      if (isEmbedded) {
+        toast({ 
+          title: 'Microphone Blocked', 
+          description: 'The preview window cannot access your microphone. Open the app in a new browser tab to use voice input.', 
+          variant: 'destructive' 
+        });
+      } else if (err.name === 'NotAllowedError') {
+        toast({ 
+          title: 'Microphone Denied', 
+          description: 'Please allow microphone access in your browser settings, then try again.', 
+          variant: 'destructive' 
+        });
+      } else {
+        toast({ 
+          title: 'Microphone Error', 
+          description: 'Could not access your microphone. Make sure one is connected and try again.', 
+          variant: 'destructive' 
+        });
+      }
       return;
     }
 
@@ -270,14 +300,13 @@ export default function Chat() {
 
     recognition.onerror = (event: any) => {
       setIsListening(false);
-      const errorMsg = event.error === 'not-allowed' 
-        ? 'Microphone access denied. Please allow microphone in your browser settings.'
-        : event.error === 'no-speech'
-        ? 'No speech detected. Try again.'
-        : event.error === 'network'
-        ? 'Network error. Voice input needs an internet connection.'
-        : `Voice input error: ${event.error}`;
-      toast({ title: 'Voice Input', description: errorMsg, variant: 'destructive' });
+      if (event.error === 'no-speech') {
+        toast({ title: 'Voice Input', description: 'No speech detected. Try speaking closer to your microphone.', variant: 'destructive' });
+      } else if (event.error === 'network') {
+        toast({ title: 'Voice Input', description: 'Network error. Voice input needs an internet connection.', variant: 'destructive' });
+      } else if (event.error !== 'aborted') {
+        toast({ title: 'Voice Input', description: `Voice input stopped: ${event.error}`, variant: 'destructive' });
+      }
     };
 
     recognition.onend = () => {
@@ -288,8 +317,9 @@ export default function Chat() {
     try {
       recognition.start();
       setIsListening(true);
+      toast({ title: 'Listening...', description: 'Start speaking. Your words will appear in the text area.' });
     } catch (err) {
-      toast({ title: 'Voice Input', description: 'Could not start voice input. Your browser may not support this feature in this context.', variant: 'destructive' });
+      toast({ title: 'Voice Input', description: 'Could not start voice input. Try opening the app in a new browser tab.', variant: 'destructive' });
     }
   }, [isListening, speechSupported, toast]);
 
