@@ -42,10 +42,17 @@ Preferred communication style: Simple, everyday language.
 - **ENS Resolution**: Custom hook (`useDisplayName`) resolves ENS names via public RPC.
 - **Wallet Identity**: Optional wallet-based authentication (no email/password).
 
+### OpenClaw Agent Runner
+- **File**: `server/openclaw.ts` — unified `runAgent(agentName, payload)` dispatcher.
+- **Agents**: JournalInsight (journal analysis), ResearchSynth (research synthesis), ThinkingPartner (thinking coach).
+- **API**: `POST /api/openclaw/run` with `{ agent: "JournalInsight", payload: {...} }`.
+- **Design**: Strictly non-thinking dispatcher; all intelligence lives in the agent classes. Each returns typed JSON.
+- **Integration**: Wraps existing Venice AI calls (`venice.ts`, `agent.api.ts`) into clean OpenClaw interface.
+
 ### XMTP Agent
 - **SDK**: `@xmtp/agent-sdk` for autonomous agents.
-- **Agent File**: `server/agent.ts` listens to XMTP messages.
-- **Commands**: `/help`, `/zones`.
+- **Agent File**: `server/agent.ts` listens to XMTP messages, routes to OpenClaw agents.
+- **Commands**: `/help`, `/zones`, `Journal: <entry>`, `Research: <notes>`, `Thinking: <question>`.
 
 ### Video Journal (Livepeer)
 - **Recording**: In-browser video recording via MediaRecorder API.

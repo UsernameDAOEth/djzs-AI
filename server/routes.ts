@@ -6,6 +6,7 @@ import { z } from "zod";
 import { analyzeJournalEntry, analyzeResearchEntry, synthesizeResearch, synthesizeWithBraveResults, type ResearchSynthesis } from "./venice";
 import { analyzeWithAgent, agentInputSchema } from "./agent.api";
 import { searchBrave, type BraveSearchResult } from "./brave";
+import { runAgent, journalInsightPayloadSchema, researchSynthPayloadSchema, thinkingPartnerPayloadSchema, type AgentName } from "./openclaw";
 import { getUncachableGitHubClient } from "./github";
 import { createUploadUrl, getAssetStatus, getPlaybackInfo, deleteAsset } from "./livepeer";
 
@@ -80,6 +81,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("GitHub repos error:", error);
       res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch repos" });
+    }
+  });
+
+  // ==================== OPENCLAW AGENT RUNNER ====================
+  app.post("/api/openclaw/run", async (req, res) => {
+    try {
+      const { agent: agentName, payload } = req.body;
+
+      if (!agentName || !payload) {
+        return res.status(400).json({ error: "Missing 'agent' and 'payload' fields" });
+      }
+
+      const validAgents: AgentName[] = ["JournalInsight", "ResearchSynth", "ThinkingPartner"];
+      if (!validAgents.includes(agentName)) {
+        return res.status(400).json({ error: `Unknown agent: ${agentName}. Valid: ${validAgents.join(", ")}` });
+      }
+
+      let validatedPayload;
+      if (agentName === "JournalInsight") {
+        validatedPayload = journalInsightPayloadSchema.parse(payload);
+      } else if (agentName === "ResearchSynth") {
+        validatedPayload = researchSynthPayloadSchema.parse(payload);
+      } else {
+        validatedPayload = thinkingPartnerPayloadSchema.parse(payload);
+      }
+
+      const result = await runAgent(agentName, validatedPayload);
+      res.json({ agent: agentName, result });
+    } catch (error) {
+      console.error("OpenClaw agent error:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid payload", details: error.errors });
+      }
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Agent processing failed",
+      });
     }
   });
 

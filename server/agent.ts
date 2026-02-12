@@ -1,5 +1,19 @@
 import "dotenv/config";
 import { Agent } from "@xmtp/agent-sdk";
+import {
+  runAgent,
+  detectIntent,
+  extractContent,
+  formatJournalReply,
+  formatResearchReply,
+  formatThinkingReply,
+  type JournalInsightPayload,
+  type ResearchSynthPayload,
+  type ThinkingPartnerPayload,
+  type JournalInsightOutput,
+  type ResearchSynthOutput,
+  type ThinkingPartnerOutput,
+} from "./openclaw";
 
 function djzsReply(text: string): string | null {
   const t = (text || "").trim();
@@ -8,22 +22,88 @@ function djzsReply(text: string): string | null {
     return [
       "DJZS Agent commands:",
       "",
-      "📋 Zones:",
-      "• /zones — List all zones",
+      "Zones:",
+      "  /zones - List all zones",
       "",
-      "Type /zones to see what's available.",
+      "OpenClaw Agents:",
+      "  Journal: <entry> - Analyze a journal entry",
+      "  Research: <notes> - Synthesize research notes",
+      "  Thinking: <question> - Start a thinking session",
+      "",
+      "Type a command prefix to route to the right agent.",
     ].join("\n");
   }
 
   if (t.startsWith("/zones")) {
     return [
       "DJZS Zones (v1):",
-      "01 Journal • Daily reflections with AI thinking partner",
-      "02 Research • Gather claims, track evidence, surface unknowns",
+      "01 Journal - Daily reflections with AI thinking partner",
+      "02 Research - Gather claims, track evidence, surface unknowns",
+      "03 Thinking Partner - Debate ideas, find patterns, deepen analysis",
     ].join("\n");
   }
 
   return null;
+}
+
+async function handleAgentMessage(sender: string, text: string): Promise<string> {
+  const intent = detectIntent(text);
+
+  if (!intent) {
+    return "I'm DJZS Agent. Type /help for commands.\n\nTo use an agent, start your message with:\n- Journal: <your entry>\n- Research: <your notes>\n- Thinking: <your question>";
+  }
+
+  const content = extractContent(text, intent);
+
+  if (!content || content.length < 3) {
+    return `Please provide some content after the "${intent === "JournalInsight" ? "Journal:" : intent === "ResearchSynth" ? "Research:" : "Thinking:"}" prefix.`;
+  }
+
+  try {
+    if (intent === "JournalInsight") {
+      const payload: JournalInsightPayload = {
+        type: "journal_entry",
+        user_id: sender,
+        content,
+        timestamp: new Date().toISOString(),
+      };
+      const result = await runAgent("JournalInsight", payload) as JournalInsightOutput;
+      return formatJournalReply(result);
+    }
+
+    if (intent === "ResearchSynth") {
+      const payload: ResearchSynthPayload = {
+        type: "research_synthesis",
+        user_id: sender,
+        batch: [{
+          id: `xmtp-${Date.now()}`,
+          content,
+        }],
+      };
+      const result = await runAgent("ResearchSynth", payload) as ResearchSynthOutput;
+      return formatResearchReply(result);
+    }
+
+    if (intent === "ThinkingPartner") {
+      const payload: ThinkingPartnerPayload = {
+        type: "thinking_partner",
+        user_id: sender,
+        question: content,
+        relevant_memory: [],
+      };
+      const result = await runAgent("ThinkingPartner", payload) as ThinkingPartnerOutput;
+      return formatThinkingReply(result);
+    }
+
+    return "Unknown agent intent.";
+  } catch (err) {
+    console.error(`OpenClaw agent error (${intent}):`, err);
+    const errorMsg = err instanceof Error ? err.message : "Unknown error";
+    if (errorMsg.includes("VENICE_API_KEY")) {
+      return "AI processing is not configured. Please set up your Venice API key.";
+    }
+    return `Agent processing failed: ${errorMsg}`;
+  }
 }
 
 async function main() {
@@ -31,21 +111,21 @@ async function main() {
     env: (process.env.XMTP_ENV as "dev" | "production") || "dev",
   });
 
-  console.log("DJZS XMTP Agent online");
+  console.log("DJZS XMTP Agent online (OpenClaw-powered)");
 
   agent.on("text", async (ctx: any) => {
     try {
       const incoming = ctx?.message?.content || "";
+      const sender = ctx?.message?.senderAddress || "unknown";
 
-      const reply = djzsReply(incoming);
-      if (reply) {
-        await ctx.sendText(reply);
+      const staticReply = djzsReply(incoming);
+      if (staticReply) {
+        await ctx.sendText(staticReply);
         return;
       }
 
-      await ctx.sendText(
-        "I'm DJZS Agent. Type /help for commands."
-      );
+      const reply = await handleAgentMessage(sender, incoming);
+      await ctx.sendText(reply);
     } catch (err) {
       console.error("Agent error:", err);
     }

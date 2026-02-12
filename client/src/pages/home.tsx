@@ -576,7 +576,80 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+                <Zap className="w-4 h-4" style={{ color: '#2E8B8B' }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>Why DJZS is Different</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-different-headline">
+                You're the architect. The AI is just a tool.
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
+                With other apps, you're the product. With DJZS, your data is your foundation and AI is the instrument you use to build on it.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/15 group" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-pillar-privacy">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                  <Shield className="w-7 h-7" style={{ color: '#F37E20' }} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Radical Privacy</h3>
+                <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
+                  Your data stays on your device. The AI only analyzes what you explicitly send — it doesn't build a profile, track you, or retain your data. You're the administrator.
+                </p>
+                <p className="text-sm italic" style={{ color: '#555668' }}>
+                  "A safe space for my thoughts. Complete honesty without worrying about who's reading my data."
+                </p>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-teal-500/15 group" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-pillar-longevity">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                  <Layers className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Built to Last</h3>
+                <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
+                  Open architecture means you can swap parts without losing data. It's a tool, not a service — no acquisitions, no shutdowns, no hostage situations with your digital brain.
+                </p>
+                <p className="text-sm italic" style={{ color: '#555668' }}>
+                  "I can trust this system for the long run. My investment in organizing my thoughts is safe."
+                </p>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/15 group" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-pillar-ai">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+                  <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">AI That Works for You</h3>
+                <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
+                  Context-aware zones give the AI specific focus. Memory Pins are explicit — you decide what carries forward. Structured output, not conversational fluff.
+                </p>
+                <p className="text-sm italic" style={{ color: '#555668' }}>
+                  "A specialized assistant that understands my task, not a generic chatbot I have to manage."
+                </p>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-yellow-500/15 group" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-pillar-calm">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
+                  <Eye className="w-7 h-7" style={{ color: '#FFB84D' }} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Calm, Focused Experience</h3>
+                <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
+                  No feeds, no notifications, no noise. DJZS is for entering, not scrolling. No timeline to check, no engagement loops. Built for deep work, not shallow validation.
+                </p>
+                <p className="text-sm italic" style={{ color: '#555668' }}>
+                  "A quiet, focused space where I can do my best work without distractions."
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
