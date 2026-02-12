@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus, PenLine, MessageCircle, ListChecks, Microscope, Lightbulb, Rocket } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -96,41 +96,46 @@ export default function Home() {
             A private system to capture, connect, and deepen your ideas. No noise, just clarity.
           </motion.p>
 
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
-            {isConnected ? (
-              <Link href="/chat">
-                <button
-                  className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
-                  style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
-                  data-testid="button-start-thinking"
-                >
-                  Start My First Entry
-                  <ArrowRight className="w-6 h-6" />
-                </button>
-              </Link>
-            ) : (
-              <>
+          <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              {isConnected ? (
                 <Link href="/chat">
                   <button
-                    className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold transition-all duration-250 hover:-translate-y-1"
-                    style={{ background: '#F37E20', color: '#fff', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
+                    className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                    style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                     data-testid="button-start-thinking"
                   >
                     Start My First Entry
                     <ArrowRight className="w-6 h-6" />
                   </button>
                 </Link>
-                <button
-                  onClick={scrollToHowItWorks}
-                  className="inline-flex items-center gap-3 rounded-2xl border px-8 py-5 text-lg font-bold transition-all duration-250 hover:text-white"
-                  style={{ borderColor: 'rgba(46,139,139,0.3)', color: '#9a9bb0' }}
-                  data-testid="button-see-how-it-works"
-                >
-                  See How It Works
-                  <ChevronDown className="w-5 h-5" />
-                </button>
-              </>
-            )}
+              ) : (
+                <>
+                  <Link href="/chat">
+                    <button
+                      className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold transition-all duration-250 hover:-translate-y-1"
+                      style={{ background: '#F37E20', color: '#fff', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
+                      data-testid="button-start-thinking"
+                    >
+                      Start My First Entry
+                      <ArrowRight className="w-6 h-6" />
+                    </button>
+                  </Link>
+                  <button
+                    onClick={scrollToHowItWorks}
+                    className="inline-flex items-center gap-3 rounded-2xl border px-8 py-5 text-lg font-bold transition-all duration-250 hover:text-white"
+                    style={{ borderColor: 'rgba(46,139,139,0.3)', color: '#9a9bb0' }}
+                    data-testid="button-see-how-it-works"
+                  >
+                    See How It Works
+                    <ChevronDown className="w-5 h-5" />
+                  </button>
+                </>
+              )}
+            </div>
+            <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-cta-microcopy">
+              No account required. Your first entry is saved locally and instantly private.
+            </p>
           </motion.div>
 
           {!isConnected && (
@@ -163,7 +168,62 @@ export default function Home() {
       </motion.section>
 
       <RevealSection>
-        <section id="how-it-works" className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+        <section id="how-it-works" className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-how-it-works-headline">
+                How It Works
+              </h2>
+              <p className="text-xl max-w-2xl mx-auto" style={{ color: '#7a7b90' }}>
+                You write first. Then the AI helps — on your terms.
+              </p>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0">
+              <div className="flex flex-col items-center text-center max-w-[220px]" data-testid="step-write">
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                  <PenLine className="w-9 h-9" style={{ color: '#F37E20' }} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">1. You Write</h3>
+                <p className="text-sm" style={{ color: '#7a7b90' }}>Capture your thoughts, reflections, or research notes in your private vault.</p>
+              </div>
+
+              <div className="hidden md:flex items-center px-4">
+                <ArrowRight className="w-8 h-8" style={{ color: '#555668' }} />
+              </div>
+              <div className="md:hidden py-2">
+                <ChevronDown className="w-6 h-6" style={{ color: '#555668' }} />
+              </div>
+
+              <div className="flex flex-col items-center text-center max-w-[220px]" data-testid="step-ask-ai">
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                  <MessageCircle className="w-9 h-9" style={{ color: '#2E8B8B' }} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">2. You Ask the AI</h3>
+                <p className="text-sm" style={{ color: '#7a7b90' }}>Click "Think with me" to send your entry. Nothing is shared until you choose.</p>
+              </div>
+
+              <div className="hidden md:flex items-center px-4">
+                <ArrowRight className="w-8 h-8" style={{ color: '#555668' }} />
+              </div>
+              <div className="md:hidden py-2">
+                <ChevronDown className="w-6 h-6" style={{ color: '#555668' }} />
+              </div>
+
+              <div className="flex flex-col items-center text-center max-w-[220px]" data-testid="step-get-insights">
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
+                  <ListChecks className="w-9 h-9" style={{ color: '#FFB84D' }} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">3. Get Structured Insights</h3>
+                <p className="text-sm" style={{ color: '#7a7b90' }}>Receive summaries, patterns, and reflections — saved locally on your device.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-zones-headline">
@@ -235,7 +295,52 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+        <section className="relative py-28 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-who-headline">
+                Who Is This For?
+              </h2>
+              <p className="text-xl max-w-2xl mx-auto" style={{ color: '#7a7b90' }}>
+                DJZS is built for people who think deeply and want a tool that respects that.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-researcher">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                  <Microscope className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">For the Researcher</h3>
+                <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
+                  Synthesize dozens of sources into a single, coherent brief. Track claims, evidence, and open questions in one place.
+                </p>
+              </div>
+              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-writer">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                  <Lightbulb className="w-7 h-7" style={{ color: '#F37E20' }} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">For the Writer</h3>
+                <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
+                  Overcome writer's block and find new angles in your own work. Let the AI surface patterns you missed.
+                </p>
+              </div>
+              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-founder">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
+                  <Rocket className="w-7 h-7" style={{ color: '#FFB84D' }} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">For the Founder</h3>
+                <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
+                  Clarify your product vision and think through complex strategic decisions. Structure your reasoning, not just your to-do list.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
@@ -409,22 +514,27 @@ export default function Home() {
             <p className="text-xl mb-12" style={{ color: '#7a7b90' }}>
               Start with a single entry.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link href="/chat">
-                <button
-                  className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
-                  style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
-                  data-testid="button-final-get-started"
-                >
-                  Start My First Entry
-                  <ArrowRight className="w-6 h-6" />
-                </button>
-              </Link>
-              {!isConnected && (
-                <div className="scale-125">
-                  <ConnectButton showBalance={false} />
-                </div>
-              )}
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Link href="/chat">
+                  <button
+                    className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                    style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
+                    data-testid="button-final-get-started"
+                  >
+                    Start My First Entry
+                    <ArrowRight className="w-6 h-6" />
+                  </button>
+                </Link>
+                {!isConnected && (
+                  <div className="scale-125">
+                    <ConnectButton showBalance={false} />
+                  </div>
+                )}
+              </div>
+              <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-final-cta-microcopy">
+                No account required. Your first entry is saved locally and instantly private.
+              </p>
             </div>
           </div>
         </section>
