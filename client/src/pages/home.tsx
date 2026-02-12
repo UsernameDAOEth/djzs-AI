@@ -894,7 +894,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6" style={{ color: '#555668' }}>
-            <a href="https://github.com/djzs" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-github">
+            <a href="https://github.com/UsernameDAOEth" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-github">
               GitHub
             </a>
             <span style={{ color: '#333445' }}>·</span>
