@@ -902,7 +902,7 @@ export default function Home() {
               X / Twitter
             </a>
             <span style={{ color: '#333445' }}>·</span>
-            <a href="mailto:hello@dj-z-s.box" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-contact">
+            <a href="mailto:djzs@username.box" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-contact">
               Contact
             </a>
           </div>
