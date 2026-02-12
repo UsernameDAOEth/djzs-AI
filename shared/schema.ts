@@ -243,20 +243,19 @@ export type PinnedMemory = typeof pinnedMemories.$inferSelect;
 
 // Venice AI structured response schemas
 export const journalAnalysisSchema = z.object({
-  summary: z.string().min(10).max(300),
-  insight: z.string().min(10).max(220),
-  question: z.string().min(10).max(220),
-  memoryCandidates: z.array(z.string().min(6).max(140)).max(2),
+  summary: z.string().min(10).max(600),
+  insight: z.string().min(10).max(500),
+  question: z.string().min(10).max(500),
+  memoryCandidates: z.array(z.string().min(6).max(300)).max(2),
 });
 
 export type JournalAnalysis = z.infer<typeof journalAnalysisSchema>;
 
-// Research mode analysis schema
 export const researchAnalysisSchema = z.object({
-  keyClaims: z.array(z.string().min(10).max(200)).min(1).max(5),
-  evidence: z.array(z.string().min(10).max(200)).max(4),
-  unknowns: z.array(z.string().min(10).max(200)).max(3),
-  nextQuestion: z.string().min(10).max(220),
+  keyClaims: z.array(z.string().min(10).max(400)).min(1).max(5),
+  evidence: z.array(z.string().min(10).max(400)).max(4),
+  unknowns: z.array(z.string().min(10).max(400)).max(3),
+  nextQuestion: z.string().min(10).max(500),
 });
 
 export type ResearchAnalysis = z.infer<typeof researchAnalysisSchema>;

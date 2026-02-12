@@ -18,13 +18,13 @@ const DJZS_JOURNAL_SCHEMA = {
       additionalProperties: false,
       required: ["summary", "insight", "question", "memoryCandidates"],
       properties: {
-        summary: { type: "string", minLength: 10, maxLength: 300 },
-        insight: { type: "string", minLength: 10, maxLength: 220 },
-        question: { type: "string", minLength: 10, maxLength: 220 },
+        summary: { type: "string", minLength: 10, maxLength: 600 },
+        insight: { type: "string", minLength: 10, maxLength: 500 },
+        question: { type: "string", minLength: 10, maxLength: 500 },
         memoryCandidates: {
           type: "array",
           maxItems: 2,
-          items: { type: "string", minLength: 6, maxLength: 140 }
+          items: { type: "string", minLength: 6, maxLength: 300 }
         }
       }
     }
@@ -44,19 +44,19 @@ const DJZS_RESEARCH_SCHEMA = {
           type: "array",
           minItems: 1,
           maxItems: 5,
-          items: { type: "string", minLength: 10, maxLength: 200 }
+          items: { type: "string", minLength: 10, maxLength: 400 }
         },
         evidence: {
           type: "array",
           maxItems: 4,
-          items: { type: "string", minLength: 10, maxLength: 200 }
+          items: { type: "string", minLength: 10, maxLength: 400 }
         },
         unknowns: {
           type: "array",
           maxItems: 3,
-          items: { type: "string", minLength: 10, maxLength: 200 }
+          items: { type: "string", minLength: 10, maxLength: 400 }
         },
-        nextQuestion: { type: "string", minLength: 10, maxLength: 220 }
+        nextQuestion: { type: "string", minLength: 10, maxLength: 500 }
       }
     }
   }
