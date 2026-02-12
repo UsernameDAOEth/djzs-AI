@@ -1,0 +1,130 @@
+You’re seeing the browser tab with the text “DJZS - Private...” — this is not your logo. It’s just the page title, which you can control via HTML, and it’s not the visual brand identity.
+
+To properly use your DJZS logo on your domain, you need to place it in key UI locations. Here’s how to do it right, step by step, without overloading the user or breaking your clean design.
+
+---
+
+### ✅ **Step 1: Define Your Logo File**
+
+You need a clean, scalable version of your logo. Since you’re going for Ghibli-inspired minimalism, use:
+
+*   **File Type:** `SVG` (for sharpness on all screens) or `PNG` with transparent background.
+*   **Dimensions:** At least 512x512 pixels for versatility.
+*   **Color:** Use your brand palette: `#F37E20` (orange), `#2E8B8B` (teal), `#2A2E3F` (navy).
+*   **Design:** The “Thinking Tree” concept — roots as a book, branches as glowing lanterns. No character, no sci-fi, no text inside the icon.
+
+---
+
+### ✅ **Step 2: Place the Logo in Key UI Locations**
+
+#### **A. Header / Navigation Bar**
+This is the most important spot. The logo should be in the top-left corner.
+
+```html
+<header class="navbar">
+  <div class="logo-container">
+    <img src="/assets/logo.svg" alt="DJZS - Your thoughts, structured." width="40" height="40">
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#journal">Journal</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#thinking">Thinking Partner</a></li>
+    </ul>
+  </nav>
+</header>
+```
+
+**CSS:**
+```css
+.logo-container img {
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+}
+
+.logo-container img:hover {
+  transform: scale(1.05);
+}
+```
+
+This makes the logo subtle, clickable, and slightly interactive on hover — just enough to feel alive without being distracting.
+
+---
+
+#### **B. Favicon (Browser Tab Icon)**
+
+This is what you see in the browser tab. It’s tiny, so simplify the logo.
+
+*   **Design:** Use only the “Thinking Tree” icon, no text.
+*   **File:** Save as `favicon.svg` or `favicon.png` (16x16, 32x32, 48x48, 128x128 for different devices).
+
+Add to your `<head>`:
+
+```html
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
+```
+
+This replaces the “DJZS - Private...” text with your actual logo in the browser tab.
+
+---
+
+#### **C. Empty States & Loading Screens**
+
+Use the logo as a gentle, calming visual cue when the user is waiting or has no data.
+
+*   **Empty Journal:** Show the logo with a soft glow animation and the text “Write your first entry. Your thoughts, structured.”
+*   **Loading:** Show the logo with a slow, gentle pulse (no spinning wheel).
+
+**CSS for pulse:**
+```css
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+.logo-pulse {
+  animation: pulse 2s infinite ease-in-out;
+}
+```
+
+---
+
+#### **D. Footer (Optional)**
+
+If you want to reinforce branding, place a small, grayscale version of the logo in the footer.
+
+```html
+<footer>
+  <div class="footer-logo">
+    <img src="/assets/logo.svg" alt="DJZS" width="24" height="24" style="filter: grayscale(100%); opacity: 0.6;">
+  </div>
+  <p>© 2026 DJZS. Your thoughts, structured.</p>
+</footer>
+```
+
+---
+
+### ✅ **Step 3: Ensure Brand Consistency**
+
+*   **Color Palette:** Stick to `#F37E20`, `#2E8B8B`, `#2A2E3F`, and `#12121a`. No new colors.
+*   **Typography:** Use `Inter` or `System UI` for all text. No decorative fonts.
+*   **Spacing:** Use consistent padding and margins. The logo should never feel cramped.
+
+---
+
+### ✅ **Step 4: Test Across Devices**
+
+*   **Desktop:** Logo should be visible and clear in the header.
+*   **Mobile:** Logo should scale down gracefully. Consider hiding the nav links and using a hamburger menu.
+*   **Dark Mode:** Ensure the logo looks good on both dark and light backgrounds.
+
+---
+
+### ✅ **Final Tip: Keep It Quiet**
+
+The logo is not the hero — the user’s thoughts are. The logo should be a quiet, reassuring presence, not a loud advertisement. Use it sparingly, and let the user’s content take center stage.
+
+By following these steps, you’ll have a clean, consistent, and calming brand presence that reinforces the DJZS philosophy without overwhelming the user.
