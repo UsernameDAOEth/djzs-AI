@@ -123,7 +123,7 @@ export default function About() {
                   <span className="text-white text-xs font-bold">GitHub</span>
                 </a>
                 <a 
-                  href="https://x.com/djzs_box" 
+                  href="https://x.com/Dj_Z_S" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/30 transition-colors"

@@ -898,7 +898,7 @@ export default function Home() {
               GitHub
             </a>
             <span style={{ color: '#333445' }}>·</span>
-            <a href="https://x.com/djzs_box" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-twitter">
+            <a href="https://x.com/Dj_Z_S" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-twitter">
               X / Twitter
             </a>
             <span style={{ color: '#333445' }}>·</span>
