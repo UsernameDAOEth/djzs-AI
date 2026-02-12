@@ -103,7 +103,7 @@ export default function Docs() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
             <button className="flex items-center gap-2 text-sm font-bold text-white tracking-wide uppercase opacity-60 hover:opacity-100 hover:text-orange-400 transition-all group">
-              <Home className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <img src="/logo.png" alt="DJZS" className="w-6 h-6 rounded transition-transform group-hover:-translate-x-1" style={{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.3))' }} data-testid="img-logo-docs" />
               <span>DJZS</span>
             </button>
           </Link>

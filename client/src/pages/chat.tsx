@@ -811,8 +811,9 @@ export default function Chat() {
 
   if (memberLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#2A2E3F' }}>
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#F37E20' }} />
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: '#2A2E3F' }}>
+        <img src="/logo.png" alt="DJZS" className="w-16 h-16 rounded-2xl logo-pulse" style={{ filter: 'drop-shadow(0 0 8px rgba(243,126,32,0.3))' }} data-testid="img-logo-loading" />
+        <p className="text-sm font-medium" style={{ color: '#7a7b90' }}>Loading your vault...</p>
       </div>
     );
   }
@@ -866,7 +867,7 @@ export default function Chat() {
           <div className="p-8 pb-4 flex items-center justify-between">
             <Link href="/">
               <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-orange-400 transition-all group">
-                <Home className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                <img src="/logo.png" alt="DJZS" className="w-6 h-6 rounded transition-transform group-hover:-translate-x-1" style={{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.3))' }} data-testid="img-logo-sidebar" />
                 <span>DJZS v1</span>
               </button>
             </Link>
@@ -1152,7 +1153,8 @@ export default function Chat() {
                 
                 {/* First time welcome (Journal only) */}
                 {selectedZone === 'journal' && entryStats && entryStats.totalEntries === 0 && (
-                  <div className="mb-6 sm:mb-8 p-3 sm:p-4 rounded-2xl bg-orange-500/[0.03] border border-orange-500/10 animate-in fade-in duration-700" data-testid="first-time-welcome">
+                  <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl bg-orange-500/[0.03] border border-orange-500/10 animate-in fade-in duration-700 flex flex-col items-center text-center" data-testid="first-time-welcome">
+                    <img src="/logo.png" alt="DJZS" className="w-12 h-12 rounded-xl mb-4 logo-pulse" style={{ filter: 'drop-shadow(0 0 6px rgba(243,126,32,0.2))' }} data-testid="img-logo-first-entry" />
                     <p className="text-[10px] sm:text-[11px] font-black text-orange-400/70 uppercase tracking-widest mb-2">First entry</p>
                     <p className="text-xs sm:text-sm text-gray-400 leading-relaxed break-words">
                       Write whatever's on your mind. The more you return, the more this becomes yours.

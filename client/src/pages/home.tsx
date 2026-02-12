@@ -29,7 +29,10 @@ export default function Home() {
       <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.85)' }}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
-            <span className="text-xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }} data-testid="link-home-logo">DJZS</span>
+            <span className="flex items-center gap-2" data-testid="link-home-logo">
+              <img src="/logo.png" alt="DJZS" className="w-8 h-8 rounded-lg transition-transform hover:scale-105" style={{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.3))' }} data-testid="img-logo-header" />
+              <span className="text-xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }}>DJZS</span>
+            </span>
           </Link>
           <div className="flex items-center gap-4">
             {isConnected ? (
@@ -542,8 +545,9 @@ export default function Home() {
 
       <footer className="border-t border-white/[0.05] py-24" style={{ background: '#2A2E3F' }}>
         <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-10">
-          <div>
-            <h2 className="text-3xl font-black tracking-widest uppercase mb-3" style={{ color: '#F37E20' }}>
+          <div className="flex flex-col items-center gap-3">
+            <img src="/logo.png" alt="DJZS" className="w-10 h-10 rounded-xl" style={{ filter: 'grayscale(100%)', opacity: 0.6 }} data-testid="img-logo-footer" />
+            <h2 className="text-3xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }}>
               DJZS
             </h2>
             <p className="text-xs font-medium uppercase tracking-[0.3em]" style={{ color: '#7a7b90' }}>
