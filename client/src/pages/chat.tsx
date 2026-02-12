@@ -268,8 +268,16 @@ export default function Chat() {
       }
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (event: any) => {
       setIsListening(false);
+      const errorMsg = event.error === 'not-allowed' 
+        ? 'Microphone access denied. Please allow microphone in your browser settings.'
+        : event.error === 'no-speech'
+        ? 'No speech detected. Try again.'
+        : event.error === 'network'
+        ? 'Network error. Voice input needs an internet connection.'
+        : `Voice input error: ${event.error}`;
+      toast({ title: 'Voice Input', description: errorMsg, variant: 'destructive' });
     };
 
     recognition.onend = () => {
@@ -277,9 +285,13 @@ export default function Chat() {
     };
 
     recognitionRef.current = recognition;
-    recognition.start();
-    setIsListening(true);
-  }, [isListening, speechSupported]);
+    try {
+      recognition.start();
+      setIsListening(true);
+    } catch (err) {
+      toast({ title: 'Voice Input', description: 'Could not start voice input. Your browser may not support this feature in this context.', variant: 'destructive' });
+    }
+  }, [isListening, speechSupported, toast]);
 
   useEffect(() => {
     return () => {
