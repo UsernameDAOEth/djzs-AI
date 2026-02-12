@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJZS Box - Enhanced with Music</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --text: #1f2937;
+            --light: #f3f4f6;
+            --border: #e5e7eb;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .zones {
+            display: flex;
+            gap: 10px;
+        }
+
+        .zone-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--light);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .zone-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .zone-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        .thinking-area {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        .music-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px var(--shadow);
+            height: fit-content;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: var(--light);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .music-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .track-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .track-item:hover {
+            background: var(--light);
+        }
+
+        .track-item.playing {
+            background: rgba(37, 99, 235, 0.1);
+            border-left: 3px solid var(--primary);
+        }
+
+        .track-info {
+            flex: 1;
+        }
+
+        .track-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .track-artist {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .track-duration {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .now-playing {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--light);
+            border-radius: 8px;
+        }
+
+        .now-playing-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .now-playing-artist {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .journal-area {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .journal-area:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .thinking-tools {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tool-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tool-btn:hover {
+            background: var(--light);
+            border-color: var(--accent);
+        }
+
+        .playlists {
+            margin-top: 20px;
+        }
+
+        .playlist-section {
+            margin-bottom: 15px;
+        }
+
+        .playlist-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .playlist-tracks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .playlist-track {
+            padding: 4px 8px;
+            background: var(--light);
+            border-radius: 4px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .playlist-track:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>DJZS Box - Enhanced Thinking</h1>
+                <div class="zones">
+                    <button class="zone-btn active" data-zone="journaling">Daily Journaling</button>
+                    <button class="zone-btn" data-zone="research">Deep Research</button>
+                    <button class="zone-btn" data-zone="problem">Problem-Solving</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="thinking-area">
+                <textarea class="journal-area" placeholder="Start your thinking session here... The AI will help you organize your thoughts and insights."></textarea>
+                <div class="thinking-tools">
+                    <button class="tool-btn" id="thinkBtn">Think with me</button>
+                    <button class="tool-btn" id="saveBtn">Save Entry</button>
+                    <button class="tool-btn" id="clearBtn">Clear</button>
+                </div>
+            </div>
+
+            <div class="music-panel">
+                <h3 style="margin-bottom: 15px; color: var(--primary);">Music Library</h3>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div>🎵 Drop music files here or click to upload</div>
+                    <input type="file" id="fileInput" accept="audio/*" multiple>
+                </div>
+
+                <div class="now-playing" id="nowPlaying">
+                    <div class="now-playing-title">No track playing</div>
+                    <div class="now-playing-artist">Upload music to get started</div>
+                </div>
+
+                <div class="player-controls">
+                    <button class="play-btn" id="playBtn">▶</button>
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                </div>
+
+                <div class="volume-control">
+                    <span>🔊</span>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+                    <span id="volumeValue">70%</span>
+                </div>
+
+                <div class="music-list" id="musicList"></div>
+
+                <div class="playlists">
+                    <div class="playlist-section">
+                        <div class="playlist-title">🎯 Focus Zone</div>
+                        <div class="playlist-tracks" id="focusPlaylist"></div>
+                    </div>
+                    <div class="playlist-section">
+                        <div class="playlist-title">🧘 Reflection Zone</div>
+                        <div class="playlist-tracks" id="reflectionPlaylist"></div>
+                    </div>
+                    <div class="playlist-section">
+                        <div class="playlist-title">💡 Creative Zone</div>
+                        <div class="playlist-tracks" id="creativePlaylist"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class MusicManager {
+            constructor() {
+                this.db = null;
+                this.currentTrack = null;
+                this.audio = new Audio();
+                this.isPlaying = false;
+                this.currentZone = 'journaling';
+                this.initializeDB();
+                this.setupEventListeners();
+                this.setupAudioEvents();
+            }
+
+            async initializeDB() {
+                this.db = await idb.openDB('DJZSMusicDB', 1, {
+                    upgrade(db) {
+                        db.createObjectStore('tracks', { keyPath: 'id' });
+                        db.createObjectStore('playlists', { keyPath: 'id' });
+                    }
+                });
+                this.loadMusicList();
+                this.loadPlaylists();
+            }
+
+            setupEventListeners() {
+                const uploadArea = document.getElementById('uploadArea');
+                const fileInput = document.getElementById('fileInput');
+                const playBtn = document.getElementById('playBtn');
+                const progressBar = document.getElementById('progressBar');
+                const volumeSlider = document.getElementById('volumeSlider');
+
+                uploadArea.addEventListener('click', () => fileInput.click());
+                fileInput.addEventListener('change', (e) => this.handleFileUpload(e.target.files));
+
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
+
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    this.handleFileUpload(e.dataTransfer.files);
+                });
+
+                playBtn.addEventListener('click', () => this.togglePlayPause());
+                
+                progressBar.addEventListener('click', (e) => {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    this.audio.currentTime = percent * this.audio.duration;
+                });
+
+                volumeSlider.addEventListener('input', (e) => {
+                    const volume = e.target.value / 100;
+                    this.audio.volume = volume;
+                    document.getElementById('volumeValue').textContent = `${e.target.value}%`;
+                });
+
+                // Zone switching
+                document.querySelectorAll('.zone-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.zone-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentZone = e.target.dataset.zone;
+                        this.suggestMusicForZone();
+                    });
+                });
+
+                // Thinking tools
+                document.getElementById('thinkBtn').addEventListener('click', () => this.processWithAI());
+                document.getElementById('saveBtn').addEventListener('click', () => this.saveEntry());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearJournal());
+            }
+
+            setupAudioEvents() {
+                this.audio.addEventListener('timeupdate', () => {
+                    const progress = (this.audio.currentTime / this.audio.duration) * 100;
+                    document.getElementById('progress').style.width = `${progress}%`;
+                });
+
+                this.audio.addEventListener('ended', () => {
+                    this.playNext();
+                });
+
+                this.audio.addEventListener('loadedmetadata', () => {
+                    this.updateNowPlaying();
+                });
+            }
+
+            async handleFileUpload(files) {
+                const uploadArea = document.getElementById('uploadArea');
+                uploadArea.innerHTML = '<div class="loading"></div> Processing files...';
+
+                for (const file of files) {
+                    if (file.type.startsWith('audio/')) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const track = {
+                            id: crypto.randomUUID(),
+                            name: file.name,
+                            blob: arrayBuffer,
+                            size: file.size,
+                            type: file.type,
+                            uploaded: new Date().toISOString()
+                        };
+
+                        await this.db.add('tracks', track);
+                    }
+                }
+
+                uploadArea.innerHTML = '🎵 Drop music files here or click to upload';
+                this.loadMusicList();
+            }
+
+            async loadMusicList() {
+                const musicList = document.getElementById('musicList');
+                const tracks = await this.db.getAll('tracks');
+                
+                musicList.innerHTML = '';
+                tracks.forEach(track => {
+                    const trackElement = document.createElement('div');
+                    trackElement.className = 'track-item';
+                    trackElement.innerHTML = `
+                        <div class="track-info">
+                            <div class="track-title">${track.name}</div>
+                            <div class="track-artist">Local file</div>
+                        </div>
+                        <div class="track-duration">${this.formatFileSize(track.size)}</div>
+                    `;
+                    trackElement.addEventListener('click', () => this.playTrack(track));
+                    musicList.appendChild(trackElement);
+                });
+            }
+
+            async loadPlaylists() {
+                const playlists = {
+                    focus: await this.db.get('playlists', 'focus') || { tracks: [] },
+                    reflection: await this.db.get('playlists', 'reflection') || { tracks: [] },
+                    creative: await this.db.get('playlists', 'creative') || { tracks: [] }
+                };
+
+                this.renderPlaylist('focusPlaylist', playlists.focus.tracks);
+                this.renderPlaylist('reflectionPlaylist', playlists.reflection.tracks);
+                this.renderPlaylist('creativePlaylist', playlists.creative.tracks);
+            }
+
+            renderPlaylist(elementId, tracks) {
+                const element = document.getElementById(elementId);
+                element.innerHTML = '';
+                tracks.forEach(trackName => {
+                    const trackElement = document.createElement('div');
+                    trackElement.className = 'playlist-track';
+                    trackElement.textContent = trackName;
+                    element.appendChild(trackElement);
+                });
+            }
+
+            async playTrack(track) {
+                const blob = new Blob([track.blob], { type: track.type });
+                const url = URL.createObjectURL(blob);
+                
+                this.audio.src = url;
+                this.currentTrack = track;
+                
+                document.querySelectorAll('.track-item').forEach(item => item.classList.remove('playing'));
+                event.currentTarget.classList.add('playing');
+                
+                this.audio.play();
+                this.isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+            }
+
+            togglePlayPause() {
+                if (this.isPlaying) {
+                    this.audio.pause();
+                    document.getElementById('playBtn').textContent = '▶';
+                } else {
+                    this.audio.play();
+                    document.getElementById('playBtn').textContent = '⏸';
+                }
+                this.isPlaying = !this.isPlaying;
+            }
+
+            updateNowPlaying() {
+                const nowPlaying = document.getElementById('nowPlaying');
+                if (this.currentTrack) {
+                    nowPlaying.innerHTML = `
+                        <div class="now-playing-title">${this.currentTrack.name}</div>
+                        <div class="now-playing-artist">Local file • ${this.currentZone}</div>
+                    `;
+                }
+            }
+
+            suggestMusicForZone() {
+                const zoneSuggestions = {
+                    journaling: 'reflection',
+                    research: 'focus',
+                    problem: 'creative'
+                };
+                
+                const suggestedPlaylist = zoneSuggestions[this.currentZone];
+                this.updateNowPlaying();
+            }
+
+            async processWithAI() {
+                const journalArea = document.querySelector('.journal-area');
+                const content = journalArea.value;
+                
+                if (!content.trim()) {
+                    alert('Please write something first!');
+                    return;
+                }
+
+                // Simulate AI processing
+                const thinkBtn = document.getElementById('thinkBtn');
+                thinkBtn.innerHTML = '<div class="loading"></div> Thinking...';
+                thinkBtn.disabled = true;
+
+                setTimeout(() => {
+                    const insights = this.generateInsights(content);
+                    journalArea.value += '\n\n--- AI Insights ---\n' + insights;
+                    thinkBtn.innerHTML = 'Think with me';
+                    thinkBtn.disabled = false;
+                }, 2000);
+            }
+
+            generateInsights(content) {
+                const insights = [];
+                
+                if (content.length > 100) {
+                    insights.push('📝 This is a substantial entry with depth to explore.');
+                }
+                
+                if (content.includes('feel') || content.includes('emotion')) {
+                    insights.push('🧘 Emotional awareness detected - consider reflecting on the source.');
+                }
+                
+                if (content.includes('problem') || content.includes('challenge')) {
+                    insights.push('💡 Problem-solving mode activated - try breaking this down into smaller steps.');
+                }
+                
+                if (content.includes('idea') || content.includes('think')) {
+                    insights.push('🎯 Creative thinking detected - explore connections between concepts.');
+                }
+                
+                return insights.join('\n');
+            }
+
+            async saveEntry() {
+                const journalArea = document.querySelector('.journal-area');
+                const content = journalArea.value;
+                
+                if (!content.trim()) {
+                    alert('Nothing to save!');
+                    return;
+                }
+
+                const entry = {
+                    id: crypto.randomUUID(),
+                    content: content,
+                    zone: this.currentZone,
+                    timestamp: new Date().toISOString(),
+                    musicTrack: this.currentTrack ? this.currentTrack.name : null
+                };
+
+                await this.db.add('entries', entry);
+                
+                const saveBtn = document.getElementById('saveBtn');
+                saveBtn.textContent = '✓ Saved';
+                setTimeout(() => {
+                    saveBtn.textContent = 'Save Entry';
+                }, 2000);
+            }
+
+            clearJournal() {
+                if (confirm('Clear the journal area?')) {
+                    document.querySelector('.journal-area').value = '';
+                }
+            }
+
+            playNext() {
+                // Simple next track logic
+                const tracks = document.querySelectorAll('.track-item');
+                const currentIndex = Array.from(tracks).findIndex(track => track.classList.contains('playing'));
+                
+                if (currentIndex < tracks.length - 1) {
+                    tracks[currentIndex + 1].click();
+                } else {
+                    tracks[0].click();
+                }
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        }
+
+        // Initialize the music manager
+        const musicManager = new MusicManager();
+
+        // Add IndexedDB polyfill if needed
+        if (!window.idb) {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/idb@7/build/iife/index-min.js';
+            document.head.appendChild(script);
+        }
+    </script>
+</body>
+</html>
