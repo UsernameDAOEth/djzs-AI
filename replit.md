@@ -1,7 +1,15 @@
-# DJZS Box - Private, Local-First AI Journaling & Research Vault
+# DJZS - Your Daily Thinking System
 
 ## Overview
-DJZS Box is a private, local-first AI journaling partner and research vault. Your writing is stored locally on your device by default (IndexedDB via Dexie), and you control what gets sent to AI. The AI supports reflection through prompts, pattern spotting, and synthesis — and you decide what to keep. The 2026 scope focuses exclusively on journal + research functionality (not chat/messaging/trading).
+DJZS is a cognitive operating system that turns daily thinking into structured insight through an AI thinking partner. It is not a journal — it's a thinking system designed to compound intelligence over time. Three zones (Journal, Research, Thinking Partner) form one loop: write → AI analyzes and connects → insights compound. Local-first storage (IndexedDB via Dexie), user-controlled AI, and privacy by default. Built for builders, founders, researchers, and systems thinkers who want cognitive leverage.
+
+## Strategic Positioning
+- **Category**: Daily thinking system / cognitive infrastructure (NOT journaling)
+- **Value prop**: "Sharpen your thinking daily" — not "Remember your life beautifully"
+- **Target users**: Builders, founders, researchers, crypto analysts, technical thinkers
+- **NOT for**: Casual diary-keeping, photo memories, lifestyle journaling, emotional reflection
+- **Competition**: Scattered notes, browser bookmarks, unstructured thinking (NOT other journal apps)
+- **Moat**: Making users measurably more intelligent through daily use
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -55,11 +63,12 @@ Preferred communication style: Simple, everyday language.
 - **Component**: `client/src/components/music-panel.tsx` (slide-in panel from right side).
 - **Integration**: "Music" button in journal action bar toggles the panel.
 
-### Key Features
-- **Journal Zone**: Daily reflections with AI thinking partner, memory pinning, context-aware insights, video journal entries.
-- **Research Zone**: Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking to journal entries.
-- **Video Journal**: Record or upload video directly in journal entries. Stored on Livepeer (decentralized). Playback IDs saved locally.
-- **Music Library**: Upload and play your own music while journaling. Tracks stored locally. Organize by Focus/Reflection/Creative zones.
+### Key Features (Three Zones, One Loop)
+- **Journal Zone**: Write daily thinking → AI auto-summarizes and extracts structured insights (key claims, patterns, open questions). Memory pinning carries context forward. Video entries via Livepeer.
+- **Research Zone**: Save articles/links → AI synthesizes research with journal entries. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking.
+- **Thinking Partner**: One AI agent that connects ideas across journal and research, debates points, finds patterns, and surfaces contradictions. Not a chatbot — a structured thinking partner.
+- **Compounding Intelligence**: Memory pins, past-entry connections, and cross-zone synthesis ensure knowledge grows smarter over time, not just larger.
+- **Music Library**: Upload and play your own music while thinking. Tracks stored locally. Organize by Focus/Reflection/Creative zones.
 - **Local-First Storage**: All data stored in browser IndexedDB. Works offline for writing/browsing.
 - **Offline Support**: Service worker caches static assets.
 
@@ -78,11 +87,12 @@ Preferred communication style: Simple, everyday language.
 - "Quantum-resistant encryption" (not implemented)
 - "Your data never leaves your device" (it does when you send text for AI)
 
-## Data Flow
-1. User writes entry → saved locally in IndexedDB (instant)
-2. User clicks "Think with me" → selected entry + pins sent to server → forwarded to Venice AI
-3. AI response → returned to client → saved locally
-4. Nothing syncs by default unless user exports
+## Data Flow (The Thinking Loop)
+1. User writes daily thinking → saved locally in IndexedDB (instant)
+2. User clicks "Think with me" → current entry + memory pins + recent context sent to server → forwarded to Venice AI
+3. AI analyzes, connects to past entries, surfaces patterns → structured insight returned
+4. Insight saved locally → knowledge base compounds over time
+5. Nothing syncs by default unless user exports
 
 ## Research Zone Modes
 1. **Brave Mode**: Privacy-first web search via Brave API, synthesized by Venice AI. Requires `BRAVE_API_KEY` secret.

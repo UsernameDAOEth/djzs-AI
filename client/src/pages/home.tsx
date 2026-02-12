@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus, PenLine, MessageCircle, ListChecks, Microscope, Lightbulb, Rocket } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus, PenLine, MessageCircle, ListChecks, Microscope, Lightbulb, Rocket, TrendingUp, Layers, Target, Zap, GitBranch } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -42,7 +42,7 @@ export default function Home() {
                   style={{ background: '#F37E20', boxShadow: '0 4px 14px rgba(243,126,32,0.25)' }}
                   data-testid="button-header-enter"
                 >
-                  Enter DJZS
+                  Enter System
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
@@ -54,15 +54,15 @@ export default function Home() {
       </header>
 
       <Helmet>
-        <title>DJZS - Private AI Journaling + Research | Local-First Thinking System</title>
-        <meta name="description" content="Private AI journaling and research capture with a Thinking Partner. Local-first storage. Your notes stay on your device." />
-        <meta property="og:title" content="DJZS - Private AI Journaling + Research" />
-        <meta property="og:description" content="Local-first AI journaling and research. Memory that stays yours. No feeds. No surveillance." />
+        <title>DJZS - Your Daily Thinking System | Compound Your Intelligence</title>
+        <meta name="description" content="A cognitive operating system that turns daily thinking into structured insight. AI thinking partner, research synthesis, and compounding intelligence — all local-first." />
+        <meta property="og:title" content="DJZS - Your Daily Thinking System" />
+        <meta property="og:description" content="Turn daily thinking into structured insight. AI thinking partner that connects ideas, debates points, and finds patterns. Local-first, private by design." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="DJZS - Private AI Journaling" />
-        <meta name="twitter:description" content="Local-first AI journaling and research. Your thinking stays yours." />
+        <meta name="twitter:title" content="DJZS - Sharpen Your Thinking Daily" />
+        <meta name="twitter:description" content="A daily thinking system that compounds your intelligence. Not a journal — a cognitive operating system for builders." />
       </Helmet>
 
       <motion.section
@@ -84,11 +84,18 @@ export default function Home() {
         />
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+          <motion.div variants={fadeUp} className="mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
+              <TrendingUp className="w-3.5 h-3.5" />
+              Cognitive Infrastructure for Builders
+            </span>
+          </motion.div>
+
           <motion.h1
             variants={fadeUp}
             className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[1] mb-8"
           >
-            Your thoughts, structured.
+            Sharpen your thinking daily.
           </motion.h1>
 
           <motion.p
@@ -96,7 +103,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            A private system to capture, connect, and deepen your ideas. No noise, just clarity.
+            A daily thinking system that compounds your intelligence. Write, research, and let AI connect the dots you'd miss.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
@@ -108,7 +115,7 @@ export default function Home() {
                     style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                     data-testid="button-start-thinking"
                   >
-                    Start My First Entry
+                    Start Thinking
                     <ArrowRight className="w-6 h-6" />
                   </button>
                 </Link>
@@ -120,7 +127,7 @@ export default function Home() {
                       style={{ background: '#F37E20', color: '#fff', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                       data-testid="button-start-thinking"
                     >
-                      Start My First Entry
+                      Start Thinking
                       <ArrowRight className="w-6 h-6" />
                     </button>
                   </Link>
@@ -137,7 +144,7 @@ export default function Home() {
               )}
             </div>
             <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-cta-microcopy">
-              No account required. Your first entry is saved locally and instantly private.
+              No account needed. Your thinking stays on your device — private and compounding.
             </p>
           </motion.div>
 
@@ -156,15 +163,15 @@ export default function Home() {
           >
             <div className="flex items-center gap-3" data-testid="text-trust-local">
               <HardDrive className="w-5 h-5" style={{ color: '#F37E20' }} />
-              <span>Stored on your device</span>
+              <span>Local-first storage</span>
             </div>
             <div className="flex items-center gap-3" data-testid="text-trust-ai">
-              <Bot className="w-5 h-5" style={{ color: '#2E8B8B' }} />
-              <span>AI only when you ask</span>
+              <Brain className="w-5 h-5" style={{ color: '#2E8B8B' }} />
+              <span>AI thinking partner</span>
             </div>
             <div className="flex items-center gap-3" data-testid="text-trust-private">
-              <Shield className="w-5 h-5" style={{ color: '#FFB84D' }} />
-              <span>Private by default</span>
+              <TrendingUp className="w-5 h-5" style={{ color: '#FFB84D' }} />
+              <span>Intelligence compounds</span>
             </div>
           </motion.div>
         </div>
@@ -175,10 +182,10 @@ export default function Home() {
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-how-it-works-headline">
-                How It Works
+                The Thinking Loop
               </h2>
               <p className="text-xl max-w-2xl mx-auto" style={{ color: '#7a7b90' }}>
-                You write first. Then the AI helps — on your terms.
+                Write. Analyze. Connect. Your intelligence compounds with every session.
               </p>
             </div>
 
@@ -187,8 +194,8 @@ export default function Home() {
                 <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <PenLine className="w-9 h-9" style={{ color: '#F37E20' }} />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">1. You Write</h3>
-                <p className="text-sm" style={{ color: '#7a7b90' }}>Capture your thoughts, reflections, or research notes in your private vault.</p>
+                <h3 className="text-lg font-bold text-white mb-2">1. Think in Writing</h3>
+                <p className="text-sm" style={{ color: '#7a7b90' }}>Capture your raw thinking — ideas, analysis, research notes, strategic questions.</p>
               </div>
 
               <div className="hidden md:flex items-center px-4">
@@ -200,10 +207,10 @@ export default function Home() {
 
               <div className="flex flex-col items-center text-center max-w-[220px]" data-testid="step-ask-ai">
                 <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
-                  <MessageCircle className="w-9 h-9" style={{ color: '#2E8B8B' }} />
+                  <GitBranch className="w-9 h-9" style={{ color: '#2E8B8B' }} />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">2. You Ask the AI</h3>
-                <p className="text-sm" style={{ color: '#7a7b90' }}>Click "Think with me" to send your entry. Nothing is shared until you choose.</p>
+                <h3 className="text-lg font-bold text-white mb-2">2. AI Connects</h3>
+                <p className="text-sm" style={{ color: '#7a7b90' }}>Your thinking partner analyzes, connects to past entries, and surfaces patterns you'd miss.</p>
               </div>
 
               <div className="hidden md:flex items-center px-4">
@@ -215,10 +222,10 @@ export default function Home() {
 
               <div className="flex flex-col items-center text-center max-w-[220px]" data-testid="step-get-insights">
                 <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
-                  <ListChecks className="w-9 h-9" style={{ color: '#FFB84D' }} />
+                  <TrendingUp className="w-9 h-9" style={{ color: '#FFB84D' }} />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">3. Get Structured Insights</h3>
-                <p className="text-sm" style={{ color: '#7a7b90' }}>Receive summaries, patterns, and reflections — saved locally on your device.</p>
+                <h3 className="text-lg font-bold text-white mb-2">3. Insights Compound</h3>
+                <p className="text-sm" style={{ color: '#7a7b90' }}>Structured insights build on each other. Your knowledge base grows smarter over time.</p>
               </div>
             </div>
           </div>
@@ -230,36 +237,36 @@ export default function Home() {
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-zones-headline">
-                Three Zones for Clear Thinking
+                Three Zones. One Loop.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                DJZS organizes your thoughts into dedicated zones, so you can focus on what matters.
+                Each zone feeds the others. Your thinking, research, and insights all connect into a single compounding system.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <ZoneFeatureCard
-                icon={<BookOpen className="w-7 h-7" style={{ color: '#F37E20' }} />}
+                icon={<PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />}
                 color="orange"
-                title="Daily Journaling"
-                description="Capture your thoughts and feelings. Get instant summaries, insights, and emotional signals to understand your patterns."
-                examplePrompt="Journal: Today I felt scattered and distracted..."
+                title="Journal Zone"
+                description="Write your daily thinking. AI auto-summarizes and extracts structured insights — key claims, patterns, and open questions."
+                examplePrompt="I'm rethinking our go-to-market. The bottleneck isn't distribution..."
                 href={isConnected ? "/chat" : "/chat"}
               />
               <ZoneFeatureCard
                 icon={<Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />}
                 color="teal"
-                title="Deep Research"
-                description="Save links, notes, and clippings. When you're ready, synthesize them into a clear thesis with contradictions and open questions."
-                examplePrompt="Research: Save this link..."
+                title="Research Zone"
+                description="Save articles, links, and findings. AI synthesizes research with your daily entries to build a structured knowledge base."
+                examplePrompt="This paper contradicts what I wrote about last Tuesday..."
                 href={isConnected ? "/chat?zone=research" : "/chat"}
               />
               <ZoneFeatureCard
                 icon={<Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />}
                 color="purple"
-                title="Think Through a Problem"
-                description="Stuck on a tough decision? Your Thinking Partner helps you explore the core tensions and find your next step."
-                examplePrompt="I'm unsure whether to pivot my project toward video diaries."
+                title="Thinking Partner"
+                description="One AI agent that connects your ideas, debates your points, and finds patterns across everything you've written and researched."
+                examplePrompt="What patterns do you see in my thinking about this market?"
                 href={isConnected ? "/chat" : "/chat"}
               />
             </div>
@@ -272,25 +279,28 @@ export default function Home() {
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-stability-headline">
-                Built for Stability, Not Hype
+                Not Another Note App
               </h2>
+              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
+                The competition isn't journaling apps — it's scattered notes, browser bookmarks, and unstructured thinking.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <StabilityCard
-                icon={<HardDrive className="w-6 h-6" style={{ color: '#F37E20' }} />}
-                title="Local-First & Private"
-                description="Your data is stored on your device, not our servers. Your thinking is yours alone."
+                icon={<TrendingUp className="w-6 h-6" style={{ color: '#F37E20' }} />}
+                title="Compounding, Not Linear"
+                description="Traditional tools accumulate. DJZS compounds — every entry connects to past thinking, building a smarter knowledge base."
               />
               <StabilityCard
-                icon={<Bot className="w-6 h-6" style={{ color: '#2E8B8B' }} />}
-                title="AI on Your Terms"
-                description="The AI only analyzes what you tell it to, when you tell it to. No passive listening, no data mining."
+                icon={<Brain className="w-6 h-6" style={{ color: '#2E8B8B' }} />}
+                title="Thinking Partner, Not Chatbot"
+                description="The AI doesn't just respond. It debates your points, finds patterns, and connects ideas across your thinking and research."
               />
               <StabilityCard
-                icon={<Shield className="w-6 h-6" style={{ color: '#FFB84D' }} />}
-                title="Open & Stable"
-                description="Built on a clean, open architecture. This is a tool you can rely on for years, not a disposable app."
+                icon={<HardDrive className="w-6 h-6" style={{ color: '#FFB84D' }} />}
+                title="Your Data, Your Device"
+                description="Local-first by design. Your thinking never leaves your device unless you explicitly send it to AI. No cloud, no lock-in."
               />
             </div>
           </div>
@@ -302,39 +312,39 @@ export default function Home() {
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-who-headline">
-                Who Is This For?
+                Built for Systems Thinkers
               </h2>
               <p className="text-xl max-w-2xl mx-auto" style={{ color: '#7a7b90' }}>
-                DJZS is built for people who think deeply and want a tool that respects that.
+                DJZS is for people who want cognitive leverage — not a prettier diary.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-founder">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                  <Rocket className="w-7 h-7" style={{ color: '#F37E20' }} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Builders & Founders</h3>
+                <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
+                  Clarify product vision, think through strategic decisions, and structure your reasoning. Build conviction, not just lists.
+                </p>
+              </div>
               <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-researcher">
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <Microscope className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">For the Researcher</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Researchers & Analysts</h3>
                 <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  Synthesize dozens of sources into a single, coherent brief. Track claims, evidence, and open questions in one place.
+                  Synthesize dozens of sources into a coherent thesis. Track claims, evidence, and contradictions. Connect research to your own thinking.
                 </p>
               </div>
-              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-writer">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
-                  <Lightbulb className="w-7 h-7" style={{ color: '#F37E20' }} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">For the Writer</h3>
-                <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  Overcome writer's block and find new angles in your own work. Let the AI surface patterns you missed.
-                </p>
-              </div>
-              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-founder">
+              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-thinker">
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
-                  <Rocket className="w-7 h-7" style={{ color: '#FFB84D' }} />
+                  <Target className="w-7 h-7" style={{ color: '#FFB84D' }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">For the Founder</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Technical Thinkers</h3>
                 <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  Clarify your product vision and think through complex strategic decisions. Structure your reasoning, not just your to-do list.
+                  Crypto analysts, engineers, anyone who thinks in systems. DJZS gives you cognitive leverage — structured insight from daily thinking.
                 </p>
               </div>
             </div>
@@ -351,10 +361,10 @@ export default function Home() {
                 <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Privacy Architecture</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight" data-testid="text-privacy-headline">
-                How DJZS Handles Your Data
+                Your Thinking Stays Yours
               </h2>
               <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#9a9bb0' }}>
-                Your journal and research data is stored locally on your device. AI analysis only happens when you explicitly request it.
+                Your ideas are stored locally on your device. AI analysis only happens when you explicitly request it.
               </p>
             </div>
 
@@ -365,7 +375,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Local-First Storage</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  All journal entries, research notes, and memories are stored in your browser's IndexedDB. Works offline. No cloud database.
+                  All entries, research, and insights are stored in your browser's IndexedDB. Works offline. No cloud database.
                 </p>
               </div>
               <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
@@ -404,104 +414,110 @@ export default function Home() {
         <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
-              <FAQItem question="How is DJZS different from ChatGPT or Claude?">
-                <p>DJZS is not a chat app and not a general AI assistant.</p>
-                <p className="mt-2" style={{ color: '#666778' }}>ChatGPT and Claude are centralized AI platforms:</p>
+              <FAQItem question="How is DJZS different from ChatGPT or Notion AI?">
+                <p>DJZS is not a chat app, not a note organizer, and not a general AI assistant.</p>
+                <p className="mt-2" style={{ color: '#666778' }}>ChatGPT and Notion AI are tools for responding to prompts:</p>
                 <ul className="list-disc list-inside ml-2" style={{ color: '#666778' }}>
-                  <li>Your conversations happen on their servers</li>
-                  <li>Memory is global or platform-controlled</li>
-                  <li>The primary interaction is asking questions</li>
+                  <li>They answer questions you ask</li>
+                  <li>Memory is platform-controlled or absent</li>
+                  <li>Your data lives on their servers</li>
                 </ul>
-                <p className="mt-3" style={{ color: '#9a9bb0' }}>DJZS is a local-first thinking system:</p>
+                <p className="mt-3" style={{ color: '#9a9bb0' }}>DJZS is a daily thinking system:</p>
                 <ul className="list-disc list-inside ml-2" style={{ color: '#9a9bb0' }}>
-                  <li>You write first, in your own workspace</li>
-                  <li>The AI responds only when you ask it to</li>
-                  <li>Memory is explicit, user-controlled, and local</li>
-                  <li>There are no feeds, profiles, or engagement loops</li>
+                  <li>You write first — the AI analyzes second</li>
+                  <li>Insights compound over time as your knowledge base grows</li>
+                  <li>Research and daily thinking connect into one system</li>
+                  <li>Everything stays on your device</li>
                 </ul>
-                <p className="text-white mt-3 font-semibold">DJZS helps you think. It doesn't replace your thinking.</p>
+                <p className="text-white mt-3 font-semibold">DJZS makes you think better. It doesn't think for you.</p>
               </FAQItem>
 
-              <FAQItem question="What does 'decentralized' mean in DJZS?">
-                <p>Decentralized does not mean "stored on a server" and it does not mean "everything is on a blockchain."</p>
-                <p className="mt-2">In DJZS, decentralized means:</p>
+              <FAQItem question="What does 'compounding intelligence' mean?">
+                <p>Most tools accumulate content linearly — notes pile up, bookmarks collect dust.</p>
+                <p className="mt-2">DJZS compounds intelligence:</p>
                 <ul className="list-disc list-inside ml-2">
-                  <li>Your data is not dependent on a single company</li>
-                  <li>Your thinking does not live in a central database</li>
-                  <li>Ownership starts on your device, not a platform</li>
+                  <li>Every entry is analyzed and connected to your past thinking</li>
+                  <li>Patterns and contradictions are surfaced automatically</li>
+                  <li>Memory pins carry forward context across sessions</li>
+                  <li>Research and daily entries cross-reference each other</li>
                 </ul>
-                <p className="mt-3" style={{ color: '#666778' }}>Centralized servers — and public blockchains — are still single points of failure. They can be indexed, surveilled, or compromised.</p>
-                <p className="text-white mt-2 font-semibold">In DJZS, decentralization starts with local-first storage. Everything else is optional.</p>
+                <p className="text-white mt-2 font-semibold">The more you use DJZS, the smarter your knowledge base becomes.</p>
               </FAQItem>
 
-              <FAQItem question="Is my data really private?">
+              <FAQItem question="Is my thinking really private?">
                 <p className="text-white font-semibold">Yes — by design.</p>
                 <ul className="list-disc list-inside ml-2 mt-2">
-                  <li>Your journal and research live on your device first</li>
-                  <li>When you ask AI for insights, only your selected text is sent to privacy-focused providers</li>
-                  <li>DJZS does not scan, profile, or monetize your journaling.</li>
-                  <li>Nothing syncs unless you choose to sync it</li>
+                  <li>Your entries and research live on your device</li>
+                  <li>AI only sees text you explicitly send via "Think with me"</li>
+                  <li>DJZS does not scan, profile, or monetize your thinking</li>
+                  <li>Nothing syncs unless you choose to export it</li>
                 </ul>
-                <p className="mt-3">DJZS works fully offline. If your device is offline, your thoughts are offline.</p>
+                <p className="mt-3">DJZS works fully offline. If your device is offline, your thinking is offline.</p>
               </FAQItem>
 
-              <FAQItem question="How does AI memory work in Journal and Research?">
-                <p>The AI does not have automatic or global memory.</p>
-                <p className="mt-2">DJZS uses explicit, user-controlled memory:</p>
+              <FAQItem question="How does the AI thinking partner work?">
+                <p>The AI is not a chatbot — it's a structured thinking partner.</p>
+                <p className="mt-2">When you click "Think with me," the AI:</p>
                 <ul className="list-disc list-inside ml-2">
-                  <li>You write an entry</li>
-                  <li>You click "Think with me"</li>
-                  <li>The agent sees: your current entry + up to 3 memory pins you previously saved</li>
-                  <li>The response is generated and stored locally as an insight</li>
+                  <li>Analyzes your current entry</li>
+                  <li>Connects it to your memory pins and past entries</li>
+                  <li>Generates structured output — summaries, key claims, patterns, open questions</li>
+                  <li>Suggests memories worth pinning for future sessions</li>
                 </ul>
-                <p className="mt-3">If something is worth remembering, the AI may suggest a memory — but only you can pin it.</p>
-                <p className="text-white mt-2 font-semibold">There is no background memory. There is no silent learning.</p>
+                <p className="text-white mt-2 font-semibold">There is no background scanning. There is no silent learning. You control every interaction.</p>
               </FAQItem>
 
-              <FAQItem question="What's the difference between Journal mode and Research mode?">
-                <p>They use the same system, but different thinking lenses.</p>
-                <div className="grid grid-cols-2 gap-4 mt-3">
+              <FAQItem question="What are the three zones?">
+                <p>Three zones, one compounding loop:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
                   <div>
-                    <p className="font-semibold mb-1" style={{ color: '#F37E20' }}>Journal mode</p>
+                    <p className="font-semibold mb-1" style={{ color: '#F37E20' }}>Journal Zone</p>
                     <ul className="list-disc list-inside ml-2 text-sm">
-                      <li>Summary</li>
-                      <li>Insight</li>
-                      <li>Reflection question</li>
+                      <li>Write daily thinking</li>
+                      <li>AI extracts insights</li>
+                      <li>Patterns surface over time</li>
                     </ul>
                   </div>
                   <div>
-                    <p className="font-semibold mb-1" style={{ color: '#2E8B8B' }}>Research mode</p>
+                    <p className="font-semibold mb-1" style={{ color: '#2E8B8B' }}>Research Zone</p>
                     <ul className="list-disc list-inside ml-2 text-sm">
-                      <li>Key claims</li>
-                      <li>Evidence</li>
-                      <li>Unknowns</li>
-                      <li>Next question</li>
+                      <li>Save and analyze sources</li>
+                      <li>Track claims and evidence</li>
+                      <li>Synthesize with entries</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
+                    <ul className="list-disc list-inside ml-2 text-sm">
+                      <li>Debates your points</li>
+                      <li>Connects ideas</li>
+                      <li>Finds patterns</li>
                     </ul>
                   </div>
                 </div>
-                <p className="mt-3 text-white font-semibold">The AI adapts its output — not your data.</p>
+                <p className="mt-3 text-white font-semibold">Each zone feeds the others. Your thinking compounds.</p>
               </FAQItem>
 
               <FAQItem question="What is a Memory Pin?">
-                <p>A Memory Pin is a thought you choose to keep.</p>
+                <p>A Memory Pin is a thought you choose to carry forward.</p>
                 <ul className="list-disc list-inside ml-2 mt-2">
                   <li>Pins stay on your device</li>
-                  <li>Pins are reused as context in future sessions</li>
-                  <li>Pins are never added automatically</li>
+                  <li>Pins are used as context in future AI sessions</li>
+                  <li>Pins are never added without your approval</li>
                 </ul>
-                <p className="mt-3">This allows your thinking to compound over time without creating a centralized memory graph.</p>
+                <p className="mt-3">This is how intelligence compounds — the AI references your past thinking without creating a centralized memory graph.</p>
               </FAQItem>
 
-              <FAQItem question="Who owns my data?">
-                <p className="text-white font-semibold text-lg">You do.</p>
+              <FAQItem question="Who is DJZS for?">
+                <p className="text-white font-semibold">Systems thinkers who want cognitive leverage.</p>
                 <ul className="list-disc list-inside ml-2 mt-2">
-                  <li>You write it</li>
-                  <li>You store it</li>
-                  <li>You choose what's remembered</li>
-                  <li>You choose what's shared</li>
-                  <li>You can leave at any time with your data intact</li>
+                  <li>Builders and founders structuring their reasoning</li>
+                  <li>Researchers synthesizing complex domains</li>
+                  <li>Crypto analysts tracking evolving narratives</li>
+                  <li>Anyone who thinks in systems, not just emotions</li>
                 </ul>
-                <p className="mt-3 text-white font-semibold">DJZS is a tool you own — not a platform that owns you.</p>
+                <p className="mt-3" style={{ color: '#666778' }}>DJZS is not for casual diary-keeping, photo memories, or lifestyle journaling.</p>
+                <p className="mt-2 text-white font-semibold">DJZS is a tool for sharper thinking — not a prettier notebook.</p>
               </FAQItem>
             </div>
           </div>
@@ -512,10 +528,10 @@ export default function Home() {
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-final-cta-headline">
-              Ready to build a better thinking habit?
+              Think more clearly starting today.
             </h2>
             <p className="text-xl mb-12" style={{ color: '#7a7b90' }}>
-              Start with a single entry.
+              Your first session takes two minutes. Your thinking compounds from there.
             </p>
             <div className="flex flex-col items-center gap-4">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -525,7 +541,7 @@ export default function Home() {
                     style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                     data-testid="button-final-get-started"
                   >
-                    Start My First Entry
+                    Start Thinking
                     <ArrowRight className="w-6 h-6" />
                   </button>
                 </Link>
@@ -536,7 +552,7 @@ export default function Home() {
                 )}
               </div>
               <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-final-cta-microcopy">
-                No account required. Your first entry is saved locally and instantly private.
+                No account needed. Your thinking stays on your device — private and compounding.
               </p>
             </div>
           </div>
@@ -551,7 +567,7 @@ export default function Home() {
               DJZS
             </h2>
             <p className="text-xs font-medium uppercase tracking-[0.3em]" style={{ color: '#7a7b90' }}>
-              A thinking system, not a network
+              Your daily thinking system
             </p>
           </div>
 
@@ -610,7 +626,7 @@ export default function Home() {
                 style={{ background: '#F37E20' }}
                 data-testid="button-mobile-try-demo"
               >
-                Start My First Entry
+                Start Thinking
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
