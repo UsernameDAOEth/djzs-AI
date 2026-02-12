@@ -1,0 +1,240 @@
+
+Excellent. This is a sharp, clean, and scalable architecture. Strict role separation is the right way to build a resilient system. Here is a detailed specification for the XMTP Builder Agent, designed to be a deterministic, non-thinking dispatcher that cleanly interfaces with the DJZS Core Router and your OpenClaw agents.
+
+---
+
+### **OpenClaw Spec for the XMTP Builder Agent**
+
+This spec defines the contract between the XMTP Builder Agent and the OpenClaw Agent Runner. The goal is to make the Builder Agent a simple, reliable orchestrator that relies entirely on the intelligence of the OpenClaw workers.
+
+#### **1. Core Function: `runAgent(agentName, payload)`**
+
+The Builder Agent's only job is to invoke this function. It does not contain any logic other than routing and formatting.
+
+**Function Signature:**
+```javascript
+/**
+ * Calls a specified OpenClaw agent with a structured payload.
+ * @param {string} agentName - The name of the agent to invoke (e.g., "JournalInsight", "ResearchSynth").
+ * @param {object} payload - A structured JSON object containing the input data for the agent.
+ * @returns {Promise<object>} - A promise that resolves to the structured JSON output from the agent.
+ */
+async function runAgent(agentName, payload)
+```
+
+#### **2. Agent Specifications & Payloads**
+
+Here are the precise specifications for each agent, including their required input payload and the expected structured output.
+
+---
+
+##### **🟦 Agent: `JournalInsight`**
+
+*   **Purpose:** Analyze a single journal entry for summary, insight, and emotional signals.
+*   **Triggered by:** User message with intent `journal_entry`.
+
+**Input `payload`:**
+```json
+{
+  "type": "journal_entry",
+  "user_id": "string", // e.g., an XMTP address or a DJZS internal ID
+  "content": "string", // The raw text of the journal entry
+  "timestamp": "string" // ISO 8601 timestamp
+}
+```
+
+**Expected Output:**
+```json
+{
+  "summary": "string", // A concise 1-2 sentence summary of the entry.
+  "insight": "string", // A key insight or reflection derived from the content.
+  "emotion_trend": "string" // The primary emotional signal (e.g., "anxious", "reflective", "optimistic").
+}
+```
+
+---
+
+##### **🟩 Agent: `ResearchSynth`**
+
+*   **Purpose:** Synthesize a batch of collected research notes into a coherent analysis.
+*   **Triggered by:** User message with intent `research_synthesize`.
+
+**Input `payload`:**
+```json
+{
+  "type": "research_synthesis",
+  "user_id": "string",
+  "batch": [
+    {
+      "id": "string", // A unique ID for the research item (e.g., a URL hash)
+      "content": "string", // The text content or transcript of the item
+      "source_url": "string", // The original URL, if applicable
+      "notes": "string" // Any user-added notes on the item
+    }
+    // ... more items
+  ]
+}
+```
+
+**Expected Output:**
+```json
+{
+  "thesis": "string", // A synthesized thesis statement based on the batch.
+  "agreements": ["string"], // An array of points or arguments that agree across sources.
+  "contradictions": ["string"], // An array of points or arguments that contradict each other.
+  "open_questions": ["string"] // An array of new questions raised by the synthesis.
+}
+```
+
+---
+
+##### **🟪 Agent: `ThinkingPartner`**
+
+*   **Purpose:** Act as a thinking partner to help the user explore a complex question by providing clarifying questions and framing core tensions.
+*   **Triggered by:** User message with intent `thinking_partner`.
+
+**Input `payload`:**
+```json
+{
+  "type": "thinking_partner",
+  "user_id": "string",
+  "question": "string", // The user's primary question or dilemma.
+  "relevant_memory": [ // An array of relevant, previously stored Memory Pins.
+    {
+      "id": "string",
+      "content": "string"
+    }
+    // ... more memories
+  ]
+}
+```
+
+**Expected Output:**
+```json
+{
+  "clarifying_questions": ["string"], // An array of questions to help the user think deeper.
+  "core_tension": "string", // A description of the central conflict or trade-off in the user's question.
+  "recommendation_frame": "string" // A neutral frame or perspective to help the user consider their options.
+}
+```
+
+---
+
+#### **3. OpenClaw Agent Runner Implementation**
+
+This is the headless worker that the `runAgent` function communicates with. It is responsible for executing the correct agent based on the `agentName` parameter.
+
+**Pseudo-code for the Runner:**
+
+```javascript
+// OpenClaw Agent Runner (e.g., a Node.js service)
+
+async function runAgent(agentName, payload) {
+  let agent;
+
+  // 1. Select the correct agent based on the name
+  switch (agentName) {
+    case 'JournalInsight':
+      agent = new JournalInsightAgent();
+      break;
+    case 'ResearchSynth':
+      agent = new ResearchSynthAgent();
+      break;
+    case 'ThinkingPartner':
+      agent = new ThinkingPartnerAgent();
+      break;
+    default:
+      throw new Error(`Unknown agent: ${agentName}`);
+  }
+
+  // 2. Validate the payload against the agent's expected schema
+  if (!agent.validatePayload(payload)) {
+    throw new Error(`Invalid payload for agent ${agentName}`);
+  }
+
+  // 3. Run the agent and return its structured output
+  const result = await agent.process(payload);
+  return result;
+}
+
+// Example Agent Class
+class JournalInsightAgent {
+  validatePayload(payload) {
+    // Check for required keys: type, user_id, content, timestamp
+    return payload && payload.type && payload.user_id && payload.content && payload.timestamp;
+  }
+
+  async process(payload) {
+    // 1. Extract content
+    const { content } = payload;
+
+    // 2. Call the underlying LLM with a specific, structured prompt
+    const llmResponse = await callLLM({
+      prompt: `Analyze the following journal entry. Respond with a JSON object containing three keys: "summary", "insight", and "emotion_trend".\n\nJournal Entry: "${content}"`,
+      // Add other parameters like model, temp, etc.
+    });
+
+    // 3. Parse and validate the LLM's response to ensure it's the correct JSON structure
+    const structuredOutput = JSON.parse(llmResponse);
+    if (!structuredOutput.summary || !structuredOutput.insight || !structuredOutput.emotion_trend) {
+      throw new Error('Agent returned malformed output');
+    }
+
+    return structuredOutput;
+  }
+}
+```
+
+---
+
+#### **4. XMTP Builder Agent Logic (Strictly Non-Thinking)**
+
+The Builder Agent's logic is a simple router and formatter. It never generates its own content.
+
+**Pseudo-code for the Builder Agent:**
+
+```javascript
+// XMTP Builder Agent Logic
+
+async function handleIncomingMessage(xmtpMessage) {
+  const { content, sender } = xmtpMessage;
+
+  // 1. Detect intent and extract data (pure pattern matching, no LLM)
+  const intent = detectIntent(content);
+  let payload;
+
+  // 2. Build the correct payload based on intent
+  if (intent === 'journal_entry') {
+    payload = {
+      type: "journal_entry",
+      user_id: sender,
+      content: content.replace(/^Journal:\s*/i, '').trim(),
+      timestamp: new Date().toISOString()
+    };
+    // Call the agent and await the structured JSON
+    const agentOutput = await runAgent("JournalInsight", payload);
+    // Format the JSON into a human-readable reply
+    return formatJournalReply(agentOutput);
+
+  } else if (intent === 'research_synthesize') {
+    // ... logic to gather batch_payload from DJZS Core
+    const agentOutput = await runAgent("ResearchSynth", batch_payload);
+    return formatResearchReply(agentOutput);
+
+  } else if (intent === 'thinking_partner') {
+    // ... logic to gather relevant_memory from DJZS Core
+    const agentOutput = await runAgent("ThinkingPartner", thinking_payload);
+    return formatThinkingReply(agentOutput);
+
+  } else {
+    return "Sorry, I didn't understand that. Please start with 'Journal:', 'Research:', or 'Thinking:'.";
+  }
+}
+
+// Formatting functions are purely presentational
+function formatJournalReply(data) {
+  return `**Summary:** ${data.summary}\n\n**Insight:** ${data.insight}\n\n**Emotional Signal:** ${data.emotion_trend}`;
+}
+```
+
+This design ensures that each component has a single, well-defined responsibility. The OpenClaw agents are the "brains," the Runner is the "nervous system," and the XMTP Builder Agent is the "mouth and ears." This makes the entire system testable, debuggable, and ready for long-term scaling.
