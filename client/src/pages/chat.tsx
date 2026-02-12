@@ -53,7 +53,9 @@ import {
   AlertCircle,
   HelpCircle,
   Plus,
-  Video
+  Video,
+  Mic,
+  MicOff
 } from "lucide-react";
 import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
@@ -220,7 +222,73 @@ export default function Chat() {
   const [braveSearchEnabled, setBraveSearchEnabled] = useState(false);
   const [braveSearchAvailable, setBraveSearchAvailable] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+  const messageInputRef = useRef(messageInput);
+  messageInputRef.current = messageInput;
+  const voiceBaseTextRef = useRef('');
+
+  const speechSupported = typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+
+  const toggleVoiceInput = useCallback(() => {
+    if (!speechSupported) return;
+
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    voiceBaseTextRef.current = messageInputRef.current;
+
+    recognition.onresult = (event: any) => {
+      let newFinal = '';
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          newFinal += transcript;
+        } else {
+          interim += transcript;
+        }
+      }
+      if (newFinal) {
+        const spacer = voiceBaseTextRef.current && !voiceBaseTextRef.current.endsWith(' ') ? ' ' : '';
+        voiceBaseTextRef.current = voiceBaseTextRef.current + spacer + newFinal;
+        setMessageInput(voiceBaseTextRef.current + (interim ? ' ' + interim : ''));
+      } else if (interim) {
+        const spacer = voiceBaseTextRef.current && !voiceBaseTextRef.current.endsWith(' ') ? ' ' : '';
+        setMessageInput(voiceBaseTextRef.current + spacer + interim);
+      }
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+  }, [isListening, speechSupported]);
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
   // Check capabilities on mount
   useEffect(() => {
     fetch('/api/health')
@@ -1495,6 +1563,25 @@ export default function Chat() {
                         </div>
                       </DialogContent>
                     </Dialog>
+
+                    {speechSupported && (
+                      <button
+                        onClick={toggleVoiceInput}
+                        className={`relative h-11 sm:h-12 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
+                          isListening
+                            ? 'text-red-400 bg-red-500/15 border-red-500/30 animate-pulse'
+                            : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
+                        }`}
+                        title={isListening ? 'Stop listening' : 'Voice input'}
+                        data-testid="button-voice-input"
+                      >
+                        {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                        <span className="text-sm font-medium">{isListening ? 'Stop' : 'Voice'}</span>
+                        {isListening && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-[#1a1d26] shadow-[0_0_6px_rgba(239,68,68,0.6)]" />
+                        )}
+                      </button>
+                    )}
 
                     <button
                       onClick={() => setShowVideoUpload(!showVideoUpload)}
