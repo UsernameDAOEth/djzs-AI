@@ -357,7 +357,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
               <Button onClick={retake} variant="outline" className="flex-1 h-11 rounded-xl border-white/10 text-gray-300 hover:text-white font-medium text-sm" data-testid="button-retake">
                 Retake
               </Button>
-              <Button onClick={uploadVideo} className="flex-1 h-11 rounded-xl text-white font-medium text-sm shadow-lg" style={{ background: '#E8842C' }} data-testid="button-upload-confirm">
+              <Button onClick={uploadVideo} className="flex-1 h-11 rounded-xl text-white font-medium text-sm shadow-lg" style={{ background: '#F37E20' }} data-testid="button-upload-confirm">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload & Attach
               </Button>

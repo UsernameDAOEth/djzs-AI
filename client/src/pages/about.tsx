@@ -4,9 +4,9 @@ import { ArrowLeft, Shield, HardDrive, Bot, Lock, Users, Globe } from "lucide-re
 
 export default function About() {
   return (
-    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(26,29,46,0.8)' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -34,7 +34,7 @@ export default function About() {
           <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>01</span> Our Mission
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> Our Mission
               </h2>
               <p className="mb-4">
                 DJ-Z-S.box exists to give you a private space for thinking. In a world where every 
@@ -49,7 +49,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>02</span> What We Don't Do
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> What We Don't Do
               </h2>
               <div className="p-6 rounded-xl bg-orange-500/5 border border-orange-500/20 mb-4">
                 <ul className="space-y-3">
@@ -75,7 +75,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>03</span> How It Works
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>03</span> How It Works
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
@@ -103,7 +103,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>04</span> The Team
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> The Team
               </h2>
               <p className="mb-4">
                 DJ-Z-S.box is built by a small team of privacy advocates and Web3 builders who 
@@ -117,7 +117,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>05</span> Open Development
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> Open Development
               </h2>
               <div className="flex flex-wrap gap-4">
                 <a 
@@ -150,7 +150,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>06</span> Contact
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Contact
               </h2>
               <p>
                 Questions? Reach out via our official channels or open an issue on GitHub. 

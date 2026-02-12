@@ -4,9 +4,9 @@ import { ArrowLeft } from "lucide-react";
 
 export default function Privacy() {
   return (
-    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(26,29,46,0.8)' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -38,7 +38,7 @@ export default function Privacy() {
           <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>01</span> Core Principle
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> Core Principle
               </h2>
               <p>
                 DJZS is built on a fundamental principle: your thoughts belong to you. 
@@ -50,7 +50,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>02</span> Data We Don't Collect
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> Data We Don't Collect
               </h2>
               <ul className="space-y-3 list-none">
                 <li><span className="text-white">• Personal Information:</span> We do not collect names, emails, phone numbers, or any personally identifiable information.</li>
@@ -61,7 +61,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>03</span> Wallet Authentication
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>03</span> Wallet Authentication
               </h2>
               <p className="mb-4">
                 Access to DJZS is granted through cryptographic wallet connection. This means:
@@ -75,7 +75,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>04</span> Local-First Architecture
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> Local-First Architecture
               </h2>
               <p>
                 DJZS uses IndexedDB for persistent local storage. All vault data, journal entries, 
@@ -87,7 +87,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>05</span> AI Processing
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> AI Processing
               </h2>
               <p className="mb-4">
                 When you interact with DJZS AI agents:
@@ -101,7 +101,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>06</span> Data When Using AI
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Data When Using AI
               </h2>
               <p>
                 When you click "Think with me" or run a research query, the text you selected 
@@ -113,7 +113,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>07</span> Third-Party Services
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Third-Party Services
               </h2>
               <p>
                 DJZS may integrate with third-party services for market data, AI processing, 
@@ -125,7 +125,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>08</span> Your Rights
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Your Rights
               </h2>
               <ul className="space-y-3 list-none">
                 <li><span className="text-white">• Data Portability:</span> Export your local vault data at any time through the interface.</li>
@@ -136,7 +136,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>09</span> Contact
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Contact
               </h2>
               <p>
                 For privacy-related inquiries, reach out through our official channels. 

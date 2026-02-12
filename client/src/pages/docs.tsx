@@ -98,8 +98,8 @@ function TechStackItem({ category, items }: TechStackItemProps) {
 
 export default function Docs() {
   return (
-    <div className="min-h-screen text-gray-300 selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
-      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.02]" style={{ background: 'rgba(26,29,46,0.8)' }}>
+    <div className="min-h-screen text-gray-300 selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
+      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.02]" style={{ background: 'rgba(42,46,63,0.8)' }}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
             <button className="flex items-center gap-2 text-sm font-bold text-white tracking-wide uppercase opacity-60 hover:opacity-100 hover:text-orange-400 transition-all group">
@@ -132,7 +132,7 @@ export default function Docs() {
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
-              <button className="px-6 py-3 rounded-xl text-white font-bold transition-colors" style={{ background: '#E8842C' }} data-testid="button-start-writing">
+              <button className="px-6 py-3 rounded-xl text-white font-bold transition-colors" style={{ background: '#F37E20' }} data-testid="button-start-writing">
                 Start Writing
               </button>
             </Link>

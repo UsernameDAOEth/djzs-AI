@@ -794,7 +794,7 @@ export default function Chat() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#1a1d2e' }}>
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#2A2E3F' }}>
         <div className="text-center max-w-sm">
           <div className="w-20 h-20 rounded-3xl bg-orange-600/10 flex items-center justify-center mx-auto mb-8 border border-orange-500/20">
             <Shield className="w-10 h-10 text-orange-400" />
@@ -811,15 +811,15 @@ export default function Chat() {
 
   if (memberLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#1a1d2e' }}>
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#E8842C' }} />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#2A2E3F' }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#F37E20' }} />
       </div>
     );
   }
 
   if (!member) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#1a1d2e' }}>
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#2A2E3F' }}>
         <div className="text-center max-w-md">
           <h2 className="text-3xl font-black text-white mb-4 tracking-tight">Initialize Your Zone</h2>
           <p className="mb-8" style={{ color: '#9a9bb0' }}>Ready to start extracting insight from your daily thinking?</p>
@@ -827,7 +827,7 @@ export default function Chat() {
             onClick={() => registerMember.mutate()}
             disabled={registerMember.isPending}
             className="h-14 px-10 rounded-2xl font-bold text-lg text-white border-0 hover:opacity-90"
-            style={{ background: '#E8842C', boxShadow: '0 8px 30px rgba(232,132,44,0.25)' }}
+            style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.25)' }}
           >
             {registerMember.isPending && <Loader2 className="w-5 h-5 mr-3 animate-spin" />}
             Start My First Entry
@@ -845,7 +845,7 @@ export default function Chat() {
 
   return (
     <TooltipProvider>
-      <div className="h-screen text-gray-300 flex overflow-hidden font-sans selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
+      <div className="h-screen text-gray-300 flex overflow-hidden font-sans selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
         {/* Mobile sidebar overlay */}
         {mobileSidebarOpen && (
           <div 
@@ -859,7 +859,7 @@ export default function Chat() {
           ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
           md:translate-x-0
           fixed md:relative z-50 md:z-auto
-          w-64 h-full border-r border-white/[0.03] flex flex-col bg-[#151828] md:bg-[#151828]/80 
+          w-64 h-full border-r border-white/[0.03] flex flex-col bg-[#1a1d26] md:bg-[#1a1d26]/80 
           transition-all duration-300 
           ${isFocused && !mobileSidebarOpen ? 'md:opacity-40' : 'opacity-100'}
         `}>
@@ -899,7 +899,7 @@ export default function Chat() {
                 >
                   <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-orange-400" : "text-gray-600 group-hover:text-gray-400"}`} />
                   <span className="text-sm font-bold tracking-tight">{zone.name}</span>
-                  {isActive && <div className="ml-auto w-1 h-1 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(232,132,44,0.5)]"></div>}
+                  {isActive && <div className="ml-auto w-1 h-1 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(243,126,32,0.5)]"></div>}
                 </button>
               );
             })}
@@ -1010,7 +1010,7 @@ export default function Chat() {
         {/* Main Interface */}
         <main className="flex-1 flex flex-col relative">
           {/* Transparent Glassy Header */}
-          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 backdrop-blur-xl border-b border-white/[0.03] sticky top-0 z-30" style={{ background: 'rgba(26,29,46,0.8)' }}>
+          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 backdrop-blur-xl border-b border-white/[0.03] sticky top-0 z-30" style={{ background: 'rgba(42,46,63,0.8)' }}>
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Hamburger menu for mobile */}
               <button 
@@ -1042,7 +1042,7 @@ export default function Chat() {
                     </div>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="border-white/10 max-w-lg p-8 rounded-[2rem] shadow-2xl" style={{ background: '#151828' }}>
+                <DialogContent className="border-white/10 max-w-lg p-8 rounded-[2rem] shadow-2xl" style={{ background: '#1a1d26' }}>
                   <DialogHeader>
                     <DialogTitle className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
@@ -1242,7 +1242,7 @@ export default function Chat() {
                           </button>
                           
                           {dossierDropdownOpen && (
-                            <div className="absolute top-full left-0 mt-1 w-64 border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden" style={{ background: '#151828' }} data-testid="dossier-dropdown">
+                            <div className="absolute top-full left-0 mt-1 w-64 border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden" style={{ background: '#1a1d26' }} data-testid="dossier-dropdown">
                               <div className="p-2 border-b border-white/5">
                                 <button
                                   onClick={() => handleSelectDossier(null)}
@@ -1302,7 +1302,7 @@ export default function Chat() {
                                       onClick={handleCreateDossier}
                                       disabled={!dossierName.trim()}
                                       className="p-2 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                                      style={{ background: '#E8842C' }}
+                                      style={{ background: '#F37E20' }}
                                       data-testid="button-create-dossier"
                                     >
                                       <Check className="w-3.5 h-3.5 text-white" />
@@ -1397,7 +1397,7 @@ export default function Chat() {
                             onClick={handleAnalyze}
                             disabled={!messageInput.trim() || searchResearch.isPending}
                             className="w-full hover:opacity-90 h-11 px-5 rounded-xl font-medium text-sm shadow-lg shadow-orange-900/30 transition-all active:scale-95 touch-target"
-                            style={{ background: '#E8842C' }}
+                            style={{ background: '#F37E20' }}
                             data-testid="button-search"
                           >
                             {searchResearch.isPending ? (
@@ -1448,7 +1448,7 @@ export default function Chat() {
                           <span className="text-sm font-medium">Pin</span>
                         </button>
                       </DialogTrigger>
-                      <DialogContent className="border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl" style={{ background: '#151828' }}>
+                      <DialogContent className="border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl" style={{ background: '#1a1d26' }}>
                         <DialogHeader>
                           <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">Pin Memory</DialogTitle>
                         </DialogHeader>
@@ -1471,7 +1471,7 @@ export default function Chat() {
                                   onClick={() => setSelectedPinKind(kind)}
                                   className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${
                                     selectedPinKind === kind 
-                                      ? "text-white shadow-lg shadow-orange-900/40 border-transparent [background:#E8842C]" 
+                                      ? "text-white shadow-lg shadow-orange-900/40 border-transparent [background:#F37E20]" 
                                       : "bg-white/[0.02] text-gray-500 hover:text-white hover:bg-white/5 border border-white/[0.05]"
                                   }`}
                                   data-testid={`button-kind-${kind}`}
@@ -1484,7 +1484,7 @@ export default function Chat() {
                           <Button
                             onClick={handleManualPin}
                             className="w-full hover:opacity-90 h-14 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-orange-900/20 transition-all active:scale-[0.98]"
-                            style={{ background: '#E8842C' }}
+                            style={{ background: '#F37E20' }}
                             data-testid="button-confirm-pin"
                           >
                             <Pin className="w-4 h-4 mr-2" />
@@ -1509,7 +1509,7 @@ export default function Chat() {
                       <Video className="w-4 h-4" />
                       <span className="text-sm font-medium">Video</span>
                       {pendingVideoAssetId && (
-                        <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-orange-500 border-2 border-[#151828] shadow-[0_0_6px_rgba(232,132,44,0.6)]" />
+                        <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-orange-500 border-2 border-[#1a1d26] shadow-[0_0_6px_rgba(243,126,32,0.6)]" />
                       )}
                     </button>
                   </div>
@@ -1537,7 +1537,7 @@ export default function Chat() {
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
                       className="h-11 sm:h-12 px-5 sm:px-8 rounded-xl font-bold text-sm shadow-lg shadow-orange-900/40 transition-all active:scale-95 hover:opacity-90 disabled:opacity-30 disabled:shadow-none"
-                      style={{ background: '#E8842C' }}
+                      style={{ background: '#F37E20' }}
                       data-testid="button-analyze"
                     >
                       {isAnalyzing ? (
@@ -1876,7 +1876,7 @@ export default function Chat() {
                                   <Button
                                     onClick={handleSaveClaimEdit}
                                     className="hover:opacity-90 h-8 px-4 text-xs"
-                                    style={{ background: '#E8842C' }}
+                                    style={{ background: '#F37E20' }}
                                     data-testid="button-save-claim-edit"
                                   >
                                     Save
@@ -2025,7 +2025,7 @@ export default function Chat() {
                                 size="sm"
                                 onClick={handlePinSuggestion}
                                 className="hover:opacity-90 h-9 px-4 text-sm touch-target"
-                                style={{ background: '#E8842C' }}
+                                style={{ background: '#F37E20' }}
                                 data-testid="button-pin-suggestion"
                               >
                                 <Pin className="w-4 h-4 mr-2" />
@@ -2114,7 +2114,7 @@ export default function Chat() {
                                         onClick={() => pinMemory.mutate(memory)}
                                         disabled={pinMemory.isPending}
                                         className="shrink-0 hover:opacity-90 h-8 px-3 text-xs touch-target"
-                                        style={{ background: 'rgba(232,132,44,0.8)' }}
+                                        style={{ background: 'rgba(243,126,32,0.8)' }}
                                         data-testid={`button-pin-memory-${idx}`}
                                       >
                                         <Pin className="w-3.5 h-3.5 mr-1" />
@@ -2248,7 +2248,7 @@ export default function Chat() {
               className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden" 
               onClick={() => setMemoryDrawerOpen(false)}
             />
-            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-white/[0.05] flex flex-col md:bg-[#151828]/80 backdrop-blur-xl animate-in slide-in-from-right duration-300" style={{ background: '#151828' }}>
+            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-white/[0.05] flex flex-col md:bg-[#1a1d26]/80 backdrop-blur-xl animate-in slide-in-from-right duration-300" style={{ background: '#1a1d26' }}>
               <Tabs defaultValue="memories" className="flex-1 flex flex-col">
                 <div className="px-5 pt-5 pb-4 border-b border-white/[0.04]">
                   <div className="flex items-center justify-between mb-4 md:hidden">

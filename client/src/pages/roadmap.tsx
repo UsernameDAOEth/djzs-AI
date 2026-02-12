@@ -72,9 +72,9 @@ const cutItems = [
 
 export default function Roadmap() {
   return (
-    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(26,29,46,0.8)' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group" data-testid="link-back-to-system">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -120,7 +120,7 @@ export default function Roadmap() {
                         : phase.status === "active"
                         ? "animate-pulse"
                         : "bg-white/5 border border-white/10"
-                    }`} style={phase.status === "active" ? { background: '#E8842C' } : undefined}>
+                    }`} style={phase.status === "active" ? { background: '#F37E20' } : undefined}>
                       {phase.status === "completed" ? (
                         <Check className="w-5 h-5 text-orange-400" />
                       ) : phase.status === "active" ? (
@@ -134,7 +134,7 @@ export default function Roadmap() {
                   {/* Content */}
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="font-mono text-xs" style={{ color: '#E8842C' }}>{phase.phase}</span>
+                      <span className="font-mono text-xs" style={{ color: '#F37E20' }}>{phase.phase}</span>
                       <h2 className="text-xl font-black text-white uppercase tracking-widest" data-testid={`text-phase-title-${phase.phase}`}>
                         {phase.title}
                       </h2>
@@ -180,7 +180,7 @@ export default function Roadmap() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
             className="mt-16 p-8 rounded-2xl border border-white/[0.05]"
-            style={{ background: 'rgba(26,29,46,0.6)' }}
+            style={{ background: 'rgba(42,46,63,0.6)' }}
           >
             <div className="flex items-center gap-3 mb-6">
               <Scissors className="w-5 h-5 text-gray-500" />
@@ -210,10 +210,10 @@ export default function Roadmap() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.7 }}
             className="mt-8 p-8 rounded-2xl border border-orange-500/20"
-            style={{ background: 'linear-gradient(135deg, rgba(232,132,44,0.08) 0%, rgba(26,29,46,0.6) 100%)' }}
+            style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.08) 0%, rgba(42,46,63,0.6) 100%)' }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <Sun className="w-5 h-5" style={{ color: '#D4A843' }} />
+              <Sun className="w-5 h-5" style={{ color: '#FFB84D' }} />
               <h3 className="text-white font-black uppercase tracking-widest" data-testid="text-sacred-ritual-title">
                 The Sacred Daily Ritual
               </h3>
@@ -224,10 +224,10 @@ export default function Roadmap() {
 
             <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
               {/* Morning */}
-              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(212,168,67,0.06)' }} data-testid="card-morning-reflection">
+              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(255,184,77,0.06)' }} data-testid="card-morning-reflection">
                 <div className="flex items-center gap-2 mb-3">
-                  <Sun className="w-4 h-4" style={{ color: '#D4A843' }} />
-                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#D4A843' }} data-testid="text-morning-title">Morning Reflection</span>
+                  <Sun className="w-4 h-4" style={{ color: '#FFB84D' }} />
+                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#FFB84D' }} data-testid="text-morning-title">Morning Reflection</span>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed">
                   Open your journal. Write what's on your mind. Let the Thinking Partner challenge your assumptions 
@@ -241,10 +241,10 @@ export default function Roadmap() {
               </div>
 
               {/* Evening */}
-              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(59,168,160,0.06)' }} data-testid="card-evening-synthesis">
+              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(46,139,139,0.06)' }} data-testid="card-evening-synthesis">
                 <div className="flex items-center gap-2 mb-3">
-                  <Moon className="w-4 h-4" style={{ color: '#3BA8A0' }} />
-                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#3BA8A0' }} data-testid="text-evening-title">Evening Synthesis</span>
+                  <Moon className="w-4 h-4" style={{ color: '#2E8B8B' }} />
+                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#2E8B8B' }} data-testid="text-evening-title">Evening Synthesis</span>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed">
                   Review what you wrote. See connections between your journal and research. 
@@ -262,7 +262,7 @@ export default function Roadmap() {
             className="mt-8 p-8 rounded-2xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20"
           >
             <div className="flex items-center gap-3 mb-4">
-              <Compass className="w-5 h-5" style={{ color: '#E8842C' }} />
+              <Compass className="w-5 h-5" style={{ color: '#F37E20' }} />
               <h3 className="text-white font-black uppercase tracking-widest" data-testid="text-north-star-title">
                 The Real North Star
               </h3>
@@ -272,7 +272,7 @@ export default function Roadmap() {
                 1,000 people use DJZS daily. 300 of them pay for it. When you ask them why, 
                 they don't talk about features or encryption or decentralization.
               </p>
-              <p className="text-sm leading-relaxed" style={{ color: '#D4A843' }} data-testid="text-north-star-quote">
+              <p className="text-sm leading-relaxed" style={{ color: '#FFB84D' }} data-testid="text-north-star-quote">
                 They say: "It helps me think clearer."
               </p>
               <p className="text-sm text-gray-500 leading-relaxed" data-testid="text-north-star-mission">

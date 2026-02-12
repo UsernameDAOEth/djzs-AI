@@ -4,9 +4,9 @@ import { ArrowLeft, Shield, HardDrive, Lock, Fingerprint, Eye, Server, Smartphon
 
 export default function Security() {
   return (
-    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#1a1d2e' }}>
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(26,29,46,0.8)' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -48,7 +48,7 @@ export default function Security() {
           <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>01</span> No Custody, No Risk
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> No Custody, No Risk
               </h2>
               <div className="space-y-4">
                 <p>
@@ -77,7 +77,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>02</span> Local-First Architecture
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> Local-First Architecture
               </h2>
               <div className="grid gap-4">
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] flex gap-4">
@@ -106,7 +106,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>03</span> User-Initiated Actions Only
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>03</span> User-Initiated Actions Only
               </h2>
               <p className="mb-4">
                 Every action in DJ-Z-S.box requires your explicit consent:
@@ -133,7 +133,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>04</span> Wallet Security
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> Wallet Security
               </h2>
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4">
                 <div className="flex items-start gap-3">
@@ -166,7 +166,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>05</span> AI Privacy
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> AI Privacy
               </h2>
               <p className="mb-4">
                 When you use AI features, we prioritize your privacy:
@@ -189,7 +189,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>06</span> Security Best Practices
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Security Best Practices
               </h2>
               <p className="mb-4">
                 To maximize your security while using DJ-Z-S.box:
@@ -205,7 +205,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#E8842C' }}>07</span> Report a Vulnerability
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Report a Vulnerability
               </h2>
               <p>
                 If you discover a security vulnerability, please report it responsibly through our 

@@ -17,26 +17,26 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen text-white overflow-hidden" style={{ background: '#1a1d2e' }}>
+    <div className="min-h-screen text-white overflow-hidden" style={{ background: '#2A2E3F' }}>
       <style>{`
         @keyframes breathe {
           0%, 100% { opacity: 0.4; transform: scale(1); }
           50% { opacity: 0.6; transform: scale(1.03); }
         }
-        ::selection { background: rgba(232,132,44,0.3); }
+        ::selection { background: rgba(243,126,32,0.3); }
       `}</style>
 
-      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.05]" style={{ background: 'rgba(26,29,46,0.85)' }}>
+      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.85)' }}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
-            <span className="text-xl font-black tracking-widest uppercase" style={{ color: '#E8842C' }} data-testid="link-home-logo">DJZS</span>
+            <span className="text-xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }} data-testid="link-home-logo">DJZS</span>
           </Link>
           <div className="flex items-center gap-4">
             {isConnected ? (
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-base font-semibold text-white transition-colors"
-                  style={{ background: '#E8842C', boxShadow: '0 4px 14px rgba(232,132,44,0.25)' }}
+                  style={{ background: '#F37E20', boxShadow: '0 4px 14px rgba(243,126,32,0.25)' }}
                   data-testid="button-header-enter"
                 >
                   Enter DJZS
@@ -72,8 +72,8 @@ export default function Home() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background: `
-              radial-gradient(800px 400px at 30% 40%, rgba(232,132,44,0.10), transparent 60%),
-              radial-gradient(600px 300px at 70% 60%, rgba(59,168,160,0.08), transparent 60%),
+              radial-gradient(800px 400px at 30% 40%, rgba(243,126,32,0.10), transparent 60%),
+              radial-gradient(600px 300px at 70% 60%, rgba(46,139,139,0.08), transparent 60%),
               radial-gradient(400px 200px at 50% 80%, rgba(123,107,141,0.06), transparent 60%)
             `,
             animation: "breathe 30s ease-in-out infinite",
@@ -101,7 +101,7 @@ export default function Home() {
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
-                  style={{ background: '#E8842C', boxShadow: '0 8px 30px rgba(232,132,44,0.3)' }}
+                  style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                   data-testid="button-start-thinking"
                 >
                   Start My First Entry
@@ -113,7 +113,7 @@ export default function Home() {
                 <Link href="/chat">
                   <button
                     className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold transition-all duration-250 hover:-translate-y-1"
-                    style={{ background: '#E8842C', color: '#fff', boxShadow: '0 8px 30px rgba(232,132,44,0.3)' }}
+                    style={{ background: '#F37E20', color: '#fff', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                     data-testid="button-start-thinking"
                   >
                     Start My First Entry
@@ -123,7 +123,7 @@ export default function Home() {
                 <button
                   onClick={scrollToHowItWorks}
                   className="inline-flex items-center gap-3 rounded-2xl border px-8 py-5 text-lg font-bold transition-all duration-250 hover:text-white"
-                  style={{ borderColor: 'rgba(59,168,160,0.3)', color: '#9a9bb0' }}
+                  style={{ borderColor: 'rgba(46,139,139,0.3)', color: '#9a9bb0' }}
                   data-testid="button-see-how-it-works"
                 >
                   See How It Works
@@ -147,15 +147,15 @@ export default function Home() {
             style={{ color: '#7a7b90' }}
           >
             <div className="flex items-center gap-3" data-testid="text-trust-local">
-              <HardDrive className="w-5 h-5" style={{ color: '#E8842C' }} />
+              <HardDrive className="w-5 h-5" style={{ color: '#F37E20' }} />
               <span>Stored on your device</span>
             </div>
             <div className="flex items-center gap-3" data-testid="text-trust-ai">
-              <Bot className="w-5 h-5" style={{ color: '#3BA8A0' }} />
+              <Bot className="w-5 h-5" style={{ color: '#2E8B8B' }} />
               <span>AI only when you ask</span>
             </div>
             <div className="flex items-center gap-3" data-testid="text-trust-private">
-              <Shield className="w-5 h-5" style={{ color: '#D4A843' }} />
+              <Shield className="w-5 h-5" style={{ color: '#FFB84D' }} />
               <span>Private by default</span>
             </div>
           </motion.div>
@@ -163,7 +163,7 @@ export default function Home() {
       </motion.section>
 
       <RevealSection>
-        <section id="how-it-works" className="relative py-32 border-t border-white/[0.05]" style={{ background: '#151828' }}>
+        <section id="how-it-works" className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-zones-headline">
@@ -176,7 +176,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <ZoneFeatureCard
-                icon={<BookOpen className="w-7 h-7" style={{ color: '#E8842C' }} />}
+                icon={<BookOpen className="w-7 h-7" style={{ color: '#F37E20' }} />}
                 color="orange"
                 title="Daily Journaling"
                 description="Capture your thoughts and feelings. Get instant summaries, insights, and emotional signals to understand your patterns."
@@ -184,7 +184,7 @@ export default function Home() {
                 href={isConnected ? "/chat" : "/chat"}
               />
               <ZoneFeatureCard
-                icon={<Search className="w-7 h-7" style={{ color: '#3BA8A0' }} />}
+                icon={<Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />}
                 color="teal"
                 title="Deep Research"
                 description="Save links, notes, and clippings. When you're ready, synthesize them into a clear thesis with contradictions and open questions."
@@ -205,7 +205,7 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d2e' }}>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-stability-headline">
@@ -215,17 +215,17 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <StabilityCard
-                icon={<HardDrive className="w-6 h-6" style={{ color: '#E8842C' }} />}
+                icon={<HardDrive className="w-6 h-6" style={{ color: '#F37E20' }} />}
                 title="Local-First & Private"
                 description="Your data is stored on your device, not our servers. Your thinking is yours alone."
               />
               <StabilityCard
-                icon={<Bot className="w-6 h-6" style={{ color: '#3BA8A0' }} />}
+                icon={<Bot className="w-6 h-6" style={{ color: '#2E8B8B' }} />}
                 title="AI on Your Terms"
                 description="The AI only analyzes what you tell it to, when you tell it to. No passive listening, no data mining."
               />
               <StabilityCard
-                icon={<Shield className="w-6 h-6" style={{ color: '#D4A843' }} />}
+                icon={<Shield className="w-6 h-6" style={{ color: '#FFB84D' }} />}
                 title="Open & Stable"
                 description="Built on a clean, open architecture. This is a tool you can rely on for years, not a disposable app."
               />
@@ -235,12 +235,12 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#151828' }}>
+        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(232,132,44,0.08)', border: '1px solid rgba(232,132,44,0.2)' }}>
-                <Shield className="w-4 h-4" style={{ color: '#E8842C' }} />
-                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#E8842C' }}>Privacy Architecture</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
+                <Shield className="w-4 h-4" style={{ color: '#F37E20' }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Privacy Architecture</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight" data-testid="text-privacy-headline">
                 How DJZS Handles Your Data
@@ -252,8 +252,8 @@ export default function Home() {
 
             <div className="grid md:grid-cols-3 gap-6 mb-10">
               <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(232,132,44,0.08)', border: '1px solid rgba(232,132,44,0.2)' }}>
-                  <HardDrive className="w-7 h-7" style={{ color: '#E8842C' }} />
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
+                  <HardDrive className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Local-First Storage</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
@@ -261,8 +261,8 @@ export default function Home() {
                 </p>
               </div>
               <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(59,168,160,0.08)', border: '1px solid rgba(59,168,160,0.2)' }}>
-                  <Bot className="w-7 h-7" style={{ color: '#3BA8A0' }} />
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+                  <Bot className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">User-Controlled AI</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
@@ -270,8 +270,8 @@ export default function Home() {
                 </p>
               </div>
               <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)' }}>
-                  <Shield className="w-7 h-7" style={{ color: '#D4A843' }} />
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
+                  <Shield className="w-7 h-7" style={{ color: '#FFB84D' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Privacy-Focused Providers</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
@@ -280,7 +280,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl border" style={{ background: 'linear-gradient(to right, rgba(232,132,44,0.04), rgba(59,168,160,0.04))', borderColor: 'rgba(255,255,255,0.08)' }}>
+            <div className="p-8 rounded-2xl border" style={{ background: 'linear-gradient(to right, rgba(243,126,32,0.04), rgba(46,139,139,0.04))', borderColor: 'rgba(255,255,255,0.08)' }}>
               <p className="text-center text-lg leading-relaxed" style={{ color: '#b0b1c0' }}>
                 When you request AI insights, only the text you select is sent to privacy-focused AI providers. The response is saved locally on your device. We do not permanently store your data on any server.
               </p>
@@ -293,7 +293,7 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#1a1d2e' }}>
+        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
               <FAQItem question="How is DJZS different from ChatGPT or Claude?">
@@ -354,7 +354,7 @@ export default function Home() {
                 <p>They use the same system, but different thinking lenses.</p>
                 <div className="grid grid-cols-2 gap-4 mt-3">
                   <div>
-                    <p className="font-semibold mb-1" style={{ color: '#E8842C' }}>Journal mode</p>
+                    <p className="font-semibold mb-1" style={{ color: '#F37E20' }}>Journal mode</p>
                     <ul className="list-disc list-inside ml-2 text-sm">
                       <li>Summary</li>
                       <li>Insight</li>
@@ -362,7 +362,7 @@ export default function Home() {
                     </ul>
                   </div>
                   <div>
-                    <p className="font-semibold mb-1" style={{ color: '#3BA8A0' }}>Research mode</p>
+                    <p className="font-semibold mb-1" style={{ color: '#2E8B8B' }}>Research mode</p>
                     <ul className="list-disc list-inside ml-2 text-sm">
                       <li>Key claims</li>
                       <li>Evidence</li>
@@ -401,7 +401,7 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#151828' }}>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-final-cta-headline">
               Ready to build a better thinking habit?
@@ -413,7 +413,7 @@ export default function Home() {
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
-                  style={{ background: '#E8842C', boxShadow: '0 8px 30px rgba(232,132,44,0.3)' }}
+                  style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                   data-testid="button-final-get-started"
                 >
                   Start My First Entry
@@ -430,10 +430,10 @@ export default function Home() {
         </section>
       </RevealSection>
 
-      <footer className="border-t border-white/[0.05] py-24" style={{ background: '#1a1d2e' }}>
+      <footer className="border-t border-white/[0.05] py-24" style={{ background: '#2A2E3F' }}>
         <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-10">
           <div>
-            <h2 className="text-3xl font-black tracking-widest uppercase mb-3" style={{ color: '#E8842C' }}>
+            <h2 className="text-3xl font-black tracking-widest uppercase mb-3" style={{ color: '#F37E20' }}>
               DJZS
             </h2>
             <p className="text-xs font-medium uppercase tracking-[0.3em]" style={{ color: '#7a7b90' }}>
@@ -461,7 +461,7 @@ export default function Home() {
               Roadmap
             </Link>
             {isConnected && (
-              <Link href="/chat" className="px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-white transition-all hover:opacity-90" style={{ background: '#E8842C' }} data-testid="link-footer-enter">
+              <Link href="/chat" className="px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-white transition-all hover:opacity-90" style={{ background: '#F37E20' }} data-testid="link-footer-enter">
                 Enter
               </Link>
             )}
@@ -488,12 +488,12 @@ export default function Home() {
       </footer>
 
       {!isConnected && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden backdrop-blur-xl border-t border-white/[0.05] p-4 safe-area-inset-bottom" style={{ background: 'rgba(26,29,46,0.95)' }}>
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden backdrop-blur-xl border-t border-white/[0.05] p-4 safe-area-inset-bottom" style={{ background: 'rgba(42,46,63,0.95)' }}>
           <div className="flex items-center gap-3 max-w-lg mx-auto">
             <Link href="/chat" className="flex-1">
               <button
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-bold text-white transition-colors min-h-[48px]"
-                style={{ background: '#E8842C' }}
+                style={{ background: '#F37E20' }}
                 data-testid="button-mobile-try-demo"
               >
                 Start My First Entry
@@ -589,7 +589,7 @@ function FAQItem({ question, children }: { question: string; children: ReactNode
             animate={{ rotate: isOpen ? 45 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Plus className="w-6 h-6" style={{ color: '#E8842C' }} />
+            <Plus className="w-6 h-6" style={{ color: '#F37E20' }} />
           </motion.div>
         </div>
       </button>
