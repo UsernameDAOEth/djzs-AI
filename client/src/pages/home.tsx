@@ -546,7 +546,7 @@ export default function Home() {
       <footer className="border-t border-white/[0.05] py-24" style={{ background: '#2A2E3F' }}>
         <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-10">
           <div className="flex flex-col items-center gap-3">
-            <img src="/logo.png" alt="DJZS" className="w-10 h-10 rounded-xl" style={{ filter: 'grayscale(100%)', opacity: 0.6 }} data-testid="img-logo-footer" />
+            <img src="/logo.png" alt="DJZS" className="w-16 h-16 rounded-2xl" style={{ filter: 'drop-shadow(0 0 4px rgba(243,126,32,0.2))' }} data-testid="img-logo-footer" />
             <h2 className="text-3xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }}>
               DJZS
             </h2>
