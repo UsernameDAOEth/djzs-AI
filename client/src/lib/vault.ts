@@ -495,6 +495,37 @@ export async function deleteMusicTrack(id: number): Promise<void> {
   await vault.musicTracks.delete(id);
 }
 
+export async function searchEntries(query: string, type?: EntryType, limit: number = 50): Promise<VaultEntry[]> {
+  if (!query.trim()) return [];
+  const lowerQuery = query.toLowerCase().trim();
+  const words = lowerQuery.split(/\s+/).filter(w => w.length > 0);
+  
+  let collection = type 
+    ? vault.entries.where('type').equals(type)
+    : vault.entries.toCollection();
+  
+  const entries = await collection.toArray();
+  
+  const scored = entries
+    .map(entry => {
+      const text = entry.text.toLowerCase();
+      let score = 0;
+      if (text.includes(lowerQuery)) score += 10;
+      for (const word of words) {
+        if (text.includes(word)) score += 1;
+      }
+      const tagMatch = entry.tags?.some(t => t.toLowerCase().includes(lowerQuery));
+      if (tagMatch) score += 5;
+      return { entry, score };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score || b.entry.createdAt.getTime() - a.entry.createdAt.getTime())
+    .slice(0, limit)
+    .map(({ entry }) => entry);
+  
+  return scored;
+}
+
 export async function searchJournalEntriesForTopic(keywords: string[], limit: number = 5): Promise<VaultEntry[]> {
   const entries = await vault.entries
     .where('type')
