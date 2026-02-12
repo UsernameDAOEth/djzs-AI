@@ -23,9 +23,7 @@ export default function About() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase">
-            About DJ-Z-S.box
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase">About DJ-Z-S</h1>
           <p className="text-lg text-gray-400 mb-12 leading-relaxed">
             A private, local-first AI journaling partner that helps you think more clearly.
           </p>
