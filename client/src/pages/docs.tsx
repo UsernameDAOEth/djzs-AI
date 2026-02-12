@@ -17,7 +17,11 @@ import {
   Database,
   Fingerprint,
   Globe,
-  Video
+  Video,
+  Brain,
+  Music,
+  Sparkles,
+  FileSearch
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -53,11 +57,12 @@ interface QuickLinkProps {
   title: string;
   description: string;
   external?: boolean;
+  testId?: string;
 }
 
-function QuickLink({ href, title, description, external }: QuickLinkProps) {
+function QuickLink({ href, title, description, external, testId }: QuickLinkProps) {
   const content = (
-    <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/30 hover:bg-orange-500/[0.03] transition-all group cursor-pointer">
+    <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/30 hover:bg-orange-500/[0.03] transition-all group cursor-pointer" data-testid={testId}>
       <div className="flex items-center justify-between mb-2">
         <h4 className="font-bold text-white group-hover:text-orange-300 transition-colors">{title}</h4>
         {external ? (
@@ -109,7 +114,7 @@ export default function Docs() {
           </Link>
           <div className="flex items-center gap-6">
             <Link href="/chat">
-              <button className="text-sm font-bold text-gray-500 hover:text-white transition-colors">
+              <button className="text-sm font-bold text-gray-500 hover:text-white transition-colors" data-testid="button-open-app-docs">
                 Open App
               </button>
             </Link>
@@ -128,7 +133,7 @@ export default function Docs() {
             DJZS Documentation
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            A private, local-first AI journaling partner that helps you think more clearly.
+            A private, local-first daily thinking system that compounds intelligence over time.
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
@@ -147,10 +152,10 @@ export default function Docs() {
                 DJZS is an <strong className="text-white">AI journaling partner for thinking and research</strong>. It creates a private space where you can process ideas, track patterns in your thinking, and develop clarity—without the AI taking over.
               </p>
               <p>
-                Unlike traditional journaling apps that store your data on remote servers, or AI assistants that generate content for you, DJZS is built on a different philosophy: <strong className="text-orange-300">your thinking should stay yours</strong>.
+                Unlike traditional journaling apps that store your data on remote servers, DJZS stores your entries locally on your device. When you choose to use AI features, your text is sent to Venice AI for processing — but Venice claims no data retention, and nothing syncs unless you export.
               </p>
               <p>
-                The AI doesn't generate content or save memory automatically. It helps you reflect on your own thinking and build insight through daily habit.
+                The AI helps you reflect on your own thinking. You control when AI is involved — it only activates when you click "Think with me." Memory pins let you carry context forward on your terms.
               </p>
             </div>
           </div>
@@ -445,6 +450,182 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-8">OpenClaw Agent Runner</h2>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 mb-8">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center">
+                <Brain className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Unified AI Agent System</h3>
+                <p className="text-xs text-purple-400/80">Three structured agents, one dispatcher</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              OpenClaw is DJZS's agent runner — a clean dispatcher that routes requests to three specialized AI agents. Each agent wraps Venice AI calls and returns strictly typed, structured JSON. No thinking happens in the dispatcher; all intelligence lives in the agent classes.
+            </p>
+            <p className="text-xs text-gray-500 mb-6 font-mono" data-testid="text-openclaw-api">
+              API: POST /api/openclaw/run {'{'} agent: "JournalInsight" | "ResearchSynth" | "ThinkingPartner", payload: {'{'} ... {'}'} {'}'}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20" data-testid="card-agent-journal">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-orange-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white">JournalInsight</h3>
+              </div>
+              <p className="text-sm text-gray-400 mb-4">Analyzes journal entries for patterns, claims, open questions, and emotional trends.</p>
+              <ul className="space-y-2 text-xs text-gray-500">
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
+                  <span>Extracts key claims and patterns</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
+                  <span>Surfaces open questions</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
+                  <span>Infers emotion trends</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
+                  <span>Generates reflective questions</span>
+                </li>
+              </ul>
+            </div>
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20" data-testid="card-agent-research">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-teal-600/20 flex items-center justify-center">
+                  <Search className="w-5 h-5 text-teal-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white">ResearchSynth</h3>
+              </div>
+              <p className="text-sm text-gray-400 mb-4">Synthesizes batches of research entries into a unified thesis with agreements and contradictions.</p>
+              <ul className="space-y-2 text-xs text-gray-500">
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
+                  <span>Builds unified thesis from sources</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
+                  <span>Identifies agreements across claims</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
+                  <span>Surfaces contradictions</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
+                  <span>Suggests follow-up research</span>
+                </li>
+              </ul>
+            </div>
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20" data-testid="card-agent-thinking">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-purple-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white">ThinkingPartner</h3>
+              </div>
+              <p className="text-sm text-gray-400 mb-4">Your AI thinking coach — debates ideas, finds patterns, and surfaces tensions in your reasoning.</p>
+              <ul className="space-y-2 text-xs text-gray-500">
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
+                  <span>Asks clarifying questions</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
+                  <span>Identifies core tensions</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
+                  <span>Suggests reframes</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
+                  <span>Provides actionable next steps</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-8">Quick Search</h2>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                <FileSearch className="w-6 h-6 text-orange-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Instant Entry Search</h3>
+                <p className="text-xs text-orange-400/80">Find any past entry in milliseconds</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-5 leading-relaxed">
+              Quick Search lets you find any past journal or research entry by typing a few characters. It searches across titles, content, and tags with smart scoring — exact matches rank highest, followed by word matches and tag hits.
+            </p>
+            <ul className="space-y-3 text-sm text-gray-500">
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                <span><strong className="text-orange-300">Real-time filtering</strong> — Results update as you type with 150ms debounce for smooth performance</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                <span><strong className="text-orange-300">Highlighted matches</strong> — Search terms are highlighted in results so you can scan quickly</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                <span><strong className="text-orange-300">Click to load</strong> — Click any result to load it directly into the editor</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                <span><strong className="text-orange-300">Zone-aware</strong> — Searches within your current zone (Journal or Research)</span>
+              </li>
+            </ul>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-8">Music Library</h2>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-gold-500/10 to-transparent border border-yellow-500/20" style={{ background: 'linear-gradient(135deg, rgba(255,184,77,0.08), transparent)' }}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,184,77,0.2)' }}>
+                <Music className="w-6 h-6" style={{ color: '#FFB84D' }} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Think with Music</h3>
+                <p className="text-xs" style={{ color: 'rgba(255,184,77,0.8)' }}>Your personal soundtrack, stored locally</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-5 leading-relaxed">
+              Upload your own music and play it while you think. Tracks are stored locally in your browser using IndexedDB — nothing leaves your device. Organize tracks into Focus, Reflection, and Creative zones to match your thinking mode.
+            </p>
+            <ul className="space-y-3 text-sm text-gray-500">
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
+                <span><strong style={{ color: '#FFB84D' }}>Drag & drop upload</strong> — Add mp3, wav, or other audio files instantly</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
+                <span><strong style={{ color: '#FFB84D' }}>Full playback controls</strong> — Play, pause, skip, seek, volume, and mute</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
+                <span><strong style={{ color: '#FFB84D' }}>Zone organization</strong> — Tag tracks as Focus, Reflection, or Creative and filter by mood</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
+                <span><strong style={{ color: '#FFB84D' }}>100% local</strong> — Audio blobs stored in IndexedDB, never uploaded anywhere</span>
+              </li>
+            </ul>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-white mb-8">Technical Stack</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <TechStackItem 
@@ -464,16 +645,20 @@ export default function Docs() {
               items={["Express.js", "TypeScript", "Drizzle ORM"]}
             />
             <TechStackItem 
-              category="AI"
-              items={["Venice AI", "Brave Search API", "Web Search API", "Web Citations", "Reasoning Models", "Structured JSON"]}
+              category="AI & Agents"
+              items={["Venice AI", "OpenClaw Runner", "Brave Search API", "Web Citations", "Reasoning Models", "Structured JSON"]}
             />
             <TechStackItem 
-              category="Video"
-              items={["Livepeer", "MediaRecorder API", "TUS Uploads"]}
+              category="Video & Audio"
+              items={["Livepeer", "MediaRecorder API", "TUS Uploads", "Music Library (IndexedDB)"]}
             />
             <TechStackItem 
               category="Storage"
-              items={["IndexedDB (local)", "PostgreSQL (optional)", "In-memory"]}
+              items={["IndexedDB (local)", "PostgreSQL (optional)", "In-memory", "Quick Search"]}
+            />
+            <TechStackItem 
+              category="Messaging"
+              items={["XMTP Agent SDK", "OpenClaw Dispatch", "Paragraph SDK"]}
             />
           </div>
         </motion.section>
@@ -485,21 +670,32 @@ export default function Docs() {
               href="/chat"
               title="Start Journaling"
               description="Open the app and begin writing"
+              testId="link-start-journaling"
             />
             <QuickLink 
               href="/chat?zone=research"
               title="Research Mode"
               description="Gather claims and track evidence"
+              testId="link-research-mode"
+            />
+            <QuickLink 
+              href="/privacy"
+              title="Privacy & Security"
+              description="How your data stays private"
+              testId="link-privacy"
             />
             <QuickLink 
               href="/terms"
               title="Terms of Service"
               description="Legal terms and risk disclosures"
+              testId="link-terms"
             />
             <QuickLink 
-              href="/"
-              title="Home"
-              description="Back to landing page"
+              href="https://github.com/UsernameDAOEth/djzs-box"
+              title="GitHub Repository"
+              description="View source code on GitHub"
+              external
+              testId="link-github-repo"
             />
           </div>
         </motion.section>
