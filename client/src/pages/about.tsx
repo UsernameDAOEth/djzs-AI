@@ -17,7 +17,6 @@ export default function About() {
           </div>
         </div>
       </nav>
-
       <main className="max-w-3xl mx-auto px-6 pt-32 pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -36,11 +35,7 @@ export default function About() {
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> Our Mission
               </h2>
-              <p className="mb-4">
-                DJ-Z-S.box exists to give you a private space for thinking. In a world where every 
-                thought is tracked, analyzed, and monetized, we believe your inner dialogue should 
-                remain yours alone.
-              </p>
+              <p className="mb-4">DJ-Z-S exists to give you a private space for thinking. In a world where every thought is tracked, analyzed, and monetized, we believe your inner dialogue should remain yours alone.</p>
               <p>
                 We're building tools that amplify your thinking without capturing it. The AI assists 
                 when you ask—it doesn't take over. Your data stays on your device, not our servers.
