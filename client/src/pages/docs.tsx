@@ -149,13 +149,13 @@ export default function Docs() {
             <h2 className="text-2xl font-bold text-white mb-4">What is DJZS?</h2>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p className="text-lg">
-                DJZS is an <strong className="text-white">AI journaling partner for thinking and research</strong>. It creates a private space where you can process ideas, track patterns in your thinking, and develop clarity—without the AI taking over.
+                DJZS is a <strong className="text-white">daily thinking system that compounds your intelligence over time</strong>. Three zones — Journal, Research, and Thinking Partner — form one loop: write, AI analyzes and connects, insights compound. It's not a journal app. It's cognitive infrastructure for builders, founders, researchers, and systems thinkers.
               </p>
               <p>
-                Unlike traditional journaling apps that store your data on remote servers, DJZS stores your entries locally on your device. When you choose to use AI features, your text is sent to Venice AI for processing — but Venice claims no data retention, and nothing syncs unless you export.
+                Your entries are stored locally on your device. When you choose to use AI, your text is sent to Venice AI for processing — Venice claims no data retention, and nothing syncs unless you export. You own your thinking.
               </p>
               <p>
-                The AI helps you reflect on your own thinking. You control when AI is involved — it only activates when you click "Think with me." Memory pins let you carry context forward on your terms.
+                The AI is your thinking partner, not a chatbot. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your knowledge grows smarter, not just larger.
               </p>
             </div>
           </div>

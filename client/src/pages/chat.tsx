@@ -708,6 +708,13 @@ export default function Chat() {
         description: "This insight will be remembered.",
       });
     },
+    onError: (error: Error) => {
+      toast({
+        title: "Pin failed",
+        description: error.message || "Could not save memory. Try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   // Pin memory locally (for agent suggestions)
@@ -736,11 +743,19 @@ export default function Chat() {
   };
 
   const handleForgetMemory = async (id: number) => {
-    await forgetMemory(id);
-    toast({
-      title: "Memory forgotten",
-      description: "This will no longer be used for context.",
-    });
+    try {
+      await forgetMemory(id);
+      toast({
+        title: "Memory forgotten",
+        description: "This will no longer be used for context.",
+      });
+    } catch (err) {
+      toast({
+        title: "Could not forget memory",
+        description: "Something went wrong. Try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const [pinDialogOpen, setPinDialogOpen] = useState(false);

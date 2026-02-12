@@ -18,6 +18,7 @@ import About from "@/pages/about";
 import Security from "@/pages/security";
 import NotFound from "@/pages/not-found";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -55,24 +56,26 @@ function Router() {
 
 function App() {
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          coolMode
-          theme={darkTheme({
-            accentColor: "hsl(270, 80%, 60%)",
-            accentColorForeground: "white",
-            borderRadius: "medium",
-          })}
-        >
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-            <InstallPrompt />
-          </TooltipProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <ErrorBoundary>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider
+            coolMode
+            theme={darkTheme({
+              accentColor: "hsl(270, 80%, 60%)",
+              accentColorForeground: "white",
+              borderRadius: "medium",
+            })}
+          >
+            <TooltipProvider>
+              <Toaster />
+              <Router />
+              <InstallPrompt />
+            </TooltipProvider>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ErrorBoundary>
   );
 }
 

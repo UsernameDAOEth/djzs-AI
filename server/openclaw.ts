@@ -3,11 +3,23 @@ import { analyzeJournalEntry, analyzeResearchEntry } from "./venice";
 import { analyzeWithAgent, type AgentInput, type AgentOutput } from "./agent.api";
 import type { JournalEntry, PinnedMemory } from "@shared/schema";
 
+const contextEntrySchema = z.object({
+  content: z.string(),
+  timestamp: z.string().optional(),
+});
+
+const contextMemorySchema = z.object({
+  kind: z.string(),
+  content: z.string(),
+});
+
 export const journalInsightPayloadSchema = z.object({
   type: z.literal("journal_entry"),
   user_id: z.string(),
   content: z.string().min(1),
   timestamp: z.string(),
+  recentEntries: z.array(contextEntrySchema).default([]),
+  pinnedMemories: z.array(contextMemorySchema).default([]),
 });
 
 export const researchSynthPayloadSchema = z.object({
@@ -19,6 +31,8 @@ export const researchSynthPayloadSchema = z.object({
     source_url: z.string().optional(),
     notes: z.string().optional(),
   })).min(1),
+  recentEntries: z.array(contextEntrySchema).default([]),
+  pinnedMemories: z.array(contextMemorySchema).default([]),
 });
 
 export const thinkingPartnerPayloadSchema = z.object({
@@ -71,8 +85,20 @@ class JournalInsightAgent implements AgentRunner {
   async process(payload: AgentPayload): Promise<JournalInsightOutput> {
     const data = payload as JournalInsightPayload;
 
-    const recentEntries: JournalEntry[] = [];
-    const pinnedMemories: PinnedMemory[] = [];
+    const recentEntries = (data.recentEntries || []).map((e, i) => ({
+      id: String(i),
+      walletAddress: "",
+      content: e.content,
+      createdAt: e.timestamp ? new Date(e.timestamp) : new Date(),
+    })) as JournalEntry[];
+    const pinnedMemories = (data.pinnedMemories || []).map((m, i) => ({
+      id: String(i),
+      walletAddress: "",
+      content: m.content,
+      source: m.kind || null,
+      sourceEntryId: null,
+      createdAt: new Date(),
+    })) as PinnedMemory[];
 
     const result = await analyzeJournalEntry(data.content, recentEntries, pinnedMemories);
 
@@ -124,8 +150,20 @@ class ResearchSynthAgent implements AgentRunner {
       return text;
     }).join("\n\n---\n\n");
 
-    const recentEntries: JournalEntry[] = [];
-    const pinnedMemories: PinnedMemory[] = [];
+    const recentEntries = (data.recentEntries || []).map((e, i) => ({
+      id: String(i),
+      walletAddress: "",
+      content: e.content,
+      createdAt: e.timestamp ? new Date(e.timestamp) : new Date(),
+    })) as JournalEntry[];
+    const pinnedMemories = (data.pinnedMemories || []).map((m, i) => ({
+      id: String(i),
+      walletAddress: "",
+      content: m.content,
+      source: m.kind || null,
+      sourceEntryId: null,
+      createdAt: new Date(),
+    })) as PinnedMemory[];
 
     const result = await analyzeResearchEntry(combinedContent, recentEntries, pinnedMemories);
 
