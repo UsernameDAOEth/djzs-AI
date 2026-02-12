@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus, PenLine, MessageCircle, ListChecks, Microscope, Lightbulb, Rocket, TrendingUp, Layers, Target, Zap, GitBranch } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus, PenLine, MessageCircle, ListChecks, Microscope, Lightbulb, Rocket, TrendingUp, Layers, Target, Zap, GitBranch, BarChart3, Clock, Eye, CheckCircle, XCircle, Sun, Moon, Crosshair } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -353,7 +353,230 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
+                <BarChart3 className="w-4 h-4" style={{ color: '#FFB84D' }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#FFB84D' }}>For Traders</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-traders-headline">
+                Most tools give you charts. We give you clarity.
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
+                DJZS turns reactive trading into systematic thinking. Track your thesis evolution, detect your biases, and compound your market intelligence.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-trader-research">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                  <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Market Intelligence</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Save tokenomics, on-chain data, market analysis
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    AI synthesizes across all your research
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Connects market events to your trading thesis
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-trader-journal">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                  <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Decision Log</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Document trade rationale and outcomes
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    AI tracks your reasoning quality over time
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Identifies cognitive biases in your patterns
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-trader-partner">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+                  <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
+                <h3 className="text-xl font-bold text-white mb-3">Trading Coach</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Debates your trade thesis before execution
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Connects current ideas to past wins/losses
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Asks the questions you forget to ask yourself
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mb-20">
+              <h3 className="text-2xl font-bold text-white text-center mb-8" data-testid="text-comparison-headline">DJZS vs. Traditional Trading Tools</h3>
+              <div className="overflow-x-auto rounded-2xl border" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                <table className="w-full text-sm" data-testid="table-comparison">
+                  <thead>
+                    <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
+                      <th className="text-left px-6 py-4 font-bold text-white">Feature</th>
+                      <th className="text-center px-6 py-4 font-bold" style={{ color: '#7a7b90' }}>TradingView</th>
+                      <th className="text-center px-6 py-4 font-bold" style={{ color: '#F37E20' }}>DJZS</th>
+                    </tr>
+                  </thead>
+                  <tbody style={{ color: '#9a9bb0' }}>
+                    <tr style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <td className="px-6 py-3.5">Chart Analysis</td>
+                      <td className="px-6 py-3.5 text-center"><CheckCircle className="w-4 h-4 inline" style={{ color: '#2E8B8B' }} /> Best in class</td>
+                      <td className="px-6 py-3.5 text-center" style={{ color: '#555668' }}>Not the focus</td>
+                    </tr>
+                    <tr style={{ borderTop: '1px solid rgba(255,255,255,0.04)', background: 'rgba(255,255,255,0.01)' }}>
+                      <td className="px-6 py-3.5">Decision Tracking</td>
+                      <td className="px-6 py-3.5 text-center" style={{ color: '#555668' }}>Basic</td>
+                      <td className="px-6 py-3.5 text-center"><CheckCircle className="w-4 h-4 inline" style={{ color: '#F37E20' }} /> Core feature</td>
+                    </tr>
+                    <tr style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <td className="px-6 py-3.5">Thesis Evolution</td>
+                      <td className="px-6 py-3.5 text-center"><XCircle className="w-4 h-4 inline" style={{ color: '#555668' }} /></td>
+                      <td className="px-6 py-3.5 text-center"><CheckCircle className="w-4 h-4 inline" style={{ color: '#F37E20' }} /> AI-powered</td>
+                    </tr>
+                    <tr style={{ borderTop: '1px solid rgba(255,255,255,0.04)', background: 'rgba(255,255,255,0.01)' }}>
+                      <td className="px-6 py-3.5">Bias Detection</td>
+                      <td className="px-6 py-3.5 text-center"><XCircle className="w-4 h-4 inline" style={{ color: '#555668' }} /></td>
+                      <td className="px-6 py-3.5 text-center"><CheckCircle className="w-4 h-4 inline" style={{ color: '#F37E20' }} /> Automated</td>
+                    </tr>
+                    <tr style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <td className="px-6 py-3.5">Market Synthesis</td>
+                      <td className="px-6 py-3.5 text-center" style={{ color: '#555668' }}>Siloed data</td>
+                      <td className="px-6 py-3.5 text-center"><CheckCircle className="w-4 h-4 inline" style={{ color: '#F37E20' }} /> Connected intelligence</td>
+                    </tr>
+                    <tr style={{ borderTop: '1px solid rgba(255,255,255,0.04)', background: 'rgba(255,255,255,0.01)' }}>
+                      <td className="px-6 py-3.5">Local-First</td>
+                      <td className="px-6 py-3.5 text-center" style={{ color: '#555668' }}>Cloud-based</td>
+                      <td className="px-6 py-3.5 text-center"><CheckCircle className="w-4 h-4 inline" style={{ color: '#F37E20' }} /> Your data, your edge</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="mb-16">
+              <h3 className="text-2xl font-bold text-white text-center mb-10" data-testid="text-routine-headline">The Trader's Daily Routine</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="relative p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-routine-morning">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
+                      <Sun className="w-5 h-5" style={{ color: '#FFB84D' }} />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">Morning Prep</h4>
+                      <p className="text-xs" style={{ color: '#555668' }}>15 min</p>
+                    </div>
+                  </div>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm" style={{ color: '#9a9bb0' }}>
+                      <span style={{ color: '#FFB84D' }}>-</span> Write your market outlook
+                    </li>
+                    <li className="flex items-start gap-2 text-sm" style={{ color: '#9a9bb0' }}>
+                      <span style={{ color: '#FFB84D' }}>-</span> AI connects to existing research
+                    </li>
+                    <li className="flex items-start gap-2 text-sm" style={{ color: '#9a9bb0' }}>
+                      <span style={{ color: '#FFB84D' }}>-</span> Surfaces relevant patterns from history
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="relative p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-routine-trade">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                      <Crosshair className="w-5 h-5" style={{ color: '#F37E20' }} />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">Trade Documentation</h4>
+                      <p className="text-xs" style={{ color: '#555668' }}>5 min</p>
+                    </div>
+                  </div>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm" style={{ color: '#9a9bb0' }}>
+                      <span style={{ color: '#F37E20' }}>-</span> Log entry/exit rationale
+                    </li>
+                    <li className="flex items-start gap-2 text-sm" style={{ color: '#9a9bb0' }}>
+                      <span style={{ color: '#F37E20' }}>-</span> AI flags inconsistencies with your thesis
+                    </li>
+                    <li className="flex items-start gap-2 text-sm" style={{ color: '#9a9bb0' }}>
+                      <span style={{ color: '#F37E20' }}>-</span> Tracks decision quality metrics
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="relative p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-routine-evening">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                      <Moon className="w-5 h-5" style={{ color: '#2E8B8B' }} />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">Evening Review</h4>
+                      <p className="text-xs" style={{ color: '#555668' }}>10 min</p>
+                    </div>
+                  </div>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm" style={{ color: '#9a9bb0' }}>
+                      <span style={{ color: '#2E8B8B' }}>-</span> AI synthesizes day's market action
+                    </li>
+                    <li className="flex items-start gap-2 text-sm" style={{ color: '#9a9bb0' }}>
+                      <span style={{ color: '#2E8B8B' }}>-</span> Identifies what you got right/wrong
+                    </li>
+                    <li className="flex items-start gap-2 text-sm" style={{ color: '#9a9bb0' }}>
+                      <span style={{ color: '#2E8B8B' }}>-</span> Updates your cognitive bias profile
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.04), rgba(255,184,77,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-trader-cta">
+              <p className="text-lg font-bold text-white mb-2">DJZS fixes the thinking, not the trading.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>The trading improvement follows naturally.</p>
+              <Link href="/chat">
+                <button
+                  className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                  style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }}
+                  data-testid="button-start-trading-smarter"
+                >
+                  Start Trading Smarter
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
