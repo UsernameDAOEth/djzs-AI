@@ -47,10 +47,19 @@ Preferred communication style: Simple, everyday language.
 - **Backend**: `/api/video/upload` (request upload URL), `/api/video/status/:assetId`, `/api/video/playback/:playbackId`.
 - **Component**: `client/src/components/video-diary.tsx` (VideoUpload + VideoPlayer).
 
+### Music Library
+- **Upload**: Drag-and-drop or click-to-upload audio files (mp3, wav, etc.).
+- **Storage**: Audio blobs stored locally in IndexedDB (`musicTracks` table, vault version 5).
+- **Playback**: Full controls — play/pause, next/prev, progress seek, volume slider, mute toggle.
+- **Zones**: Organize tracks into Focus, Reflection, and Creative zones with filter tabs.
+- **Component**: `client/src/components/music-panel.tsx` (slide-in panel from right side).
+- **Integration**: "Music" button in journal action bar toggles the panel.
+
 ### Key Features
 - **Journal Zone**: Daily reflections with AI thinking partner, memory pinning, context-aware insights, video journal entries.
 - **Research Zone**: Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking to journal entries.
 - **Video Journal**: Record or upload video directly in journal entries. Stored on Livepeer (decentralized). Playback IDs saved locally.
+- **Music Library**: Upload and play your own music while journaling. Tracks stored locally. Organize by Focus/Reflection/Creative zones.
 - **Local-First Storage**: All data stored in browser IndexedDB. Works offline for writing/browsing.
 - **Offline Support**: Service worker caches static assets.
 

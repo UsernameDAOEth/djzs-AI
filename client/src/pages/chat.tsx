@@ -55,7 +55,8 @@ import {
   Plus,
   Video,
   Mic,
-  MicOff
+  MicOff,
+  Headphones
 } from "lucide-react";
 import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
@@ -75,6 +76,7 @@ import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnaly
 import { format } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
 import { VideoUpload, VideoPlayer } from "@/components/video-diary";
+import { MusicPanel } from "@/components/music-panel";
 import { 
   vault, 
   saveEntry, 
@@ -353,6 +355,7 @@ export default function Chat() {
   const [claimTrustLevel, setClaimTrustLevel] = useState<TrustLevel>("unknown");
   const [relatedJournalEntries, setRelatedJournalEntries] = useState<Array<{ id?: number; text: string; createdAt: Date }>>([]);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
+  const [showMusicPanel, setShowMusicPanel] = useState(false);
   const [pendingVideoAssetId, setPendingVideoAssetId] = useState<string | null>(null);
   const [pendingVideoPlaybackId, setPendingVideoPlaybackId] = useState<string | null>(null);
 
@@ -955,6 +958,7 @@ export default function Chat() {
   };
 
   return (
+    <>
     <TooltipProvider>
       <div className="h-screen text-gray-300 flex overflow-hidden font-sans selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
         {/* Mobile sidebar overlay */}
@@ -1642,6 +1646,20 @@ export default function Chat() {
                       {pendingVideoAssetId && (
                         <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-orange-500 border-2 border-[#1a1d26] shadow-[0_0_6px_rgba(243,126,32,0.6)]" />
                       )}
+                    </button>
+
+                    <button
+                      onClick={() => setShowMusicPanel(!showMusicPanel)}
+                      className={`relative h-11 sm:h-12 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
+                        showMusicPanel
+                          ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
+                          : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
+                      }`}
+                      title="Music library"
+                      data-testid="button-music-panel"
+                    >
+                      <Headphones className="w-4 h-4" />
+                      <span className="text-sm font-medium">Music</span>
                     </button>
                   </div>
 
@@ -2516,5 +2534,8 @@ export default function Chat() {
         )}
       </div>
     </TooltipProvider>
+
+    <MusicPanel isOpen={showMusicPanel} onClose={() => setShowMusicPanel(false)} />
+    </>
   );
 }

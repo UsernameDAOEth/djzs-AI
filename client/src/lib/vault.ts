@@ -4,6 +4,7 @@ export type EntryType = 'journal' | 'research';
 export type MemoryKind = 'goal' | 'pattern' | 'preference' | 'project' | 'principle' | 'question' | 'person';
 export type ClaimStatus = 'verified' | 'uncertain' | 'to_check';
 export type TrustLevel = 'high' | 'medium' | 'low' | 'unknown';
+export type MusicZone = 'focus' | 'reflection' | 'creative';
 
 export interface VaultEntry {
   id?: number;
@@ -57,6 +58,16 @@ export interface ResearchQuery {
   createdAt: Date;
 }
 
+export interface MusicTrack {
+  id?: number;
+  name: string;
+  blob: ArrayBuffer;
+  size: number;
+  type: string;
+  zone?: MusicZone;
+  uploadedAt: Date;
+}
+
 export interface ResearchClaim {
   id?: number;
   dossierId: number;
@@ -77,6 +88,7 @@ class VaultDatabase extends Dexie {
   researchDossiers!: EntityTable<ResearchDossier, 'id'>;
   researchQueries!: EntityTable<ResearchQuery, 'id'>;
   researchClaims!: EntityTable<ResearchClaim, 'id'>;
+  musicTracks!: EntityTable<MusicTrack, 'id'>;
 
   constructor() {
     super('djzs-vault');
@@ -112,6 +124,17 @@ class VaultDatabase extends Dexie {
       researchDossiers: '++id, name, isArchived, createdAt, updatedAt',
       researchQueries: '++id, dossierId, createdAt',
       researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
+    });
+
+    this.version(5).stores({
+      entries: '++id, type, createdAt, updatedAt, videoAssetId',
+      insights: '++id, entryId, type, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
+      tradeRecords: '++id, action, status, createdAt',
+      researchDossiers: '++id, name, isArchived, createdAt, updatedAt',
+      researchQueries: '++id, dossierId, createdAt',
+      researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
+      musicTracks: '++id, name, zone, uploadedAt',
     });
   }
 }
@@ -437,6 +460,39 @@ export async function getClaimsByStatus(dossierId: number, status: ClaimStatus):
     .equals(dossierId)
     .and(c => c.status === status)
     .toArray();
+}
+
+export async function addMusicTrack(
+  file: File,
+  zone?: MusicZone
+): Promise<number> {
+  const arrayBuffer = await file.arrayBuffer();
+  const track: Omit<MusicTrack, 'id'> = {
+    name: file.name.replace(/\.[^/.]+$/, ''),
+    blob: arrayBuffer,
+    size: file.size,
+    type: file.type,
+    zone,
+    uploadedAt: new Date(),
+  };
+  const id = await vault.musicTracks.add(track);
+  return id as number;
+}
+
+export async function getAllMusicTracks(): Promise<MusicTrack[]> {
+  return vault.musicTracks.orderBy('uploadedAt').reverse().toArray();
+}
+
+export async function getMusicTracksByZone(zone: MusicZone): Promise<MusicTrack[]> {
+  return vault.musicTracks.where('zone').equals(zone).toArray();
+}
+
+export async function updateMusicTrackZone(id: number, zone: MusicZone | undefined): Promise<void> {
+  await vault.musicTracks.update(id, { zone });
+}
+
+export async function deleteMusicTrack(id: number): Promise<void> {
+  await vault.musicTracks.delete(id);
 }
 
 export async function searchJournalEntriesForTopic(keywords: string[], limit: number = 5): Promise<VaultEntry[]> {
