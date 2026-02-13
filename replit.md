@@ -88,11 +88,15 @@ Preferred communication style: Simple, everyday language.
 - Venice AI claims no data retention
 - Brave Search claims no tracking/profiling
 
+### Implemented (XMTP Layer Only)
+- XMTP messaging is E2E encrypted via MLS protocol with forward secrecy & post-compromise security
+- Quantum-resistant key encapsulation (XWING KEM) protects XMTP Welcome messages against "Harvest Now, Decrypt Later" attacks
+- Note: Quantum resistance applies to XMTP messaging only, NOT to Venice AI calls
+
 ### NOT Implemented (Do Not Claim)
 - Encryption-at-rest for IndexedDB vault (planned)
-- End-to-end encryption for AI requests (not E2EE)
-- "Quantum-resistant encryption" (not implemented)
-- "Your data never leaves your device" (it does when you send text for AI)
+- End-to-end encryption for Venice AI requests (not E2EE — text sent over HTTPS but not E2E encrypted)
+- "Your data never leaves your device" (it does when you send text for AI via Venice)
 
 ## Data Flow (The Thinking Loop)
 1. User writes daily thinking → saved locally in IndexedDB (instant)

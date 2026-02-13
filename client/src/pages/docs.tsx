@@ -305,6 +305,58 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-8">Why This Level of Privacy</h2>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20 mb-8" data-testid="card-why-privacy-docs">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                <Shield className="w-6 h-6 text-orange-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Your raw thinking is more sensitive than anything else you share online.</h3>
+              </div>
+            </div>
+            <div className="space-y-4 text-gray-400 leading-relaxed">
+              <p>
+                Social posts are curated. Emails are edited. But your daily thinking — the half-formed ideas, the doubts, the unfiltered analysis of what's working and what isn't — that's your most vulnerable data. A thinking system that captures this deserves the highest possible privacy standard.
+              </p>
+              <p>
+                Most apps say "we value your privacy" while building business models that depend on accessing your data. DJZS is designed differently from the ground up:
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 mb-6">
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <HardDrive className="w-5 h-5 text-orange-400 mb-2" />
+                <h4 className="text-sm font-bold text-white mb-1">Local-First Storage</h4>
+                <p className="text-xs text-gray-500">All entries, insights, memory pins, research dossiers, and claims live in your browser's IndexedDB. We don't have a database of your thoughts. There's nothing to hack, subpoena, or sell.</p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <Bot className="w-5 h-5 text-orange-400 mb-2" />
+                <h4 className="text-sm font-bold text-white mb-1">User-Controlled AI</h4>
+                <p className="text-xs text-gray-500">Your text is only sent to AI when you explicitly click "Think with me." Venice AI processes it without storing or training on your data. Nothing happens in the background.</p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <Search className="w-5 h-5 text-orange-400 mb-2" />
+                <h4 className="text-sm font-bold text-white mb-1">Privacy-First Search</h4>
+                <p className="text-xs text-gray-500">Brave Search doesn't track or profile you. Venice AI's web search doesn't log queries. Your research stays your research.</p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <Lock className="w-5 h-5 text-orange-400 mb-2" />
+                <h4 className="text-sm font-bold text-white mb-1">Wallet-Based Identity</h4>
+                <p className="text-xs text-gray-500">No email, no password, no account to breach. Your wallet is your identity. No personal information is required or stored.</p>
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-amber-500/[0.04] border border-amber-500/15">
+              <p className="text-xs text-amber-300 font-semibold mb-1">What we're honest about</p>
+              <p className="text-xs text-gray-500 leading-relaxed">When you click "Think with me," your entry text is sent to Venice AI over the internet for processing. This is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because we believe you deserve to know exactly when your data leaves your device.</p>
+            </div>
+            <div className="p-4 rounded-xl bg-green-500/[0.04] border border-green-500/15 mt-4">
+              <p className="text-xs text-green-300 font-semibold mb-1">What IS end-to-end encrypted</p>
+              <p className="text-xs text-gray-500 leading-relaxed">XMTP messaging is fully end-to-end encrypted using the MLS protocol with quantum-resistant key encapsulation (XWING KEM). When you interact with DJZS agents via XMTP, your messages are protected with forward secrecy, post-compromise security, and quantum resistance — the same level of protection as Signal and WhatsApp, using a newer standard. See the <a href="https://docs.xmtp.org/protocol/security" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 underline underline-offset-2">XMTP Security Documentation</a> for full details.</p>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-white mb-8">Core Principles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard 
@@ -668,6 +720,71 @@ export default function Docs() {
             <p className="text-xs text-gray-600 mt-3">
               Additional commands: <span className="font-mono text-gray-500">/help</span> (list commands) · <span className="font-mono text-gray-500">/zones</span> (show available zones)
             </p>
+          </div>
+
+          <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-green-500/[0.06] to-transparent border border-green-500/20" data-testid="card-xmtp-security">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-green-600/20 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-green-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">XMTP Messaging Security</h3>
+                <p className="text-xs text-green-400/80">End-to-end encrypted with quantum resistance</p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-400 mb-5 leading-relaxed">
+              All XMTP conversations — including messages to DJZS agents — are secured with the <strong className="text-white">Messaging Layer Security (MLS) protocol</strong>, providing the same level of encryption as Signal and WhatsApp but using a newer, more efficient standard.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <h4 className="text-xs font-bold text-green-300 uppercase tracking-wide mb-3">Security Properties</h4>
+                <ul className="space-y-2 text-xs text-gray-500">
+                  <li className="flex items-start gap-2">
+                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-white">End-to-end encryption</strong> — Only you and the recipient can read messages. Not even XMTP nodes can see content.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-white">Forward secrecy</strong> — If current keys are compromised, past messages remain secure. MLS uses a ratcheting mechanism that deletes old keys after use.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-white">Post-compromise security</strong> — Regular key rotation through MLS commits means even if keys are compromised, future messages are protected.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-white">Message authentication</strong> — Every message is cryptographically signed, preventing impersonation.</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <h4 className="text-xs font-bold text-green-300 uppercase tracking-wide mb-3">Quantum Resistance</h4>
+                <ul className="space-y-2 text-xs text-gray-500">
+                  <li className="flex items-start gap-2">
+                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-white">XWING KEM</strong> — A hybrid post-quantum key encapsulation mechanism that combines conventional cryptography with ML-KEM (NIST-standardized post-quantum algorithm).</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-white">HNDL protection</strong> — Defends against "Harvest Now, Decrypt Later" attacks, where adversaries store encrypted messages until quantum computers can break current encryption.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-white">Welcome message protection</strong> — Quantum-resistant encryption secures Welcome messages (the entry point containing group secrets), protecting entire conversations.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-white">Efficient by design</strong> — Quantum protection is applied at the conversation entry point (Welcome messages), so regular messages are unaffected in size and speed.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-green-500/[0.04] border border-green-500/15">
+              <p className="text-xs text-gray-400 leading-relaxed">
+                According to XMTP's documentation, the protocol uses the ciphersuite <span className="font-mono text-green-300">MLS_128_HPKEX25519_CHACHA20POLY1305_SHA256_Ed25519</span> for conventional security, with XWING KEM layered on top for quantum resistance. For full details, see the{' '}
+                <a href="https://docs.xmtp.org/protocol/security" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 underline underline-offset-2" data-testid="link-xmtp-security-docs">XMTP Security Documentation</a>.
+              </p>
+            </div>
           </div>
         </motion.section>
 

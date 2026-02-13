@@ -271,7 +271,7 @@ export default function About() {
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                   <MessageSquare className="w-5 h-5 text-orange-400 mb-3" />
                   <h3 className="text-white font-bold mb-2">XMTP Messaging</h3>
-                  <p className="text-xs text-gray-500">Interact with AI agents through XMTP decentralized messaging. Send journal entries, research queries, or thinking questions from any XMTP-compatible app.</p>
+                  <p className="text-xs text-gray-500">Interact with AI agents through XMTP decentralized messaging — fully end-to-end encrypted with the MLS protocol and quantum-resistant key encapsulation (XWING KEM). Forward secrecy ensures past messages stay secure even if keys are compromised. Send journal entries, research queries, or thinking questions from any XMTP-compatible app.</p>
                 </div>
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                   <Search className="w-5 h-5 text-orange-400 mb-3" />
