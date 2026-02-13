@@ -1593,127 +1593,137 @@ export default function Chat() {
 
                 {/* Action bar - Journal zone only */}
                 {selectedZone === 'journal' && (
-                <div className="flex items-center justify-between gap-3 mt-4 sm:mt-6 py-3 sm:py-4 px-1">
-                  {/* Left side: secondary tools + character count */}
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
-                      <DialogTrigger asChild>
-                        <button
-                          disabled={!messageInput.trim()}
-                          className="group relative h-11 sm:h-12 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-2 bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
-                          title="Pin to vault"
-                          data-testid="button-pin"
-                        >
-                          <Pin className="w-4 h-4" />
-                          <span className="text-sm font-medium">Pin</span>
-                        </button>
-                      </DialogTrigger>
-                      <DialogContent className="border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl" style={{ background: '#1a1d26' }}>
-                        <DialogHeader>
-                          <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">Pin Memory</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-8 py-4">
-                          <p className="text-sm text-gray-500 leading-relaxed font-medium">This thought will be stored in your local vault and used as context for future thinking partners.</p>
-                          
-                          <div className="relative group">
-                            <div className="absolute -inset-2 bg-gradient-to-r from-orange-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="relative p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] shadow-inner">
-                              <p className="text-sm text-gray-300 leading-relaxed line-clamp-4 font-medium italic">"{messageInput}"</p>
-                            </div>
-                          </div>
-
-                          <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] ml-1">Context Category</label>
-                            <div className="flex flex-wrap gap-2">
-                              {["pattern", "goal", "preference", "principle", "project", "question", "person"].map((kind) => (
-                                <button
-                                  key={kind}
-                                  onClick={() => setSelectedPinKind(kind)}
-                                  className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${
-                                    selectedPinKind === kind 
-                                      ? "text-white shadow-lg shadow-orange-900/40 border-transparent [background:#F37E20]" 
-                                      : "bg-white/[0.02] text-gray-500 hover:text-white hover:bg-white/5 border border-white/[0.05]"
-                                  }`}
-                                  data-testid={`button-kind-${kind}`}
-                                >
-                                  {kind}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                          <Button
-                            onClick={handleManualPin}
-                            className="w-full hover:opacity-90 h-14 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-orange-900/20 transition-all active:scale-[0.98]"
-                            style={{ background: '#F37E20' }}
-                            data-testid="button-confirm-pin"
+                <div className="mt-4 sm:mt-6 py-3 sm:py-4 px-1 space-y-3">
+                  {/* Top row: tools + character count */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
+                        <DialogTrigger asChild>
+                          <button
+                            disabled={!messageInput.trim()}
+                            className="group relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
+                            title="Pin to vault"
+                            data-testid="button-pin"
                           >
-                            <Pin className="w-4 h-4 mr-2" />
-                            Secure to Vault
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                            <Pin className="w-4 h-4" />
+                            <span className="hidden sm:inline text-xs font-medium">Pin</span>
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl" style={{ background: '#1a1d26' }}>
+                          <DialogHeader>
+                            <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">Pin Memory</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-8 py-4">
+                            <p className="text-sm text-gray-500 leading-relaxed font-medium">This thought will be stored in your local vault and used as context for future thinking partners.</p>
+                            
+                            <div className="relative group">
+                              <div className="absolute -inset-2 bg-gradient-to-r from-orange-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                              <div className="relative p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] shadow-inner">
+                                <p className="text-sm text-gray-300 leading-relaxed line-clamp-4 font-medium italic">"{messageInput}"</p>
+                              </div>
+                            </div>
 
-                    {speechSupported && (
+                            <div className="space-y-4">
+                              <label className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] ml-1">Context Category</label>
+                              <div className="flex flex-wrap gap-2">
+                                {["pattern", "goal", "preference", "principle", "project", "question", "person"].map((kind) => (
+                                  <button
+                                    key={kind}
+                                    onClick={() => setSelectedPinKind(kind)}
+                                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${
+                                      selectedPinKind === kind 
+                                        ? "text-white shadow-lg shadow-orange-900/40 border-transparent [background:#F37E20]" 
+                                        : "bg-white/[0.02] text-gray-500 hover:text-white hover:bg-white/5 border border-white/[0.05]"
+                                    }`}
+                                    data-testid={`button-kind-${kind}`}
+                                  >
+                                    {kind}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                            <Button
+                              onClick={handleManualPin}
+                              className="w-full hover:opacity-90 h-14 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-orange-900/20 transition-all active:scale-[0.98]"
+                              style={{ background: '#F37E20' }}
+                              data-testid="button-confirm-pin"
+                            >
+                              <Pin className="w-4 h-4 mr-2" />
+                              Secure to Vault
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+
+                      {speechSupported && (
+                        <button
+                          onClick={toggleVoiceInput}
+                          className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
+                            isListening
+                              ? 'text-red-400 bg-red-500/15 border-red-500/30 animate-pulse'
+                              : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
+                          }`}
+                          title={isListening ? 'Stop listening' : 'Voice input'}
+                          data-testid="button-voice-input"
+                        >
+                          {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                          <span className="hidden sm:inline text-xs font-medium">{isListening ? 'Stop' : 'Voice'}</span>
+                          {isListening && (
+                            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-[#1a1d26] shadow-[0_0_6px_rgba(239,68,68,0.6)]" />
+                          )}
+                        </button>
+                      )}
+
                       <button
-                        onClick={toggleVoiceInput}
-                        className={`relative h-11 sm:h-12 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
-                          isListening
-                            ? 'text-red-400 bg-red-500/15 border-red-500/30 animate-pulse'
-                            : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
+                        onClick={() => setShowVideoUpload(!showVideoUpload)}
+                        className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
+                          showVideoUpload
+                            ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
+                            : pendingVideoAssetId
+                              ? 'text-orange-400 bg-orange-500/10 border-orange-500/20 hover:bg-orange-500/15'
+                              : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
                         }`}
-                        title={isListening ? 'Stop listening' : 'Voice input'}
-                        data-testid="button-voice-input"
+                        title={pendingVideoAssetId ? 'Video attached' : 'Add video'}
+                        data-testid="button-video-journal"
                       >
-                        {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                        <span className="text-sm font-medium">{isListening ? 'Stop' : 'Voice'}</span>
-                        {isListening && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-[#1a1d26] shadow-[0_0_6px_rgba(239,68,68,0.6)]" />
+                        <Video className="w-4 h-4" />
+                        <span className="hidden sm:inline text-xs font-medium">Video</span>
+                        {pendingVideoAssetId && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-orange-500 border-2 border-[#1a1d26] shadow-[0_0_6px_rgba(243,126,32,0.6)]" />
                         )}
                       </button>
-                    )}
 
-                    <button
-                      onClick={() => setShowVideoUpload(!showVideoUpload)}
-                      className={`relative h-11 sm:h-12 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
-                        showVideoUpload
-                          ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
-                          : pendingVideoAssetId
-                            ? 'text-orange-400 bg-orange-500/10 border-orange-500/20 hover:bg-orange-500/15'
+                      <button
+                        onClick={() => setShowMusicPanel(!showMusicPanel)}
+                        className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
+                          showMusicPanel
+                            ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
                             : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
-                      }`}
-                      title={pendingVideoAssetId ? 'Video attached' : 'Add video'}
-                      data-testid="button-video-journal"
-                    >
-                      <Video className="w-4 h-4" />
-                      <span className="text-sm font-medium">Video</span>
-                      {pendingVideoAssetId && (
-                        <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-orange-500 border-2 border-[#1a1d26] shadow-[0_0_6px_rgba(243,126,32,0.6)]" />
-                      )}
-                    </button>
+                        }`}
+                        title="Music library"
+                        data-testid="button-music-panel"
+                      >
+                        <Headphones className="w-4 h-4" />
+                        <span className="hidden sm:inline text-xs font-medium">Music</span>
+                      </button>
+                    </div>
 
-                    <button
-                      onClick={() => setShowMusicPanel(!showMusicPanel)}
-                      className={`relative h-11 sm:h-12 px-4 sm:px-5 rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
-                        showMusicPanel
-                          ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
-                          : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
-                      }`}
-                      title="Music library"
-                      data-testid="button-music-panel"
-                    >
-                      <Headphones className="w-4 h-4" />
-                      <span className="text-sm font-medium">Music</span>
-                    </button>
+                    {messageInput.length > 0 && (
+                      <span className={`text-[11px] font-medium tabular-nums transition-colors ${
+                        messageInput.length > 5000 ? 'text-red-400' : messageInput.length > 3000 ? 'text-amber-400' : 'text-gray-600'
+                      }`} data-testid="text-char-count">
+                        {messageInput.length.toLocaleString()} chars
+                      </span>
+                    )}
                   </div>
 
-                  {/* Right side: primary actions */}
+                  {/* Bottom row: primary actions */}
                   <div className="flex items-center gap-2.5">
                     <Button
                       onClick={handleSendText}
                       disabled={!messageInput.trim() || sendMessage.isPending}
                       variant="ghost"
-                      className="h-11 sm:h-12 px-4 sm:px-6 rounded-xl font-semibold text-sm text-gray-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] disabled:opacity-30 disabled:border-transparent transition-all active:scale-95"
+                      className="flex-1 sm:flex-none h-11 sm:h-12 px-4 sm:px-6 rounded-xl font-semibold text-sm text-gray-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] disabled:opacity-30 disabled:border-transparent transition-all active:scale-95"
                       data-testid="button-save"
                     >
                       {sendMessage.isPending ? (
@@ -1729,7 +1739,7 @@ export default function Chat() {
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className="h-11 sm:h-12 px-5 sm:px-8 rounded-xl font-bold text-sm shadow-lg shadow-orange-900/40 transition-all active:scale-95 hover:opacity-90 disabled:opacity-30 disabled:shadow-none"
+                      className="flex-[2] sm:flex-none h-11 sm:h-12 px-5 sm:px-8 rounded-xl font-bold text-sm shadow-lg shadow-orange-900/40 transition-all active:scale-95 hover:opacity-90 disabled:opacity-30 disabled:shadow-none"
                       style={{ background: '#F37E20' }}
                       data-testid="button-analyze"
                     >
@@ -1748,6 +1758,11 @@ export default function Chat() {
                       )}
                     </Button>
                   </div>
+
+                  {/* Keyboard shortcut hint */}
+                  <p className="hidden sm:block text-[10px] text-gray-600 text-center">
+                    Enter to save · Cmd+Enter to think
+                  </p>
                 </div>
                 )}
               </div>
