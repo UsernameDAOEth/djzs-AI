@@ -278,10 +278,27 @@ export default function Chat() {
     }
 
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast({ title: 'Voice Input', description: 'Speech recognition is not supported in this browser.', variant: 'destructive' });
+      return;
+    }
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
+
+    // Optimization: Add a service worker check or common failure handling
+    // Many browsers fail with 'network' error if the site is not served over HTTPS 
+    // or if permissions are weird in an iframe.
+    const isSecure = window.location.protocol === 'https:';
+    if (!isSecure && window.location.hostname !== 'localhost') {
+      toast({ 
+        title: 'Security Requirement', 
+        description: 'Voice input requires an HTTPS connection. Please ensure you are on a secure URL.', 
+        variant: 'destructive' 
+      });
+      return;
+    }
 
     voiceBaseTextRef.current = messageInputRef.current;
 
@@ -307,11 +324,23 @@ export default function Chat() {
     };
 
     recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
       setIsListening(false);
       if (event.error === 'no-speech') {
         toast({ title: 'Voice Input', description: 'No speech detected. Try speaking closer to your microphone.', variant: 'destructive' });
       } else if (event.error === 'network') {
-        toast({ title: 'Voice Input', description: 'Network error. Voice input needs an internet connection.', variant: 'destructive' });
+        // More descriptive error for Replit environment
+        toast({ 
+          title: 'Voice Input', 
+          description: 'Network error. Voice recognition usually requires an internet connection and a secure HTTPS origin. If you are in a preview, try opening the app in a new tab.', 
+          variant: 'destructive' 
+        });
+      } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        toast({ 
+          title: 'Permission Denied', 
+          description: 'Microphone access was denied or is not allowed by the system. Check your browser permissions.', 
+          variant: 'destructive' 
+        });
       } else if (event.error !== 'aborted') {
         toast({ title: 'Voice Input', description: `Voice input stopped: ${event.error}`, variant: 'destructive' });
       }
