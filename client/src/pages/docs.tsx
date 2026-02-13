@@ -450,6 +450,73 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-8">Research Dossiers & Claims</h2>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20 mb-8">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-teal-600/20 flex items-center justify-center">
+                <FileSearch className="w-6 h-6 text-teal-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Organize Research into Dossiers</h3>
+                <p className="text-xs text-teal-400/80">Named folders for structured knowledge building</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              Dossiers are research folders that let you organize findings by topic. Each dossier holds claims — key takeaways from your research — with trust levels and status tracking. Think of them as structured evidence files for any topic you're investigating.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="space-y-4">
+                <h4 className="text-sm font-bold text-teal-300">How Dossiers Work</h4>
+                <ul className="space-y-3 text-sm text-gray-500">
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-teal-300">Quick Search</strong> — Select "No dossier" for standalone research queries that don't need to be organized</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-teal-300">Create a Dossier</strong> — Click the folder icon, then "New dossier" to create a named research folder (e.g., "AI Agents", "DeFi Yields")</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-teal-300">Select a Dossier</strong> — Pick an existing dossier from the dropdown before searching. All claims you save will go into that folder</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-teal-300">Delete a Dossier</strong> — Hover over a dossier name in the dropdown and click the trash icon to remove it</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-sm font-bold text-teal-300">Claims & Trust Levels</h4>
+                <ul className="space-y-3 text-sm text-gray-500">
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-teal-300">Save Claims</strong> — After a research result, click the + button next to any key takeaway to save it as a claim in your active dossier</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-teal-300">Trust Levels</strong> — Rate each claim's reliability: verified, likely, speculative, or contested</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-teal-300">Status Tracking</strong> — Mark claims as active, archived, or refuted as your research evolves</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-teal-300">Journal Linking</strong> — Connect claims to journal entries so your research and daily thinking reference each other</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-teal-500/[0.06] border border-teal-500/15">
+              <p className="text-sm text-gray-400 leading-relaxed">
+                All dossiers and claims are stored locally in your browser's IndexedDB. Nothing is sent to a server. Your research stays private and portable.
+              </p>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-white mb-8">OpenClaw Agent Runner</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 mb-8">
             <div className="flex items-center gap-3 mb-5">
