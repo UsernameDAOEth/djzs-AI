@@ -1,9 +1,9 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Feather, Video } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Feather, Video, Menu, X } from "lucide-react";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
 import { RevealSection } from "@/components/hero";
 import { Helmet } from "react-helmet";
@@ -11,6 +11,7 @@ import { Helmet } from "react-helmet";
 export default function Home() {
   const { isConnected } = useAccount();
   const [mobileBarDismissed, setMobileBarDismissed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const scrollToHowItWorks = () => {
     const el = document.getElementById("how-it-works");
@@ -27,39 +28,95 @@ export default function Home() {
         ::selection { background: rgba(243,126,32,0.3); }
       `}</style>
 
-      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.85)' }}>
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.06]" style={{ background: 'rgba(42,46,63,0.88)', boxShadow: '0 1px 20px rgba(0,0,0,0.15)' }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <Link href="/">
-            <span className="flex items-center gap-2" data-testid="link-home-logo">
-              <img src="/logo.png" alt="DJZS" className="w-8 h-8 rounded-lg transition-transform hover:scale-105" style={{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.3))' }} data-testid="img-logo-header" />
-              <span className="text-xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }}>DJZS</span>
+            <span className="flex items-center gap-2.5" data-testid="link-home-logo">
+              <img src="/logo.png" alt="DJZS" className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg transition-transform hover:scale-105" style={{ filter: 'drop-shadow(0 0 4px rgba(243,126,32,0.3))' }} data-testid="img-logo-header" />
+              <span className="text-lg sm:text-xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }}>DJZS</span>
             </span>
           </Link>
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-4">
-              <Link href="/docs" className="text-sm font-medium transition-colors hover:text-white" style={{ color: '#9a9bb0' }} data-testid="link-header-docs">
-                Docs
-              </Link>
-              <Link href="/about" className="text-sm font-medium transition-colors hover:text-white" style={{ color: '#9a9bb0' }} data-testid="link-header-about">
-                About
-              </Link>
-            </div>
+          <div className="flex items-center gap-3 sm:gap-5">
+            <nav className="hidden md:flex items-center gap-1">
+              {[
+                { href: '/docs', label: 'Docs' },
+                { href: '/about', label: 'About' },
+                { href: '/privacy', label: 'Privacy' },
+                { href: '/roadmap', label: 'Roadmap' },
+              ].map(link => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="relative px-3 py-1.5 text-sm font-medium transition-colors hover:text-white group"
+                  style={{ color: '#9a9bb0' }}
+                  data-testid={`link-header-${link.label.toLowerCase()}`}
+                >
+                  {link.label}
+                  <span className="absolute bottom-0 left-3 right-3 h-px scale-x-0 group-hover:scale-x-100 transition-transform origin-left" style={{ background: '#F37E20' }} />
+                </Link>
+              ))}
+            </nav>
             {isConnected ? (
               <Link href="/chat">
                 <button
-                  className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-base font-semibold text-white transition-colors"
-                  style={{ background: '#F37E20', boxShadow: '0 4px 14px rgba(243,126,32,0.25)' }}
+                  className="relative inline-flex items-center gap-2 rounded-xl px-5 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.98]"
+                  style={{ background: '#F37E20', boxShadow: '0 4px 20px rgba(243,126,32,0.3), 0 0 40px rgba(243,126,32,0.1)' }}
                   data-testid="button-header-enter"
                 >
-                  Enter System
+                  <span className="hidden sm:inline">Enter System</span>
+                  <span className="sm:hidden">Enter</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
             ) : (
               <ConnectButton showBalance={false} />
             )}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-white/[0.06]"
+              style={{ color: '#9a9bb0' }}
+              data-testid="button-mobile-menu"
+              aria-label="Menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              key="mobile-menu"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="md:hidden border-t border-white/[0.05] overflow-hidden"
+              style={{ background: 'rgba(26,29,38,0.98)' }}
+            >
+              <nav className="flex flex-col px-4 py-3 gap-1">
+                {[
+                  { href: '/docs', label: 'Docs' },
+                  { href: '/about', label: 'About' },
+                  { href: '/privacy', label: 'Privacy' },
+                  { href: '/security', label: 'Security' },
+                  { href: '/roadmap', label: 'Roadmap' },
+                ].map(link => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:bg-white/[0.04] hover:text-white"
+                    style={{ color: '#9a9bb0' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                    data-testid={`link-mobile-${link.label.toLowerCase()}`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <Helmet>
