@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Feather, Video, Menu, X } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -169,7 +169,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            A daily thinking system that compounds your intelligence. Write, research, and let AI connect the dots you'd miss.
+            Three zones — Journal, Research, Thinking Partner — form one loop. Write your thinking, click "Think with me," and AI analyzes patterns, surfaces blind spots, and connects today's ideas to yesterday's insights.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
@@ -348,17 +348,17 @@ export default function Home() {
               <StabilityCard
                 icon={<TrendingUp className="w-6 h-6" style={{ color: '#F37E20' }} />}
                 title="Compounding, Not Linear"
-                description="Traditional tools accumulate. DJZS compounds — every entry connects to past thinking, building a smarter knowledge base."
+                description="Every entry gets analyzed. Key claims extracted. Patterns connected to past thinking. After 30 days, your knowledge base surfaces insights you'd never find in scattered notes."
               />
               <StabilityCard
                 icon={<Brain className="w-6 h-6" style={{ color: '#2E8B8B' }} />}
                 title="Thinking Partner, Not Chatbot"
-                description="The AI doesn't just respond. It debates your points, finds patterns, and connects ideas across your thinking and research."
+                description="Click 'Think with me' and get structured output: summaries, key claims, open questions, and contradictions with past entries. Not a conversation — an analysis."
               />
               <StabilityCard
                 icon={<HardDrive className="w-6 h-6" style={{ color: '#FFB84D' }} />}
                 title="Your Data, Your Device"
-                description="Local-first by design. Your thinking never leaves your device unless you explicitly send it to AI. No cloud, no lock-in."
+                description="Everything lives in your browser's IndexedDB. Works offline. AI only sees what you explicitly send. No cloud database, no profiles, no training on your data."
               />
             </div>
           </div>
@@ -472,93 +472,93 @@ export default function Home() {
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
-                <Feather className="w-4 h-4" style={{ color: '#2E8B8B' }} />
-                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Writers</span>
+                <BarChart3 className="w-4 h-4" style={{ color: '#2E8B8B' }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Traders</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-writers-headline">
-                Write to think. Think to write better.
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-traders-headline">
+                Trade with conviction. Track every thesis.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                Great writing comes from clear thinking. DJZS helps you develop ideas across sessions, spot recurring themes, and build a personal knowledge system that makes every draft sharper.
+                Crypto moves fast. Your analysis shouldn't live in Discord threads and scattered notes. DJZS turns market thinking into structured strategy — track your theses, stress-test assumptions, and compound your trading intelligence.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              <div className="p-8 rounded-2xl border transition-all hover:border-teal-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-writer-research">
+              <div className="p-8 rounded-2xl border transition-all hover:border-teal-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-trader-research">
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
-                <h3 className="text-xl font-bold text-white mb-3">Source Library</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Market Intelligence</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Save articles, quotes, references in organized dossiers
+                    Build dossiers on protocols, tokens, and market narratives
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    AI finds connections between sources you'd miss
+                    AI synthesizes on-chain analysis, whitepapers, and alpha
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Cross-references research with your past writing
+                    Track claims with trust levels — separate signal from noise
                   </li>
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-writer-journal">
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-trader-journal">
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
-                <h3 className="text-xl font-bold text-white mb-3">Idea Development</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Trade Journal</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Develop raw ideas across multiple sessions
+                    Document your thesis before entering a position
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    AI surfaces recurring themes in your thinking
+                    AI tracks how your market views evolve over time
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Tracks how your arguments evolve over time
+                    Surfaces biases and emotional patterns in your trading
                   </li>
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-writer-partner">
+              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-trader-partner">
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
-                <h3 className="text-xl font-bold text-white mb-3">Editor's Eye</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Strategy Stress-Test</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Challenges weak arguments before your readers do
+                    Challenges your thesis before you risk capital
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Finds gaps and contradictions in your reasoning
+                    Connects current market view to past trade reasoning
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Suggests angles you haven't considered
+                    Finds contradictions between your research and your bets
                   </li>
                 </ul>
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(123,107,141,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-writer-cta">
-              <p className="text-lg font-bold text-white mb-2">Your best ideas aren't lost in scattered notes anymore.</p>
-              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every thought connected. Every theme tracked. Every draft informed by your full thinking history.</p>
+            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(123,107,141,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-trader-cta">
+              <p className="text-lg font-bold text-white mb-2">Stop trading on vibes. Start compounding trading intelligence.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every thesis documented. Every pattern tracked. Every lesson carried forward to the next trade.</p>
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
                   style={{ background: '#2E8B8B', boxShadow: '0 6px 24px rgba(46,139,139,0.3)' }}
-                  data-testid="button-start-writer-thinking"
+                  data-testid="button-start-trader-thinking"
                 >
                   Start Thinking
                   <ArrowRight className="w-5 h-5" />
@@ -696,8 +696,8 @@ export default function Home() {
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
                   Your data stays on your device. The AI only analyzes what you explicitly send — it doesn't build a profile, track you, or retain your data. You're the administrator.
                 </p>
-                <p className="text-sm italic" style={{ color: '#555668' }}>
-                  "A safe space for my thoughts. Complete honesty without worrying about who's reading my data."
+                <p className="text-sm" style={{ color: '#555668' }}>
+                  Raw thinking is your most sensitive data. Honest analysis requires knowing nobody is watching.
                 </p>
               </div>
 
@@ -709,8 +709,8 @@ export default function Home() {
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
                   Open architecture means you can swap parts without losing data. It's a tool, not a service — no acquisitions, no shutdowns, no hostage situations with your digital brain.
                 </p>
-                <p className="text-sm italic" style={{ color: '#555668' }}>
-                  "I can trust this system for the long run. My investment in organizing my thoughts is safe."
+                <p className="text-sm" style={{ color: '#555668' }}>
+                  Export your data anytime. No lock-in. Your thinking compounds regardless of what happens to the product.
                 </p>
               </div>
 
@@ -722,8 +722,8 @@ export default function Home() {
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
                   Context-aware zones give the AI specific focus. Memory Pins are explicit — you decide what carries forward. Structured output, not conversational fluff.
                 </p>
-                <p className="text-sm italic" style={{ color: '#555668' }}>
-                  "A specialized assistant that understands my task, not a generic chatbot I have to manage."
+                <p className="text-sm" style={{ color: '#555668' }}>
+                  You get summaries, key claims, patterns, and open questions — not a chat thread you have to manage.
                 </p>
               </div>
 
@@ -735,9 +735,87 @@ export default function Home() {
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
                   No feeds, no notifications, no noise. DJZS is for entering, not scrolling. No timeline to check, no engagement loops. Built for deep work, not shallow validation.
                 </p>
-                <p className="text-sm italic" style={{ color: '#555668' }}>
-                  "A quiet, focused space where I can do my best work without distractions."
+                <p className="text-sm" style={{ color: '#555668' }}>
+                  Ghibli-inspired design. Music library for focus. Zero engagement tricks.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
+                <Zap className="w-4 h-4" style={{ color: '#FFB84D' }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#FFB84D' }}>How It Actually Works</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-think-with-me-headline">
+                What happens when you click "Think with me"
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
+                The AI doesn't run in the background. It activates only when you ask. Here's exactly what it does.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-think-input">
+                <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: '#F37E20' }}>What you send</p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
+                    <PenLine className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Your current entry (only the text you wrote)
+                  </li>
+                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
+                    <Pin className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
+                    Your Memory Pins (goals, patterns, preferences you've saved)
+                  </li>
+                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
+                    <GitBranch className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Recent entry context (so the AI sees the bigger picture)
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-think-output">
+                <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: '#2E8B8B' }}>What you get back</p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Structured summary of your thinking
+                  </li>
+                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Key claims extracted (with connections to past entries)
+                  </li>
+                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Open questions and contradictions to explore
+                  </li>
+                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Suggested Memory Pins to carry forward
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-2xl border" style={{ background: 'linear-gradient(135deg, rgba(255,184,77,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-memory-pins">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
+                  <Pin className="w-6 h-6" style={{ color: '#FFB84D' }} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Memory Pins: How Intelligence Compounds</h3>
+                  <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
+                    After each analysis, the AI suggests thoughts worth remembering — a key insight, a goal you stated, a pattern it noticed. You choose which ones to pin. Pinned memories become context for every future session. This is how your knowledge base gets smarter, not just bigger.
+                  </p>
+                  <p className="text-sm mt-3" style={{ color: '#555668' }}>
+                    Nothing is pinned without your approval. You can view, edit, or remove any Memory Pin at any time.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -753,10 +831,10 @@ export default function Home() {
                 <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Privacy Architecture</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight" data-testid="text-privacy-headline">
-                Your Thinking Stays Yours
+                Raw Thinking Demands Maximum Privacy
               </h2>
               <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#9a9bb0' }}>
-                Your ideas are stored locally on your device. AI analysis only happens when you explicitly request it.
+                Your unfiltered analysis — market theses, strategic doubts, half-formed ideas — is your most sensitive data. Honest thinking requires knowing nobody is watching.
               </p>
             </div>
 
@@ -767,7 +845,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Local-First Storage</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  All entries, research, and insights are stored in your browser's IndexedDB. Works offline. No cloud database.
+                  All entries, research, and insights stored in your browser's IndexedDB. Works offline. No cloud database. No server-side copies.
                 </p>
               </div>
               <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
@@ -776,25 +854,49 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">User-Controlled AI</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  AI only sees your data when you click "Think with me." Nothing is sent automatically. You control what the AI receives.
+                  AI only sees your data when you click "Think with me." Nothing is sent automatically. No background scanning. No silent learning.
                 </p>
               </div>
               <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
                   <Shield className="w-7 h-7" style={{ color: '#FFB84D' }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">Privacy-Focused Providers</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Privacy-First Providers</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  Powered by Venice AI (no data retention) and Brave Search (no tracking). Your queries are not stored or used for training.
+                  Venice AI (no data retention), Brave Search (no tracking). Your queries are not stored, profiled, or used for training.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mb-10">
+              <div className="p-6 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-xmtp-e2e">
+                <div className="flex items-center gap-3 mb-3">
+                  <Lock className="w-5 h-5" style={{ color: '#2E8B8B' }} />
+                  <h4 className="text-base font-bold text-white">XMTP: E2E Encrypted Messaging</h4>
+                </div>
+                <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
+                  Agent communication via XMTP uses MLS protocol with forward secrecy and post-compromise security. Messages are end-to-end encrypted by default.
+                </p>
+              </div>
+              <div className="p-6 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-xmtp-quantum">
+                <div className="flex items-center gap-3 mb-3">
+                  <Shield className="w-5 h-5" style={{ color: '#7B6B8D' }} />
+                  <h4 className="text-base font-bold text-white">Quantum-Resistant Key Exchange</h4>
+                </div>
+                <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
+                  XMTP Welcome messages use XWING KEM — protecting against "harvest now, decrypt later" attacks. Future-proof security for your communication layer.
                 </p>
               </div>
             </div>
 
             <div className="p-8 rounded-2xl border" style={{ background: 'linear-gradient(to right, rgba(243,126,32,0.04), rgba(46,139,139,0.04))', borderColor: 'rgba(255,255,255,0.08)' }}>
               <p className="text-center text-lg leading-relaxed" style={{ color: '#b0b1c0' }}>
-                When you request AI insights, only the text you select is sent to privacy-focused AI providers. The response is saved locally on your device. We do not permanently store your data on any server.
+                When you request AI insights, only the text you select is sent to privacy-focused providers via HTTPS. The response is saved locally on your device. We do not permanently store your data on any server.
               </p>
-              <p className="text-center text-[10px] mt-4 uppercase tracking-wider" style={{ color: '#555668' }}>
+              <p className="text-center text-sm mt-4" style={{ color: '#555668' }}>
+                Honest disclosure: Venice AI calls use HTTPS, not E2E encryption. XMTP messaging is E2E encrypted.
+              </p>
+              <p className="text-center text-[10px] mt-2 uppercase tracking-wider" style={{ color: '#444556' }}>
                 Planned: encryption-at-rest for local storage · E2E encrypted AI requests
               </p>
             </div>
@@ -905,7 +1007,7 @@ export default function Home() {
                 <ul className="list-disc list-inside ml-2 mt-2">
                   <li>Builders and founders structuring their reasoning</li>
                   <li>Researchers synthesizing complex domains</li>
-                  <li>Crypto analysts tracking evolving narratives</li>
+                  <li>Traders and crypto analysts tracking evolving theses</li>
                   <li>Anyone who thinks in systems, not just emotions</li>
                 </ul>
                 <p className="mt-3" style={{ color: '#7a7b90' }}>DJZS is not for casual diary-keeping, photo memories, or lifestyle journaling.</p>
