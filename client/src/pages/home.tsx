@@ -659,7 +659,7 @@ export default function Home() {
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
-                  style={{ background: '#7B6B8D', boxShadow: '0 6px 24px rgba(123,107,141,0.3)' }}
+                  style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }}
                   data-testid="button-start-creator-thinking"
                 >
                   Start Thinking
