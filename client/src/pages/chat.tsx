@@ -219,6 +219,7 @@ export default function Chat() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [frozenHeight, setFrozenHeight] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [expandedEntryId, setExpandedEntryId] = useState<number | null>(null);
   const [quickSearchQuery, setQuickSearchQuery] = useState("");
   const [quickSearchResults, setQuickSearchResults] = useState<NonNullable<typeof localEntries>>([]);
   const [quickSearchOpen, setQuickSearchOpen] = useState(false);
@@ -388,7 +389,7 @@ export default function Chat() {
       .where('type')
       .equals(selectedZone)
       .toArray()
-      .then(entries => entries.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 10)),
+      .then(entries => entries.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 50)),
     [selectedZone]
   );
   
@@ -1388,7 +1389,7 @@ export default function Chat() {
                             onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
                             className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                               activeDossierId 
-                                ? 'bg-orange-500/10 border border-orange-500/30 text-orange-400' 
+                                ? 'bg-teal-500/10 border border-teal-500/30 text-teal-400' 
                                 : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
                             }`}
                             data-testid="button-dossier-selector"
@@ -1406,7 +1407,7 @@ export default function Chat() {
                                 <button
                                   onClick={() => handleSelectDossier(null)}
                                   className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                    !activeDossierId ? 'bg-orange-500/10 text-orange-400' : 'text-gray-400 hover:bg-white/5'
+                                    !activeDossierId ? 'bg-teal-500/10 text-teal-400' : 'text-gray-400 hover:bg-white/5'
                                   }`}
                                   data-testid="button-no-dossier"
                                 >
@@ -1422,7 +1423,7 @@ export default function Chat() {
                                       <button
                                         onClick={() => handleSelectDossier(dossier.id!)}
                                         className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                          activeDossierId === dossier.id ? 'bg-orange-500/10 text-orange-400' : 'text-gray-400 hover:bg-white/5'
+                                          activeDossierId === dossier.id ? 'bg-teal-500/10 text-teal-400' : 'text-gray-400 hover:bg-white/5'
                                         }`}
                                         data-testid={`button-dossier-${dossier.id}`}
                                       >
@@ -1453,7 +1454,7 @@ export default function Chat() {
                                         if (e.key === 'Escape') { setShowNewDossierInput(false); setDossierName(''); }
                                       }}
                                       placeholder="Dossier name..."
-                                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-gray-500 outline-none focus:border-orange-500/50"
+                                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-gray-500 outline-none focus:border-teal-500/50"
                                       autoFocus
                                       data-testid="input-new-dossier"
                                     />
@@ -1461,7 +1462,7 @@ export default function Chat() {
                                       onClick={handleCreateDossier}
                                       disabled={!dossierName.trim()}
                                       className="p-2 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                                      style={{ background: '#F37E20' }}
+                                      style={{ background: '#2E8B8B' }}
                                       data-testid="button-create-dossier"
                                     >
                                       <Check className="w-3.5 h-3.5 text-white" />
@@ -1509,13 +1510,13 @@ export default function Chat() {
                             onClick={() => setBraveSearchEnabled(!braveSearchEnabled)}
                             className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                               braveSearchEnabled 
-                                ? 'bg-orange-500/10 border border-orange-500/30 text-orange-400' 
+                                ? 'bg-teal-500/10 border border-teal-500/30 text-teal-400' 
                                 : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
                             }`}
                             title={braveSearchEnabled ? "Brave Search (privacy-first, no tracking)" : "Use default web search"}
                             data-testid="button-brave-toggle"
                           >
-                            <Shield className={`w-4 h-4 ${braveSearchEnabled ? 'text-orange-400' : 'text-gray-500'}`} />
+                            <Shield className={`w-4 h-4 ${braveSearchEnabled ? 'text-teal-400' : 'text-gray-500'}`} />
                             <span className="hidden sm:inline">{braveSearchEnabled ? 'Brave' : 'Default'}</span>
                           </button>
                         )}
@@ -1523,18 +1524,18 @@ export default function Chat() {
                       
                       {/* Rotating prompt - centered, truncated on mobile */}
                       <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 px-2">
-                        <Search className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400/60 shrink-0" />
-                        <span className="text-xs sm:text-sm font-medium text-orange-300/70 truncate">{currentPrompts[currentPromptIndex]}</span>
+                        <Search className="w-4 h-4 sm:w-5 sm:h-5 text-teal-400/60 shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-teal-300/70 truncate">{currentPrompts[currentPromptIndex]}</span>
                       </div>
                       
                       <div className={`relative transition-all duration-500 rounded-2xl ${isFocused ? 'zone-glow' : ''}`}>
                         <div className={`flex flex-col gap-3 px-3 sm:px-5 py-3 sm:py-4 rounded-2xl border transition-all ${
                           isFocused 
-                            ? 'border-orange-500/40 bg-orange-500/[0.03]' 
+                            ? 'border-teal-500/40 bg-teal-500/[0.03]' 
                             : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.12]'
                         }`}>
                           <div className="flex items-center gap-3">
-                            <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-orange-400' : 'text-gray-500'}`} />
+                            <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-teal-400' : 'text-gray-500'}`} />
                             <input
                               type="text"
                               value={messageInput}
@@ -1555,8 +1556,8 @@ export default function Chat() {
                           <Button
                             onClick={handleAnalyze}
                             disabled={!messageInput.trim() || searchResearch.isPending}
-                            className="w-full hover:opacity-90 h-11 px-5 rounded-xl font-medium text-sm shadow-lg shadow-orange-900/30 transition-all active:scale-95 touch-target"
-                            style={{ background: '#F37E20' }}
+                            className="w-full hover:opacity-90 h-11 px-5 rounded-xl font-medium text-sm shadow-lg shadow-teal-900/30 transition-all active:scale-95 touch-target"
+                            style={{ background: '#2E8B8B' }}
                             data-testid="button-search"
                           >
                             {searchResearch.isPending ? (
@@ -1578,7 +1579,7 @@ export default function Chat() {
                             <button
                               key={idx}
                               onClick={() => setMessageInput(suggestion)}
-                              className="px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-orange-500/30 hover:text-orange-400 hover:bg-orange-500/[0.05] transition-all whitespace-nowrap touch-target"
+                              className="px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-teal-500/30 hover:text-teal-400 hover:bg-teal-500/[0.05] transition-all whitespace-nowrap touch-target"
                               data-testid={`button-suggestion-${idx}`}
                             >
                               {suggestion}
@@ -1778,11 +1779,11 @@ export default function Chat() {
                       {/* Header */}
                       <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-orange-600/20">
-                            <Search className="w-5 h-5 text-orange-400" />
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-teal-600/20">
+                            <Search className="w-5 h-5 text-teal-400" />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-orange-400">Research Results</p>
+                            <p className="text-sm font-semibold text-teal-400">Research Results</p>
                             <p className="text-xs text-gray-600">
                               {researchResult.mode === 'explain' ? 'Explain mode' : researchResult.mode === 'brave' ? 'Brave Search (private)' : 'Web search'} 
                               {researchResult.cached && ' • cached'}
@@ -1805,18 +1806,18 @@ export default function Chat() {
                             <div className="flex items-center justify-between">
                               <p className="text-xs font-medium text-gray-500">Key takeaways</p>
                               {activeDossierId && (
-                                <p className="text-[10px] text-orange-400/60">Click + to save as claim</p>
+                                <p className="text-[10px] text-teal-400/60">Click + to save as claim</p>
                               )}
                             </div>
                             <ul className="space-y-2">
                               {researchResult.keyTakeaways.map((takeaway, idx) => (
                                 <li key={idx} className="flex items-start gap-3 group">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
                                   <p className="text-white/90 leading-relaxed flex-1">{takeaway}</p>
                                   {activeDossierId && (
                                     <button
                                       onClick={() => handleSaveClaimToDossier(takeaway, undefined, true)}
-                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-orange-400 hover:bg-orange-500/10 transition-all shrink-0"
+                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-teal-400 hover:bg-teal-500/10 transition-all shrink-0"
                                       title="Save as claim and add details"
                                       data-testid={`button-save-claim-${idx}`}
                                     >
@@ -1831,8 +1832,8 @@ export default function Chat() {
                         
                         {/* Synthesis */}
                         {researchResult.synthesisMarkdown && (
-                          <div className="p-4 rounded-xl bg-orange-500/[0.06] border border-orange-500/20">
-                            <p className="text-xs font-medium text-orange-400/80 mb-3">Synthesis</p>
+                          <div className="p-4 rounded-xl bg-teal-500/[0.06] border border-teal-500/20">
+                            <p className="text-xs font-medium text-teal-400/80 mb-3">Synthesis</p>
                             <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{researchResult.synthesisMarkdown}</p>
                           </div>
                         )}
@@ -1851,7 +1852,7 @@ export default function Chat() {
                                       setAgentResponse(null);
                                       setMessageInput(item);
                                     }}
-                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-orange-500/[0.08] border border-orange-500/20 text-orange-200/80 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-orange-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-teal-500/[0.08] border border-teal-500/20 text-teal-200/80 hover:bg-teal-500/15 hover:border-teal-500/30 hover:text-teal-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
                                     data-testid={`button-next-check-${idx}`}
                                   >
                                     {item}
@@ -1875,7 +1876,21 @@ export default function Chat() {
 
                       {/* Footer */}
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <p className="text-xs text-gray-600 italic">Based on AI knowledge synthesis</p>
+                        <Button
+                          onClick={() => {
+                            const topic = researchResult.query || messageInput;
+                            const synthesis = researchResult.synthesisMarkdown ? `\n\nResearch notes:\n${researchResult.synthesisMarkdown.slice(0, 300)}` : '';
+                            clearAndReset();
+                            setSelectedZone('journal');
+                            setTimeout(() => setMessageInput(`Thinking about: ${topic}${synthesis}`), 100);
+                          }}
+                          variant="ghost"
+                          className="text-teal-400/70 hover:text-teal-300 hover:bg-teal-500/10 h-9 touch-target"
+                          data-testid="button-journal-about-this"
+                        >
+                          <PenLine className="w-4 h-4 mr-2" />
+                          Journal about this
+                        </Button>
                         <Button
                           onClick={clearAndReset}
                           variant="ghost"
@@ -1894,7 +1909,7 @@ export default function Chat() {
                       <div className="p-4 border-b border-white/[0.05]">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <FolderOpen className="w-4 h-4 text-orange-400" />
+                            <FolderOpen className="w-4 h-4 text-teal-400" />
                             <p className="text-sm font-medium text-white">
                               {dossiers?.find(d => d.id === activeDossierId)?.name} Claims
                             </p>
@@ -1908,7 +1923,7 @@ export default function Chat() {
                           <input
                             type="text"
                             placeholder="Add a claim manually..."
-                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-orange-500/50"
+                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-teal-500/50"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' && e.currentTarget.value.trim()) {
                                 handleSaveClaimToDossier(e.currentTarget.value.trim(), undefined, true);
@@ -1925,7 +1940,7 @@ export default function Chat() {
                                 input.value = '';
                               }
                             }}
-                            className="px-3 py-2 rounded-lg bg-orange-500/20 text-orange-400 hover:bg-orange-500/30 transition-colors"
+                            className="px-3 py-2 rounded-lg bg-teal-500/20 text-teal-400 hover:bg-teal-500/30 transition-colors"
                             title="Add claim"
                             data-testid="button-add-manual-claim"
                           >
@@ -1940,7 +1955,7 @@ export default function Chat() {
                             key={claim.id} 
                             className={`group p-3 rounded-xl border transition-all ${
                               editingClaimId === claim.id 
-                                ? 'bg-orange-500/[0.05] border-orange-500/30' 
+                                ? 'bg-teal-500/[0.05] border-teal-500/30' 
                                 : 'bg-white/[0.02] border-white/[0.05] hover:border-white/[0.1]'
                             }`}
                           >
@@ -1962,7 +1977,7 @@ export default function Chat() {
                                   <p className="text-xs text-gray-500 mt-1.5 pl-0">📎 {claim.sourceNote}</p>
                                 )}
                                 {claim.linkedJournalEntryId && (
-                                  <p className="text-xs text-orange-400/70 mt-1.5 flex items-center gap-1">
+                                  <p className="text-xs text-teal-400/70 mt-1.5 flex items-center gap-1">
                                     <PenLine className="w-3 h-3" />
                                     Linked to journal entry
                                   </p>
@@ -1997,8 +2012,8 @@ export default function Chat() {
                                   onClick={() => handleUpdateClaimStatus(claim.id!, 'to_check')}
                                   className={`p-1.5 rounded-lg transition-all ${
                                     claim.status === 'to_check' 
-                                      ? 'bg-orange-500/20 text-orange-400' 
-                                      : 'text-gray-500 hover:text-orange-400 hover:bg-orange-500/10'
+                                      ? 'bg-teal-500/20 text-teal-400' 
+                                      : 'text-gray-500 hover:text-teal-400 hover:bg-teal-500/10'
                                   }`}
                                   title="Mark as to check"
                                   data-testid={`button-tocheck-claim-${claim.id}`}
@@ -2009,8 +2024,8 @@ export default function Chat() {
                                   onClick={() => editingClaimId === claim.id ? setEditingClaimId(null) : handleStartEditClaim(claim)}
                                   className={`p-1.5 rounded-lg transition-all ${
                                     editingClaimId === claim.id 
-                                      ? 'bg-orange-500/20 text-orange-400' 
-                                      : 'text-gray-500 hover:text-orange-400 hover:bg-orange-500/10 opacity-0 group-hover:opacity-100'
+                                      ? 'bg-teal-500/20 text-teal-400' 
+                                      : 'text-gray-500 hover:text-teal-400 hover:bg-teal-500/10 opacity-0 group-hover:opacity-100'
                                   }`}
                                   title="Add source note"
                                   data-testid={`button-edit-claim-${claim.id}`}
@@ -2038,7 +2053,7 @@ export default function Chat() {
                                     value={claimSourceNote}
                                     onChange={(e) => setClaimSourceNote(e.target.value)}
                                     placeholder="Where did you find this? How reliable is it?"
-                                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-orange-500/50"
+                                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-teal-500/50"
                                     data-testid="input-source-note"
                                   />
                                 </div>
@@ -2085,15 +2100,15 @@ export default function Chat() {
                   
                   {/* Related Journal Entries - Show when research finds related thinking */}
                   {relatedJournalEntries && relatedJournalEntries.length > 0 && (
-                    <div className="mt-4 rounded-2xl sm:rounded-3xl border border-orange-500/20 bg-orange-500/[0.02] overflow-hidden" data-testid="related-entries-panel">
-                      <div className="p-4 border-b border-orange-500/10">
+                    <div className="mt-4 rounded-2xl sm:rounded-3xl border border-teal-500/20 bg-teal-500/[0.02] overflow-hidden" data-testid="related-entries-panel">
+                      <div className="p-4 border-b border-teal-500/10">
                         <div className="flex items-center gap-2">
-                          <PenLine className="w-4 h-4 text-orange-400" />
+                          <PenLine className="w-4 h-4 text-teal-400" />
                           <p className="text-sm font-medium text-white">Related from your Journal</p>
                           <span className="text-xs text-gray-500">({relatedJournalEntries.length})</span>
                         </div>
                         {editingClaimId && (
-                          <p className="text-[10px] text-orange-400/70 mt-1">Click an entry to link it to the claim you're editing</p>
+                          <p className="text-[10px] text-teal-400/70 mt-1">Click an entry to link it to the claim you're editing</p>
                         )}
                       </div>
                       <div className="p-4 space-y-3 max-h-[200px] overflow-y-auto">
@@ -2102,7 +2117,7 @@ export default function Chat() {
                             key={entry.id || idx} 
                             className={`p-3 rounded-xl bg-white/[0.02] border transition-all ${
                               editingClaimId 
-                                ? 'border-orange-500/20 hover:border-orange-500/40 cursor-pointer' 
+                                ? 'border-teal-500/20 hover:border-teal-500/40 cursor-pointer' 
                                 : 'border-white/[0.05]'
                             }`}
                             onClick={() => {
@@ -2196,7 +2211,7 @@ export default function Chat() {
                                       setMessageInput(q);
                                       setTimeout(() => textareaRef.current?.focus(), 100);
                                     }}
-                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-orange-500/[0.08] border border-orange-500/20 text-orange-200/80 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-orange-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-teal-500/[0.08] border border-teal-500/20 text-teal-200/80 hover:bg-teal-500/15 hover:border-teal-500/30 hover:text-teal-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
                                     data-testid={`button-reflective-${idx}`}
                                   >
                                     {q}
@@ -2239,7 +2254,20 @@ export default function Chat() {
 
                       {/* Footer */}
                       <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <p className="text-xs text-gray-600 italic">You don't need to resolve this now.</p>
+                        <Button
+                          onClick={() => {
+                            const topic = agentResponse.said || messageInput;
+                            clearAndReset();
+                            setSelectedZone('research');
+                            setTimeout(() => setMessageInput(topic), 100);
+                          }}
+                          variant="ghost"
+                          className="text-teal-400/70 hover:text-teal-300 hover:bg-teal-500/10 h-9 touch-target"
+                          data-testid="button-research-this"
+                        >
+                          <Search className="w-4 h-4 mr-2" />
+                          Research this
+                        </Button>
                         <Button
                           onClick={clearAndReset}
                           variant="ghost"
@@ -2520,32 +2548,92 @@ export default function Chat() {
                   {(!quickSearchOpen || !quickSearchQuery) && (
                     <>
                       {showHistory && (
-                        <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                          {localEntries.slice(0, 10).map((entry) => (
-                            <div 
-                              key={entry.id} 
-                              className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] entry-card"
-                            >
-                              <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm text-gray-400 leading-relaxed line-clamp-3">
-                                    {entry.text}
-                                  </p>
-                                  {entry.videoPlaybackId && entry.videoAssetId && (
-                                    <VideoPlayer playbackId={entry.videoPlaybackId} assetId={entry.videoAssetId} compact />
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2 shrink-0">
-                                  {entry.videoAssetId && (
-                                    <Video className="w-3.5 h-3.5 text-orange-400" />
-                                  )}
-                                  <span className="text-xs font-medium text-gray-600">
-                                    {format(new Date(entry.createdAt), "MMM d")}
-                                  </span>
+                        <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
+                          {(() => {
+                            const grouped: Record<string, typeof localEntries> = {};
+                            localEntries.forEach((entry) => {
+                              const d = new Date(entry.createdAt);
+                              const now = new Date();
+                              const isToday = d.toDateString() === now.toDateString();
+                              const isYesterday = d.toDateString() === new Date(now.getTime() - 86400000).toDateString();
+                              const label = isToday ? 'Today' : isYesterday ? 'Yesterday' : format(d, "EEEE, MMM d");
+                              if (!grouped[label]) grouped[label] = [];
+                              grouped[label]!.push(entry);
+                            });
+                            return Object.entries(grouped).map(([dateLabel, entries]) => (
+                              <div key={dateLabel} className="mb-3">
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2 ml-1">{dateLabel}</p>
+                                <div className="space-y-2">
+                                  {entries!.map((entry) => {
+                                    const isExpanded = expandedEntryId === entry.id;
+                                    return (
+                                      <button
+                                        key={entry.id}
+                                        onClick={() => setExpandedEntryId(isExpanded ? null : entry.id!)}
+                                        className={`w-full text-left p-3 sm:p-4 rounded-xl border transition-all ${
+                                          isExpanded
+                                            ? 'bg-white/[0.04] border-orange-500/20'
+                                            : 'bg-white/[0.02] border-white/[0.04] hover:border-white/[0.08]'
+                                        }`}
+                                        data-testid={`entry-card-${entry.id}`}
+                                      >
+                                        <div className="flex items-start justify-between gap-3">
+                                          <div className="flex-1 min-w-0">
+                                            <p className={`text-sm text-gray-400 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
+                                              {entry.text}
+                                            </p>
+                                            {isExpanded && entry.videoPlaybackId && entry.videoAssetId && (
+                                              <div className="mt-3">
+                                                <VideoPlayer playbackId={entry.videoPlaybackId} assetId={entry.videoAssetId} compact />
+                                              </div>
+                                            )}
+                                            {isExpanded && (
+                                              <div className="flex items-center gap-2 mt-3">
+                                                <button
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setMessageInput(entry.text);
+                                                    setExpandedEntryId(null);
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                  }}
+                                                  className="text-[10px] font-semibold px-2.5 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors"
+                                                  data-testid={`button-reuse-entry-${entry.id}`}
+                                                >
+                                                  Continue this thought
+                                                </button>
+                                                <button
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    const topic = entry.text.slice(0, 100);
+                                                    setExpandedEntryId(null);
+                                                    setSelectedZone('research');
+                                                    setTimeout(() => setMessageInput(topic), 100);
+                                                  }}
+                                                  className="text-[10px] font-semibold px-2.5 py-1.5 rounded-lg bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 transition-colors"
+                                                  data-testid={`button-research-entry-${entry.id}`}
+                                                >
+                                                  Research this
+                                                </button>
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div className="flex items-center gap-2 shrink-0">
+                                            {entry.videoAssetId && (
+                                              <Video className="w-3.5 h-3.5 text-orange-400" />
+                                            )}
+                                            <span className="text-[10px] font-medium text-gray-600">
+                                              {format(new Date(entry.createdAt), "h:mm a")}
+                                            </span>
+                                            <ChevronDown className={`w-3.5 h-3.5 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                                          </div>
+                                        </div>
+                                      </button>
+                                    );
+                                  })}
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            ));
+                          })()}
                         </div>
                       )}
                     </>
