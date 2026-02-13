@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus, PenLine, MessageCircle, ListChecks, Microscope, Lightbulb, Rocket, TrendingUp, Layers, Target, Zap, GitBranch, Clock, Eye, CheckCircle, Briefcase, Feather, Video } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Feather, Video } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet";
 
 export default function Home() {
   const { isConnected } = useAccount();
+  const [mobileBarDismissed, setMobileBarDismissed] = useState(false);
 
   const scrollToHowItWorks = () => {
     const el = document.getElementById("how-it-works");
@@ -34,7 +35,15 @@ export default function Home() {
               <span className="text-xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }}>DJZS</span>
             </span>
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-4">
+              <Link href="/docs" className="text-sm font-medium transition-colors hover:text-white" style={{ color: '#9a9bb0' }} data-testid="link-header-docs">
+                Docs
+              </Link>
+              <Link href="/about" className="text-sm font-medium transition-colors hover:text-white" style={{ color: '#9a9bb0' }} data-testid="link-header-about">
+                About
+              </Link>
+            </div>
             {isConnected ? (
               <Link href="/chat">
                 <button
@@ -243,7 +252,7 @@ export default function Home() {
                 title="Journal Zone"
                 description="Write your daily thinking. AI auto-summarizes and extracts structured insights — key claims, patterns, and open questions."
                 examplePrompt="I'm rethinking our go-to-market. The bottleneck isn't distribution..."
-                href={isConnected ? "/chat" : "/chat"}
+                href="/chat"
               />
               <ZoneFeatureCard
                 icon={<Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />}
@@ -251,7 +260,7 @@ export default function Home() {
                 title="Research Zone"
                 description="Save articles, links, and findings. AI synthesizes research with your daily entries to build a structured knowledge base."
                 examplePrompt="This paper contradicts what I wrote about last Tuesday..."
-                href={isConnected ? "/chat?zone=research" : "/chat"}
+                href="/chat?zone=research"
               />
               <ZoneFeatureCard
                 icon={<Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />}
@@ -259,7 +268,7 @@ export default function Home() {
                 title="Thinking Partner"
                 description="One AI agent that connects your ideas, debates your points, and finds patterns across everything you've written and researched."
                 examplePrompt="What patterns do you see in my thinking about this market?"
-                href={isConnected ? "/chat" : "/chat"}
+                href="/chat"
               />
             </div>
           </div>
@@ -294,51 +303,6 @@ export default function Home() {
                 title="Your Data, Your Device"
                 description="Local-first by design. Your thinking never leaves your device unless you explicitly send it to AI. No cloud, no lock-in."
               />
-            </div>
-          </div>
-        </section>
-      </RevealSection>
-
-      <RevealSection>
-        <section className="relative py-28 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-who-headline">
-                Built for Systems Thinkers
-              </h2>
-              <p className="text-xl max-w-2xl mx-auto" style={{ color: '#7a7b90' }}>
-                DJZS is for people who want cognitive leverage — not a prettier diary.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-founder">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
-                  <Rocket className="w-7 h-7" style={{ color: '#F37E20' }} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Builders & Founders</h3>
-                <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  Clarify product vision, think through strategic decisions, and structure your reasoning. Build conviction, not just lists.
-                </p>
-              </div>
-              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-researcher">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
-                  <Microscope className="w-7 h-7" style={{ color: '#2E8B8B' }} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Researchers & Analysts</h3>
-                <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  Synthesize dozens of sources into a coherent thesis. Track claims, evidence, and contradictions. Connect research to your own thinking.
-                </p>
-              </div>
-              <div className="p-8 rounded-2xl border transition-all hover:border-white/10" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-archetype-thinker">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
-                  <Target className="w-7 h-7" style={{ color: '#FFB84D' }} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Technical Thinkers</h3>
-                <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  Crypto analysts, engineers, anyone who thinks in systems. DJZS gives you cognitive leverage — structured insight from daily thinking.
-                </p>
-              </div>
             </div>
           </div>
         </section>
@@ -787,8 +751,8 @@ export default function Home() {
             <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
               <FAQItem question="How is DJZS different from ChatGPT or Notion AI?">
                 <p>DJZS is not a chat app, not a note organizer, and not a general AI assistant.</p>
-                <p className="mt-2" style={{ color: '#666778' }}>ChatGPT and Notion AI are tools for responding to prompts:</p>
-                <ul className="list-disc list-inside ml-2" style={{ color: '#666778' }}>
+                <p className="mt-2" style={{ color: '#7a7b90' }}>ChatGPT and Notion AI are tools for responding to prompts:</p>
+                <ul className="list-disc list-inside ml-2" style={{ color: '#7a7b90' }}>
                   <li>They answer questions you ask</li>
                   <li>Memory is platform-controlled or absent</li>
                   <li>Your data lives on their servers</li>
@@ -887,7 +851,7 @@ export default function Home() {
                   <li>Crypto analysts tracking evolving narratives</li>
                   <li>Anyone who thinks in systems, not just emotions</li>
                 </ul>
-                <p className="mt-3" style={{ color: '#666778' }}>DJZS is not for casual diary-keeping, photo memories, or lifestyle journaling.</p>
+                <p className="mt-3" style={{ color: '#7a7b90' }}>DJZS is not for casual diary-keeping, photo memories, or lifestyle journaling.</p>
                 <p className="mt-2 text-white font-semibold">DJZS is a tool for sharper thinking — not a prettier notebook.</p>
               </FAQItem>
             </div>
@@ -983,7 +947,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {!isConnected && (
+      {!isConnected && !mobileBarDismissed && (
         <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden backdrop-blur-xl border-t border-white/[0.05] p-4 safe-area-inset-bottom" style={{ background: 'rgba(42,46,63,0.95)' }}>
           <div className="flex items-center gap-3 max-w-lg mx-auto">
             <Link href="/chat" className="flex-1">
@@ -996,6 +960,15 @@ export default function Home() {
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
+            <button
+              onClick={() => setMobileBarDismissed(true)}
+              className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-white/10"
+              style={{ color: '#7a7b90' }}
+              data-testid="button-dismiss-mobile-bar"
+              aria-label="Dismiss"
+            >
+              <Plus className="w-5 h-5 rotate-45" />
+            </button>
           </div>
         </div>
       )}
