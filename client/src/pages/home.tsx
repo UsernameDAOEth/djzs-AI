@@ -11,10 +11,6 @@ import { Helmet } from "react-helmet";
 export default function Home() {
   const { isConnected } = useAccount();
 
-  const scrollToHowItWorks = () => {
-    const el = document.getElementById("how-it-works");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
 
   return (
     <div className="min-h-screen text-white overflow-hidden" style={{ background: '#2A2E3F' }}>
@@ -42,7 +38,7 @@ export default function Home() {
                   style={{ background: '#F37E20', boxShadow: '0 4px 14px rgba(243,126,32,0.25)' }}
                   data-testid="button-header-enter"
                 >
-                  Enter System
+                  Enter Sanctuary
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
@@ -54,15 +50,15 @@ export default function Home() {
       </header>
 
       <Helmet>
-        <title>DJZS - Your Daily Thinking System | Compound Your Intelligence</title>
-        <meta name="description" content="A cognitive operating system that turns daily thinking into structured insight. AI thinking partner, research synthesis, and compounding intelligence — all local-first." />
-        <meta property="og:title" content="DJZS - Your Daily Thinking System" />
-        <meta property="og:description" content="Turn daily thinking into structured insight. AI thinking partner that connects ideas, debates points, and finds patterns. Local-first, private by design." />
+        <title>DJZS - A Sanctuary for Your Thinking | Private, Local-First, AI on Your Terms</title>
+        <meta name="description" content="DJZS is where your thoughts stay yours. A daily thinking system for builders, founders, and researchers — local-first, user-controlled AI, privacy by default. Not another surveillance tool." />
+        <meta property="og:title" content="DJZS - A Sanctuary for Your Thinking" />
+        <meta property="og:description" content="In a world where platforms monetize your attention and data, DJZS gives you control back. Local-first thinking system with AI that works for you, not on you." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="DJZS - Sharpen Your Thinking Daily" />
-        <meta name="twitter:description" content="A daily thinking system that compounds your intelligence. Not a journal — a cognitive operating system for builders." />
+        <meta name="twitter:title" content="DJZS - Your Thinking Deserves a Sanctuary" />
+        <meta name="twitter:description" content="Not another AI tool that harvests your data. DJZS is local-first, private by design, and built for people who think deeply and refuse platform dependency." />
       </Helmet>
 
       <motion.section
@@ -86,24 +82,32 @@ export default function Home() {
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <motion.div variants={fadeUp} className="mb-6">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
-              <TrendingUp className="w-3.5 h-3.5" />
-              Cognitive Infrastructure for Builders
+              <Shield className="w-3.5 h-3.5" />
+              Private by Design
             </span>
           </motion.div>
 
           <motion.h1
             variants={fadeUp}
-            className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[1] mb-8"
+            className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[1] mb-6"
           >
-            Sharpen your thinking daily.
+            A sanctuary for your thinking.
           </motion.h1>
 
           <motion.p
             variants={fadeUp}
-            className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
+            className="text-xl md:text-2xl max-w-3xl mx-auto leading-snug mb-4 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            A daily thinking system that compounds your intelligence. Write, research, and let AI connect the dots you'd miss.
+            Not another surveillance tool. DJZS is where your thoughts stay yours — local-first, user-controlled, AI only on request.
+          </motion.p>
+
+          <motion.p
+            variants={fadeUp}
+            className="text-base max-w-2xl mx-auto leading-relaxed mb-12"
+            style={{ color: '#666778' }}
+          >
+            Built for people who think deeply, write intentionally, and refuse platform dependency.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
@@ -113,9 +117,9 @@ export default function Home() {
                   <button
                     className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
                     style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
-                    data-testid="button-start-thinking"
+                    data-testid="button-hero-enter-sanctuary"
                   >
-                    Start Thinking
+                    Enter Your Sanctuary
                     <ArrowRight className="w-6 h-6" />
                   </button>
                 </Link>
@@ -125,26 +129,27 @@ export default function Home() {
                     <button
                       className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold transition-all duration-250 hover:-translate-y-1"
                       style={{ background: '#F37E20', color: '#fff', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
-                      data-testid="button-start-thinking"
+                      data-testid="button-hero-claim-space"
                     >
-                      Start Thinking
+                      Claim Your Thinking Space
                       <ArrowRight className="w-6 h-6" />
                     </button>
                   </Link>
-                  <button
-                    onClick={scrollToHowItWorks}
-                    className="inline-flex items-center gap-3 rounded-2xl border px-8 py-5 text-lg font-bold transition-all duration-250 hover:text-white"
-                    style={{ borderColor: 'rgba(46,139,139,0.3)', color: '#9a9bb0' }}
-                    data-testid="button-see-how-it-works"
-                  >
-                    See How It Works
-                    <ChevronDown className="w-5 h-5" />
-                  </button>
+                  <Link href="/docs">
+                    <button
+                      className="inline-flex items-center gap-3 rounded-2xl border px-8 py-5 text-lg font-bold transition-all duration-250 hover:text-white"
+                      style={{ borderColor: 'rgba(46,139,139,0.3)', color: '#9a9bb0' }}
+                      data-testid="button-explore-philosophy"
+                    >
+                      Explore the Philosophy
+                      <ArrowRight className="w-5 h-5" />
+                    </button>
+                  </Link>
                 </>
               )}
             </div>
             <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-cta-microcopy">
-              No account needed. Your thinking stays on your device — private and compounding.
+              No account needed. No data harvested. Your thinking stays on your device.
             </p>
           </motion.div>
 
@@ -162,20 +167,38 @@ export default function Home() {
             style={{ color: '#7a7b90' }}
           >
             <div className="flex items-center gap-3" data-testid="text-trust-local">
-              <HardDrive className="w-5 h-5" style={{ color: '#F37E20' }} />
-              <span>Local-first storage</span>
+              <Shield className="w-5 h-5" style={{ color: '#F37E20' }} />
+              <span>Your thoughts stay private</span>
             </div>
             <div className="flex items-center gap-3" data-testid="text-trust-ai">
-              <Brain className="w-5 h-5" style={{ color: '#2E8B8B' }} />
-              <span>AI thinking partner</span>
+              <Bot className="w-5 h-5" style={{ color: '#2E8B8B' }} />
+              <span>AI only when you ask</span>
             </div>
             <div className="flex items-center gap-3" data-testid="text-trust-private">
-              <TrendingUp className="w-5 h-5" style={{ color: '#FFB84D' }} />
-              <span>Intelligence compounds</span>
+              <HardDrive className="w-5 h-5" style={{ color: '#FFB84D' }} />
+              <span>You control what's remembered</span>
             </div>
           </motion.div>
         </div>
       </motion.section>
+
+      <RevealSection>
+        <section className="relative py-20 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+          <div className="max-w-3xl mx-auto px-6 text-center">
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="text-2xl md:text-3xl font-medium leading-relaxed"
+              style={{ color: '#b0b1c0' }}
+              data-testid="text-worldview-narrative"
+            >
+              In a world where platforms monetize your attention and data, DJZS gives you control back — <span className="text-white font-bold">your journal, your memory, your AI assistance, on your terms.</span>
+            </motion.p>
+          </div>
+        </section>
+      </RevealSection>
 
       <RevealSection>
         <section id="how-it-works" className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
@@ -353,7 +376,70 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
+                <MessageCircle className="w-4 h-4" style={{ color: '#F37E20' }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Independent Thinkers</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight" data-testid="text-social-proof-headline">
+                Why They Choose DJZS
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-proof-writer">
+                <p className="text-base leading-relaxed mb-6 italic" style={{ color: '#b0b1c0' }}>
+                  "I need a place to wrestle with ideas without fear of surveillance — DJZS gives me that. My most dangerous thinking finally has a home."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(243,126,32,0.15)' }}>
+                    <PenLine className="w-4 h-4" style={{ color: '#F37E20' }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">Writer & Researcher</p>
+                    <p className="text-xs" style={{ color: '#555668' }}>Independent thinker</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-proof-founder">
+                <p className="text-base leading-relaxed mb-6 italic" style={{ color: '#b0b1c0' }}>
+                  "My most important thoughts stay private and organized — not data fodder. DJZS compounds what I know instead of just storing it."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(46,139,139,0.15)' }}>
+                    <Rocket className="w-4 h-4" style={{ color: '#2E8B8B' }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">Founder & Builder</p>
+                    <p className="text-xs" style={{ color: '#555668' }}>Privacy-first builder</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-proof-analyst">
+                <p className="text-base leading-relaxed mb-6 italic" style={{ color: '#b0b1c0' }}>
+                  "I think in systems. DJZS is the only tool that thinks with me instead of at me. My research actually connects to my daily entries now."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,184,77,0.15)' }}>
+                    <Target className="w-4 h-4" style={{ color: '#FFB84D' }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">Systems Analyst</p>
+                    <p className="text-xs" style={{ color: '#555668' }}>Independent scholar</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
@@ -566,7 +652,7 @@ export default function Home() {
                   style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }}
                   data-testid="button-start-trading-smarter"
                 >
-                  Start Trading Smarter
+                  Start Thinking Smarter
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </Link>
@@ -824,10 +910,10 @@ export default function Home() {
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-final-cta-headline">
-              Think more clearly starting today.
+              Your thinking deserves better than a platform that watches.
             </h2>
             <p className="text-xl mb-12" style={{ color: '#7a7b90' }}>
-              Your first session takes two minutes. Your thinking compounds from there.
+              Two minutes. No signup. Your first session stays on your device and compounds from there.
             </p>
             <div className="flex flex-col items-center gap-4">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -837,7 +923,7 @@ export default function Home() {
                     style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                     data-testid="button-final-get-started"
                   >
-                    Start Thinking
+                    Claim Your Thinking Space
                     <ArrowRight className="w-6 h-6" />
                   </button>
                 </Link>
@@ -848,7 +934,7 @@ export default function Home() {
                 )}
               </div>
               <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-final-cta-microcopy">
-                No account needed. Your thinking stays on your device — private and compounding.
+                No account needed. No data harvested. Your thinking stays on your device.
               </p>
             </div>
           </div>
