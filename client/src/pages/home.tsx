@@ -148,14 +148,6 @@ export default function Home() {
             </p>
           </motion.div>
 
-          {!isConnected && (
-            <motion.div variants={fadeUp} className="mb-12">
-              <div className="scale-125 inline-block">
-                <ConnectButton showBalance={false} />
-              </div>
-            </motion.div>
-          )}
-
           <motion.div
             variants={fadeUp}
             className="flex flex-col sm:flex-row items-center justify-center gap-10 text-base font-medium"
@@ -924,11 +916,6 @@ export default function Home() {
                     <ArrowRight className="w-6 h-6" />
                   </button>
                 </Link>
-                {!isConnected && (
-                  <div className="scale-125">
-                    <ConnectButton showBalance={false} />
-                  </div>
-                )}
               </div>
               <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-final-cta-microcopy">
                 No account needed. Your thinking stays on your device — private and compounding.
@@ -1009,9 +996,6 @@ export default function Home() {
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
-            <div className="flex-1">
-              <ConnectButton />
-            </div>
           </div>
         </div>
       )}
