@@ -62,7 +62,7 @@ function App() {
           <RainbowKitProvider
             coolMode
             theme={darkTheme({
-              accentColor: "hsl(270, 80%, 60%)",
+              accentColor: "#F37E20",
               accentColorForeground: "white",
               borderRadius: "medium",
             })}

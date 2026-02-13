@@ -31,7 +31,8 @@ export function WalletConnectButton() {
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 font-semibold text-white shadow-lg backdrop-blur transition hover:bg-white/20"
+                    className="inline-flex items-center gap-2 rounded-2xl px-5 py-3 font-semibold text-white shadow-lg transition hover:brightness-110"
+                    style={{ background: '#F37E20', boxShadow: '0 4px 16px rgba(243,126,32,0.3)' }}
                     data-testid="button-connect-wallet"
                   >
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
