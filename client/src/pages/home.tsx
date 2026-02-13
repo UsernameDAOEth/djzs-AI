@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus, PenLine, MessageCircle, ListChecks, Microscope, Lightbulb, Rocket, TrendingUp, Layers, Target, Zap, GitBranch, BarChart3, Clock, Eye, CheckCircle, XCircle, Sun, Moon, Crosshair } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, BookOpen, Search, Brain, ChevronDown, Plus, PenLine, MessageCircle, ListChecks, Microscope, Lightbulb, Rocket, TrendingUp, Layers, Target, Zap, GitBranch, BarChart3, Clock, Eye, CheckCircle, XCircle, Sun, Moon, Crosshair, Briefcase, Feather, Video } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -577,6 +577,312 @@ export default function Home() {
 
       <RevealSection>
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
+                <Briefcase className="w-4 h-4" style={{ color: '#F37E20' }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>For Founders</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-founders-headline">
+                Build with clarity. Ship with conviction.
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
+                Founders make hundreds of decisions daily. DJZS turns scattered thinking into structured strategy — track your reasoning, test your assumptions, and compound your founder intelligence.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-founder-research">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                  <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Market & Competitive Intel</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Save competitor analysis, market data, user feedback
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    AI synthesizes across all your research sources
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Connects market signals to your product strategy
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-founder-journal">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                  <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Founder's Decision Log</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Document pivots, strategy shifts, and key decisions
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    AI tracks your reasoning patterns over time
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Surfaces blind spots before they become costly
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-founder-partner">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+                  <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
+                <h3 className="text-xl font-bold text-white mb-3">Strategic Advisor</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Stress-tests your strategy before you commit resources
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Connects today's decisions to past lessons learned
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Asks the hard questions your team won't
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.04), rgba(255,184,77,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-founder-cta">
+              <p className="text-lg font-bold text-white mb-2">Stop building on gut feel. Start compounding founder intelligence.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every decision documented. Every pattern tracked. Every lesson carried forward.</p>
+              <Link href="/chat">
+                <button
+                  className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                  style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }}
+                  data-testid="button-start-founder-thinking"
+                >
+                  Start Thinking
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+                <Feather className="w-4 h-4" style={{ color: '#2E8B8B' }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Writers</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-writers-headline">
+                Write to think. Think to write better.
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
+                Great writing comes from clear thinking. DJZS helps you develop ideas across sessions, spot recurring themes, and build a personal knowledge system that makes every draft sharper.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+              <div className="p-8 rounded-2xl border transition-all hover:border-teal-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-writer-research">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                  <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Source Library</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Save articles, quotes, references in organized dossiers
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    AI finds connections between sources you'd miss
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Cross-references research with your past writing
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-writer-journal">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                  <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Idea Development</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Develop raw ideas across multiple sessions
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    AI surfaces recurring themes in your thinking
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Tracks how your arguments evolve over time
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-writer-partner">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+                  <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
+                <h3 className="text-xl font-bold text-white mb-3">Editor's Eye</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Challenges weak arguments before your readers do
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Finds gaps and contradictions in your reasoning
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Suggests angles you haven't considered
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(123,107,141,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-writer-cta">
+              <p className="text-lg font-bold text-white mb-2">Your best ideas aren't lost in scattered notes anymore.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every thought connected. Every theme tracked. Every draft informed by your full thinking history.</p>
+              <Link href="/chat">
+                <button
+                  className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                  style={{ background: '#2E8B8B', boxShadow: '0 6px 24px rgba(46,139,139,0.3)' }}
+                  data-testid="button-start-writer-thinking"
+                >
+                  Start Thinking
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(123,107,141,0.08)', border: '1px solid rgba(123,107,141,0.2)' }}>
+                <Video className="w-4 h-4" style={{ color: '#7B6B8D' }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#7B6B8D' }}>For Content Creators</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-creators-headline">
+                Stop creating in a vacuum. Start building a content brain.
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
+                Great content comes from deep thinking, not just trending topics. DJZS helps you develop original perspectives, track what resonates, and build a content strategy that compounds.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-creator-research">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                  <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Content Intelligence</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Save trends, audience insights, competitor content
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    AI identifies patterns across your research
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Builds a knowledge base that informs every piece
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-creator-journal">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                  <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Content Lab</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Draft ideas, angles, and narratives in one place
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    AI tracks which themes keep surfacing
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Never lose a content idea again
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-creator-partner">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+                  <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
+                <h3 className="text-xl font-bold text-white mb-3">Creative Sparring Partner</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Tests your takes before you publish
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Connects new ideas to your existing body of work
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Helps you find your unique angle on any topic
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(123,107,141,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(123,107,141,0.15)' }} data-testid="card-creator-cta">
+              <p className="text-lg font-bold text-white mb-2">Your content gets better because your thinking gets better.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every idea tracked. Every angle explored. Every piece backed by a growing knowledge base.</p>
+              <Link href="/chat">
+                <button
+                  className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                  style={{ background: '#7B6B8D', boxShadow: '0 6px 24px rgba(123,107,141,0.3)' }}
+                  data-testid="button-start-creator-thinking"
+                >
+                  Start Thinking
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
