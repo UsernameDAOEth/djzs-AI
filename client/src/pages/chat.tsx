@@ -2551,7 +2551,7 @@ export default function Chat() {
                         <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
                           {(() => {
                             const grouped: Record<string, typeof localEntries> = {};
-                            localEntries.forEach((entry) => {
+                            (localEntries ?? []).forEach((entry) => {
                               const d = new Date(entry.createdAt);
                               const now = new Date();
                               const isToday = d.toDateString() === now.toDateString();
