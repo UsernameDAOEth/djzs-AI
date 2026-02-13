@@ -149,7 +149,7 @@ export default function Docs() {
             <h2 className="text-2xl font-bold text-white mb-4">What is DJZS?</h2>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p className="text-lg">
-                DJZS is a <strong className="text-white">daily thinking system that compounds your intelligence over time</strong>. Three zones — Journal, Research, and Thinking Partner — form one loop: write, AI analyzes and connects, insights compound. It's not a journal app. It's cognitive infrastructure for builders, founders, researchers, and systems thinkers.
+                DJZS is a <strong className="text-white">daily thinking system that compounds your intelligence over time</strong>. Three zones — Journal, Research, and Thinking Partner — form one loop: write, AI analyzes and connects, insights compound. It's not a journal app. It's cognitive infrastructure for founders, traders, content creators, researchers, and systems thinkers.
               </p>
               <p>
                 Your entries are stored locally on your device. When you choose to use AI, your text is sent to Venice AI for processing — Venice claims no data retention, and nothing syncs unless you export. You own your thinking.

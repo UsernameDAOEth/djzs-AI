@@ -1,12 +1,12 @@
 # DJZS - Your Daily Thinking System
 
 ## Overview
-DJZS is a cognitive operating system that turns daily thinking into structured insight through an AI thinking partner. It is not a journal — it's a thinking system designed to compound intelligence over time. Three zones (Journal, Research, Thinking Partner) form one loop: write → AI analyzes and connects → insights compound. Local-first storage (IndexedDB via Dexie), user-controlled AI, and privacy by default. Built for builders, founders, researchers, and systems thinkers who want cognitive leverage.
+DJZS is a cognitive operating system that turns daily thinking into structured insight through an AI thinking partner. It is not a journal — it's a thinking system designed to compound intelligence over time. Three zones (Journal, Research, Thinking Partner) form one loop: write → AI analyzes and connects → insights compound. Local-first storage (IndexedDB via Dexie), user-controlled AI, and privacy by default. Built for founders, traders, content creators, researchers, and systems thinkers who want cognitive leverage.
 
 ## Strategic Positioning
 - **Category**: Daily thinking system / cognitive infrastructure (NOT journaling)
 - **Value prop**: "Sharpen your thinking daily" — not "Remember your life beautifully"
-- **Target users**: Builders, founders, researchers, crypto analysts, technical thinkers
+- **Target users**: Founders, traders (crypto analysts, DeFi researchers), content creators, builders, researchers, systems thinkers
 - **NOT for**: Casual diary-keeping, photo memories, lifestyle journaling, emotional reflection
 - **Competition**: Scattered notes, browser bookmarks, unstructured thinking (NOT other journal apps)
 - **Moat**: Making users measurably more intelligent through daily use

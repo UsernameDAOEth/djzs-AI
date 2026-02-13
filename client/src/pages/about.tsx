@@ -306,6 +306,11 @@ export default function About() {
                 DJ-Z-S.box is built by a small team of privacy advocates and Web3 builders who 
                 believe that the best tools are the ones that respect their users.
               </p>
+              <p className="mb-4">
+                We build for founders structuring their reasoning, traders tracking evolving theses, 
+                and content creators compounding original perspectives. If you think in systems and 
+                want cognitive leverage — DJZS is for you.
+              </p>
               <p>
                 We're not a VC-backed startup racing to monetize your attention. We're building 
                 sustainable software that prioritizes your privacy over our growth metrics.
