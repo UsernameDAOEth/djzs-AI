@@ -531,6 +531,25 @@ export default function Docs() {
             <p className="text-gray-400 mb-6 leading-relaxed">
               OpenClaw is DJZS's agent runner — a clean dispatcher that routes requests to three specialized AI agents. Each agent wraps Venice AI calls and returns strictly typed, structured JSON. No thinking happens in the dispatcher; all intelligence lives in the agent classes.
             </p>
+
+            <div className="p-5 rounded-xl bg-purple-500/[0.06] border border-purple-500/15 mb-6">
+              <p className="text-sm font-bold text-purple-300 mb-3">How It Connects to What You See</p>
+              <ul className="space-y-3 text-sm text-gray-400">
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                  <span>When you write in the <strong className="text-orange-300">Journal Zone</strong> and click <strong className="text-white">"Think with me"</strong>, the JournalInsight agent analyzes your entry, pulls in your recent entries and memory pins as context, and returns a structured summary with patterns, emotions, and reflective questions.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span>When you search in the <strong className="text-teal-300">Research Zone</strong> and click <strong className="text-white">"Research"</strong>, the ResearchSynth agent synthesizes information from web results or AI knowledge, identifies agreements and contradictions across sources, and suggests what to investigate next.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span>The <strong className="text-purple-300">ThinkingPartner</strong> agent works behind the scenes to debate your ideas, identify tensions in your reasoning, and propose reframes — acting as a structured thinking coach, not a chatbot.</span>
+                </li>
+              </ul>
+            </div>
+
             <p className="text-xs text-gray-500 mb-6 font-mono" data-testid="text-openclaw-api">
               API: POST /api/openclaw/run {'{'} agent: "JournalInsight" | "ResearchSynth" | "ThinkingPartner", payload: {'{'} ... {'}'} {'}'}
             </p>
@@ -617,6 +636,38 @@ export default function Docs() {
                 </li>
               </ul>
             </div>
+          </div>
+
+          <div className="mt-8 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center">
+                <Network className="w-5 h-5 text-purple-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">XMTP Agent Commands</h3>
+                <p className="text-xs text-gray-500">Access agents via messaging</p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-400 mb-4 leading-relaxed">
+              You can also interact with OpenClaw agents through XMTP messaging. Send a message with one of these prefixes and the agent will process your request and respond directly:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="px-4 py-3 rounded-xl bg-orange-500/[0.06] border border-orange-500/15">
+                <p className="text-xs font-bold text-orange-300 mb-1">Journal:</p>
+                <p className="text-xs text-gray-500">e.g. "Journal: Today I realized..."</p>
+              </div>
+              <div className="px-4 py-3 rounded-xl bg-teal-500/[0.06] border border-teal-500/15">
+                <p className="text-xs font-bold text-teal-300 mb-1">Research:</p>
+                <p className="text-xs text-gray-500">e.g. "Research: DeFi yield trends"</p>
+              </div>
+              <div className="px-4 py-3 rounded-xl bg-purple-500/[0.06] border border-purple-500/15">
+                <p className="text-xs font-bold text-purple-300 mb-1">Thinking:</p>
+                <p className="text-xs text-gray-500">e.g. "Thinking: Should I pivot?"</p>
+              </div>
+            </div>
+            <p className="text-xs text-gray-600 mt-3">
+              Additional commands: <span className="font-mono text-gray-500">/help</span> (list commands) · <span className="font-mono text-gray-500">/zones</span> (show available zones)
+            </p>
           </div>
         </motion.section>
 
