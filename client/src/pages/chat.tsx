@@ -77,6 +77,7 @@ import { format } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
 import { VideoUpload, VideoPlayer } from "@/components/video-diary";
 import { MusicPanel } from "@/components/music-panel";
+import { QuickSearch } from "@/components/quick-search";
 import { 
   vault, 
   saveEntry, 
@@ -100,7 +101,6 @@ import {
   deleteClaim,
   getClaimsForDossier,
   searchJournalEntriesForTopic,
-  searchEntries,
   exportVault,
   type MemoryPin,
   type EntryType,
@@ -220,10 +220,7 @@ export default function Chat() {
   const [frozenHeight, setFrozenHeight] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [expandedEntryId, setExpandedEntryId] = useState<number | null>(null);
-  const [quickSearchQuery, setQuickSearchQuery] = useState("");
-  const [quickSearchResults, setQuickSearchResults] = useState<NonNullable<typeof localEntries>>([]);
-  const [quickSearchOpen, setQuickSearchOpen] = useState(false);
-  const quickSearchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [quickSearchModalOpen, setQuickSearchModalOpen] = useState(false);
   const [lastEntryId, setLastEntryId] = useState<number | null>(null);
   const [researchResult, setResearchResult] = useState<ResearchResult | null>(null);
   const [webModeEnabled, setWebModeEnabled] = useState(true);
@@ -461,28 +458,17 @@ export default function Chat() {
     setFrozenHeight(null);
   }, [selectedZone]);
 
-  const handleQuickSearch = useCallback((query: string) => {
-    setQuickSearchQuery(query);
-    if (quickSearchTimerRef.current) clearTimeout(quickSearchTimerRef.current);
-    if (!query.trim()) {
-      setQuickSearchResults([]);
-      return;
-    }
-    quickSearchTimerRef.current = setTimeout(async () => {
-      const results = await searchEntries(query, selectedZone as EntryType, 20);
-      setQuickSearchResults(results);
-    }, 150);
-  }, [selectedZone]);
 
   useEffect(() => {
-    if (quickSearchTimerRef.current) clearTimeout(quickSearchTimerRef.current);
-    setQuickSearchQuery("");
-    setQuickSearchResults([]);
-    setQuickSearchOpen(false);
-    return () => {
-      if (quickSearchTimerRef.current) clearTimeout(quickSearchTimerRef.current);
+    const handleCmdK = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setQuickSearchModalOpen(prev => !prev);
+      }
     };
-  }, [selectedZone]);
+    window.addEventListener("keydown", handleCmdK);
+    return () => window.removeEventListener("keydown", handleCmdK);
+  }, []);
 
   // Lock body scroll when memory drawer is open on mobile
   useEffect(() => {
@@ -2470,128 +2456,17 @@ export default function Chat() {
                       Past Entries ({localEntries.length})
                     </button>
                     <button
-                      onClick={() => {
-                        setQuickSearchOpen(!quickSearchOpen);
-                        if (quickSearchOpen) {
-                          setQuickSearchQuery("");
-                          setQuickSearchResults([]);
-                        }
-                      }}
-                      className={`flex items-center gap-1.5 text-xs font-medium transition-colors touch-target px-2.5 py-1 rounded-lg ${
-                        quickSearchOpen 
-                          ? 'text-orange-400 bg-orange-500/10 border border-orange-500/20' 
-                          : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
-                      }`}
+                      onClick={() => setQuickSearchModalOpen(true)}
+                      className="flex items-center gap-1.5 text-xs font-medium transition-colors touch-target px-2.5 py-1 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-white/5"
                       data-testid="button-toggle-quick-search"
                     >
                       <Search className="w-3.5 h-3.5" />
-                      Search
+                      <span>Search</span>
+                      <kbd className="hidden sm:inline-flex ml-1 px-1 py-0.5 rounded text-[9px] font-mono text-gray-600 border border-white/[0.08] bg-white/[0.03]">⌘K</kbd>
                     </button>
                   </div>
 
-                  {quickSearchOpen && (
-                    <div className="mb-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                        <input
-                          type="text"
-                          value={quickSearchQuery}
-                          onChange={(e) => handleQuickSearch(e.target.value)}
-                          placeholder="Search past entries..."
-                          className="w-full pl-9 pr-8 py-2.5 rounded-xl text-sm text-white placeholder-gray-600 border border-white/[0.06] focus:border-orange-500/30 focus:outline-none focus:ring-1 focus:ring-orange-500/20 transition-all"
-                          style={{ background: 'rgba(255,255,255,0.03)' }}
-                          autoFocus
-                          data-testid="input-quick-search"
-                        />
-                        {quickSearchQuery && (
-                          <button
-                            onClick={() => { setQuickSearchQuery(""); setQuickSearchResults([]); }}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
-                            data-testid="button-clear-search"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                      {quickSearchQuery && (
-                        <p className="text-[10px] text-gray-600 mt-1.5 ml-1" data-testid="text-search-count">
-                          {quickSearchResults.length} {quickSearchResults.length === 1 ? 'result' : 'results'} found
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {quickSearchOpen && quickSearchQuery && quickSearchResults.length > 0 && (
-                    <div className="space-y-2 mb-6 animate-in fade-in duration-200" data-testid="list-search-results">
-                      {quickSearchResults.map((entry) => {
-                        const text = entry.text;
-                        const queryLower = quickSearchQuery.toLowerCase();
-                        const textLower = text.toLowerCase();
-                        const matchIndex = textLower.indexOf(queryLower);
-                        
-                        let preview: { before: string; match: string; after: string } | null = null;
-                        if (matchIndex >= 0) {
-                          const start = Math.max(0, matchIndex - 40);
-                          const end = Math.min(text.length, matchIndex + quickSearchQuery.length + 80);
-                          preview = {
-                            before: (start > 0 ? '...' : '') + text.slice(start, matchIndex),
-                            match: text.slice(matchIndex, matchIndex + quickSearchQuery.length),
-                            after: text.slice(matchIndex + quickSearchQuery.length, end) + (end < text.length ? '...' : ''),
-                          };
-                        }
-                        
-                        return (
-                          <button
-                            key={entry.id}
-                            onClick={() => {
-                              setMessageInput(entry.text);
-                              setQuickSearchOpen(false);
-                              setQuickSearchQuery("");
-                              setQuickSearchResults([]);
-                              window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }}
-                            className="w-full text-left p-3 rounded-xl border border-white/[0.04] hover:border-orange-500/20 hover:bg-orange-500/[0.03] transition-all group"
-                            style={{ background: 'rgba(255,255,255,0.02)' }}
-                            data-testid={`search-result-${entry.id}`}
-                          >
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm text-gray-400 leading-relaxed line-clamp-2">
-                                  {preview ? (
-                                    <>
-                                      <span>{preview.before}</span>
-                                      <span className="text-orange-400 font-medium bg-orange-500/10 px-0.5 rounded">{preview.match}</span>
-                                      <span>{preview.after}</span>
-                                    </>
-                                  ) : (
-                                    text.slice(0, 120) + (text.length > 120 ? '...' : '')
-                                  )}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-2 shrink-0">
-                                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-white/[0.03] border border-white/[0.06]" style={{ color: entry.type === 'journal' ? '#F37E20' : '#2E8B8B' }}>
-                                  {entry.type === 'journal' ? 'J' : 'R'}
-                                </span>
-                                <span className="text-[10px] font-medium text-gray-600">
-                                  {format(new Date(entry.createdAt), "MMM d")}
-                                </span>
-                              </div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {quickSearchOpen && quickSearchQuery && quickSearchResults.length === 0 && (
-                    <div className="text-center py-6 mb-4" data-testid="text-no-search-results">
-                      <p className="text-sm text-gray-600">No entries match "{quickSearchQuery}"</p>
-                    </div>
-                  )}
-                  
-                  {(!quickSearchOpen || !quickSearchQuery) && (
-                    <>
-                      {showHistory && (
+                  {showHistory && (
                         <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
                           {(() => {
                             const grouped: Record<string, typeof localEntries> = {};
@@ -2680,8 +2555,6 @@ export default function Chat() {
                           })()}
                         </div>
                       )}
-                    </>
-                  )}
                 </div>
               )}
             </div>
@@ -2835,6 +2708,14 @@ export default function Chat() {
     </TooltipProvider>
 
     <MusicPanel isOpen={showMusicPanel} onClose={() => setShowMusicPanel(false)} />
+    <QuickSearch
+      open={quickSearchModalOpen}
+      onClose={() => setQuickSearchModalOpen(false)}
+      onSelectEntry={(entry) => {
+        setMessageInput(entry.text);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }}
+    />
     </>
   );
 }
