@@ -1,15 +1,16 @@
-# DJZS - Your Daily Thinking System
+# DJZS - Decentralized AI for Sovereign Thinking
 
 ## Overview
-DJZS is a cognitive operating system that turns daily thinking into structured insight through an AI thinking partner. It is not a journal — it's a thinking system designed to compound intelligence over time. Three zones (Journal, Research, Thinking Partner) form one loop: write → AI analyzes and connects → insights compound. Local-first storage (IndexedDB via Dexie), user-controlled AI, and privacy by default. Built for founders, traders, content creators, researchers, and systems thinkers who want cognitive leverage.
+DJZS is a decentralized, quantum-resilient AI thinking system designed for sovereign users. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. Three zones (Journal, Research, Thinking Partner) form one loop: capture locally → reflect with decentralized AI → compound insights securely. No centralized model training on your thoughts. No cloud surveillance layer. No silent data extraction.
 
 ## Strategic Positioning
-- **Category**: Daily thinking system / cognitive infrastructure (NOT journaling)
-- **Value prop**: "Sharpen your thinking daily" — not "Remember your life beautifully"
-- **Target users**: Founders, traders (crypto analysts, DeFi researchers), content creators, builders, researchers, systems thinkers
+- **Category**: Decentralized cognitive infrastructure for sovereign users (NOT journaling, NOT note-taking)
+- **Value prop**: "Decentralized AI for sovereign thinking" — not "Remember your life beautifully"
+- **Target users**: Crypto-native builders, privacy maximalists, founders, traders (crypto analysts, DeFi researchers), content creators, researchers, strategists, long-term thinkers
 - **NOT for**: Casual diary-keeping, photo memories, lifestyle journaling, emotional reflection
-- **Competition**: Scattered notes, browser bookmarks, unstructured thinking (NOT other journal apps)
-- **Moat**: Making users measurably more intelligent through daily use
+- **Competition**: Centralized AI tools (ChatGPT, Notion AI), scattered notes, browser bookmarks (NOT other journal apps)
+- **Moat**: Decentralized AI + E2E encryption + local-first = no centralized platform can replicate the sovereignty guarantee
+- **Positioning statement**: Cognitive infrastructure for a decentralized, post-surveillance world
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.

@@ -133,12 +133,12 @@ export default function Docs() {
             DJZS Documentation
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            A private, local-first daily thinking system that compounds intelligence over time.
+            A decentralized, quantum-resilient AI thinking system. Local-first storage, E2E encrypted messaging, and decentralized inference.
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
               <button className="px-6 py-3 rounded-xl text-white font-bold transition-colors" style={{ background: '#F37E20' }} data-testid="button-start-writing">
-                Start Writing
+                Start Thinking
               </button>
             </Link>
           </div>
@@ -149,13 +149,13 @@ export default function Docs() {
             <h2 className="text-2xl font-bold text-white mb-4">What is DJZS?</h2>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p className="text-lg">
-                DJZS is a <strong className="text-white">daily thinking system that compounds your intelligence over time</strong>. Three zones — Journal, Research, and Thinking Partner — form one loop: write, AI analyzes and connects, insights compound. It's not a journal app. It's cognitive infrastructure for founders, traders, content creators, researchers, and systems thinkers.
+                DJZS is a <strong className="text-white">decentralized, quantum-resilient AI thinking system designed for sovereign users</strong>. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. No centralized model training on your thoughts. No cloud surveillance layer.
               </p>
               <p>
-                Your entries are stored locally on your device. When you choose to use AI, your text is sent to Venice AI for processing — Venice claims no data retention, and nothing syncs unless you export. You own your thinking.
+                Three zones — Journal, Research, and Thinking Partner — form one loop: capture your thinking locally, reflect with decentralized AI, and compound insights securely. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
               </p>
               <p>
-                The AI is your thinking partner, not a chatbot. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your knowledge grows smarter, not just larger.
+                The AI is your thinking partner, not a chatbot. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your intelligence compounds without becoming platform exhaust.
               </p>
             </div>
           </div>

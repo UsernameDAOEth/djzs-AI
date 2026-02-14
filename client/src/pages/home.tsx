@@ -120,15 +120,15 @@ export default function Home() {
       </header>
 
       <Helmet>
-        <title>DJZS - Your Daily Thinking System | Compound Your Intelligence</title>
-        <meta name="description" content="A cognitive operating system that turns daily thinking into structured insight. AI thinking partner, research synthesis, and compounding intelligence — all local-first." />
-        <meta property="og:title" content="DJZS - Your Daily Thinking System" />
-        <meta property="og:description" content="Turn daily thinking into structured insight. AI thinking partner that connects ideas, debates points, and finds patterns. Local-first, private by design." />
+        <title>DJZS - Decentralized AI for Sovereign Thinking</title>
+        <meta name="description" content="A decentralized, quantum-resilient AI thinking system. Local-first storage, E2E encrypted messaging, and decentralized AI inference via Venice. Your thoughts are not training data." />
+        <meta property="og:title" content="DJZS - Decentralized AI for Sovereign Thinking" />
+        <meta property="og:description" content="Local-first. End-to-end encrypted. Quantum-resilient by design. A thinking system that compounds your intelligence without giving it away." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="DJZS - Sharpen Your Thinking Daily" />
-        <meta name="twitter:description" content="A daily thinking system that compounds your intelligence. Not a journal — a cognitive operating system for builders." />
+        <meta name="twitter:title" content="DJZS - Decentralized AI for Sovereign Thinking" />
+        <meta name="twitter:description" content="A decentralized, quantum-resilient AI thinking system. Your thoughts stay local. Your AI runs decentralized. Your intelligence compounds securely." />
       </Helmet>
 
       <motion.section
@@ -152,8 +152,8 @@ export default function Home() {
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <motion.div variants={fadeUp} className="mb-6">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
-              <TrendingUp className="w-3.5 h-3.5" />
-              Cognitive Infrastructure for Builders
+              <Shield className="w-3.5 h-3.5" />
+              Decentralized Cognitive Infrastructure
             </span>
           </motion.div>
 
@@ -161,7 +161,7 @@ export default function Home() {
             variants={fadeUp}
             className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[1] mb-8"
           >
-            Sharpen your thinking daily.
+            Decentralized AI for sovereign thinking.
           </motion.h1>
 
           <motion.p
@@ -169,7 +169,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            Three zones — Journal, Research, Thinking Partner — form one loop. Write your thinking, click "Think with me," and AI analyzes patterns, surfaces blind spots, and connects today's ideas to yesterday's insights.
+            Your thoughts stay local. Your AI runs decentralized. Your intelligence compounds securely. No centralized model training on your thinking. No cloud surveillance layer.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
@@ -210,7 +210,7 @@ export default function Home() {
               )}
             </div>
             <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-cta-microcopy">
-              No account needed. Your thinking stays on your device — private and compounding.
+              Local-first. End-to-end encrypted. Quantum-resilient by design.
             </p>
           </motion.div>
 
@@ -225,7 +225,11 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-3" data-testid="text-trust-ai">
               <Brain className="w-5 h-5" style={{ color: '#2E8B8B' }} />
-              <span>AI thinking partner</span>
+              <span>Decentralized AI inference</span>
+            </div>
+            <div className="flex items-center gap-3" data-testid="text-trust-encrypted">
+              <Lock className="w-5 h-5" style={{ color: '#7B6B8D' }} />
+              <span>E2E encrypted messaging</span>
             </div>
             <div className="flex items-center gap-3" data-testid="text-trust-private">
               <TrendingUp className="w-5 h-5" style={{ color: '#FFB84D' }} />
@@ -240,10 +244,10 @@ export default function Home() {
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-how-it-works-headline">
-                The Thinking Loop
+                Capture. Reflect Securely. Compound.
               </h2>
               <p className="text-xl max-w-2xl mx-auto" style={{ color: '#7a7b90' }}>
-                Write. Analyze. Connect. Your intelligence compounds with every session.
+                Three steps. Decentralized AI. Your intelligence compounds without becoming platform exhaust.
               </p>
             </div>
 
@@ -252,8 +256,8 @@ export default function Home() {
                 <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <PenLine className="w-9 h-9" style={{ color: '#F37E20' }} />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">1. Think in Writing</h3>
-                <p className="text-sm" style={{ color: '#7a7b90' }}>Capture your raw thinking — ideas, analysis, research notes, strategic questions.</p>
+                <h3 className="text-lg font-bold text-white mb-2">1. Capture Locally</h3>
+                <p className="text-sm" style={{ color: '#7a7b90' }}>Your writing is stored locally on your device. No account required. No forced cloud sync. You decide when and what leaves your machine.</p>
               </div>
 
               <div className="hidden md:flex items-center px-4">
@@ -267,8 +271,8 @@ export default function Home() {
                 <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <GitBranch className="w-9 h-9" style={{ color: '#2E8B8B' }} />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">2. AI Connects</h3>
-                <p className="text-sm" style={{ color: '#7a7b90' }}>Your thinking partner analyzes, connects to past entries, and surfaces patterns you'd miss.</p>
+                <h3 className="text-lg font-bold text-white mb-2">2. Reflect with Decentralized AI</h3>
+                <p className="text-sm" style={{ color: '#7a7b90' }}>Requests route to decentralized inference nodes. No centralized model provider stores or trains on your data. No persistent identity required.</p>
               </div>
 
               <div className="hidden md:flex items-center px-4">
@@ -282,8 +286,8 @@ export default function Home() {
                 <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
                   <TrendingUp className="w-9 h-9" style={{ color: '#FFB84D' }} />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">3. Insights Compound</h3>
-                <p className="text-sm" style={{ color: '#7a7b90' }}>Structured insights build on each other. Your knowledge base grows smarter over time.</p>
+                <h3 className="text-lg font-bold text-white mb-2">3. Compound Securely</h3>
+                <p className="text-sm" style={{ color: '#7a7b90' }}>Insights are linked, surfaced, and evolved over time. All communication protected by E2E encryption, forward secrecy, and post-compromise security.</p>
               </div>
             </div>
           </div>
@@ -337,28 +341,38 @@ export default function Home() {
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-stability-headline">
-                Not Another Note App
+                Why DJZS
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                The competition isn't journaling apps — it's scattered notes, browser bookmarks, and unstructured thinking.
+                Cognitive infrastructure for a decentralized, post-surveillance world.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <StabilityCard
-                icon={<TrendingUp className="w-6 h-6" style={{ color: '#F37E20' }} />}
-                title="Compounding, Not Linear"
-                description="Every entry gets analyzed. Key claims extracted. Patterns connected to past thinking. After 30 days, your knowledge base surfaces insights you'd never find in scattered notes."
+                icon={<HardDrive className="w-6 h-6" style={{ color: '#F37E20' }} />}
+                title="Local-First by Default"
+                description="All entries, insights, and research live on your device. No cloud database. No server-side copies. You decide when anything leaves your machine."
               />
               <StabilityCard
                 icon={<Brain className="w-6 h-6" style={{ color: '#2E8B8B' }} />}
-                title="Thinking Partner, Not Chatbot"
-                description="Click 'Think with me' and get structured output: summaries, key claims, open questions, and contradictions with past entries. Not a conversation — an analysis."
+                title="Decentralized AI Inference"
+                description="Your prompts are not stored or reused for training. No centralized AI company owns the interaction. AI execution is distributed, not monopolized."
               />
               <StabilityCard
-                icon={<HardDrive className="w-6 h-6" style={{ color: '#FFB84D' }} />}
-                title="Your Data, Your Device"
-                description="Everything lives in your browser's IndexedDB. Works offline. AI only sees what you explicitly send. No cloud database, no profiles, no training on your data."
+                icon={<Lock className="w-6 h-6" style={{ color: '#7B6B8D' }} />}
+                title="E2E Encrypted Messaging"
+                description="XMTP + MLS protocol provides end-to-end encryption with forward secrecy and post-compromise security. Your communication is cryptographically protected."
+              />
+              <StabilityCard
+                icon={<Shield className="w-6 h-6" style={{ color: '#FFB84D' }} />}
+                title="Forward Secrecy"
+                description="Encryption keys are ratcheted forward on every message. If a key is compromised, past messages remain secure. Your history stays protected."
+              />
+              <StabilityCard
+                icon={<TrendingUp className="w-6 h-6" style={{ color: '#F37E20' }} />}
+                title="Built for Long-Term Thinkers"
+                description="Memory Pins carry context forward. Insights compound across sessions. Your knowledge base grows smarter over time — not just larger."
               />
             </div>
           </div>
@@ -677,13 +691,13 @@ export default function Home() {
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
                 <Zap className="w-4 h-4" style={{ color: '#2E8B8B' }} />
-                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>Why DJZS is Different</span>
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>Decentralized AI by Design</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-different-headline">
-                You're the architect. The AI is just a tool.
+                AI becomes a tool, not a data vacuum.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                With other apps, you're the product. With DJZS, your data is your foundation and AI is the instrument you use to build on it.
+                DJZS integrates decentralized AI inference via Venice, rather than centralized AI providers. No single company controls the model. No centralized logs of your thinking.
               </p>
             </div>
 
@@ -692,12 +706,12 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <Shield className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">Radical Privacy</h3>
+                <h3 className="text-xl font-bold text-white mb-3">No Centralized Surveillance</h3>
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
-                  Your data stays on your device. The AI only analyzes what you explicitly send — it doesn't build a profile, track you, or retain your data. You're the administrator.
+                  Your prompts are not stored or reused for training. No centralized AI company owns the interaction. AI execution is distributed, not monopolized. Reduced surveillance risk.
                 </p>
                 <p className="text-sm" style={{ color: '#555668' }}>
-                  Raw thinking is your most sensitive data. Honest analysis requires knowing nobody is watching.
+                  DJZS uses decentralized AI infrastructure instead of centralized SaaS AI endpoints.
                 </p>
               </div>
 
@@ -705,12 +719,12 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <Layers className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">Built to Last</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Interoperable & Future-Proof</h3>
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
-                  Open architecture means you can swap parts without losing data. It's a tool, not a service — no acquisitions, no shutdowns, no hostage situations with your digital brain.
+                  DJZS remains interoperable with future decentralized models. The MLS-based architecture allows algorithm upgrades and future post-quantum primitives without redesign.
                 </p>
                 <p className="text-sm" style={{ color: '#555668' }}>
-                  Export your data anytime. No lock-in. Your thinking compounds regardless of what happens to the product.
+                  This is how you build systems that survive paradigm shifts. Export your data anytime. No lock-in.
                 </p>
               </div>
 
@@ -718,12 +732,12 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">AI That Works for You</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Sovereign Data Ownership</h3>
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
-                  Context-aware zones give the AI specific focus. Memory Pins are explicit — you decide what carries forward. Structured output, not conversational fluff.
+                  Your data stays on your device. No cloud database. No silent data extraction. Memory Pins are explicit — you decide what carries forward. You own your cognitive graph.
                 </p>
                 <p className="text-sm" style={{ color: '#555668' }}>
-                  You get summaries, key claims, patterns, and open questions — not a chat thread you have to manage.
+                  Your thoughts are not training data. Your AI is not centralized. Your system is designed to last.
                 </p>
               </div>
 
@@ -731,12 +745,12 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
                   <Eye className="w-7 h-7" style={{ color: '#FFB84D' }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">Calm, Focused Experience</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Quantum-Resilient Design</h3>
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
-                  No feeds, no notifications, no noise. DJZS is for entering, not scrolling. No timeline to check, no engagement loops. Built for deep work, not shallow validation.
+                  Built with cryptographic agility. The MLS-based architecture allows algorithm upgrades and future post-quantum primitives. XWING KEM protects against "harvest now, decrypt later" attacks.
                 </p>
                 <p className="text-sm" style={{ color: '#555668' }}>
-                  Ghibli-inspired design. Music library for focus. Zero engagement tricks.
+                  No feeds, no notifications, no noise. Built for deep work, not shallow validation.
                 </p>
               </div>
             </div>
@@ -831,10 +845,10 @@ export default function Home() {
                 <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Privacy Architecture</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight" data-testid="text-privacy-headline">
-                Raw Thinking Demands Maximum Privacy
+                Privacy & Sovereignty Promise
               </h2>
               <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#9a9bb0' }}>
-                Your unfiltered analysis — market theses, strategic doubts, half-formed ideas — is your most sensitive data. Honest thinking requires knowing nobody is watching.
+                Your thoughts are not training data. Your AI is not centralized. Your system is designed to last.
               </p>
             </div>
 
@@ -861,9 +875,9 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
                   <Shield className="w-7 h-7" style={{ color: '#FFB84D' }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">Privacy-First Providers</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Decentralized Inference</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  Venice AI (no data retention), Brave Search (no tracking). Your queries are not stored, profiled, or used for training.
+                  Venice AI runs decentralized inference — no data retention, no centralized training. Brave Search adds privacy-first web search with no tracking or profiling.
                 </p>
               </div>
             </div>
@@ -1003,15 +1017,16 @@ export default function Home() {
               </FAQItem>
 
               <FAQItem question="Who is DJZS for?">
-                <p className="text-white font-semibold">Systems thinkers who want cognitive leverage.</p>
+                <p className="text-white font-semibold">Sovereign thinkers who refuse to trade intelligence for convenience.</p>
                 <ul className="list-disc list-inside ml-2 mt-2">
-                  <li>Builders and founders structuring their reasoning</li>
-                  <li>Researchers synthesizing complex domains</li>
-                  <li>Traders and crypto analysts tracking evolving theses</li>
-                  <li>Anyone who thinks in systems, not just emotions</li>
+                  <li>Crypto-native builders and privacy maximalists</li>
+                  <li>Founders structuring their reasoning</li>
+                  <li>Researchers and strategists synthesizing complex domains</li>
+                  <li>Traders tracking evolving theses</li>
+                  <li>Anyone who thinks long-term</li>
                 </ul>
                 <p className="mt-3" style={{ color: '#7a7b90' }}>DJZS is not for casual diary-keeping, photo memories, or lifestyle journaling.</p>
-                <p className="mt-2 text-white font-semibold">DJZS is a tool for sharper thinking — not a prettier notebook.</p>
+                <p className="mt-2 text-white font-semibold">DJZS is cognitive infrastructure for a decentralized, post-surveillance world.</p>
               </FAQItem>
             </div>
           </div>
@@ -1022,10 +1037,10 @@ export default function Home() {
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-final-cta-headline">
-              Think more clearly starting today.
+              Build intelligence that compounds — without giving it away.
             </h2>
             <p className="text-xl mb-12" style={{ color: '#7a7b90' }}>
-              Your first session takes two minutes. Your thinking compounds from there.
+              Your thoughts stay local. Your AI runs decentralized. Start thinking sovereignly.
             </p>
             <div className="flex flex-col items-center gap-4">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -1041,7 +1056,7 @@ export default function Home() {
                 </Link>
               </div>
               <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-final-cta-microcopy">
-                No account needed. Your thinking stays on your device — private and compounding.
+                No account needed. Local-first. Decentralized AI. Quantum-resilient by design.
               </p>
             </div>
           </div>
@@ -1056,7 +1071,7 @@ export default function Home() {
               DJZS
             </h2>
             <p className="text-xs font-medium uppercase tracking-[0.3em]" style={{ color: '#7a7b90' }}>
-              Your daily thinking system
+              Decentralized AI for sovereign thinking
             </p>
           </div>
 

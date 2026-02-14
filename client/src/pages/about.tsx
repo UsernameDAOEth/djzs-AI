@@ -26,7 +26,7 @@ export default function About() {
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase" data-testid="text-about-title">About DJ-Z-S</h1>
           <p className="text-lg text-gray-400 mb-12 leading-relaxed">
-            A daily thinking system that compounds your intelligence over time. Not a journal — a cognitive operating system with privacy at its core.
+            A decentralized, quantum-resilient AI thinking system designed for sovereign users. Local-first. End-to-end encrypted. Built on decentralized inference.
           </p>
 
           <div className="space-y-14 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
@@ -35,10 +35,9 @@ export default function About() {
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> Our Mission
               </h2>
-              <p className="mb-4">DJ-Z-S exists to give you a private space for thinking. In a world where every thought is tracked, analyzed, and monetized, we believe your inner dialogue should remain yours alone.</p>
+              <p className="mb-4">DJ-Z-S exists because raw thinking is your most sensitive data. In a world where every thought feeds centralized AI models, we believe your inner dialogue should remain sovereign — locally stored, decentralized when processed, and cryptographically protected in transit.</p>
               <p>
-                We're building tools that amplify your thinking without capturing it. The AI assists 
-                when you ask — it doesn't take over. Your data stays on your device, not our servers.
+                We're building cognitive infrastructure that amplifies your thinking without capturing it. The AI runs on decentralized inference, not centralized SaaS endpoints. Your data stays on your device, not our servers.
               </p>
             </section>
 
@@ -200,7 +199,36 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> AI Agents Under the Hood
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Decentralized AI by Design
+              </h2>
+              <p className="mb-5">DJZS integrates decentralized AI inference using Venice, rather than centralized AI providers.</p>
+              <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4">
+                <h3 className="text-white font-bold mb-3 text-xs">What this means in practice</h3>
+                <ul className="space-y-2 text-xs text-gray-500">
+                  <li className="flex items-start gap-3">
+                    <span className="text-orange-400 mt-0.5 shrink-0">+</span>
+                    <span>Your prompts are not stored or reused for training</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-orange-400 mt-0.5 shrink-0">+</span>
+                    <span>No centralized AI company owns the interaction</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-orange-400 mt-0.5 shrink-0">+</span>
+                    <span>AI execution is distributed, not monopolized</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-orange-400 mt-0.5 shrink-0">+</span>
+                    <span>DJZS remains interoperable with future decentralized models</span>
+                  </li>
+                </ul>
+              </div>
+              <p className="text-xs text-gray-600">AI becomes a tool, not a data vacuum.</p>
+            </section>
+
+            <section>
+              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> AI Agents Under the Hood
               </h2>
               <p className="mb-5">Three specialized AI agents power the system. Each one is triggered only when you take action — never automatically.</p>
               <div className="space-y-3">
@@ -234,7 +262,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Memory Pins & Compounding Intelligence
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Memory Pins & Compounding Intelligence
               </h2>
               <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4" data-testid="card-memory-pins">
                 <div className="flex items-center gap-3 mb-3">
@@ -255,7 +283,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Additional Tools
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Additional Tools
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
@@ -283,7 +311,40 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Research Dossiers & Claims
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> Messaging Security (XMTP + MLS)
+              </h2>
+              <p className="mb-5">End-to-end encrypted messaging built on Messaging Layer Security (MLS) and the XMTP network.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <Lock className="w-4 h-4 text-teal-400 mb-2" />
+                  <h3 className="text-white font-bold mb-2 text-xs">Message Confidentiality</h3>
+                  <p className="text-xs text-gray-500">Messages are encrypted using AEAD (Authenticated Encryption with Associated Data). Only intended participants can read the content.</p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <Shield className="w-4 h-4 text-teal-400 mb-2" />
+                  <h3 className="text-white font-bold mb-2 text-xs">Forward Secrecy</h3>
+                  <p className="text-xs text-gray-500">Encryption keys are ratcheted forward on every message. If a key is compromised, past messages remain secure.</p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <RefreshCw className="w-4 h-4 text-teal-400 mb-2" />
+                  <h3 className="text-white font-bold mb-2 text-xs">Post-Compromise Security</h3>
+                  <p className="text-xs text-gray-500">Group secrets are regularly rotated via MLS commit updates. An attacker with old state cannot decrypt future messages.</p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <Eye className="w-4 h-4 text-teal-400 mb-2" />
+                  <h3 className="text-white font-bold mb-2 text-xs">Authentication & Integrity</h3>
+                  <p className="text-xs text-gray-500">Messages are digitally signed, preventing impersonation and spoofing. Any tampering is detected cryptographically through MLS and AEAD verification.</p>
+                </div>
+              </div>
+              <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <h3 className="text-white font-bold mb-2 text-xs">Quantum-Resilient Design</h3>
+                <p className="text-xs text-gray-500">While no production system is fully post-quantum today, the MLS-based architecture allows algorithm upgrades, future post-quantum primitives, and long-term resilience without redesign. XWING KEM protects Welcome messages against "harvest now, decrypt later" attacks.</p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>11</span> Research Dossiers & Claims
               </h2>
               <p className="mb-4">The Research Zone includes a structured system for tracking what you've learned and how much you trust it:</p>
               <div className="space-y-3">
@@ -300,7 +361,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> The Team
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>12</span> The Team
               </h2>
               <p className="mb-4">
                 DJ-Z-S.box is built by a small team of privacy advocates and Web3 builders who 
@@ -319,7 +380,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>11</span> Open Development
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>13</span> Open Development
               </h2>
               <div className="flex flex-wrap gap-4">
                 <a 
@@ -355,7 +416,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>12</span> Contact
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>14</span> Contact
               </h2>
               <p>
                 Questions? Reach out via our official channels or open an issue on GitHub. 
@@ -366,7 +427,7 @@ export default function About() {
 
           <div className="mt-20 pt-12 border-t border-white/[0.05] text-center">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600">
-              © 2026 DJZS SYSTEM / A THINKING SYSTEM, NOT A NETWORK
+              © 2026 DJZS SYSTEM / DECENTRALIZED AI FOR SOVEREIGN THINKING
             </p>
           </div>
         </motion.div>
