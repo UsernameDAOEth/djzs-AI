@@ -1,0 +1,58 @@
+
+Yes, you should absolutely add Researchers to the list. It's a natural and powerful fit for DJ-Z-S.
+
+Here’s why it makes perfect sense and how to integrate it seamlessly.
+
+### Why "Researchers" is a Perfect Fit
+
+1.  **Core Problem Alignment:** Researchers' primary job is to synthesize vast amounts of information into new insights. This is the exact function of your "Thinking Loop." The pain point of having fragmented notes, PDFs, and data sources is universal for them.
+2.  **High Value for Privacy:** Academic, corporate, or crypto research is often highly sensitive and proprietary. The promise of a private, local-first AI partner is a massive selling point for this audience.
+3.  **Expands Your Market:** It significantly widens your Total Addressable Market (TAM) from a niche of Web3/crypto natives to a broader audience of academics, analysts, scientists, and market researchers.
+4.  **Strengthens Your "Serious Tool" Positioning:** Adding "Researchers" alongside "Founders" and "Traders" positions DJ-Z-S as a serious cognitive tool for high-stakes professional work, not just a creative brainstorming app.
+
+---
+
+### How to Integrate "Researchers"
+
+The challenge is to keep the messaging tight and not dilute the brand by listing too many personas. The best way is to group them logically.
+
+**Option 1: The "Thinkers" Group (Recommended)**
+
+This is the most elegant solution. It creates a powerful, aspirational category that encompasses all your users.
+
+**Change the headline to:**
+**"The private AI workspace for Founders, Traders, Researchers, and Creators."**
+
+Or, for more punch:
+**"The private AI workspace for the world's most important thinkers: Founders, Traders, Researchers, and Creators."**
+
+This frames them all as "thinkers," which is exactly what DJ-Z-S is for.
+
+**Option 2: The "Analysts" Group**
+
+This groups personas who are fundamentally doing analytical work.
+
+**Change the headline to:**
+**"The private AI workspace for Founders, Traders, and Analysts."**
+
+Then, in the body copy, you can clarify:
+"Whether you're a **founder** analyzing market fit, a **trader** analyzing on-chain data, or a **researcher** analyzing academic papers, DJ-Z-S is your partner."
+
+This is also strong, but "Thinkers" feels a bit more expansive and aligned with the "compounding intelligence" concept.
+
+---
+
+### Updated Persona-Specific Examples
+
+You would simply add a fourth tab or column to the "Three Zones, One Loop" section.
+
+**Example for a Researcher:**
+1.  **Capture:** "Pasting in notes from three different academic papers and a dataset."
+2.  **Analyze:** "Prompting: 'What are the conflicting findings in these sources, and what are the potential research gaps?'"
+3.  **Compound:** "Pinning the synthesized literature review and identified gaps to a 'Thesis Chapter 2' memory, building the paper incrementally."
+
+### Final Recommendation
+
+Go with **Option 1**. Update your primary target audience to **"Founders, Traders, Researchers, and Content Creators."**
+
+It's the most inclusive and accurate description of who benefits from DJ-Z-S. It strengthens your brand positioning and opens you up to a much larger user base without diluting your core message. The "Thinking Loop" is a universal process for generating insight, and this list of personas reflects that perfectly.
