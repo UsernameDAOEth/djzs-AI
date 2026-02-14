@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ArrowLeft, Shield, HardDrive, Bot, Lock, Users, Globe, BookOpen, Search, Sparkles, Brain, Pin, Video, Headphones, MessageSquare, AlertTriangle, Eye, RefreshCw, TrendingUp, Briefcase, BarChart3, Palette, Zap, Download, Wallet, ChevronRight } from "lucide-react";
+import { ArrowLeft, Shield, HardDrive, Bot, Lock, Users, Globe, BookOpen, Search, Sparkles, Brain, Pin, Video, Headphones, MessageSquare, AlertTriangle, Eye, RefreshCw, TrendingUp, Briefcase, BarChart3, Palette, Zap, Download, Wallet, ChevronRight, FlaskConical } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
@@ -28,7 +28,7 @@ export default function About() {
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase" data-testid="text-about-title">About DJ-Z-S</h1>
           <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">Your strategy, your alpha, your ideas. They shouldn't live on someone else's server.</p>
-          <p className="text-sm text-gray-400 mb-12 leading-relaxed">The private AI workspace for Founders, Traders, and Creators to turn raw thoughts into refined output. Local-first. End-to-End Encrypted. Built on decentralized inference.</p>
+          <p className="text-sm text-gray-400 mb-12 leading-relaxed">The private AI workspace for Founders, Traders, Researchers, and Creators to turn raw thoughts into refined output. Local-first. End-to-End Encrypted. Built on decentralized inference.</p>
 
           <div className="space-y-14 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
 
@@ -98,6 +98,12 @@ export default function About() {
                   label="For Creators"
                   accent="#7B6B8D"
                   text="Your unique angle, your content strategy, and your unreleased ideas are your IP. Most platforms are designed to mine it. DJ-Z-S is your private studio to brainstorm, outline, and develop your voice without feeding the machine that wants to replace you."
+                />
+                <PersonaCallout
+                  icon={<FlaskConical className="w-4 h-4" />}
+                  label="For Researchers"
+                  accent="#2E8B8B"
+                  text="Your hypotheses, unpublished findings, and proprietary datasets are your competitive advantage. Exposing them to centralized AI tools risks leaking your work before publication. DJ-Z-S is the private lab where your research can be synthesized, challenged, and refined by AI — without leaving your control."
                 />
               </div>
             </section>
@@ -172,6 +178,16 @@ export default function About() {
                     { step: "Capture", text: "Brainstorming a chaotic list of video ideas for the next quarter." },
                     { step: "Analyze", text: "Asking: 'Group these ideas by theme and identify the most unique angle.' The AI cross-references your pinned notes on audience feedback." },
                     { step: "Compound", text: "Pinning the refined content pillars to your 'Q2 Strategy' memory, creating a clear plan from a messy brainstorm." },
+                  ]}
+                />
+                <PersonaWorkflow
+                  icon={<FlaskConical className="w-4 h-4" />}
+                  label="Researcher Workflow"
+                  accent="#2E8B8B"
+                  steps={[
+                    { step: "Capture", text: "Pasting in notes from three different academic papers and a dataset." },
+                    { step: "Analyze", text: "Prompting: 'What are the conflicting findings in these sources, and what are the potential research gaps?'" },
+                    { step: "Compound", text: "Pinning the synthesized literature review and identified gaps to a 'Thesis Chapter 2' memory, building the paper incrementally." },
                   ]}
                 />
               </div>
@@ -487,7 +503,7 @@ export default function About() {
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>14</span> Built by Us, for Us
               </h2>
               <p className="mb-4">
-                DJ-Z-S.box is built by a small team of builders who are also users. We're founders who've had strategic thinking leak through centralized tools. Traders who've seen alpha evaporate when shared with the wrong platform. Creators tired of training their own replacements.
+                DJ-Z-S.box is built by a small team of builders who are also users. We're founders who've had strategic thinking leak through centralized tools. Traders who've seen alpha evaporate when shared with the wrong platform. Researchers whose unpublished findings were exposed to centralized AI. Creators tired of training their own replacements.
               </p>
               <p className="mb-4">
                 We built the tool we desperately needed: a sovereign workspace where your roadmap stays your roadmap, your thesis stays your thesis, and your unreleased ideas stay unreleased until you decide otherwise.

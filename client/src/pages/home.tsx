@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3 } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -644,6 +644,108 @@ export default function Home() {
 
       <RevealSection>
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+                <FlaskConical className="w-6 h-6" style={{ color: '#2E8B8B' }} />
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Researchers</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-researchers-headline">
+                Synthesize faster. Think deeper. Publish with confidence.
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
+                Research means drowning in sources — papers, datasets, conflicting findings. DJZS turns fragmented knowledge into structured insight, helping you identify gaps, resolve contradictions, and build your thesis incrementally.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+              <div className="p-8 rounded-2xl border transition-all hover:border-teal-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-researcher-research">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                  <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Literature & Data Synthesis</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Build dossiers on papers, datasets, and source materials
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    AI identifies conflicting findings and research gaps
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
+                    Track claims with trust levels — separate signal from noise
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-researcher-journal">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                  <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
+                <h3 className="text-xl font-bold text-white mb-3">Research Log</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Document hypotheses, observations, and methodology notes
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    AI tracks how your thinking evolves across studies
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
+                    Surfaces assumptions and blind spots in your reasoning
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-researcher-partner">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+                  <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
+                <h3 className="text-xl font-bold text-white mb-3">Thesis Advisor</h3>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Challenges your thesis before peer review does
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Connects findings across papers and datasets
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
+                    Identifies gaps in your argument before you publish
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-researcher-cta">
+              <p className="text-lg font-bold text-white mb-2">Stop drowning in sources. Start compounding research intelligence.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every finding documented. Every contradiction surfaced. Every thesis built incrementally.</p>
+              <Link href="/chat">
+                <button
+                  className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                  style={{ background: '#2E8B8B', boxShadow: '0 6px 24px rgba(46,139,139,0.3)' }}
+                  data-testid="button-start-researcher-thinking"
+                >
+                  Start Thinking
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
