@@ -133,7 +133,7 @@ export default function Docs() {
             DJZS Documentation
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            A decentralized, quantum-resilient AI thinking system. Local-first storage, E2E encrypted messaging, and decentralized inference.
+            The private AI workspace for Founders, Traders, Researchers, and Creators. Build a "compounding intelligence" that is 100% yours.
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
@@ -149,13 +149,13 @@ export default function Docs() {
             <h2 className="text-2xl font-bold text-white mb-4">What is DJZS?</h2>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p className="text-lg">
-                DJZS is a <strong className="text-white">decentralized, quantum-resilient AI thinking system designed for sovereign users</strong>. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. No centralized model training on your thoughts. No cloud surveillance layer.
+                DJ-Z-S is the <strong className="text-white">private AI workspace for the world's most important thinkers: Founders, Traders, Researchers, and Creators</strong>. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. No centralized model training on your thoughts. No cloud surveillance layer.
               </p>
               <p>
-                Three zones — Journal, Research, and Thinking Partner — form one loop: capture your thinking locally, reflect with decentralized AI, and compound insights securely. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
+                Three zones — Journal, Research, and Thinking Partner — form one loop: capture your thinking locally, analyze with a private AI, and compound the results into a living knowledge base. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
               </p>
               <p>
-                The AI is your thinking partner, not a chatbot. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your intelligence compounds without becoming platform exhaust.
+                The AI is your thinking partner, not a chatbot. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your intelligence compounds without becoming platform exhaust. We call this <strong className="text-white">compounding intelligence</strong>.
               </p>
             </div>
           </div>
@@ -305,22 +305,22 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-white mb-8">Why This Level of Privacy</h2>
+          <h2 className="text-2xl font-bold text-white mb-8">Your Thinking is a Data Mine</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20 mb-8" data-testid="card-why-privacy-docs">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
                 <Shield className="w-6 h-6 text-orange-400" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Your raw thinking is more sensitive than anything else you share online.</h3>
+                <h3 className="text-xl font-bold text-white">Every day, you capture your most valuable thoughts in digital notebooks. But where does that data really go?</h3>
               </div>
             </div>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p>
-                Social posts are curated. Emails are edited. But your daily thinking — the half-formed ideas, the doubts, the unfiltered analysis of what's working and what isn't — that's your most vulnerable data. A thinking system that captures this deserves the highest possible privacy standard.
+                Your product roadmap. Your trade thesis. Your unpublished research. Your unreleased content strategy. This is your most sensitive data — and it shouldn't feed centralized AI models. Most apps say "we value your privacy" while building business models that depend on accessing your data.
               </p>
               <p>
-                Most apps say "we value your privacy" while building business models that depend on accessing your data. DJZS is designed differently from the ground up:
+                DJZS is designed differently from the ground up:
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 mb-6">
@@ -937,50 +937,47 @@ export default function Docs() {
 
         <motion.section variants={fadeUp} className="mb-20">
           <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.03]">
-            <h2 className="text-2xl font-bold text-white mb-6">Philosophy</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-xs font-bold text-orange-400 uppercase tracking-wide mb-3">What DJZS Is</h3>
-                <ul className="space-y-2 text-gray-400">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    An AI journaling partner
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    A thinking partner
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    A tool for clarity
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    Local-first and private
-                  </li>
-                </ul>
+            <h2 className="text-2xl font-bold text-white mb-6">Our Philosophy</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-5 rounded-xl border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }}>
+                <div className="flex items-center gap-3 mb-3">
+                  <HardDrive className="w-5 h-5 text-orange-400" />
+                  <h3 className="text-sm font-bold text-white">Local-First</h3>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Your journal and memory vault are stored locally in your browser. They are never on our servers. This isn't a feature; it's the foundation of our privacy model.</p>
+              </div>
+              <div className="p-5 rounded-xl border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }}>
+                <div className="flex items-center gap-3 mb-3">
+                  <Shield className="w-5 h-5 text-teal-400" />
+                  <h3 className="text-sm font-bold text-white">Sovereign</h3>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">We believe you should have a digital space that is truly yours. DJ-Z-S is your sovereign workspace, free from the prying eyes of ad-tech and AI companies.</p>
+              </div>
+              <div className="p-5 rounded-xl border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
+                <div className="flex items-center gap-3 mb-3">
+                  <Brain className="w-5 h-5 text-purple-400" />
+                  <h3 className="text-sm font-bold text-white">Uncensored</h3>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Our AI is designed to be your thinking partner, not your censor. It won't refuse to explore controversial ideas or sensitive strategies. Your thoughts are your own.</p>
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                <Users className="w-6 h-6 text-orange-400" />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">What DJZS Is Not</h3>
-                <ul className="space-y-2 text-gray-500">
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500/50 mt-1">✗</span>
-                    AI therapist
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500/50 mt-1">✗</span>
-                    AI coach
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500/50 mt-1">✗</span>
-                    Memory system or "second brain"
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500/50 mt-1">✗</span>
-                    Content generator
-                  </li>
-                </ul>
+                <h3 className="text-xl font-bold text-white">Built by Dj-z-s</h3>
+                <p className="text-xs text-orange-400/80">Solo Founder</p>
               </div>
+            </div>
+            <div className="space-y-4 text-gray-400 leading-relaxed">
+              <p>After years of building in Web3 and watching founders, traders, researchers, and creators have their most valuable ideas scraped and profited from by centralized platforms, I decided to build the tool I desperately needed.</p>
+              <p>DJ-Z-S isn't a faceless startup; it's a project with a singular mission: to give you a private space to do your best work. Your trust is the only thing that matters here.</p>
             </div>
           </div>
         </motion.section>
