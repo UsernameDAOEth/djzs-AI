@@ -1,0 +1,106 @@
+DJZS AI
+A private, local-first AI journaling partner and research vault.
+Your writing is stored locally on your device by default, and you control what gets sent to AI.
+
+Repository: github.com/UsernameDAOEth/djzs-box
+
+Overview
+DJZS AI is an AI journaling partner for thinking and research. It creates a private space where you can process ideas, track patterns in your thinking, and develop clarity — without the AI taking over.
+
+Unlike traditional journaling apps that store your data on remote servers, or AI assistants that generate content for you, DJZS AI is built on a different philosophy:
+
+Your thinking should stay yours.
+
+The AI doesn't auto-generate your life or silently build a shadow profile. It supports reflection through prompts, pattern spotting, and synthesis — and you decide what to keep.
+
+What's true today (privacy-first claims)
+DJZS AI is designed around privacy, but we only claim what is implemented and verifiable:
+
+We DO claim (implemented)
+Local-first storage: Journal and research data is stored in your browser using IndexedDB (Dexie).
+User control over AI: Content is only sent to AI when you explicitly run a "Think with me" / research action.
+Offline-capable journaling: You can write and browse your vault without an internet connection (AI/research requires internet).
+We do NOT claim (unless implemented)
+Encryption-at-rest for your IndexedDB vault (planned).
+End-to-end encryption for AI (AI requests are not E2EE).
+"Quantum-resistant encryption" (requires specific PQ cryptography and documentation).
+"Your data never leaves your device" (it does when you send text for AI analysis).
+If you want these stronger claims, implement them first and document them clearly.
+
+Features
+Journal Zone
+Your private space to think, reflect, and achieve clarity with an AI thinking partner.
+
+Deep Reasoning: AI helps surface patterns, connections, and blind spots
+Reflective Questions: prompts designed to deepen your thinking
+Memory Pinning: save insights worth keeping long-term
+Context Awareness: AI can consider recent entries + pinned memories (client-selected context)
+Local-First Storage: stored locally in IndexedDB on your device
+Offline Support: write and browse locally without internet
+Research Zone
+Search and synthesize information, then track claims over time.
+
+Brave Mode: privacy-oriented search via Brave API (when configured)
+Web Mode: live web-style synthesis (provider dependent)
+Explain Mode: knowledge synthesis without live browsing
+Dossiers: organize research into named folders
+Claim Tracking: save key takeaways with trust levels and status
+Cross-Zone Linking: connect claims to journal entries and pins
+Video Journal
+Record or upload video directly within your journal entries, stored on decentralized infrastructure.
+
+In-Browser Recording: record video journals using your device camera
+File Upload: upload existing video files (up to 500MB)
+Resumable Uploads: TUS protocol ensures reliable uploads even on slow connections
+Decentralized Storage: videos stored on Livepeer's decentralized network
+Playback: watch past video journal entries inline with your written reflections
+Download: download your videos anytime from past entries
+Core Principles
+Principle	Description
+Local-First	Your vault lives on your device (IndexedDB). Sync is optional/future, not required.
+User-Controlled AI	The AI only sees what you intentionally submit for analysis.
+Thinking Partner	Helps you think — spots patterns and asks questions rather than replacing your voice.
+No Surveillance	No feeds, no attention loops, no social graph. A tool for thinking, not a network.
+Memory Control	You decide what to pin and keep. Nothing is auto-saved as "memory" without you.
+Wallet Identity (optional)	Wallet-based identity can be used for auth/gating where enabled.
+Data Flow (clear + accurate)
+You write → saved locally (instant)
+You click "Think with me" → selected entry + selected pins/context sent to the server /api/* → forwarded to AI provider(s)
+AI responds → returned to client → saved locally
+Nothing syncs by default unless you export or enable an optional sync feature
+AI actions require internet. Local journaling does not.
+
+Web2 vs "User-Owned" Thinking
+Your private thoughts deserve better than default Web2 patterns.
+
+Web2 apps tend to store journals on remote servers and monetize behavior.
+DJZS Box is built to keep your vault local and give you control over what gets shared.
+Web2 (Centralized)	DJZS Box posture (Local-first)
+Identity	Email/password accounts	Wallet login optional (where enabled)
+Data	Stored on company servers	Stored locally by default
+Control	Platform decides access	You control export + local data
+Portability	Walled gardens	Export-first direction
+Privacy	Tracking + profiling incentives	Minimize data collection
+What DJZS Box is / isn't
+DJZS Box is:
+
+an AI journaling partner
+a thinking partner
+a tool for clarity
+local-first and privacy-minded
+DJZS Box is not:
+
+an AI therapist
+an "AI coach" making life decisions for you
+a surveillance-based "second brain"
+a content generator
+Quick Start
+Prerequisites
+Node.js 18+
+npm (or yarn)
+Wallet (optional, only if using wallet-gated features)
+Install
+git clone https://github.com/UsernameDAOEth/djzs-box.git
+cd djzs-box
+npm install
+npm run dev
