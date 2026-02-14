@@ -538,12 +538,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!name || typeof name !== "string") {
         return res.status(400).json({ error: "Video name is required" });
       }
-      const result = await createUploadUrl(name);
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Livepeer API timeout")), 15000));
+      const result = await Promise.race([createUploadUrl(name), timeoutPromise]);
       res.json(result);
     } catch (error) {
       console.error("Error creating video upload URL:", error);
       if (error instanceof Error && error.message.includes("LIVEPEER_API_KEY")) {
         return res.status(503).json({ error: "Video service not configured" });
+      }
+      if (error instanceof Error && error.message.includes("timeout")) {
+        return res.status(504).json({ error: "Video service timed out. Please try again." });
       }
       res.status(500).json({ error: "Failed to create upload URL" });
     }

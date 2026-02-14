@@ -174,7 +174,8 @@ export async function analyzeJournalEntry(
     throw new Error("No content in Venice response");
   }
 
-  const parsed = JSON.parse(content);
+  const sanitizedContent = content.replace(/[\x00-\x1F\x7F]/g, (ch: string) => ch === '\n' || ch === '\r' || ch === '\t' ? ch : ' ');
+  const parsed = JSON.parse(sanitizedContent);
   return journalAnalysisSchema.parse(parsed);
 }
 
@@ -241,7 +242,8 @@ export async function analyzeResearchEntry(
     throw new Error("No content in Venice response");
   }
 
-  const parsed = JSON.parse(content);
+  const sanitizedContent = content.replace(/[\x00-\x1F\x7F]/g, (ch: string) => ch === '\n' || ch === '\r' || ch === '\t' ? ch : ' ');
+  const parsed = JSON.parse(sanitizedContent);
   return researchAnalysisSchema.parse(parsed);
 }
 
@@ -351,7 +353,8 @@ export async function synthesizeResearch(query: string, webMode: boolean): Promi
     throw new Error("No JSON found in response");
   }
   
-  const parsed = JSON.parse(jsonMatch[0]);
+  const sanitizedMatch = jsonMatch[0].replace(/[\x00-\x1F\x7F]/g, (ch: string) => ch === '\n' || ch === '\r' || ch === '\t' ? ch : ' ');
+  const parsed = JSON.parse(sanitizedMatch);
   
   // Parse web search citations from Venice response if available
   let sources: { title: string; url: string; snippet: string }[] = [];
@@ -466,7 +469,8 @@ Synthesize these results into actionable knowledge.`;
   
   let parsed: { keyTakeaways?: string[]; whatToCheckNext?: string[]; confidence?: string; synthesisMarkdown?: string };
   try {
-    parsed = JSON.parse(jsonMatch[0]);
+    const sanitized = jsonMatch[0].replace(/[\x00-\x1F\x7F]/g, (ch: string) => ch === '\n' || ch === '\r' || ch === '\t' ? ch : ' ');
+    parsed = JSON.parse(sanitized);
   } catch (parseError) {
     console.error("JSON parse error in Brave synthesis:", parseError);
     return {
