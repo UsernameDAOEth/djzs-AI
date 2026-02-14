@@ -337,54 +337,6 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-stability-headline">
-                Why DJZS
-              </h2>
-              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                Your thoughts. Your insights. Your edge. Never mined. Never monetized.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <StabilityCard
-                icon={<HardDrive className="w-6 h-6" />}
-                title="Your Thinking Stays Yours"
-                description="Your thoughts, insights, and research never leave your device unless you say so. No cloud backups. No server copies. No silent syncing. You own the exit."
-                accent="#F37E20"
-              />
-              <StabilityCard
-                icon={<Brain className="w-6 h-6" />}
-                title="Your AI Doesn't Train on You"
-                description="You're not the training data. Your prompts aren't scraped, stored, or used to train someone else's model. The AI works for you—not the other way around."
-                accent="#2E8B8B"
-              />
-              <StabilityCard
-                icon={<Lock className="w-6 h-6" />}
-                title="Your Conversations Are Private"
-                description="Even if your device is hacked, your past messages stay secure. Encryption keys rotate automatically. Your thinking stays private—no matter what."
-                accent="#7B6B8D"
-              />
-              <StabilityCard
-                icon={<Shield className="w-6 h-6" />}
-                title="Your Past Is Protected"
-                description="If someone gets into your system today, they can't read what you wrote yesterday. Your history is locked—even if your present is exposed."
-                accent="#FFB84D"
-              />
-              <StabilityCard
-                icon={<TrendingUp className="w-6 h-6" />}
-                title="Your Knowledge Grows Smarter"
-                description="Your insights don't just pile up—they connect. Memory Pins link ideas across time. Your thinking gets sharper, not just noisier."
-                accent="#F37E20"
-              />
-            </div>
-          </div>
-        </section>
-      </RevealSection>
-
-      <RevealSection>
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
@@ -1189,52 +1141,6 @@ function ZoneFeatureCard({
         </div>
       </motion.div>
     </Link>
-  );
-}
-
-function StabilityCard({
-  icon,
-  title,
-  description,
-  accent = '#F37E20',
-}: {
-  icon: ReactNode;
-  title: string;
-  description: string;
-  accent?: string;
-}) {
-  return (
-    <motion.div
-      whileHover={{ y: -4, scale: 1.01 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className="group relative p-8 rounded-2xl overflow-hidden cursor-default"
-      style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.06)',
-      }}
-      data-testid={`card-stability-${title.toLowerCase().replace(/\s+/g, '-')}`}
-    >
-      <div
-        className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }}
-      />
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500 blur-3xl"
-        style={{ background: accent }}
-      />
-      <div
-        className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-all duration-300"
-        style={{
-          background: `rgba(255,255,255,0.04)`,
-          border: `1px solid rgba(255,255,255,0.08)`,
-          color: accent,
-        }}
-      >
-        {icon}
-      </div>
-      <h3 className="text-lg font-bold text-white mb-3 tracking-tight">{title}</h3>
-      <p className="text-sm leading-relaxed" style={{ color: '#8a8ba0' }}>{description}</p>
-    </motion.div>
   );
 }
 

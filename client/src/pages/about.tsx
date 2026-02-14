@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ArrowLeft, Shield, HardDrive, Bot, Lock, Users, Globe, BookOpen, Search, Sparkles, Brain, Pin, Video, Headphones, MessageSquare, AlertTriangle, Eye, RefreshCw } from "lucide-react";
+import { ArrowLeft, Shield, HardDrive, Bot, Lock, Users, Globe, BookOpen, Search, Sparkles, Brain, Pin, Video, Headphones, MessageSquare, AlertTriangle, Eye, RefreshCw, TrendingUp } from "lucide-react";
+import type { ReactNode } from "react";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -43,7 +44,46 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> Three Zones, One Loop
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> Why DJZS
+              </h2>
+              <p className="mb-6">Your thoughts. Your insights. Your edge. Never mined. Never monetized.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <WhyCard
+                  icon={<HardDrive className="w-5 h-5" />}
+                  title="Your Thinking Stays Yours"
+                  description="Your thoughts, insights, and research never leave your device unless you say so. No cloud backups. No server copies. No silent syncing. You own the exit."
+                  accent="#F37E20"
+                />
+                <WhyCard
+                  icon={<Brain className="w-5 h-5" />}
+                  title="Your AI Doesn't Train on You"
+                  description="You're not the training data. Your prompts aren't scraped, stored, or used to train someone else's model. The AI works for you—not the other way around."
+                  accent="#2E8B8B"
+                />
+                <WhyCard
+                  icon={<Lock className="w-5 h-5" />}
+                  title="Your Conversations Are Private"
+                  description="Even if your device is hacked, your past messages stay secure. Encryption keys rotate automatically. Your thinking stays private—no matter what."
+                  accent="#7B6B8D"
+                />
+                <WhyCard
+                  icon={<Shield className="w-5 h-5" />}
+                  title="Your Past Is Protected"
+                  description="If someone gets into your system today, they can't read what you wrote yesterday. Your history is locked—even if your present is exposed."
+                  accent="#FFB84D"
+                />
+                <WhyCard
+                  icon={<TrendingUp className="w-5 h-5" />}
+                  title="Your Knowledge Grows Smarter"
+                  description="Your insights don't just pile up—they connect. Memory Pins link ideas across time. Your thinking gets sharper, not just noisier."
+                  accent="#F37E20"
+                />
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>03</span> Three Zones, One Loop
               </h2>
               <p className="mb-6">
                 DJZS is built around three interconnected zones that form a single thinking loop: 
@@ -84,7 +124,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>03</span> The Thinking Loop
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> The Thinking Loop
               </h2>
               <p className="mb-6">Every feature in DJZS feeds back into one loop designed to compound your intelligence:</p>
               <div className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.05]">
@@ -122,7 +162,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> Why This Level of Privacy
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> Why This Level of Privacy
               </h2>
               <div className="p-6 rounded-xl border border-orange-500/20 mb-6" style={{ background: 'rgba(243,126,32,0.03)' }} data-testid="card-why-privacy">
                 <div className="flex items-center gap-3 mb-4">
@@ -169,7 +209,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> What We Don't Do
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> What We Don't Do
               </h2>
               <div className="p-6 rounded-xl bg-orange-500/5 border border-orange-500/20 mb-4">
                 <ul className="space-y-3">
@@ -199,7 +239,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Decentralized AI by Design
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Decentralized AI by Design
               </h2>
               <p className="mb-5">DJZS integrates decentralized AI inference using Venice, rather than centralized AI providers.</p>
               <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4">
@@ -228,7 +268,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> AI Agents Under the Hood
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> AI Agents Under the Hood
               </h2>
               <p className="mb-5">Three specialized AI agents power the system. Each one is triggered only when you take action — never automatically.</p>
               <div className="space-y-3">
@@ -262,7 +302,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Memory Pins & Compounding Intelligence
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Memory Pins & Compounding Intelligence
               </h2>
               <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4" data-testid="card-memory-pins">
                 <div className="flex items-center gap-3 mb-3">
@@ -283,7 +323,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Additional Tools
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> Additional Tools
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
@@ -432,6 +472,37 @@ export default function About() {
           </div>
         </motion.div>
       </main>
+    </div>
+  );
+}
+
+function WhyCard({ icon, title, description, accent = '#F37E20' }: {
+  icon: ReactNode;
+  title: string;
+  description: string;
+  accent?: string;
+}) {
+  return (
+    <div
+      className="group relative p-5 rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-0.5"
+      style={{
+        background: 'rgba(255,255,255,0.02)',
+        border: '1px solid rgba(255,255,255,0.06)',
+      }}
+      data-testid={`card-why-${title.toLowerCase().replace(/\s+/g, '-')}`}
+    >
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }}
+      />
+      <div
+        className="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
+        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: accent }}
+      >
+        {icon}
+      </div>
+      <h3 className="text-white font-bold text-sm mb-2">{title}</h3>
+      <p className="text-xs leading-relaxed text-gray-500">{description}</p>
     </div>
   );
 }
