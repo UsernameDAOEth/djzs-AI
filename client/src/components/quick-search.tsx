@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Search, X, BookOpen, Globe, Layers, ArrowRight, Clock } from "lucide-react";
-import { searchEntries, type VaultEntry, type EntryType } from "@/lib/vault";
+import { Search, X, BookOpen, Globe, Layers, ArrowRight, Clock, Tag, FileText } from "lucide-react";
+import { vault, searchEntries, type VaultEntry, type EntryType } from "@/lib/vault";
+import { useLiveQuery } from "dexie-react-hooks";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -21,6 +22,11 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  const recentEntries = useLiveQuery(
+    () => vault.entries.orderBy("createdAt").reverse().limit(8).toArray(),
+    []
+  );
 
   useEffect(() => {
     if (open) {
@@ -76,45 +82,58 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
     onClose();
   };
 
+  const displayItems = query.trim()
+    ? results
+    : (recentEntries ?? []).filter(e => filter === "all" || e.type === filter);
+
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [displayItems.length, filter]);
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (displayItems.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelectedIndex(i => Math.min(i + 1, results.length - 1));
-      scrollToSelected(selectedIndex + 1);
+      const next = Math.min(selectedIndex + 1, displayItems.length - 1);
+      setSelectedIndex(next);
+      scrollToSelected(next);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelectedIndex(i => Math.max(i - 1, 0));
-      scrollToSelected(selectedIndex - 1);
-    } else if (e.key === "Enter" && results.length > 0) {
+      const prev = Math.max(selectedIndex - 1, 0);
+      setSelectedIndex(prev);
+      scrollToSelected(prev);
+    } else if (e.key === "Enter") {
       e.preventDefault();
-      handleSelect(results[selectedIndex]);
+      const clamped = Math.min(selectedIndex, displayItems.length - 1);
+      if (displayItems[clamped]) handleSelect(displayItems[clamped]);
     }
   };
 
   const scrollToSelected = (index: number) => {
     if (!resultsRef.current) return;
     const items = resultsRef.current.querySelectorAll("[data-search-item]");
-    items[index]?.scrollIntoView({ block: "nearest" });
+    const clamped = Math.max(0, Math.min(index, items.length - 1));
+    items[clamped]?.scrollIntoView({ block: "nearest" });
   };
 
   const highlightMatch = (text: string, q: string) => {
-    if (!q.trim()) return text.slice(0, 160) + (text.length > 160 ? "..." : "");
+    if (!q.trim()) return text.slice(0, 140) + (text.length > 140 ? "..." : "");
     const lower = text.toLowerCase();
     const qLower = q.toLowerCase();
     const idx = lower.indexOf(qLower);
-    if (idx < 0) return text.slice(0, 160) + (text.length > 160 ? "..." : "");
+    if (idx < 0) return text.slice(0, 140) + (text.length > 140 ? "..." : "");
 
-    const contextStart = Math.max(0, idx - 50);
-    const contextEnd = Math.min(text.length, idx + q.length + 100);
+    const contextStart = Math.max(0, idx - 40);
+    const contextEnd = Math.min(text.length, idx + q.length + 90);
     const before = (contextStart > 0 ? "..." : "") + text.slice(contextStart, idx);
     const match = text.slice(idx, idx + q.length);
     const after = text.slice(idx + q.length, contextEnd) + (contextEnd < text.length ? "..." : "");
 
     return (
       <>
-        <span className="text-gray-500">{before}</span>
+        <span className="text-gray-400">{before}</span>
         <span className="text-orange-400 font-semibold bg-orange-500/15 px-0.5 rounded">{match}</span>
-        <span className="text-gray-500">{after}</span>
+        <span className="text-gray-400">{after}</span>
       </>
     );
   };
@@ -146,12 +165,16 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="relative w-full max-w-xl rounded-2xl border border-white/[0.08] shadow-2xl overflow-hidden"
-            style={{ background: "#1a1d26" }}
+            className="relative w-full max-w-xl rounded-2xl overflow-hidden"
+            style={{
+              background: 'linear-gradient(180deg, #1e2130 0%, #1a1d26 100%)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), 0 0 80px -20px rgba(243,126,32,0.06)',
+            }}
             onClick={(e) => e.stopPropagation()}
             data-testid="quick-search-panel"
           >
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.06]">
               <Search className="w-5 h-5 text-gray-500 shrink-0" />
               <input
                 ref={inputRef}
@@ -160,13 +183,13 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                 onChange={(e) => handleQueryChange(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search your entries..."
-                className="flex-1 bg-transparent text-sm text-white placeholder-gray-600 outline-none"
+                className="flex-1 bg-transparent text-base text-white placeholder-gray-600 outline-none"
                 data-testid="input-quick-search-modal"
               />
               {query && (
                 <button
                   onClick={() => { setQuery(""); setResults([]); }}
-                  className="text-gray-500 hover:text-white transition-colors"
+                  className="p-1 text-gray-500 hover:text-white transition-colors"
                   data-testid="button-clear-search-modal"
                 >
                   <X className="w-4 h-4" />
@@ -177,12 +200,12 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
               </kbd>
             </div>
 
-            <div className="flex items-center gap-1.5 px-4 py-2 border-b border-white/[0.04]">
+            <div className="flex items-center gap-2 px-5 py-2.5 border-b border-white/[0.04]">
               {filters.map(({ key, label, icon: Icon }) => (
                 <button
                   key={key}
                   onClick={() => handleFilterChange(key)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     filter === key
                       ? key === "journal"
                         ? "text-orange-400 bg-orange-500/10 border border-orange-500/20"
@@ -197,9 +220,14 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                   {label}
                 </button>
               ))}
-              {query && (
+              {isSearching && (
+                <div className="ml-auto">
+                  <div className="w-3.5 h-3.5 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
+                </div>
+              )}
+              {query && !isSearching && (
                 <span className="ml-auto text-[10px] text-gray-600">
-                  {isSearching ? "Searching..." : `${results.length} ${results.length === 1 ? "result" : "results"}`}
+                  {results.length} {results.length === 1 ? "result" : "results"}
                 </span>
               )}
             </div>
@@ -209,51 +237,58 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
               className="max-h-[50vh] overflow-y-auto overscroll-contain"
               style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,0.1) transparent" }}
             >
-              {!query && (
-                <div className="flex flex-col items-center justify-center py-12 text-center px-6">
-                  <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-3">
-                    <Search className="w-6 h-6 text-orange-400/60" />
-                  </div>
-                  <p className="text-sm text-gray-500 mb-1">Search your thinking</p>
-                  <p className="text-xs text-gray-600">Find past journal entries and research notes instantly</p>
-                  <div className="flex items-center gap-4 mt-4 text-[10px] text-gray-600">
-                    <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] font-mono">↑↓</kbd> navigate</span>
-                    <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] font-mono">↵</kbd> select</span>
-                    <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] font-mono">esc</kbd> close</span>
-                  </div>
+              {!query.trim() && displayItems.length > 0 && (
+                <div className="px-5 pt-3 pb-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
+                    Recent entries
+                  </span>
                 </div>
               )}
 
-              {query && results.length === 0 && !isSearching && (
-                <div className="flex flex-col items-center justify-center py-12 text-center px-6">
-                  <p className="text-sm text-gray-500">No entries match "<span className="text-gray-400">{query}</span>"</p>
-                  <p className="text-xs text-gray-600 mt-1">Try different keywords or change the filter</p>
+              {displayItems.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-14 text-center px-6">
+                  {query.trim() ? (
+                    <>
+                      <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-3">
+                        <Search className="w-6 h-6 text-gray-600" />
+                      </div>
+                      <p className="text-sm text-gray-400 font-medium">No entries match "{query}"</p>
+                      <p className="text-xs text-gray-600 mt-1">Try different keywords or change the filter</p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-3">
+                        <Search className="w-6 h-6 text-orange-400/60" />
+                      </div>
+                      <p className="text-sm text-gray-400 font-medium">Search your thinking</p>
+                      <p className="text-xs text-gray-600 mt-1">Find past journal entries and research notes instantly</p>
+                    </>
+                  )}
                 </div>
-              )}
-
-              {results.length > 0 && (
+              ) : (
                 <div className="py-1">
-                  {results.map((entry, i) => (
+                  {displayItems.map((entry, i) => (
                     <button
                       key={entry.id}
                       data-search-item
                       onClick={() => handleSelect(entry)}
                       onMouseEnter={() => setSelectedIndex(i)}
-                      className={`w-full text-left px-4 py-3 flex items-start gap-3 transition-colors ${
+                      className={`group w-full text-left px-5 py-3.5 flex items-start gap-3.5 transition-all duration-150 ${
                         i === selectedIndex ? "bg-white/[0.05]" : "hover:bg-white/[0.03]"
                       }`}
                       data-testid={`search-result-modal-${entry.id}`}
                     >
                       <div
-                        className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                        style={{
-                          background: entry.type === "journal" ? "rgba(243,126,32,0.12)" : "rgba(46,139,139,0.12)",
-                        }}
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                          entry.type === "journal"
+                            ? "bg-orange-500/10 text-orange-400"
+                            : "bg-teal-500/10 text-teal-400"
+                        }`}
                       >
                         {entry.type === "journal" ? (
-                          <BookOpen className="w-3.5 h-3.5 text-orange-400" />
+                          <FileText className="w-4 h-4" />
                         ) : (
-                          <Globe className="w-3.5 h-3.5 text-teal-400" />
+                          <Globe className="w-4 h-4" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -265,28 +300,45 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                             <Clock className="w-2.5 h-2.5" />
                             {format(new Date(entry.createdAt), "MMM d, yyyy")}
                           </span>
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-600">
+                            {entry.type}
+                          </span>
                           {entry.tags && entry.tags.length > 0 && (
-                            <span className="text-[10px] text-gray-600">
-                              {entry.tags.slice(0, 2).join(", ")}
-                            </span>
+                            <>
+                              <span className="text-gray-700">·</span>
+                              <span className="flex items-center gap-1 text-[10px] text-gray-600 truncate max-w-[120px]">
+                                <Tag className="w-2.5 h-2.5" />
+                                {entry.tags.slice(0, 2).join(", ")}
+                              </span>
+                            </>
                           )}
                         </div>
                       </div>
-                      <ArrowRight className={`w-3.5 h-3.5 shrink-0 mt-1 transition-opacity ${i === selectedIndex ? "text-orange-400 opacity-100" : "opacity-0"}`} />
+                      <ArrowRight className={`w-3.5 h-3.5 shrink-0 mt-1.5 transition-all duration-150 ${
+                        i === selectedIndex ? "text-orange-400 opacity-100 translate-x-0" : "opacity-0 -translate-x-1"
+                      }`} />
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            <div className="px-4 py-2 border-t border-white/[0.04] flex items-center justify-between">
+            <div className="px-5 py-2.5 border-t border-white/[0.04] flex items-center justify-between">
               <div className="flex items-center gap-3 text-[10px] text-gray-600">
+                <span className="flex items-center gap-1">
+                  <kbd className="px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] font-mono text-[9px]">↑↓</kbd>
+                  navigate
+                </span>
+                <span className="flex items-center gap-1">
+                  <kbd className="px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] font-mono text-[9px]">↵</kbd>
+                  select
+                </span>
                 <span className="flex items-center gap-1">
                   <kbd className="px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] font-mono text-[9px]">⌘K</kbd>
                   toggle
                 </span>
               </div>
-              <p className="text-[10px] text-gray-700">Searches locally stored entries</p>
+              <p className="text-[10px] text-gray-700">Local search only</p>
             </div>
           </motion.div>
         </motion.div>
