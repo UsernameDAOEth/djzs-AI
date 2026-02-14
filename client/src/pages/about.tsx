@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ArrowLeft, Shield, HardDrive, Bot, Lock, Users, Globe, BookOpen, Search, Sparkles, Brain, Pin, Video, Headphones, MessageSquare, AlertTriangle, Eye, RefreshCw, TrendingUp, Briefcase, BarChart3, Palette, Zap, Download, Wallet, ChevronRight, FlaskConical } from "lucide-react";
+import { ArrowLeft, Shield, HardDrive, Bot, Lock, Globe, BookOpen, Search, Sparkles, Brain, Pin, Video, Headphones, MessageSquare, AlertTriangle, RefreshCw, Briefcase, BarChart3, Palette, Zap, Download, Wallet, ChevronRight, FlaskConical, User } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
@@ -15,7 +15,7 @@ export default function About() {
     <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
+          <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group" data-testid="link-back-home">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="text-xs font-black uppercase tracking-[0.2em]">Back to System</span>
           </Link>
@@ -27,71 +27,34 @@ export default function About() {
       <main className="max-w-3xl mx-auto px-6 pt-32 pb-20">
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase" data-testid="text-about-title">About DJ-Z-S</h1>
-          <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">Your strategy, your alpha, your ideas. They shouldn't live on someone else's server.</p>
-          <p className="text-sm text-gray-400 mb-12 leading-relaxed">The private AI workspace for Founders, Traders, Researchers, and Creators to turn raw thoughts into refined output. Local-first. End-to-End Encrypted. Built on decentralized inference.</p>
+          <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">Your strategy, your alpha, your research. They shouldn't live on someone else's server.</p>
+          <p className="text-sm text-gray-400 mb-12 leading-relaxed">DJ-Z-S is the private AI workspace for the world's most important thinkers: <strong className="text-white">Founders, Traders, Researchers, and Creators.</strong> We help you build a "compounding intelligence" that is 100% yours.</p>
 
           <div className="space-y-14 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> Our Mission
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> The Problem — Your Thinking is a Data Mine
               </h2>
-              <p className="mb-4">Your product roadmap. Your trade thesis. Your unreleased content strategy. This is your most sensitive data — and it shouldn't feed centralized AI models. We believe your inner dialogue should remain sovereign: locally stored, decentralized when processed, and cryptographically protected in transit.</p>
-              <p>
-                We're building cognitive infrastructure that amplifies your thinking without capturing it. The AI runs on decentralized inference, not centralized SaaS endpoints. Your data stays on your device, not our servers. Your edge stays yours.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> Why DJZS
-              </h2>
-              <p className="mb-6">Your strategy. Your alpha. Your IP. Never mined. Never monetized.</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <WhyCard
-                  icon={<HardDrive className="w-5 h-5" />}
-                  title="Your Strategy Stays Sovereign"
-                  description="Your roadmap, thesis, and unreleased ideas never leave your device unless you say so. No cloud backups. No server copies. No silent syncing. You own the exit."
-                  accent="#F37E20"
-                />
-                <WhyCard
-                  icon={<Brain className="w-5 h-5" />}
-                  title="Your AI Doesn't Leak Your Edge"
-                  description="Your prompts aren't scraped, stored, or used to train someone else's model. Your competitive analysis stays yours. The AI works for you — not the other way around."
-                  accent="#2E8B8B"
-                />
-                <WhyCard
-                  icon={<Lock className="w-5 h-5" />}
-                  title="Your Alpha Is Encrypted"
-                  description="Even if your device is compromised, your past messages stay secure. Encryption keys rotate automatically. Your thesis stays private — no matter what."
-                  accent="#7B6B8D"
-                />
-                <WhyCard
-                  icon={<Shield className="w-5 h-5" />}
-                  title="Your Past Moves Are Protected"
-                  description="If someone gets into your system today, they can't read what you analyzed yesterday. Your history is locked — even if your present is exposed."
-                  accent="#FFB84D"
-                />
-                <WhyCard
-                  icon={<TrendingUp className="w-5 h-5" />}
-                  title="Your Knowledge Compounds"
-                  description="Your insights don't just pile up — they connect. Memory Pins link ideas across time. Your thinking gets sharper and your edge grows, not just your note count."
-                  accent="#F37E20"
-                />
-              </div>
-
+              <p className="mb-6">Every day, you capture your most valuable thoughts in digital notebooks. But where does that data really go?</p>
               <div className="space-y-3">
                 <PersonaCallout
                   icon={<Briefcase className="w-4 h-4" />}
                   label="For Founders"
                   accent="#F37E20"
-                  text="Your product roadmap, fundraising strategy, and competitive analysis are your most valuable assets. Using standard AI note apps is like leaving your M.O. on a coffee shop table. DJ-Z-S ensures your strategic thinking remains sovereign."
+                  text="Your product roadmap, fundraising strategy, and competitive analysis are your most valuable assets. Using standard AI note apps is like leaving your M.O. on a coffee shop table. Their business model is to read your mail."
                 />
                 <PersonaCallout
                   icon={<BarChart3 className="w-4 h-4" />}
                   label="For Traders"
                   accent="#2E8B8B"
-                  text="Your thesis on a trade, your analysis of on-chain data, and your risk management rules are your alpha. Exposing that to a third-party AI leaks your edge. DJ-Z-S is the encrypted vault where your thesis can be stress-tested by AI without ever leaving your control."
+                  text="Your thesis on a trade, your analysis of on-chain data, and your risk management rules are your alpha. Exposing that to a third-party AI leaks your edge. You're training a model that will be sold to your competitors."
+                />
+                <PersonaCallout
+                  icon={<FlaskConical className="w-4 h-4" />}
+                  label="For Researchers"
+                  accent="#2E8B8B"
+                  text="Your literature reviews, raw data, and nascent hypotheses are the foundation of your work. Centralized AI platforms can co-opt your findings and flag your inquiries. Your research deserves a sovereign space."
                 />
                 <PersonaCallout
                   icon={<Palette className="w-4 h-4" />}
@@ -99,22 +62,15 @@ export default function About() {
                   accent="#7B6B8D"
                   text="Your unique angle, your content strategy, and your unreleased ideas are your IP. Most platforms are designed to mine it. DJ-Z-S is your private studio to brainstorm, outline, and develop your voice without feeding the machine that wants to replace you."
                 />
-                <PersonaCallout
-                  icon={<FlaskConical className="w-4 h-4" />}
-                  label="For Researchers"
-                  accent="#2E8B8B"
-                  text="Your hypotheses, unpublished findings, and proprietary datasets are your competitive advantage. Exposing them to centralized AI tools risks leaking your work before publication. DJ-Z-S is the private lab where your research can be synthesized, challenged, and refined by AI — without leaving your control."
-                />
               </div>
             </section>
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>03</span> Three Zones, One Loop
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> The Solution — Three Zones, One Loop
               </h2>
               <p className="mb-6">
-                DJZS is built around three interconnected zones that form a single thinking loop: 
-                <strong className="text-white"> capture → AI analyzes and connects → insights compound</strong>. Each zone serves a specific purpose, but together they make your thinking measurably sharper over time.
+                DJ-Z-S is built around a simple, powerful workflow: capture your thoughts, analyze them with a private AI, and compound the results into a living knowledge base. We call it the <strong className="text-white">Thinking Loop</strong>.
               </p>
               <div className="space-y-4 mb-8">
                 <div className="p-5 rounded-xl border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }} data-testid="card-zone-journal">
@@ -149,15 +105,15 @@ export default function About() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-white font-bold text-xs uppercase tracking-widest">See it in action</h3>
+                <h3 className="text-white font-bold text-xs uppercase tracking-widest">See how it works for you</h3>
                 <PersonaWorkflow
                   icon={<Briefcase className="w-4 h-4" />}
                   label="Founder Workflow"
                   accent="#F37E20"
                   steps={[
                     { step: "Capture", text: "Journaling about a new feature idea and potential go-to-market challenges." },
-                    { step: "Analyze", text: "Using 'Think with me' to ask: 'What are the biggest risks here?' The AI pulls in your pinned notes about past competitor failures." },
-                    { step: "Compound", text: "Pinning the synthesized risk analysis to your 'Product Roadmap' memory, making it instantly accessible for the next planning session." },
+                    { step: "Analyze", text: "Use 'Think with me' to ask: 'What are the biggest risks here?' The AI pulls in your pinned notes about past competitor failures." },
+                    { step: "Compound", text: "Pin the synthesized risk analysis to your 'Product Roadmap' memory, making it instantly accessible for the next planning session." },
                   ]}
                 />
                 <PersonaWorkflow
@@ -165,19 +121,9 @@ export default function About() {
                   label="Trader Workflow"
                   accent="#2E8B8B"
                   steps={[
-                    { step: "Capture", text: "Pasting in on-chain data about a new token and your initial gut reaction." },
-                    { step: "Analyze", text: "Prompting: 'What bullish and bearish signals are present in this data compared to my thesis on DePIN?'" },
-                    { step: "Compound", text: "Pinning the AI-generated summary to your 'DePIN Thesis' memory, building a living, analyzable database of your trade logic." },
-                  ]}
-                />
-                <PersonaWorkflow
-                  icon={<Palette className="w-4 h-4" />}
-                  label="Creator Workflow"
-                  accent="#7B6B8D"
-                  steps={[
-                    { step: "Capture", text: "Brainstorming a chaotic list of video ideas for the next quarter." },
-                    { step: "Analyze", text: "Asking: 'Group these ideas by theme and identify the most unique angle.' The AI cross-references your pinned notes on audience feedback." },
-                    { step: "Compound", text: "Pinning the refined content pillars to your 'Q2 Strategy' memory, creating a clear plan from a messy brainstorm." },
+                    { step: "Capture", text: "Paste in on-chain data about a new token and your initial gut reaction." },
+                    { step: "Analyze", text: "Prompt: 'What bullish and bearish signals are present in this data compared to my thesis on DePIN?'" },
+                    { step: "Compound", text: "Pin the AI-generated summary to your 'DePIN Thesis' memory, building a living, analyzable database of your trade logic." },
                   ]}
                 />
                 <PersonaWorkflow
@@ -185,9 +131,19 @@ export default function About() {
                   label="Researcher Workflow"
                   accent="#2E8B8B"
                   steps={[
-                    { step: "Capture", text: "Pasting in notes from three different academic papers and a dataset." },
-                    { step: "Analyze", text: "Prompting: 'What are the conflicting findings in these sources, and what are the potential research gaps?'" },
-                    { step: "Compound", text: "Pinning the synthesized literature review and identified gaps to a 'Thesis Chapter 2' memory, building the paper incrementally." },
+                    { step: "Capture", text: "Paste in notes from three different academic papers and a dataset." },
+                    { step: "Analyze", text: "Prompt: 'What are the conflicting findings in these sources, and what are the potential research gaps?'" },
+                    { step: "Compound", text: "Pin the synthesized literature review and identified gaps to a 'Thesis Chapter 2' memory, building the paper incrementally." },
+                  ]}
+                />
+                <PersonaWorkflow
+                  icon={<Palette className="w-4 h-4" />}
+                  label="Creator Workflow"
+                  accent="#7B6B8D"
+                  steps={[
+                    { step: "Capture", text: "Brainstorm a chaotic list of video ideas for the next quarter." },
+                    { step: "Analyze", text: "Ask: 'Group these ideas by theme and identify the most unique angle.' The AI cross-references your pinned notes on audience feedback." },
+                    { step: "Compound", text: "Pin the refined content pillars to your 'Q2 Strategy' memory, creating a clear plan from a messy brainstorm." },
                   ]}
                 />
               </div>
@@ -195,84 +151,75 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> The Thinking Loop
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>03</span> Our Philosophy
               </h2>
-              <p className="mb-6">Every feature in DJZS feeds back into one loop designed to compound your edge:</p>
-              <div className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-7 h-7 rounded-full bg-orange-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-orange-400">1</span>
-                    </div>
-                    <div>
-                      <p className="text-white font-semibold mb-1">Capture your thinking</p>
-                      <p className="text-xs text-gray-500">Strategy sessions, trade analysis, content outlines, or open questions — saved instantly to your device's local storage. Nothing leaves your machine.</p>
-                    </div>
+              <div className="space-y-4">
+                <div className="p-5 rounded-xl border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <HardDrive className="w-5 h-5 text-orange-400" />
+                    <h3 className="text-white font-bold">Local-First</h3>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-7 h-7 rounded-full bg-orange-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-orange-400">2</span>
-                    </div>
-                    <div>
-                      <p className="text-white font-semibold mb-1">AI analyzes when you ask</p>
-                      <p className="text-xs text-gray-500">Click "Think with me" and your entry + memory pins + recent context are sent to Venice AI for analysis. Get back structured insights: patterns, claims, open questions, and strategic recommendations.</p>
-                    </div>
+                  <p className="text-gray-400">Your journal and memory vault are stored locally in your browser. They are never on our servers. This isn't a feature; it's the foundation of our privacy model. There's nothing to hack, subpoena, or sell.</p>
+                </div>
+                <div className="p-5 rounded-xl border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <Shield className="w-5 h-5 text-teal-400" />
+                    <h3 className="text-white font-bold">Sovereign</h3>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-7 h-7 rounded-full bg-orange-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-orange-400">3</span>
-                    </div>
-                    <div>
-                      <p className="text-white font-semibold mb-1">Your edge compounds</p>
-                      <p className="text-xs text-gray-500">AI results are saved locally. Memory pins carry forward context. Past entries connect to new ones. Your knowledge base grows sharper over time — every analysis makes the next one more valuable.</p>
-                    </div>
+                  <p className="text-gray-400">We believe you should have a digital space that is truly yours. DJ-Z-S is designed to be your sovereign workspace, free from the prying eyes of ad-tech and AI companies. Your roadmap stays your roadmap. Your thesis stays your thesis.</p>
+                </div>
+                <div className="p-5 rounded-xl border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <Brain className="w-5 h-5 text-purple-400" />
+                    <h3 className="text-white font-bold">Uncensored</h3>
                   </div>
+                  <p className="text-gray-400">Our AI is designed to be your thinking partner, not your censor. It won't refuse to explore controversial ideas or sensitive strategies. Your thoughts are your own.</p>
                 </div>
               </div>
             </section>
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> Why This Level of Privacy
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> The Tech — How We Keep It Private
               </h2>
-              <div className="p-6 rounded-xl border border-orange-500/20 mb-6" style={{ background: 'rgba(243,126,32,0.03)' }} data-testid="card-why-privacy">
-                <div className="flex items-center gap-3 mb-4">
-                  <Eye className="w-5 h-5 text-orange-400" />
-                  <p className="text-white font-bold">Your unfiltered thinking is your most valuable — and most vulnerable — asset.</p>
+              <p className="mb-6">We use a hybrid architecture to balance powerful AI with uncompromising privacy.</p>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <HardDrive className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-white font-bold text-xs mb-1">Your Data</p>
+                    <p className="text-xs text-gray-500">Your journal entries, memory vault, research dossiers, and claims are stored locally in your browser's IndexedDB. They never touch our servers.</p>
+                  </div>
                 </div>
-                <div className="space-y-4 text-gray-400">
-                  <p>
-                    Social posts are curated. Pitch decks are polished. But your daily thinking — the half-formed trade thesis, the product pivot you're not sure about, the content angle no one else sees — that's your real edge. A thinking system that captures this deserves the highest possible privacy standard.
-                  </p>
-                  <p>
-                    Most apps say "we value your privacy" while building business models that depend on accessing your data. DJZS is designed differently from the ground up:
-                  </p>
-                  <ul className="space-y-2 text-xs">
-                    <li className="flex items-start gap-3">
-                      <HardDrive className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
-                      <span><strong className="text-white">Local-first storage</strong> — All entries, insights, memory pins, research dossiers, and claims live in your browser's IndexedDB. We don't have a database of your thoughts. There's nothing to hack, subpoena, or sell.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Bot className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
-                      <span><strong className="text-white">User-controlled AI</strong> — Your text is only sent to AI when you explicitly click "Think with me." Venice AI processes it without storing or training on your data. Nothing happens in the background.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Search className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
-                      <span><strong className="text-white">Privacy-first search</strong> — Brave Search doesn't track or profile you. Venice AI's web search doesn't log queries. Your research stays your research.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Lock className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
-                      <span><strong className="text-white">Wallet-based identity</strong> — No email, no password, no account to breach. Your wallet is your identity. No personal information required. No marketing emails, ever.</span>
-                    </li>
-                  </ul>
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <Bot className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-white font-bold text-xs mb-1">AI Inference</p>
+                    <p className="text-xs text-gray-500">When you use "Think with me," your prompt is sent to a decentralized inference network (via Venice AI) for processing. Your prompts are not stored or used for training. No centralized AI company owns the interaction.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <Wallet className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-white font-bold text-xs mb-1">Identity</p>
+                    <p className="text-xs text-gray-500">You connect with a crypto wallet. It's a login you own, not an email address we can sell. No marketing emails. Ever.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <Lock className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-white font-bold text-xs mb-1">Messaging (XMTP + MLS)</p>
+                    <p className="text-xs text-gray-500">End-to-end encrypted via the MLS protocol with forward secrecy, post-compromise security, and quantum-resistant key encapsulation (XWING KEM). Past messages stay secure even if keys are compromised.</p>
+                  </div>
                 </div>
               </div>
+              <p className="text-xs text-gray-500 mb-4">This is the most private way to access powerful AI today. We are actively researching on-device models to eliminate the inference step in the future.</p>
               <div className="p-4 rounded-xl bg-amber-500/[0.04] border border-amber-500/15">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-xs text-amber-300 font-semibold mb-1">What we're honest about</p>
-                    <p className="text-xs text-gray-500">When you click "Think with me," your entry text is sent to Venice AI over the internet for processing. This is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because we believe you deserve to know exactly when your data leaves your device.</p>
+                    <p className="text-xs text-gray-500">When you click "Think with me," your entry text is sent to Venice AI over the internet for processing. This is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because you deserve to know exactly when your data leaves your device.</p>
                   </div>
                 </div>
               </div>
@@ -280,66 +227,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> What We Don't Do
-              </h2>
-              <div className="p-6 rounded-xl bg-orange-500/5 border border-orange-500/20 mb-4">
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
-                    <span className="text-orange-400 mt-0.5">×</span>
-                    <span><strong className="text-white">No custody of funds</strong> — We never hold, access, or control your crypto assets</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-orange-400 mt-0.5">×</span>
-                    <span><strong className="text-white">No automatic transactions</strong> — Nothing happens without your explicit approval</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-orange-400 mt-0.5">×</span>
-                    <span><strong className="text-white">No data harvesting</strong> — Your entries, research, and trade analysis stay on your device</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-orange-400 mt-0.5">×</span>
-                    <span><strong className="text-white">No tracking or profiling</strong> — We don't analyze your behavior for ads or sell your patterns</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-orange-400 mt-0.5">×</span>
-                    <span><strong className="text-white">No background AI calls</strong> — AI is never triggered without your explicit action</span>
-                  </li>
-                </ul>
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Decentralized AI by Design
-              </h2>
-              <p className="mb-5">DJZS integrates decentralized AI inference using Venice, rather than centralized AI providers. Your prompts don't feed Big Tech's models.</p>
-              <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4">
-                <h3 className="text-white font-bold mb-3 text-xs">What this means for your workflow</h3>
-                <ul className="space-y-2 text-xs text-gray-500">
-                  <li className="flex items-start gap-3">
-                    <span className="text-orange-400 mt-0.5 shrink-0">+</span>
-                    <span>Your prompts are not stored or reused for training — your alpha stays yours</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-orange-400 mt-0.5 shrink-0">+</span>
-                    <span>No centralized AI company owns the interaction or your intellectual property</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-orange-400 mt-0.5 shrink-0">+</span>
-                    <span>AI execution is distributed, not monopolized — no single point of failure</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-orange-400 mt-0.5 shrink-0">+</span>
-                    <span>DJZS remains interoperable with future decentralized models as the ecosystem evolves</span>
-                  </li>
-                </ul>
-              </div>
-              <p className="text-xs text-gray-600">AI becomes a tool that sharpens your edge, not a data vacuum that extracts it.</p>
-            </section>
-
-            <section>
-              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Your AI Team
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> Your AI Team
               </h2>
               <p className="mb-5">Three specialized AI agents power the system. Each one is triggered only when you take action — never automatically. They work for you, not on you.</p>
               <div className="space-y-3">
@@ -349,7 +237,7 @@ export default function About() {
                     <h3 className="text-white font-bold text-xs">Your AI Analyst</h3>
                     <span className="text-[10px] text-gray-600 ml-auto">Triggered by "Think with me"</span>
                   </div>
-                  <p className="text-xs text-gray-500">Analyzes your journal entry alongside recent entries and memory pins. Returns structured insights: what you said, why it matters, patterns detected, open questions, and a reflective prompt to push your thinking deeper. Like having a senior strategist review your notes.</p>
+                  <p className="text-xs text-gray-500">Analyzes your journal entry alongside recent entries and memory pins. Returns structured insights: what you said, why it matters, patterns detected, open questions, and a reflective prompt to push your thinking deeper.</p>
                 </div>
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]" data-testid="card-agent-synth">
                   <div className="flex items-center gap-3 mb-2">
@@ -368,12 +256,11 @@ export default function About() {
                   <p className="text-xs text-gray-500">Debates your ideas, stress-tests your thesis, identifies core tensions in your reasoning, suggests reframes, and provides actionable next steps. Connects insights across journal and research zones.</p>
                 </div>
               </div>
-              <p className="text-xs text-gray-600 mt-4">All agents are dispatched through OpenClaw, a unified runner that routes requests and returns structured JSON. You can also access agents via XMTP messaging using prefixes: <span className="font-mono text-gray-500">Journal:</span>, <span className="font-mono text-gray-500">Research:</span>, <span className="font-mono text-gray-500">Thinking:</span></p>
             </section>
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Memory Pins & Compounding Intelligence
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Memory Pins & Compounding Intelligence
               </h2>
               <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4" data-testid="card-memory-pins">
                 <div className="flex items-center gap-3 mb-3">
@@ -388,13 +275,13 @@ export default function About() {
                   <RefreshCw className="w-4 h-4 text-orange-400" />
                   <h3 className="text-white font-bold">Compounding Intelligence</h3>
                 </div>
-                <p className="text-gray-400">Unlike scattered notes that just pile up, DJZS connects today's thinking to yesterday's insights. Memory pins, past-entry connections, and cross-zone synthesis ensure your knowledge base grows smarter over time. Each entry makes the next analysis more valuable — your edge compounds daily.</p>
+                <p className="text-gray-400">Unlike scattered notes that just pile up, DJ-Z-S connects today's thinking to yesterday's insights. Memory pins, past-entry connections, and cross-zone synthesis ensure your knowledge base grows smarter over time. Each entry makes the next analysis more valuable — your edge compounds daily.</p>
               </div>
             </section>
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> Additional Tools
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Additional Tools
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
@@ -410,7 +297,7 @@ export default function About() {
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                   <MessageSquare className="w-5 h-5 text-orange-400 mb-3" />
                   <h3 className="text-white font-bold mb-2">XMTP Messaging</h3>
-                  <p className="text-xs text-gray-500">Interact with AI agents through XMTP decentralized messaging — fully end-to-end encrypted with the MLS protocol and quantum-resistant key encapsulation (XWING KEM). Forward secrecy ensures past messages stay secure even if keys are compromised. Send journal entries, research queries, or thinking questions from any XMTP-compatible app.</p>
+                  <p className="text-xs text-gray-500">Interact with AI agents through XMTP decentralized messaging — fully end-to-end encrypted with quantum-resistant key protection. Send journal entries, research queries, or thinking questions from any XMTP-compatible app.</p>
                 </div>
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                   <Search className="w-5 h-5 text-orange-400 mb-3" />
@@ -422,101 +309,30 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>11</span> Messaging Security (XMTP + MLS)
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Built by Dj-z-s
               </h2>
-              <p className="mb-5">End-to-end encrypted messaging built on Messaging Layer Security (MLS) and the XMTP network.</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <Lock className="w-4 h-4 text-teal-400 mb-2" />
-                  <h3 className="text-white font-bold mb-2 text-xs">Message Confidentiality</h3>
-                  <p className="text-xs text-gray-500">Messages are encrypted using AEAD (Authenticated Encryption with Associated Data). Only intended participants can read the content.</p>
+              <div className="p-6 rounded-xl border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.03)' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-orange-500/15 flex items-center justify-center">
+                    <User className="w-5 h-5 text-orange-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold">Dj-z-s</p>
+                    <p className="text-xs text-gray-500">Solo Founder</p>
+                  </div>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <Shield className="w-4 h-4 text-teal-400 mb-2" />
-                  <h3 className="text-white font-bold mb-2 text-xs">Forward Secrecy</h3>
-                  <p className="text-xs text-gray-500">Encryption keys are ratcheted forward on every message. If a key is compromised, past messages remain secure.</p>
-                </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <RefreshCw className="w-4 h-4 text-teal-400 mb-2" />
-                  <h3 className="text-white font-bold mb-2 text-xs">Post-Compromise Security</h3>
-                  <p className="text-xs text-gray-500">Group secrets are regularly rotated via MLS commit updates. An attacker with old state cannot decrypt future messages.</p>
-                </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <Eye className="w-4 h-4 text-teal-400 mb-2" />
-                  <h3 className="text-white font-bold mb-2 text-xs">Authentication & Integrity</h3>
-                  <p className="text-xs text-gray-500">Messages are digitally signed, preventing impersonation and spoofing. Any tampering is detected cryptographically through MLS and AEAD verification.</p>
-                </div>
-              </div>
-              <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                <h3 className="text-white font-bold mb-2 text-xs">Quantum-Resilient Design</h3>
-                <p className="text-xs text-gray-500">While no production system is fully post-quantum today, the MLS-based architecture allows algorithm upgrades, future post-quantum primitives, and long-term resilience without redesign. XWING KEM protects Welcome messages against "harvest now, decrypt later" attacks.</p>
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>12</span> Research Dossiers & Claims
-              </h2>
-              <p className="mb-4">The Research Zone includes a structured system for tracking what you've learned and how much you trust it:</p>
-              <div className="space-y-3">
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <h3 className="text-white font-bold mb-2 text-xs">Dossiers</h3>
-                  <p className="text-xs text-gray-500">Named folders for organizing research by topic — competitor analysis, market thesis, content strategy, or trade setups. Each dossier holds search queries, AI synthesis results, and tracked claims. Archive or delete when a topic is resolved.</p>
-                </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <h3 className="text-white font-bold mb-2 text-xs">Claims & Trust Levels</h3>
-                  <p className="text-xs text-gray-500">Track specific claims from your research with status labels (<span className="text-green-400">verified</span>, <span className="text-amber-400">uncertain</span>, <span className="text-red-400">to check</span>) and trust levels (high, medium, low, unknown). Link claims back to journal entries to see how your research connects to your thinking.</p>
+                <div className="space-y-4 text-gray-400">
+                  <p>After years of building in Web3 and watching founders, traders, researchers, and creators have their most valuable ideas scraped and profited from by centralized platforms, I decided to build the tool I desperately needed.</p>
+                  <p>DJ-Z-S isn't a faceless startup; it's a project with a singular mission: to give you a private space to do your best work. Your trust is the only thing that matters here.</p>
                 </div>
               </div>
             </section>
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>13</span> Practical Answers
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Open Development
               </h2>
-              <div className="space-y-3">
-                <PracticalItem
-                  icon={<Download className="w-4 h-4" />}
-                  question="Can I export my data?"
-                  answer="Yes. You can export your entire journal and memory vault as a standard file at any time. Your data is yours, period. No lock-in, no hostage negotiations."
-                />
-                <PracticalItem
-                  icon={<Wallet className="w-4 h-4" />}
-                  question="Why a wallet instead of email login?"
-                  answer="Because your identity shouldn't be tied to an email a corporation controls. A wallet is a login you truly own, works in seconds, and keeps you pseudonymous. No marketing emails, no password resets, no data breaches of your credentials."
-                />
-                <PracticalItem
-                  icon={<Zap className="w-4 h-4" />}
-                  question="How fast is the AI?"
-                  answer="AI insights come back in seconds, not minutes. Venice's decentralized inference is built for speed. Your edge depends on fast feedback loops — we optimize for that."
-                />
-                <PracticalItem
-                  icon={<HardDrive className="w-4 h-4" />}
-                  question="What if I clear my browser data?"
-                  answer="Your local vault lives in IndexedDB. Clearing browser data will erase it. We recommend regular exports as backups. Future versions will support encrypted cloud backup options that you control."
-                />
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>14</span> Built by Us, for Us
-              </h2>
-              <p className="mb-4">
-                DJ-Z-S.box is built by a small team of builders who are also users. We're founders who've had strategic thinking leak through centralized tools. Traders who've seen alpha evaporate when shared with the wrong platform. Researchers whose unpublished findings were exposed to centralized AI. Creators tired of training their own replacements.
-              </p>
-              <p className="mb-4">
-                We built the tool we desperately needed: a sovereign workspace where your roadmap stays your roadmap, your thesis stays your thesis, and your unreleased ideas stay unreleased until you decide otherwise.
-              </p>
-              <p>
-                We're not a VC-backed startup racing to monetize your attention. We're building sustainable software that prioritizes your sovereignty over our growth metrics.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>15</span> Open Development
-              </h2>
+              <p className="mb-5">We believe in transparency. You can see exactly what we're building, in real-time. Our development is open for anyone to inspect.</p>
               <div className="flex flex-wrap gap-4">
                 <a 
                   href="https://github.com/UsernameDAOEth/djzs-box" 
@@ -526,7 +342,7 @@ export default function About() {
                   data-testid="link-github"
                 >
                   <Globe className="w-4 h-4 text-orange-400" />
-                  <span className="text-white text-xs font-bold">GitHub</span>
+                  <span className="text-white text-xs font-bold">View Public Commits on GitHub</span>
                 </a>
                 <a 
                   href="https://x.com/Dj_Z_S" 
@@ -535,8 +351,8 @@ export default function About() {
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/30 transition-colors"
                   data-testid="link-twitter"
                 >
-                  <Users className="w-4 h-4 text-orange-400" />
-                  <span className="text-white text-xs font-bold">X / Twitter</span>
+                  <Sparkles className="w-4 h-4 text-orange-400" />
+                  <span className="text-white text-xs font-bold">Follow Progress on X</span>
                 </a>
                 <Link 
                   href="/docs"
@@ -549,12 +365,35 @@ export default function About() {
               </div>
             </section>
 
+            <section>
+              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> FAQ
+              </h2>
+              <div className="space-y-3">
+                <PracticalItem
+                  icon={<Download className="w-4 h-4" />}
+                  question="Can I export my data?"
+                  answer="Yes. You can export your entire journal and memory vault as a standard file at any time. Your data is yours, period."
+                />
+                <PracticalItem
+                  icon={<Wallet className="w-4 h-4" />}
+                  question="How do I get started?"
+                  answer="Connect your wallet in 10 seconds and start your first journal entry. No email, no signup."
+                />
+                <PracticalItem
+                  icon={<Zap className="w-4 h-4" />}
+                  question="Is it fast?"
+                  answer="Yes. We know your edge depends on it. AI insights are delivered in seconds, not minutes."
+                />
+              </div>
+            </section>
+
           </div>
 
           <div className="mt-16 pt-12 border-t border-white/[0.05]">
             <div className="text-center">
-              <p className="text-white font-bold text-lg mb-3">Ready to protect your edge?</p>
-              <p className="text-gray-500 text-sm mb-6">Your strategy, your alpha, your IP — sovereign from day one.</p>
+              <p className="text-white font-bold text-lg mb-3">Ready to protect your best ideas and sharpen your edge?</p>
+              <p className="text-gray-500 text-sm mb-6">Start using DJ-Z-S today.</p>
               <div className="flex flex-wrap gap-3 justify-center">
                 <Link
                   href="/chat"
@@ -577,42 +416,11 @@ export default function About() {
 
           <div className="mt-16 pt-8 border-t border-white/[0.05] text-center">
             <p className="text-xs text-gray-600">
-              © 2026 DJZS SYSTEM / DECENTRALIZED AI FOR SOVEREIGN THINKING
+              &copy; 2026 DJZS SYSTEM / DECENTRALIZED AI FOR SOVEREIGN THINKING
             </p>
           </div>
         </motion.div>
       </main>
-    </div>
-  );
-}
-
-function WhyCard({ icon, title, description, accent = '#F37E20' }: {
-  icon: ReactNode;
-  title: string;
-  description: string;
-  accent?: string;
-}) {
-  return (
-    <div
-      className="group relative p-5 rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-0.5"
-      style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.06)',
-      }}
-      data-testid={`card-why-${title.toLowerCase().replace(/\s+/g, '-')}`}
-    >
-      <div
-        className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }}
-      />
-      <div
-        className="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
-        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: accent }}
-      >
-        {icon}
-      </div>
-      <h3 className="text-white font-bold text-sm mb-2">{title}</h3>
-      <p className="text-xs leading-relaxed text-gray-500">{description}</p>
     </div>
   );
 }
@@ -655,6 +463,7 @@ function PersonaWorkflow({ icon, label, accent, steps }: {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center gap-2 p-4 text-left"
+        data-testid={`button-toggle-${label.toLowerCase().replace(/\s+/g, '-')}`}
       >
         <span style={{ color: accent }}>{icon}</span>
         <span className="text-xs font-bold text-white uppercase tracking-wider">{label}</span>
@@ -709,6 +518,7 @@ function PracticalItem({ icon, question, answer }: {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center gap-3 p-4 text-left"
+        data-testid={`button-faq-${question.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}`}
       >
         <span className="text-orange-400">{icon}</span>
         <span className="text-white font-bold text-xs">{question}</span>
