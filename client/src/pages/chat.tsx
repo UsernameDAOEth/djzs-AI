@@ -1077,6 +1077,16 @@ export default function Chat() {
                 </button>
               );
             })}
+
+            <button
+              onClick={() => setQuickSearchModalOpen(true)}
+              className="w-full flex items-center gap-4 px-4 py-3 mt-3 rounded-xl text-gray-500 hover:text-gray-300 hover:bg-white/[0.03] transition-all group"
+              data-testid="button-sidebar-quick-search"
+            >
+              <Search className="w-5 h-5 text-gray-600 group-hover:text-gray-400 transition-colors" />
+              <span className="text-sm font-bold tracking-tight">Search</span>
+              <kbd className="ml-auto px-1.5 py-0.5 rounded text-[10px] font-mono text-gray-600 border border-white/[0.08] bg-white/[0.03] group-hover:border-white/[0.12]">⌘K</kbd>
+            </button>
           </nav>
 
           <div className="p-4 mt-auto">
