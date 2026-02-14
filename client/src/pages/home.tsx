@@ -153,7 +153,7 @@ export default function Home() {
           <motion.div variants={fadeUp} className="mb-6">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
               <Shield className="w-3.5 h-3.5" />
-              Decentralized Cognitive Infrastructure
+              Decentralized Journaling Zone System
             </span>
           </motion.div>
 
