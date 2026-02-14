@@ -26,9 +26,7 @@ export default function About() {
       <main className="max-w-3xl mx-auto px-6 pt-32 pb-20">
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase" data-testid="text-about-title">About DJ-Z-S</h1>
-          <p className="text-lg text-gray-400 mb-12 leading-relaxed">
-            A decentralized, quantum-resilient AI thinking system designed for sovereign users. Local-first. End-to-end encrypted. Built on decentralized inference.
-          </p>
+          <p className="text-lg text-gray-400 mb-12 leading-relaxed">A decentralized, quantum-resilient AI thinking system designed for sovereign users. Local-first. End-to-End Encrypted. Built on decentralized inference.</p>
 
           <div className="space-y-14 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
 
