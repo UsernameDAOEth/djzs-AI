@@ -1,4 +1,4 @@
-# DJZS Box (GitHub)
+# DJZS AI
 
 **A private, local-first AI journaling partner and research vault.**  
 Your writing is stored locally on your device by default, and you control what gets sent to AI.
@@ -9,9 +9,9 @@ Repository: `github.com/UsernameDAOEth/djzs-box`
 
 ## Overview
 
-DJZS Box is an AI journaling partner for thinking and research. It creates a private space where you can process ideas, track patterns in your thinking, and develop clarity — without the AI taking over.
+DJZS AI is an AI journaling partner for thinking and research. It creates a private space where you can process ideas, track patterns in your thinking, and develop clarity — without the AI taking over.
 
-Unlike traditional journaling apps that store your data on remote servers, or AI assistants that generate content for you, DJZS Box is built on a different philosophy:
+Unlike traditional journaling apps that store your data on remote servers, or AI assistants that generate content for you, DJZS AI is built on a different philosophy:
 
 **Your thinking should stay yours.**
 
@@ -21,7 +21,7 @@ The AI doesn't auto-generate your life or silently build a shadow profile. It su
 
 ## What's true today (privacy-first claims)
 
-DJZS Box is designed around privacy, but we only claim what is implemented and verifiable:
+DJZS AI is designed around privacy, but we only claim what is implemented and verifiable:
 
 ### We DO claim (implemented)
 - **Local-first storage:** Journal and research data is stored in your browser using **IndexedDB (Dexie)**.
@@ -101,9 +101,9 @@ Record or upload video directly within your journal entries, stored on decentral
 Your private thoughts deserve better than default Web2 patterns.
 
 - Web2 apps tend to store journals on remote servers and monetize behavior.
-- DJZS Box is built to keep your vault local and give you control over what gets shared.
+- DJZS AI is built to keep your vault local and give you control over what gets shared.
 
-| | Web2 (Centralized) | DJZS Box posture (Local-first) |
+| | Web2 (Centralized) | DJZS AI posture (Local-first) |
 |---|---|---|
 | Identity | Email/password accounts | Wallet login optional (where enabled) |
 | Data | Stored on company servers | Stored locally by default |
@@ -113,15 +113,15 @@ Your private thoughts deserve better than default Web2 patterns.
 
 ---
 
-## What DJZS Box is / isn't
+## What DJZS AI is / isn't
 
-**DJZS Box is:**
+**DJZS AI is:**
 - an AI journaling partner
 - a thinking partner
 - a tool for clarity
 - local-first and privacy-minded
 
-**DJZS Box is not:**
+**DJZS AI is not:**
 - an AI therapist
 - an "AI coach" making life decisions for you
 - a surveillance-based "second brain"
