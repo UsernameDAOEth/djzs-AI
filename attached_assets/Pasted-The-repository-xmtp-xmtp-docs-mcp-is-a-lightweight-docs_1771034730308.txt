@@ -1,0 +1,95 @@
+The repository `xmtp/xmtp-docs-mcp` is a lightweight, docs-only Model Context Protocol (MCP) server designed to expose XMTP documentation as searchable tools for MCP-compatible clients like Claude Code, Cursor, and VS Code.
+
+Here's a comprehensive overview:
+
+### Purpose
+- Provides structured, queryable access to XMTP documentation for LLM-assisted development workflows.
+- Intended as an internal beta for technical documentation teams to create their own MCP servers.
+
+### Quickstart Guides
+
+#### Claude Code
+1. Add the MCP server:
+   ```bash
+   claude mcp add --transport stdio xmtp-docs -- npx -y github:xmtp/xmtp-docs-mcp
+   ```
+2. Start Claude Code:
+   ```bash
+   claude
+   ```
+3. Inside Claude Code, run `/mcp` to see the `xmtp-docs` server and its tool endpoints.
+
+#### Cursor (Per-Project)
+1. Create `.cursor/mcp.json` in your project root:
+   ```json
+   {
+     "mcpServers": {
+       "xmtp-docs": {
+         "command": "npx",
+         "args": ["-y", "github:xmtp/xmtp-docs-mcp"]
+       }
+     }
+   }
+   ```
+   Note: Use `mcp_servers` if `mcpServers` isn't recognized.
+2. Restart Cursor and select a Claude-based agent (e.g., Sonnet).
+
+#### VS Code (Per-Workspace)
+1. Install the GitHub Copilot extension.
+2. Add the MCP server via:
+   - Command Palette: `MCP: Add Server...` → Command (stdio) → `npx -y github:xmtp/xmtp-docs-mcp`
+   - Or create `.vscode/mcp.json`:
+     ```json
+     {
+       "servers": {
+         "xmtp-docs": {
+           "type": "stdio",
+           "command": "npx",
+           "args": ["-y", "github:xmtp/xmtp-docs-mcp"]
+         }
+       },
+       "inputs": []
+     }
+     ```
+
+### Docs Source
+- Loads the full XMTP LLM docs bundle from: `https://docs.xmtp.org/llms/llms-full.txt`
+
+### Tool Endpoints
+The server exposes two MCP tools:
+1. **`search_xmtp_docs`**: Returns ranked search results with previews.
+2. **`get_xmtp_doc_chunk`**: Fetches full content of a specific chunk by ID.
+
+### Forking for Your Own Docs
+This repo is a template for other documentation teams. To adapt it:
+1. Fork to `your-org/your-docs-mcp`.
+2. Update `package.json` with your project details.
+3. Change the docs URL in `src/index.ts` to your documentation source.
+4. Customize the server name in `src/index.ts`.
+5. Build with `npm install && npm run build`.
+
+### Project Structure
+- `src/index.ts`: Core server logic (loads docs, chunking, MCP tools).
+- `src/cli.ts`: Entry point.
+- `dist/`: Compiled JavaScript output.
+- `package.json`: Dependencies and metadata.
+- `tsconfig.json`: TypeScript settings.
+
+### Technical Details
+- Built on `@modelcontextprotocol/sdk` with `StdioServerTransport`.
+- Uses Zod for runtime validation of tool parameters.
+- Chunks docs by markdown headings (`#`, `##`, `###`) for searchability.
+- Keyword-based search scoring with support for phrases and tokens.
+
+### Local Development
+For contributors only:
+```bash
+npm install
+npm run build
+npm run dev
+```
+
+### License
+CC0-1.0 Universal.
+
+This project simplifies integrating XMTP documentation into AI-powered development environments, making it easier for developers to get contextual help while building with XMTP.
