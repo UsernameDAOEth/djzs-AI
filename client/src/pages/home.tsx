@@ -802,12 +802,8 @@ export default function Home() {
         <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
-                <Shield className="w-4 h-4" style={{ color: '#F37E20' }} />
-                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Privacy Architecture</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight" data-testid="text-privacy-headline">
-                Privacy & Sovereignty Promise
+              <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight uppercase" data-testid="text-privacy-headline">
+                Privacy Architecture
               </h2>
               <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#9a9bb0' }}>
                 Your thoughts are not training data. Your AI is not centralized. Your system is designed to last.
