@@ -1408,7 +1408,7 @@ export default function Chat() {
                     {/* Research: Search bar style - centered */}
                     <div className="space-y-3 sm:space-y-4 text-center">
                       {/* Dossier selector */}
-                      <div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
+                      <div className="flex flex-wrap items-center justify-center gap-2 mb-2 sm:mb-4 px-2 sm:px-0">
                         <div className="relative">
                           <button
                             onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
