@@ -78,6 +78,14 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { VideoUpload, VideoPlayer } from "@/components/video-diary";
 import { MusicPanel } from "@/components/music-panel";
 import { QuickSearch } from "@/components/quick-search";
+import {
+  exportVaultAsZip,
+  importVaultFromZip,
+  importVaultFromJson,
+  requestPersistentStorage,
+  checkPersistentStorage,
+  getLastBackupDate,
+} from "@/lib/vault-backup";
 import { 
   vault, 
   saveEntry, 
@@ -103,6 +111,7 @@ import {
   searchJournalEntriesForTopic,
   exportVault,
   type MemoryPin,
+  type MusicTrack,
   type EntryType,
   type EntryStats,
   type ResearchDossier,
@@ -226,6 +235,11 @@ export default function Chat() {
   const [webModeEnabled, setWebModeEnabled] = useState(true);
   const [braveSearchEnabled, setBraveSearchEnabled] = useState(false);
   const [braveSearchAvailable, setBraveSearchAvailable] = useState(false);
+  const [storagePersisted, setStoragePersisted] = useState<boolean | null>(null);
+  const [lastBackupDate, setLastBackupDateState] = useState<string | null>(getLastBackupDate());
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const importFileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -365,7 +379,10 @@ export default function Chat() {
     };
   }, []);
 
-  // Check capabilities on mount
+  useEffect(() => {
+    checkPersistentStorage().then(setStoragePersisted);
+  }, []);
+
   useEffect(() => {
     fetch('/api/health')
       .then(res => res.json())
@@ -2644,31 +2661,97 @@ export default function Chat() {
                     )}
                   </div>
                 </ScrollArea>
-                <div className="p-4 border-t border-white/[0.04]">
+                <div className="p-4 border-t border-white/[0.04] space-y-3">
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${storagePersisted ? 'bg-green-400' : 'bg-yellow-400'}`} />
+                      <span className="text-[10px] text-gray-500" data-testid="text-storage-status">
+                        {storagePersisted === null ? 'Checking...' : storagePersisted ? 'Persistent storage: On' : 'Persistent storage: Off'}
+                      </span>
+                    </div>
+                    {storagePersisted === false && (
+                      <button
+                        className="text-[10px] text-orange-400 hover:text-orange-300 font-medium"
+                        onClick={async () => {
+                          const granted = await requestPersistentStorage();
+                          setStoragePersisted(granted);
+                          toast({ title: granted ? "Persistent storage enabled" : "Browser denied persistent storage", description: granted ? "Your data is now protected from automatic cleanup" : "Your browser may clear data under storage pressure. Back up regularly." });
+                        }}
+                        data-testid="button-enable-persist"
+                      >
+                        Enable
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-gray-600 px-1" data-testid="text-last-backup">
+                    Last backup: {lastBackupDate ? format(new Date(lastBackupDate), "MMM d, yyyy 'at' h:mm a") : 'never'}
+                  </p>
                   <Button 
                     variant="outline" 
                     className="w-full border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-xl font-medium text-xs transition-all touch-target"
+                    disabled={isExporting}
                     onClick={async () => {
+                      setIsExporting(true);
                       try {
-                        const data = await exportVault();
-                        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                        const blob = await exportVaultAsZip();
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `djzs-vault-${new Date().toISOString().split('T')[0]}.json`;
+                        a.download = `djzs-vault-${new Date().toISOString().split('T')[0]}.zip`;
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
-                        toast({ title: "Vault exported", description: "Your data has been downloaded" });
+                        setLastBackupDateState(getLastBackupDate());
+                        toast({ title: "Vault exported", description: "ZIP archive downloaded (JSON + Markdown)" });
                       } catch (err) {
                         toast({ title: "Export failed", description: "Could not export vault data", variant: "destructive" });
+                      } finally {
+                        setIsExporting(false);
                       }
                     }}
                     data-testid="button-export-vault"
                   >
-                    <Download className="w-4 h-4 mr-2" />
-                    Export Vault
+                    {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+                    {isExporting ? 'Exporting...' : 'Export Vault (.zip)'}
+                  </Button>
+                  <input
+                    ref={importFileRef}
+                    type="file"
+                    accept=".zip,.json"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setIsImporting(true);
+                      try {
+                        const result = file.name.endsWith('.zip')
+                          ? await importVaultFromZip(file)
+                          : await importVaultFromJson(file);
+                        const totalAdded = result.entriesAdded + result.insightsAdded + result.pinsAdded + result.dossiersAdded + result.queriesAdded + result.claimsAdded + result.musicTracksAdded;
+                        const totalSkipped = result.entriesSkipped + result.insightsSkipped + result.pinsSkipped + result.dossiersSkipped + result.queriesSkipped + result.claimsSkipped + result.musicTracksSkipped;
+                        toast({
+                          title: "Import complete",
+                          description: `Added ${totalAdded} items, skipped ${totalSkipped} duplicates`,
+                        });
+                      } catch (err: any) {
+                        toast({ title: "Import failed", description: err.message || "Could not import vault data", variant: "destructive" });
+                      } finally {
+                        setIsImporting(false);
+                        if (importFileRef.current) importFileRef.current.value = '';
+                      }
+                    }}
+                    data-testid="input-import-file"
+                  />
+                  <Button
+                    variant="outline"
+                    className="w-full border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-xl font-medium text-xs transition-all touch-target"
+                    disabled={isImporting}
+                    onClick={() => importFileRef.current?.click()}
+                    data-testid="button-import-vault"
+                  >
+                    {isImporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+                    {isImporting ? 'Importing...' : 'Import Backup (.zip / .json)'}
                   </Button>
                 </div>
               </TabsContent>

@@ -925,6 +925,48 @@ export default function Home() {
                 <p className="mt-3">DJZS works fully offline. If your device is offline, your thinking is offline.</p>
               </FAQItem>
 
+              <FAQItem question="Where is my data stored?">
+                <p className="text-white font-semibold">In your browser's local database (IndexedDB) on this device.</p>
+                <p className="mt-2">DJZS does not use cloud servers for storage. Your journal entries, research dossiers, memory pins, and music tracks all live in your browser's IndexedDB. This data persists across sessions but never leaves your device unless you explicitly send text to the AI or export it.</p>
+                <p className="mt-2">Clearing your browser data will permanently delete this information. We recommend regular backups.</p>
+              </FAQItem>
+
+              <FAQItem question="How do I back up my data?">
+                <p className="text-white font-semibold">Export creates a single ZIP archive containing JSON + Markdown files.</p>
+                <p className="mt-2">Your export includes:</p>
+                <ul className="list-disc list-inside ml-2">
+                  <li>A manifest with version info and checksums</li>
+                  <li>Each entry as structured JSON + human-readable Markdown</li>
+                  <li>Memory pins, research dossiers, queries, and claims</li>
+                  <li>Music tracks (if any)</li>
+                </ul>
+                <p className="mt-2">Import merges new data with your existing vault — it won't overwrite or delete anything. Duplicates are automatically skipped.</p>
+                <p className="text-white mt-2 font-semibold">Your data is yours. You can leave anytime with a complete, readable copy.</p>
+              </FAQItem>
+
+              <FAQItem question="Can I use DJZS on multiple devices?">
+                <p className="text-white font-semibold">Yes, via export and import.</p>
+                <p className="mt-2">Export on device A, import on device B. The import will merge data without duplicating entries. This is manual but works today with zero extra complexity.</p>
+                <p className="mt-2" style={{ color: '#7a7b90' }}>Future: optional XMTP-based E2E encrypted sync across devices (serverless, opt-in).</p>
+              </FAQItem>
+
+              <FAQItem question="Is my local data encrypted?">
+                <p>Currently, IndexedDB data is not encrypted at rest. Anyone with access to your unlocked browser profile can read it.</p>
+                <p className="mt-2" style={{ color: '#7a7b90' }}>Planned: passphrase-based vault encryption (WebCrypto AES-GCM) — set a passphrase, auto-lock timer, encrypted exports.</p>
+                <p className="text-white mt-2 font-semibold">We tell you the truth now so you can trust us later.</p>
+              </FAQItem>
+
+              <FAQItem question="What does the AI see?">
+                <p className="text-white font-semibold">Only the text you choose to send.</p>
+                <ul className="list-disc list-inside ml-2 mt-2">
+                  <li>When you click "Think with me" — your current entry + selected memory pins are sent to Venice AI over HTTPS/TLS</li>
+                  <li>This is <strong className="text-white">not end-to-end encrypted</strong> — Venice sees the plaintext to compute a response</li>
+                  <li>Venice claims no data retention and no training on your inputs</li>
+                  <li>XMTP messaging (to the agent) is fully E2E encrypted via MLS protocol</li>
+                </ul>
+                <p className="mt-2">Nothing is sent in the background. Nothing is scanned. You control every interaction.</p>
+              </FAQItem>
+
               <FAQItem question="How does the AI thinking partner work?">
                 <p>The AI is not a chatbot — it's a structured thinking partner.</p>
                 <p className="mt-2">When you click "Think with me," the AI:</p>
