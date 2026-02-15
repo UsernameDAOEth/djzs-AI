@@ -78,6 +78,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { VideoUpload, VideoPlayer } from "@/components/video-diary";
 import { MusicPanel } from "@/components/music-panel";
 import { QuickSearch } from "@/components/quick-search";
+import { TradeArtifactZone } from "@/components/trade-artifact-composer";
 import {
   exportVaultAsZip,
   importVaultFromZip,
@@ -138,6 +139,7 @@ type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
 const V1_ZONES = [
   { id: "journal", name: "Journal", icon: PenLine, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight." },
   { id: "research", name: "Research", icon: Search, description: "Quick research", purpose: "Search and synthesize information related to your thinking." },
+  { id: "trade", name: "Trade", icon: Receipt, description: "Trade artifacts", purpose: "Build thesis, stress test, sign & track trade artifacts." },
 ];
 
 const JOURNAL_PROMPTS = [
@@ -1309,7 +1311,13 @@ export default function Chat() {
           </header>
 
           {/* Main Content Area - scrollable */}
-          <div className={`flex-1 overflow-y-auto scroll-smooth ${selectedZone === 'journal' ? 'zone-journal' : 'zone-research'}`}>
+          <div className={`flex-1 overflow-y-auto scroll-smooth ${selectedZone === 'journal' ? 'zone-journal' : selectedZone === 'trade' ? 'zone-trade' : 'zone-research'}`}>
+            {selectedZone === 'trade' && (
+              <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-4 sm:py-8">
+                <TradeArtifactZone walletAddress={address} />
+              </div>
+            )}
+            {selectedZone !== 'trade' && (
             <div className="flex flex-col max-w-2xl w-full mx-auto px-4 sm:px-8">
               {/* Writing Area - vertically centered */}
               <div className={`flex-1 flex flex-col justify-center py-4 sm:py-12 ${
@@ -2581,6 +2589,7 @@ export default function Chat() {
                 </div>
               )}
             </div>
+            )}
           </div>
         </main>
 

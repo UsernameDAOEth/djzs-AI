@@ -71,9 +71,18 @@ Preferred communication style: Simple, everyday language.
 - **Component**: `client/src/components/music-panel.tsx` (slide-in panel from right side).
 - **Integration**: "Music" button in journal action bar toggles the panel.
 
-### Key Features (Three Zones, One Loop)
+### Trade Artifacts
+- **Types**: `client/src/lib/trade-artifacts.ts` — TradeThesis, ZoneRef, StressTestReport, RiskSummary, TradeArtifactV1, TradeArtifactRow.
+- **XMTP Bridge**: `client/src/lib/trade-artifacts-xmtp.ts` — send artifacts to trader agents, stream ExecutionReports.
+- **Storage**: `tradeArtifacts` table in Dexie vault (version 6), `++id` PK with `&hash` unique index, denormalized fields for indexing.
+- **Component**: `client/src/components/trade-artifact-composer.tsx` — TradeArtifactZone with 4 tabs (Compose, Stress Test, Risk & Sign, History).
+- **Integration**: Accessible as "Trade" zone in chat sidebar. Uses viem WalletClient for EIP-191 signing, SHA-256 content hashing.
+- **Flow**: Build thesis → AI stress test via Thinking Partner → Risk computation → Sign & store → Optional XMTP send to agent.
+
+### Key Features (Four Zones, One Loop)
 - **Journal Zone**: Write daily thinking → AI auto-summarizes and extracts structured insights (key claims, patterns, open questions). Memory pinning carries context forward. Video entries via Livepeer.
 - **Research Zone**: Save articles/links → AI synthesizes research with journal entries. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking.
+- **Trade Zone**: Build trade thesis → AI stress tests → Risk computation → Wallet-sign artifact → Store locally with content hash → Send to trader agent via XMTP.
 - **Thinking Partner**: One AI agent that connects ideas across journal and research, debates points, finds patterns, and surfaces contradictions. Not a chatbot — a structured thinking partner.
 - **Compounding Intelligence**: Memory pins, past-entry connections, and cross-zone synthesis ensure knowledge grows smarter over time, not just larger.
 - **Music Library**: Upload and play your own music while thinking. Tracks stored locally. Organize by Focus/Reflection/Creative zones.
