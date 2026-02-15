@@ -243,48 +243,6 @@ export default function Home() {
         <section id="how-it-works" className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-zones-headline">
-                Three Zones. One Loop.
-              </h2>
-              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                Each zone feeds the others. Your thinking, research, and insights all connect into a single compounding system.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <ZoneFeatureCard
-                icon={<PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />}
-                color="orange"
-                title="Journal Zone"
-                description="Write your daily thinking. AI auto-summarizes and extracts structured insights — key claims, patterns, and open questions."
-                examplePrompt="I'm rethinking our go-to-market. The bottleneck isn't distribution..."
-                href="/chat"
-              />
-              <ZoneFeatureCard
-                icon={<Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />}
-                color="teal"
-                title="Research Zone"
-                description="Save articles, links, and findings. AI synthesizes research with your daily entries to build a structured knowledge base."
-                examplePrompt="This paper contradicts what I wrote about last Tuesday..."
-                href="/chat?zone=research"
-              />
-              <ZoneFeatureCard
-                icon={<Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />}
-                color="purple"
-                title="Thinking Partner"
-                description="One AI agent that connects your ideas, debates your points, and finds patterns across everything you've written and researched."
-                examplePrompt="What patterns do you see in my thinking about this market?"
-                href="/chat"
-              />
-            </div>
-          </div>
-        </section>
-      </RevealSection>
-
-      <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="text-center mb-16">
               <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
                 <Briefcase className="w-6 h-6" style={{ color: '#F37E20' }} />
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>For Founders</span>
@@ -1151,43 +1109,6 @@ export default function Home() {
         </div>
       )}
     </div>
-  );
-}
-
-function ZoneFeatureCard({
-  icon,
-  color,
-  title,
-  description,
-  examplePrompt,
-  href,
-}: {
-  icon: ReactNode;
-  color: "orange" | "teal" | "purple";
-  title: string;
-  description: string;
-  examplePrompt: string;
-  href: string;
-}) {
-  return (
-    <Link href={href}>
-      <motion.div
-        whileHover={{ y: -4, scale: 1.01 }}
-        transition={{ duration: 0.25, ease: "easeOut" }}
-        className="h-full p-10 rounded-2xl cursor-pointer group transition-colors duration-250"
-        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
-        data-testid={`card-zone-${color}`}
-      >
-        <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-8 transition-colors" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          {icon}
-        </div>
-        <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
-        <p className="text-base leading-relaxed mb-8" style={{ color: '#7a7b90' }}>{description}</p>
-        <div className="px-5 py-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
-          <p className="text-sm font-mono italic" style={{ color: '#555668' }}>"{examplePrompt}"</p>
-        </div>
-      </motion.div>
-    </Link>
   );
 }
 
