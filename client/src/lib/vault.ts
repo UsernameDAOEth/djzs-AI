@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
+import type { TradeArtifactRow } from '@/lib/trade-artifacts';
 
 export type EntryType = 'journal' | 'research';
 export type MemoryKind = 'goal' | 'pattern' | 'preference' | 'project' | 'principle' | 'question' | 'person';
@@ -89,6 +90,7 @@ class VaultDatabase extends Dexie {
   researchQueries!: EntityTable<ResearchQuery, 'id'>;
   researchClaims!: EntityTable<ResearchClaim, 'id'>;
   musicTracks!: EntityTable<MusicTrack, 'id'>;
+  tradeArtifacts!: EntityTable<TradeArtifactRow, 'id'>;
 
   constructor() {
     super('djzs-vault');
@@ -135,6 +137,18 @@ class VaultDatabase extends Dexie {
       researchQueries: '++id, dossierId, createdAt',
       researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
       musicTracks: '++id, name, zone, uploadedAt',
+    });
+
+    this.version(6).stores({
+      entries: '++id, type, createdAt, updatedAt, videoAssetId',
+      insights: '++id, entryId, type, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
+      tradeRecords: '++id, action, status, createdAt',
+      researchDossiers: '++id, name, isArchived, createdAt, updatedAt',
+      researchQueries: '++id, dossierId, createdAt',
+      researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
+      musicTracks: '++id, name, zone, uploadedAt',
+      tradeArtifacts: '++id, &hash, createdAt, thesisAsset, thesisSide, thesisTimeframe, *linkedJournalEntryIds, *linkedResearchDossierIds',
     });
   }
 }
