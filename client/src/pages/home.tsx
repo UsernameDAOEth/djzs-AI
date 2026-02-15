@@ -240,61 +240,6 @@ export default function Home() {
       </motion.section>
 
       <RevealSection>
-        <section id="how-it-works" className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-how-it-works-headline">
-                Capture. Reflect Securely. Compound.
-              </h2>
-              <p className="text-xl max-w-2xl mx-auto" style={{ color: '#7a7b90' }}>
-                Three steps. Decentralized AI. Your intelligence compounds without becoming platform exhaust.
-              </p>
-            </div>
-
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0">
-              <div className="flex flex-col items-center text-center max-w-[220px]" data-testid="step-write">
-                <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
-                  <PenLine className="w-9 h-9" style={{ color: '#F37E20' }} />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">1. Capture Locally</h3>
-                <p className="text-sm" style={{ color: '#7a7b90' }}>Your writing is stored locally on your device. No account required. No forced cloud sync. You decide when and what leaves your machine.</p>
-              </div>
-
-              <div className="hidden md:flex items-center px-4">
-                <ArrowRight className="w-8 h-8" style={{ color: '#555668' }} />
-              </div>
-              <div className="md:hidden py-2">
-                <ChevronDown className="w-6 h-6" style={{ color: '#555668' }} />
-              </div>
-
-              <div className="flex flex-col items-center text-center max-w-[220px]" data-testid="step-ask-ai">
-                <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
-                  <GitBranch className="w-9 h-9" style={{ color: '#2E8B8B' }} />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">2. Reflect with Decentralized AI</h3>
-                <p className="text-sm" style={{ color: '#7a7b90' }}>Requests route to decentralized inference nodes. No centralized model provider stores or trains on your data. No persistent identity required.</p>
-              </div>
-
-              <div className="hidden md:flex items-center px-4">
-                <ArrowRight className="w-8 h-8" style={{ color: '#555668' }} />
-              </div>
-              <div className="md:hidden py-2">
-                <ChevronDown className="w-6 h-6" style={{ color: '#555668' }} />
-              </div>
-
-              <div className="flex flex-col items-center text-center max-w-[220px]" data-testid="step-get-insights">
-                <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
-                  <TrendingUp className="w-9 h-9" style={{ color: '#FFB84D' }} />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">3. Compound Securely</h3>
-                <p className="text-sm" style={{ color: '#7a7b90' }}>Insights are linked, surfaced, and evolved over time. All communication protected by E2E encryption, forward secrecy, and post-compromise security.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </RevealSection>
-
-      <RevealSection>
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
