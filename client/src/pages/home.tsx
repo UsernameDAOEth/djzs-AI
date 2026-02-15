@@ -651,8 +651,12 @@ export default function Home() {
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight uppercase" data-testid="text-different-headline">
-                Decentralized AI by Design
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+                <Zap className="w-6 h-6" style={{ color: '#2E8B8B' }} />
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>Decentralized AI by Design</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-different-headline">
+                AI becomes a tool, not a data vacuum.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
                 DJZS integrates decentralized AI inference via Venice, rather than centralized AI providers. No single company controls the model. No centralized logs of your thinking.
@@ -720,8 +724,12 @@ export default function Home() {
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight uppercase" data-testid="text-think-with-me-headline">
-                How It Actually Works
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
+                <Zap className="w-6 h-6" style={{ color: '#FFB84D' }} />
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#FFB84D' }}>How It Actually Works</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-think-with-me-headline">
+                What happens when you click "Think with me"
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
                 The AI doesn't run in the background. It activates only when you ask. Here's exactly what it does.
@@ -794,8 +802,12 @@ export default function Home() {
         <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
-              <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight uppercase" data-testid="text-privacy-headline">
-                Privacy Architecture
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
+                <Shield className="w-6 h-6" style={{ color: '#F37E20' }} />
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Privacy Architecture</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-privacy-headline">
+                Privacy & Sovereignty Promise
               </h2>
               <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#9a9bb0' }}>
                 Your thoughts are not training data. Your AI is not centralized. Your system is designed to last.
