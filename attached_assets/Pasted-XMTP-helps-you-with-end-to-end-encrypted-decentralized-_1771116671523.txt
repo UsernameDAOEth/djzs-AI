@@ -1,0 +1,55 @@
+XMTP helps you with **end-to-end encrypted, decentralized messaging**. It does **not** automatically make your **Venice inference calls** end-to-end encrypted—because Venice has to see the plaintext prompt to run inference, and your connection to Venice is still a normal HTTPS/TLS API call.
+
+### What XMTP actually gives you (from the docs you linked)
+XMTP positions itself as:
+- **End-to-end encrypted**: messages are encrypted client-side and only recipients can decrypt them.
+- **Decentralized**: messages are distributed across a censorship-resistant network of nodes.
+- **Quantum-resistant**: protection against “harvest now, decrypt later” via post-quantum cryptography (as described in their security docs).
+- Plus identity/consent/content-types primitives for chat apps and agents.
+
+That’s all about **message transport + storage on the XMTP network**, not about encrypting third-party HTTPS APIs you call outside XMTP.
+
+### Why “Venice AI calls use HTTPS, not E2E” can still be true even if you use XMTP
+You likely have two different channels in your architecture:
+
+**Channel A: XMTP messaging (E2E, decentralized)**
+- User device ↔ other user device, or user device ↔ your agent (as an XMTP identity)
+- Encrypted client-side; XMTP nodes can’t read message content
+
+**Channel B: Venice inference (HTTPS/TLS, centralized service)**
+- User device (or your agent) → Venice API over HTTPS
+- Encrypted *in transit* (TLS), but **the Venice endpoint can read the prompt** once it arrives (because it must to compute a response)
+- This is **not E2E** unless Venice itself were an endpoint holding decryption keys (which isn’t how typical inference APIs work)
+
+So your landing page line “Venice AI calls use HTTPS, not E2E encryption” is compatible with “we use XMTP”—as long as you’re honest that XMTP is for **messaging**, while Venice is for **inference**.
+
+### Where XMTP *can* strengthen your product (and what it can’t do)
+**XMTP can:**
+- Provide **E2E + decentralized sync/collaboration** without you running servers (e.g., send encrypted journal deltas to your other devices or collaborators over XMTP).
+- Let users talk to an **agent identity** over XMTP with E2E privacy *up to the agent*.
+- Support “quantum-resistant” messaging properties as XMTP defines them (for the messaging layer).
+
+**XMTP cannot:**
+- Make the **prompt you send to Venice** opaque to Venice. If Venice generates the output, Venice must “see” the input in some form.
+- Turn “centralized inference” into “decentralized inference.” At best, you have **decentralized transport/sync** plus **centralized inference**.
+
+### The copy fix: say the true thing, crisply
+If you want maximum trust and minimum pedantry from technical users, I’d phrase it like this (you can adapt):
+
+- **Messaging & sync (optional):** “If you enable XMTP, your messages/sync traffic are end-to-end encrypted and distributed across the XMTP network.”
+- **AI inference (optional):** “When you ask the AI to analyze text, the selected context is sent to Venice over HTTPS/TLS. This protects data in transit, but it is not end-to-end encrypted with Venice.”
+
+Then avoid the overloaded word “decentralized” unless you define it:
+- “We don’t run app servers” (true)
+- “Sync uses XMTP’s decentralized node network” (true if you do it)
+- “Inference is performed by Venice (a third-party inference provider)” (true)
+
+### The key architectural question (determines what you can claim)
+When you say “I use XMTP,” which of these is it?
+
+1) **XMTP for chat/collab only** (users message each other; journal stays local)  
+2) **XMTP as your sync layer** (your “100% forever” cross-device story)  
+3) **XMTP to talk to an agent** (agent may call Venice)  
+4) All of the above
+
+Answering that lets me tell you exactly what security/privacy claims are valid on the homepage, and which ones will get you called out by technical users.
