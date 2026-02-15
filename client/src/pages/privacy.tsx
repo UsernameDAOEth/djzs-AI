@@ -87,28 +87,40 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> AI Processing
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> Two Data Channels
               </h2>
               <p className="mb-4">
-                When you interact with DJZS AI agents:
+                DJZS uses two separate channels with different privacy properties. We distinguish them clearly:
               </p>
-              <ul className="space-y-3 list-disc pl-4">
-                <li>Queries may be processed by third-party AI providers to generate responses.</li>
-                <li>We minimize data transmission and do not store conversation history on our servers.</li>
-                <li>AI-generated insights are for informational purposes only.</li>
-              </ul>
+              <div className="space-y-4 mb-4">
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <h3 className="text-white font-bold mb-2">XMTP Messaging — End-to-End Encrypted</h3>
+                  <p className="text-xs leading-relaxed">
+                    Messages between you and the DJZS agent travel over the XMTP network with end-to-end encryption (MLS protocol). XMTP nodes cannot read message content. This channel includes forward secrecy, post-compromise security, and quantum-resistant key encapsulation (XWING KEM) on Welcome messages.
+                  </p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <h3 className="text-white font-bold mb-2">Venice AI Inference — HTTPS/TLS (Not E2E)</h3>
+                  <p className="text-xs leading-relaxed">
+                    When you click "Think with me" or run a research query, your selected text is sent to Venice AI over HTTPS/TLS. This means your data is encrypted in transit, but Venice must see the plaintext to compute a response. This is standard for all AI inference APIs — it is <strong className="text-white">not end-to-end encrypted</strong>. Venice claims no data retention and does not train on your inputs. Quantum resistance does not apply to these API calls.
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs" style={{ color: '#9a9bb0' }}>
+                Brave Search queries (in Research mode) are also sent over HTTPS/TLS. Brave claims no tracking or profiling. AI-generated insights are saved locally on your device in IndexedDB.
+              </p>
             </section>
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Data When Using AI
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> What We Send and When
               </h2>
-              <p>
-                When you click "Think with me" or run a research query, the text you selected 
-                is sent to AI providers (Venice AI, Brave Search). These providers claim no data 
-                retention and do not train on your inputs. The AI response is saved locally 
-                on your device in IndexedDB.
-              </p>
+              <ul className="space-y-3 list-none">
+                <li><span className="text-white">• User-initiated only:</span> Nothing is sent to any AI provider unless you explicitly click "Think with me" or submit a research query.</li>
+                <li><span className="text-white">• Minimal context:</span> Only your current entry text and selected memory pins are transmitted — not your entire vault history.</li>
+                <li><span className="text-white">• No server-side storage:</span> We do not permanently store your prompts, entries, or AI responses on any server.</li>
+                <li><span className="text-white">• Responses saved locally:</span> AI-generated insights are stored in your browser's IndexedDB, not on our infrastructure.</li>
+              </ul>
             </section>
 
             <section>
@@ -125,7 +137,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Your Rights
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Not Yet Implemented
               </h2>
               <ul className="space-y-3 list-none">
                 <li><span className="text-white">• Data Portability:</span> Export your local vault data at any time through the interface.</li>

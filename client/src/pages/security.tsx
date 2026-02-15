@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ArrowLeft, Shield, HardDrive, Lock, Fingerprint, Eye, Server, Smartphone, CheckCircle } from "lucide-react";
+import { ArrowLeft, Shield, HardDrive, Lock, Fingerprint, Eye, Server, Smartphone, CheckCircle, MessageSquareLock, Cpu, AlertTriangle } from "lucide-react";
 
 export default function Security() {
   return (
@@ -166,15 +166,88 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> AI Privacy
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> Two Communication Channels
               </h2>
               <p className="mb-4">
-                When you use AI features, we prioritize your privacy:
+                DJZS uses two distinct communication channels with different security properties. We separate them clearly so you know exactly what's protected and how.
+              </p>
+
+              <div className="grid gap-4 mb-6">
+                <div className="p-5 rounded-xl border" style={{ background: 'rgba(46,139,139,0.08)', borderColor: 'rgba(46,139,139,0.25)' }}>
+                  <div className="flex items-start gap-4">
+                    <MessageSquareLock className="w-6 h-6 shrink-0" style={{ color: '#2E8B8B' }} />
+                    <div>
+                      <h3 className="text-white font-bold mb-2">Channel A: XMTP Messaging (E2E Encrypted)</h3>
+                      <p className="text-xs mb-3">Communication between you and the DJZS agent uses the XMTP network.</p>
+                      <ul className="space-y-2 text-xs">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span>Messages are <strong className="text-white">encrypted client-side</strong> — only you and the recipient can read them</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span><strong className="text-white">MLS protocol</strong> with forward secrecy and post-compromise security</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span><strong className="text-white">XWING KEM</strong> quantum-resistant key encapsulation on Welcome messages</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span>Distributed across a <strong className="text-white">censorship-resistant</strong> network of nodes</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-5 rounded-xl border" style={{ background: 'rgba(243,126,32,0.06)', borderColor: 'rgba(243,126,32,0.2)' }}>
+                  <div className="flex items-start gap-4">
+                    <Cpu className="w-6 h-6 text-orange-400 shrink-0" />
+                    <div>
+                      <h3 className="text-white font-bold mb-2">Channel B: Venice AI Inference (HTTPS/TLS)</h3>
+                      <p className="text-xs mb-3">When you ask the AI to analyze your thinking, the selected context is sent to Venice for inference.</p>
+                      <ul className="space-y-2 text-xs">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span>Data is <strong className="text-white">encrypted in transit</strong> via HTTPS/TLS</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span>Venice claims <strong className="text-white">no data retention</strong> and no training on your inputs</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <AlertTriangle className="w-3.5 h-3.5 text-yellow-400 mt-0.5 shrink-0" />
+                          <span>This is <strong className="text-white">not end-to-end encrypted</strong> — Venice must see your plaintext prompt to compute a response</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <AlertTriangle className="w-3.5 h-3.5 text-yellow-400 mt-0.5 shrink-0" />
+                          <span>Quantum resistance does <strong className="text-white">not</strong> apply to Venice API calls</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <p className="text-xs leading-relaxed">
+                  <strong className="text-white">In short:</strong> XMTP handles messaging with full E2E encryption. Venice handles AI inference over standard HTTPS — encrypted in transit but not end-to-end. We are transparent about this distinction because trust requires honesty.
+                </p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> AI Provider Privacy
+              </h2>
+              <p className="mb-4">
+                When you use AI features, only the context you select is transmitted:
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
-                  <span><strong className="text-white">Venice AI</strong> — Privacy-first AI with no data retention or training on your inputs</span>
+                  <span><strong className="text-white">Venice AI</strong> — Claims no data retention or training on your inputs. Your prompt is sent over HTTPS/TLS (not E2E encrypted)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
@@ -182,14 +255,18 @@ export default function Security() {
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
-                  <span><strong className="text-white">Minimal transmission</strong> — Only the current context is sent, not your entire history</span>
+                  <span><strong className="text-white">Minimal transmission</strong> — Only the current entry + memory context is sent, not your entire history</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <span><strong className="text-white">User-initiated only</strong> — Nothing is sent unless you explicitly click "Think with me" or run a research query</span>
                 </li>
               </ul>
             </section>
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Security Best Practices
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Security Best Practices
               </h2>
               <p className="mb-4">
                 To maximize your security while using DJ-Z-S.box:
@@ -205,7 +282,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Report a Vulnerability
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Report a Vulnerability
               </h2>
               <p>
                 If you discover a security vulnerability, please report it responsibly through our 
