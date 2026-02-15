@@ -240,7 +240,7 @@ export default function Home() {
       </motion.section>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+        <section id="how-it-works" className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-zones-headline">
