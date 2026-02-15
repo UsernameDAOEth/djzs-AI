@@ -724,12 +724,8 @@ export default function Home() {
         <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
-                <Zap className="w-4 h-4" style={{ color: '#FFB84D' }} />
-                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#FFB84D' }}>How It Actually Works</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-think-with-me-headline">
-                What happens when you click "Think with me"
+              <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight uppercase" data-testid="text-think-with-me-headline">
+                How It Actually Works
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
                 The AI doesn't run in the background. It activates only when you ask. Here's exactly what it does.
