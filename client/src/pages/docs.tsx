@@ -21,7 +21,8 @@ import {
   Brain,
   Music,
   Sparkles,
-  FileSearch
+  FileSearch,
+  TrendingUp
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -152,7 +153,7 @@ export default function Docs() {
                 DJ-Z-S is the <strong className="text-white">private AI workspace for the world's most important thinkers: Founders, Traders, Researchers, and Creators</strong>. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. No centralized model training on your thoughts. No cloud surveillance layer.
               </p>
               <p>
-                Three zones — Journal, Research, and Thinking Partner — form one loop: capture your thinking locally, analyze with a private AI, and compound the results into a living knowledge base. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
+                Four zones — Journal, Research, Trade, and Thinking Partner — form one loop: capture your thinking locally, analyze with a private AI, and compound the results into a living knowledge base. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
               </p>
               <p>
                 The AI is your thinking partner, not a chatbot. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your intelligence compounds without becoming platform exhaust. We call this <strong className="text-white">compounding intelligence</strong>.
@@ -460,6 +461,45 @@ export default function Docs() {
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
                   <span><strong className="text-teal-300">Cross-Zone Linking</strong> - Connect research claims to journal entries</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20 hover:border-purple-500/30 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Trade</h3>
+                  <p className="text-xs text-purple-400/80">Signed trade artifacts with AI stress testing</p>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-5 leading-relaxed">Build trade theses, stress test with AI, compute risk, wallet-sign artifacts, and send to trader agents via E2E encrypted XMTP.</p>
+              <ul className="space-y-3 text-sm text-gray-500">
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Compose Thesis</strong> - Asset, side, timeframe, conviction, entry/exit strategy, market conditions</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">AI Stress Test</strong> - Thinking Partner challenges your thesis, identifies risks and blind spots</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Risk & Sign</strong> - Compute risk summary, wallet-sign with EIP-191, SHA-256 content hash</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">XMTP Send</strong> - Send signed artifacts to trader agents via E2E encrypted messaging</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Execution Reports</strong> - Stream live status updates from trader agents</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Cross-Zone Links</strong> - Reference journal entries and research dossiers as evidence</span>
                 </li>
               </ul>
             </div>
@@ -892,8 +932,8 @@ export default function Docs() {
               items={["IndexedDB (local)", "PostgreSQL (optional)", "In-memory", "Quick Search"]}
             />
             <TechStackItem 
-              category="Messaging"
-              items={["XMTP Agent SDK", "OpenClaw Dispatch", "Paragraph SDK"]}
+              category="Messaging & Trade"
+              items={["XMTP Agent SDK", "OpenClaw Dispatch", "Paragraph SDK", "Trade Artifacts (EIP-191)", "XMTP Send + Exec Reports"]}
             />
           </div>
         </motion.section>

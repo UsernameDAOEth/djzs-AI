@@ -1,7 +1,7 @@
 # DJZS - Decentralized AI for Sovereign Thinking
 
 ## Overview
-DJZS is a decentralized, quantum-resilient AI thinking system designed for sovereign users. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. Three zones (Journal, Research, Thinking Partner) form one loop: capture locally → reflect with decentralized AI → compound insights securely. No centralized model training on your thoughts. No cloud surveillance layer. No silent data extraction.
+DJZS is a decentralized, quantum-resilient AI thinking system designed for sovereign users. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. Four zones (Journal, Research, Trade, Thinking Partner) form one loop: capture locally → reflect with decentralized AI → compound insights securely. No centralized model training on your thoughts. No cloud surveillance layer. No silent data extraction.
 
 ## Strategic Positioning
 - **Category**: Decentralized cognitive infrastructure for sovereign users (NOT journaling, NOT note-taking)
