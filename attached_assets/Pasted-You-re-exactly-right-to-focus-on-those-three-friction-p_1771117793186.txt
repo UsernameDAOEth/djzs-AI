@@ -1,0 +1,114 @@
+You’re exactly right to focus on those three friction points. For a **100% local, IndexedDB app** the *real* product is: (1) data survivability, (2) local security, (3) trustable business model. Here’s how I’d make each concrete (product + copy you can drop onto the site).
+
+## 1) “How do I not lose my data?” (make backup a first-class feature)
+### The threats you’re defending against
+- User clears site data / browser “storage cleanup”
+- OS/browser profile corruption
+- Switching devices/browsers
+- Incognito / wrong profile / wrong domain
+- IndexedDB quota eviction (less common, but real)
+
+### Minimum bar (do these)
+1) **Persistent storage request**: call `navigator.storage.persist()` and show status (“Persistent storage: On/Off”). If Off, explain the risk in one sentence and offer a “Enable” button.
+2) **One-click export** that produces a single file (zip recommended) and **shows “Last backup: never / date”** in the UI header.
+3) **Import that actually works** (merge + dedupe), not “wipe and replace” by default.
+
+### Export formats (make it explicit and boring)
+I’d ship **one canonical export** and optionally a “human-readable” export.
+
+**A) Canonical archive (for restore):** `djzs-export-v1.zip`
+- `manifest.json` (version, createdAt, appVersion)
+- `entries/{uuid}.json` (full structured data)
+- `entries/{uuid}.md` (optional convenience render)
+- `pins.json`
+- `sources/{uuid}.json` (and/or `.md`)
+- `attachments/*` (if you support file uploads)
+- `checksums.json` (optional, but builds trust)
+
+**B) Readable export (for leaving):**
+- A folder of Markdown files with frontmatter (YAML/JSON), plus sources.
+
+On the landing page, literally list this. Privacy-max users love concrete file formats.
+
+### Recommended backup flow (no server, still smooth)
+Give users two supported paths:
+- **Manual**: “Export → save to your password manager vault / encrypted drive / cloud folder”
+- **Auto-backup (best, if available):** use the browser **File System Access API** to let them pick a local folder and then write periodic exports there (daily/weekly). If the API isn’t available, fall back to download.
+
+### Multi-device (still “100% forever”)
+With no server you basically have 3 honest options—pick one and say it clearly:
+1) **Manual sync**: export on device A → import on device B (works today, zero extra crypto complexity).
+2) **XMTP sync (optional)**: send encrypted “entry deltas” to your other device(s) over XMTP. This gives you cross-device without your servers, but it *does* mean data leaves the device (still E2E).
+3) **Local network transfer** (WebRTC / QR code pairing): great UX, but more engineering.
+
+If you keep “100% forever” as a mantra, you can still do (2) and call it “serverless E2E sync via XMTP (opt-in).”
+
+## 2) “Is local data encrypted?” (ship a vault, and be blunt)
+Right now, if you don’t encrypt locally, the truth is:
+- anyone with access to the unlocked OS user + browser profile can read it.
+
+### Implement passphrase lock (WebCrypto vault)
+What users expect:
+- **Set passphrase** → app “locks”
+- **Unlock** to view/edit
+- **Auto-lock timer**
+- **Export can be encrypted** with the same passphrase
+
+Implementation shape (high level):
+- Derive a key from passphrase (PBKDF2 is easiest in WebCrypto; Argon2 via WASM if you want stronger)
+- Encrypt each object (entry/source/pin) with AES-GCM
+- Store ciphertext in IndexedDB
+- Keep the derived key only in memory while unlocked
+
+UX details that matter:
+- Clear warning: “If you forget the passphrase, data cannot be recovered.”
+- “Lock now” button
+- “Wipe local data” button
+
+### About “E2E encrypted AI requests”
+Be careful with this phrase. If you mean “to Venice,” it’s misleading: Venice has to receive plaintext (or plaintext-equivalent) to run inference.
+
+Better copy:
+- **“E2E encrypted messaging/sync via XMTP (optional)”**
+- **“AI analysis is sent to Venice over HTTPS/TLS when you click Think”**
+- **“You control exactly what gets sent (entry sections, pins, sources)”**
+
+That framing avoids getting dunked on by technical users.
+
+## 3) Pricing / status / business model (trust lever, not an afterthought)
+With a pure client app, the cleanest models are:
+
+### Option A (most consistent): Free app + BYOK for AI
+- App is free
+- User supplies their Venice key (stored session-only or encrypted in vault)
+- You have near-zero ongoing costs, and your privacy story stays pristine
+
+### Option B: One-time license for “Pro features” (no servers needed)
+Charge for:
+- Vault encryption UI polish
+- Auto-backup to chosen folder
+- Advanced search/indexing
+- Templates/workflows
+- Power-user analytics (still local)
+
+You can enforce licensing client-side (not bulletproof, but often “good enough” for indie pricing).
+
+### Option C: Open-core
+- Core is open source (builds trust)
+- Paid “packaged” version / templates / priority support
+
+Whatever you choose, put a single sentence on the homepage:
+- “No account required. Works offline. BYOK for AI.”  
+- “Business model: one-time license / free + BYOK / open-source + paid add-ons.”
+
+## Copy you can paste into your FAQ (tight + honest)
+- **Where is my data stored?** “In your browser’s local database (IndexedDB) on this device.”
+- **How do I back it up?** “Export creates a single archive containing JSON + optional Markdown. Import restores or merges.”
+- **Can I use it on multiple devices?** “Yes via export/import (and optional XMTP E2E sync if enabled).”
+- **Is my data encrypted?** “If Vault is enabled, entries are encrypted locally with your passphrase. Without Vault, anyone with access to this browser profile can read it.”
+- **What does the AI see?** “Only the text you select to send (entry + optional pins/sources). It’s sent to Venice over HTTPS/TLS.”
+
+## Clarifying questions (so I can be specific to your implementation)
+1) Does your export today include **attachments/sources**, or only journal text?
+2) Do you want multi-device to be **manual only**, or are you actually planning **XMTP-based sync**?
+3) Are you willing to make “BYOK for Venice” explicit on the landing page, or are you currently covering inference costs somehow?
