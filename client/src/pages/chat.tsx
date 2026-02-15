@@ -512,10 +512,6 @@ export default function Chat() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/members", address] });
-      toast({
-        title: "Welcome to DJZS",
-        description: "Your journal is ready.",
-      });
     },
     onError: (error: Error) => {
       console.error("[DJZS] Registration error:", error);
