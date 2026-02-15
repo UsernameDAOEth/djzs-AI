@@ -137,7 +137,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Not Yet Implemented
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Your Rights
               </h2>
               <ul className="space-y-3 list-none">
                 <li><span className="text-white">• Data Portability:</span> Export your local vault data at any time through the interface.</li>

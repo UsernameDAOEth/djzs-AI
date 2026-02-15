@@ -98,7 +98,7 @@ export default function Security() {
                   <Server className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-1">No Server-Side Storage</h3>
-                    <p className="text-xs">We do not permanently store your personal data, journal entries, or research on any server. When you request AI insights, your selected text is sent to privacy-focused AI providers (Venice AI) which claim no data retention.</p>
+                    <p className="text-xs">We do not permanently store your personal data, journal entries, or research on any server. When you request AI insights, your selected text is sent to Venice AI over HTTPS/TLS (not end-to-end encrypted — Venice sees the plaintext to compute a response). Venice claims no data retention.</p>
                   </div>
                 </div>
               </div>

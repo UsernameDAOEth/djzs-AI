@@ -121,14 +121,14 @@ export default function Home() {
 
       <Helmet>
         <title>DJZS - Decentralized AI for Sovereign Thinking</title>
-        <meta name="description" content="A decentralized, quantum-resilient AI thinking system. Local-first storage, E2E encrypted messaging, and decentralized AI inference via Venice. Your thoughts are not training data." />
+        <meta name="description" content="A local-first AI thinking system with E2E encrypted messaging (XMTP) and AI inference via Venice (HTTPS/TLS, not E2E). Your thoughts stay on your device. Your intelligence compounds securely." />
         <meta property="og:title" content="DJZS - Decentralized AI for Sovereign Thinking" />
-        <meta property="og:description" content="Local-first. End-to-end encrypted. Quantum-resilient by design. A thinking system that compounds your intelligence without giving it away." />
+        <meta property="og:description" content="Local-first storage. E2E encrypted messaging via XMTP. AI inference via Venice (HTTPS, not E2E). A thinking system that compounds your intelligence without giving it away." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="DJZS - Decentralized AI for Sovereign Thinking" />
-        <meta name="twitter:description" content="A decentralized, quantum-resilient AI thinking system. Your thoughts stay local. Your AI runs decentralized. Your intelligence compounds securely." />
+        <meta name="twitter:description" content="Local-first AI thinking system. E2E encrypted messaging via XMTP. AI inference via Venice (HTTPS, not E2E). Your thoughts stay local. Your intelligence compounds securely." />
       </Helmet>
 
       <motion.section
@@ -169,7 +169,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            Your thoughts stay local. Your AI runs decentralized. Your intelligence compounds securely. No centralized model training on your thinking. No cloud surveillance layer.
+            Your thoughts stay local. AI inference routes through Venice over HTTPS — not E2E, but no data retention. Messaging via XMTP is fully end-to-end encrypted. Your intelligence compounds securely.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
@@ -210,7 +210,7 @@ export default function Home() {
               )}
             </div>
             <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-cta-microcopy">
-              Local-first. End-to-end encrypted. Quantum-resilient by design.
+              Local-first storage. E2E encrypted messaging. Privacy-focused AI.
             </p>
           </motion.div>
 
