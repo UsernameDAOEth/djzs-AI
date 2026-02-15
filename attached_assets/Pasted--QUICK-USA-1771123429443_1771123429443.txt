@@ -1,0 +1,55 @@
+/* =====================================================================================
+  QUICK USAGE (inside a component / action)
+  Assumes:
+    - you already have an XMTP client from your useXmtp hook
+    - you already have walletClient from wagmi useWalletClient
+    - you have a `vault` instance exported from @/lib/vault
+===================================================================================== */
+
+/*
+import { useWalletClient } from "wagmi";
+import { vault } from "@/lib/vault";
+import { createTradeArtifactV1, toTradeArtifactRow, computeRiskSummary } from "@/lib/trade-artifacts";
+import { sendTradeArtifactOverXmtp, streamExecutionReports } from "@/lib/trade-artifacts-xmtp";
+import { useXmtp } from "@/hooks/use-xmtp";
+
+async function createStoreAndSend(agentAddress: `0x${string}`) {
+  const { data: walletClient } = useWalletClient();
+  const { xmtpClient } = useXmtp(); // adjust to your hook’s return shape
+
+  const thesis = /* build from your Journal Zone UI * /;
+  const evidence = /* ZoneRef[] linking to entries/researchDossiers * /;
+  const stressTest = /* Thinking Partner output object * /;
+
+  const risk = computeRiskSummary({
+    thesis,
+    params: { maxPositionSizePct: 5, maxDailyLossPct: 2 }
+  });
+
+  const artifact = await createTradeArtifactV1({
+    thesis,
+    evidence,
+    stressTest,
+    risk,
+    memo: "Snapshot before execution",
+    walletClient: walletClient ?? undefined
+  });
+
+  // Dedup by hash: if already stored, reuse existing row
+  const existing = await vault.tradeArtifacts.where("hash").equals(artifact.hash).first();
+  const artifactId = existing?.id ?? (await vault.tradeArtifacts.add(toTradeArtifactRow(artifact)));
+
+  await sendTradeArtifactOverXmtp({ xmtpClient: xmtpClient as any, agentAddress, artifact });
+
+  const stop = await streamExecutionReports({
+    xmtpClient: xmtpClient as any,
+    agentAddress,
+    onReport: async report => {
+      // TODO: write report into Journal Zone (or a new tradeExecutionReports table)
+      console.log("Report for", report.artifactHash, report.status);
+    }
+  });
+
+  return { artifactId, artifactHash: artifact.hash, stop };
+}
+*/
