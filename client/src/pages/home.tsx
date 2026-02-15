@@ -169,7 +169,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            Your thoughts stay local. AI inference routes through Venice over HTTPS — not E2E, but no data retention. Messaging via XMTP is fully end-to-end encrypted. Your intelligence compounds securely.
+            Your thoughts stay local. AI inference runs through Venice — no data stored, no logs kept. Messages to your agents? Fully encrypted via XMTP. Your intelligence compounds — securely, privately, on your terms.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
