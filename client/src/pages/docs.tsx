@@ -124,7 +124,6 @@ export default function Docs() {
           </div>
         </div>
       </header>
-
       <motion.main 
         initial="hidden" 
         animate="show" 
@@ -1147,7 +1146,7 @@ export default function Docs() {
             </div>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p>After years of building in Web3 and watching founders, traders, researchers, and creators have their most valuable ideas scraped and profited from by centralized platforms, I decided to build the tool I desperately needed.</p>
-              <p>DJ-Z-S isn't a faceless startup; it's a project with a singular mission: to give you a private space to do your best work. Your trust is the only thing that matters here.</p>
+              <p>DJZS.AI isn't a faceless startup; it's a project with a singular mission: to give you a private space to do your best work. Your trust is the only thing that matters here.</p>
             </div>
           </div>
         </motion.section>
