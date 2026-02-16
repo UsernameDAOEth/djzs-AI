@@ -22,7 +22,9 @@ import {
   Music,
   Sparkles,
   FileSearch,
-  TrendingUp
+  TrendingUp,
+  KeyRound,
+  ShieldCheck
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -331,9 +333,19 @@ export default function Docs() {
                 <p className="text-xs text-gray-500">All entries, insights, memory pins, research dossiers, and claims live in your browser's IndexedDB. We don't have a database of your thoughts. There's nothing to hack, subpoena, or sell.</p>
               </div>
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <ShieldCheck className="w-5 h-5 text-green-400 mb-2" />
+                <h4 className="text-sm font-bold text-white mb-1">Vault Encryption</h4>
+                <p className="text-xs text-gray-500">Set a passphrase to encrypt your vault with AES-256-GCM. Journal entries, AI insights, and memory pins are encrypted at rest. Even with device access, your thoughts stay locked.</p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                 <Bot className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-white mb-1">User-Controlled AI</h4>
                 <p className="text-xs text-gray-500">Your text is only sent to AI when you explicitly click "Think with me." Venice AI processes it without storing or training on your data. Nothing happens in the background.</p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <KeyRound className="w-5 h-5 text-orange-400 mb-2" style={{ color: '#FFB84D' }} />
+                <h4 className="text-sm font-bold text-white mb-1">Bring Your Own Key</h4>
+                <p className="text-xs text-gray-500">Use your own Venice API key for full control over AI usage and billing. Your key stays in your browser's local storage, never on our servers.</p>
               </div>
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                 <Search className="w-5 h-5 text-orange-400 mb-2" />
@@ -349,6 +361,10 @@ export default function Docs() {
             <div className="p-4 rounded-xl bg-amber-500/[0.04] border border-amber-500/15">
               <p className="text-xs text-amber-300 font-semibold mb-1">What we're honest about</p>
               <p className="text-xs text-gray-500 leading-relaxed">When you click "Think with me," your entry text is sent to Venice AI over the internet for processing. This is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because we believe you deserve to know exactly when your data leaves your device.</p>
+            </div>
+            <div className="p-4 rounded-xl bg-green-500/[0.04] border border-green-500/15 mt-4">
+              <p className="text-xs text-green-300 font-semibold mb-1">What IS encrypted at rest</p>
+              <p className="text-xs text-gray-500 leading-relaxed">When you set a vault passphrase, your journal entries, AI insights, and memory pins are encrypted locally using AES-256-GCM with PBKDF2 key derivation (600k iterations). Your passphrase never leaves your device. Even if someone copies your browser data, they cannot read your thoughts without your passphrase.</p>
             </div>
             <div className="p-4 rounded-xl bg-green-500/[0.04] border border-green-500/15 mt-4">
               <p className="text-xs text-green-300 font-semibold mb-1">What IS end-to-end encrypted</p>
@@ -472,14 +488,18 @@ export default function Docs() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Trade</h3>
-                  <p className="text-xs text-purple-400/80">Signed trade artifacts with AI stress testing</p>
+                  <p className="text-xs text-purple-400/80">Full trade workflow: compose, stress test, execute, monitor</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Build trade theses, stress test with AI, compute risk, wallet-sign artifacts, and send to trader agents via E2E encrypted XMTP.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Build trade theses, stress test with AI, compute risk, wallet-sign artifacts, execute trades (paper or live on-chain), and monitor markets with autonomous alerts. Six tabs, one complete flow.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Compose Thesis</strong> - Asset, side, timeframe, conviction, entry/exit strategy, market conditions</span>
+                  <span><strong className="text-purple-300">Compose Thesis</strong> - Asset, side, timeframe, conviction, entry/exit strategy, live market conditions auto-filled</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Cross-Zone Intelligence</strong> - Auto-surfaces relevant journal entries, research dossiers, and claims matching your asset</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
@@ -491,15 +511,15 @@ export default function Docs() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Execute</strong> - Paper trading (simulated) or live on-chain execution via connected wallet with BaseScan links</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Market Monitor</strong> - Set price and change alerts that auto-trigger with 60-second polling and toast notifications</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
                   <span><strong className="text-purple-300">XMTP Send</strong> - Send signed artifacts to trader agents via E2E encrypted messaging</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Execution Reports</strong> - Stream live status updates from trader agents</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Cross-Zone Links</strong> - Reference journal entries and research dossiers as evidence</span>
                 </li>
               </ul>
             </div>
@@ -901,6 +921,116 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-8">Vault Encryption</h2>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-green-600/20 flex items-center justify-center">
+                <ShieldCheck className="w-6 h-6 text-green-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Encrypt Your Local Vault</h3>
+                <p className="text-xs text-green-400/80">AES-256-GCM encryption with PBKDF2 key derivation</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              Add an extra layer of protection to your locally stored data. When you set a passphrase, all sensitive fields in your vault are encrypted using military-grade AES-256-GCM encryption. Even if someone gains access to your device, your thoughts remain locked without your passphrase.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="space-y-4">
+                <h4 className="text-sm font-bold text-green-300">How It Works</h4>
+                <ul className="space-y-3 text-sm text-gray-500">
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-green-300">Set Passphrase</strong> — Open Settings in the sidebar and create a passphrase to enable encryption</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-green-300">Automatic Encryption</strong> — Once set, all new entries and insights are encrypted on save and decrypted on read</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-green-300">Lock Vault</strong> — Lock your vault when stepping away. The encryption key is cleared from memory</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-green-300">Unlock</strong> — Re-enter your passphrase to unlock and resume working</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-sm font-bold text-green-300">What Gets Encrypted</h4>
+                <ul className="space-y-3 text-sm text-gray-500">
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-green-300">Journal entries</strong> — Your entry text is encrypted before storage</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-green-300">AI insights</strong> — The "what you said," "why it matters," "next move," and reflective question fields</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-green-300">Memory pins</strong> — Pinned memory content is encrypted at rest</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                    <span><strong className="text-green-300">Exports</strong> — When you export your vault, data is decrypted for portability</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-green-500/[0.06] border border-green-500/15">
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Encryption uses <strong className="text-white">PBKDF2 with 600,000 iterations</strong> for key derivation and <strong className="text-white">AES-GCM-256</strong> for encryption — all running locally in your browser via the WebCrypto API. Your passphrase never leaves your device.
+              </p>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-8">Bring Your Own Key (BYOK)</h2>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20" style={{ background: 'linear-gradient(135deg, rgba(255,184,77,0.08), transparent)' }}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,184,77,0.2)' }}>
+                <KeyRound className="w-6 h-6" style={{ color: '#FFB84D' }} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Use Your Own Venice API Key</h3>
+                <p className="text-xs" style={{ color: 'rgba(255,184,77,0.8)' }}>Full control over your AI inference</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              By default, DJZS uses a shared Venice AI key for convenience. But if you want full control over your AI usage, billing, and rate limits, you can bring your own Venice API key. Your key is stored locally in your browser and sent directly with each AI request.
+            </p>
+            <ul className="space-y-3 text-sm text-gray-500 mb-6">
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
+                <span><strong style={{ color: '#FFB84D' }}>Settings Panel</strong> — Open Settings in the chat sidebar to enter your Venice API key</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
+                <span><strong style={{ color: '#FFB84D' }}>Local Storage</strong> — Your key is stored only in your browser's localStorage, never on our servers</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
+                <span><strong style={{ color: '#FFB84D' }}>Automatic Injection</strong> — Once set, your key is used for all AI calls: journal insights, research, stress tests, and thinking partner</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
+                <span><strong style={{ color: '#FFB84D' }}>Easy Removal</strong> — Clear your key anytime to switch back to the shared key</span>
+              </li>
+            </ul>
+            <div className="p-4 rounded-xl border border-yellow-500/15" style={{ background: 'rgba(255,184,77,0.04)' }}>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Get a Venice API key at <a href="https://venice.ai" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-white transition-colors" style={{ color: '#FFB84D' }} data-testid="link-venice-ai">venice.ai</a>. Venice is a privacy-first AI provider that claims no data retention on inference requests.
+              </p>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-white mb-8">Technical Stack</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <TechStackItem 
@@ -928,12 +1058,12 @@ export default function Docs() {
               items={["Livepeer", "MediaRecorder API", "TUS Uploads", "Music Library (IndexedDB)"]}
             />
             <TechStackItem 
-              category="Storage"
-              items={["IndexedDB (local)", "PostgreSQL (optional)", "In-memory", "Quick Search"]}
+              category="Storage & Security"
+              items={["IndexedDB (local)", "PostgreSQL (optional)", "In-memory", "Quick Search", "AES-GCM-256", "PBKDF2 (600k)", "WebCrypto API"]}
             />
             <TechStackItem 
               category="Messaging & Trade"
-              items={["XMTP Agent SDK", "OpenClaw Dispatch", "Paragraph SDK", "Trade Artifacts (EIP-191)", "XMTP Send + Exec Reports"]}
+              items={["XMTP Agent SDK", "OpenClaw Dispatch", "Paragraph SDK", "Trade Artifacts (EIP-191)", "XMTP Send + Exec Reports", "Paper/Live Execution", "Market Alerts", "BYOK (Venice)"]}
             />
           </div>
         </motion.section>
