@@ -583,6 +583,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  const COINGECKO_IDS: Record<string, string> = {
+    btc: "bitcoin", bitcoin: "bitcoin",
+    eth: "ethereum", ethereum: "ethereum",
+    sol: "solana", solana: "solana",
+    bnb: "binancecoin",
+    xrp: "ripple",
+    ada: "cardano",
+    doge: "dogecoin",
+    dot: "polkadot",
+    avax: "avalanche-2",
+    matic: "matic-network", polygon: "matic-network",
+    link: "chainlink",
+    uni: "uniswap",
+    atom: "cosmos",
+    arb: "arbitrum",
+    op: "optimism",
+    sui: "sui",
+    apt: "aptos",
+    near: "near",
+    ftm: "fantom",
+    sei: "sei-network",
+    inj: "injective-protocol",
+    tia: "celestia",
+    jup: "jupiter-exchange-solana",
+    render: "render-token",
+    pepe: "pepe",
+    wif: "dogwifcoin",
+    bonk: "bonk",
+  };
+
+  app.get("/api/market/price/:asset", async (req, res) => {
+    try {
+      const raw = req.params.asset.toLowerCase().trim();
+      const coinId = COINGECKO_IDS[raw] || raw;
+      const response = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${encodeURIComponent(coinId)}&vs_currencies=usd&include_24hr_change=true`
+      );
+      if (!response.ok) {
+        return res.status(502).json({ error: "Failed to fetch price from CoinGecko" });
+      }
+      const data = await response.json();
+      const entry = data[coinId];
+      if (!entry) {
+        return res.status(404).json({ error: `Asset "${raw}" not found on CoinGecko` });
+      }
+      res.json({
+        asset: raw,
+        coinId,
+        priceUsd: entry.usd,
+        change24h: entry.usd_24h_change ?? null,
+      });
+    } catch (error) {
+      console.error("Market price fetch error:", error);
+      res.status(500).json({ error: "Failed to fetch market price" });
+    }
+  });
+
+  app.get("/api/market/sentiment", async (_req, res) => {
+    try {
+      const response = await fetch("https://api.alternative.me/fng/?limit=1");
+      if (!response.ok) {
+        return res.status(502).json({ error: "Failed to fetch Fear & Greed Index" });
+      }
+      const data = await response.json();
+      const entry = data?.data?.[0];
+      if (!entry) {
+        return res.status(502).json({ error: "No sentiment data available" });
+      }
+      const score = parseInt(entry.value, 10);
+      let label: "FEAR" | "NEUTRAL" | "GREED";
+      if (score <= 35) label = "FEAR";
+      else if (score <= 65) label = "NEUTRAL";
+      else label = "GREED";
+      res.json({
+        score,
+        label,
+        classification: entry.value_classification,
+        timestamp: entry.timestamp,
+      });
+    } catch (error) {
+      console.error("Sentiment fetch error:", error);
+      res.status(500).json({ error: "Failed to fetch market sentiment" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

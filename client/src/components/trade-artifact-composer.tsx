@@ -42,6 +42,7 @@ import {
   Plus,
   Search,
   Send,
+  RefreshCw,
 } from "lucide-react";
 
 interface TradeArtifactZoneProps {
@@ -116,6 +117,35 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
   const [catalysts, setCatalysts] = useState("");
   const [notes, setNotes] = useState("");
   const [memo, setMemo] = useState("");
+
+  const [marketLoading, setMarketLoading] = useState(false);
+  const [priceChange24h, setPriceChange24h] = useState<number | null>(null);
+
+  const fetchMarketData = async (assetName: string) => {
+    if (!assetName.trim()) return;
+    setMarketLoading(true);
+    try {
+      const [priceRes, sentimentRes] = await Promise.all([
+        fetch(`/api/market/price/${encodeURIComponent(assetName.trim())}`),
+        fetch("/api/market/sentiment"),
+      ]);
+      if (priceRes.ok) {
+        const priceData = await priceRes.json();
+        setCurrentPrice(String(priceData.priceUsd));
+        setPriceChange24h(priceData.change24h);
+      } else {
+        toast({ title: "Price unavailable", description: `Could not find price for "${assetName.trim().toUpperCase()}"`, variant: "destructive" });
+      }
+      if (sentimentRes.ok) {
+        const sentimentData = await sentimentRes.json();
+        setSentiment(sentimentData.label);
+      }
+    } catch {
+      toast({ title: "Market data unavailable", description: "Could not reach market data services", variant: "destructive" });
+    } finally {
+      setMarketLoading(false);
+    }
+  };
 
   const [selectedJournalIds, setSelectedJournalIds] = useState<Set<number>>(new Set());
   const [selectedDossierIds, setSelectedDossierIds] = useState<Set<number>>(new Set());
@@ -413,6 +443,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                   placeholder="ETH, BTC, SOL..."
                   value={asset}
                   onChange={(e) => setAsset(e.target.value)}
+                  onBlur={() => fetchMarketData(asset)}
                 />
               </div>
               <div>
@@ -532,7 +563,20 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
             <div className="flex items-center gap-2 mb-1">
               <BarChart3 size={16} className="text-teal-400" />
               <h3 className="text-sm font-semibold text-white">Market Conditions</h3>
-              <span className="text-[10px] text-gray-600 ml-auto">Optional</span>
+              {priceChange24h !== null && (
+                <span className={`text-[10px] font-medium ${priceChange24h >= 0 ? "text-green-400" : "text-red-400"}`} data-testid="text-price-change">
+                  {priceChange24h >= 0 ? "+" : ""}{priceChange24h.toFixed(1)}% 24h
+                </span>
+              )}
+              <button
+                data-testid="button-refresh-market"
+                onClick={() => fetchMarketData(asset)}
+                disabled={marketLoading || !asset.trim()}
+                className="ml-auto p-1 rounded-lg hover:bg-white/[0.05] text-gray-500 hover:text-teal-400 transition-colors disabled:opacity-30"
+                title="Refresh market data"
+              >
+                <RefreshCw size={14} className={marketLoading ? "animate-spin" : ""} />
+              </button>
             </div>
 
             <div className="grid grid-cols-2 gap-3">

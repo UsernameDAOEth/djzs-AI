@@ -77,6 +77,7 @@ Preferred communication style: Simple, everyday language.
 - **Storage**: `tradeArtifacts` table in Dexie vault (version 6), `++id` PK with `&hash` unique index, denormalized fields for indexing.
 - **Component**: `client/src/components/trade-artifact-composer.tsx` — TradeArtifactZone with 4 tabs (Compose, Stress Test, Risk & Sign, History).
 - **Integration**: Accessible as "Trade" zone in chat sidebar. Uses viem WalletClient for EIP-191 signing, SHA-256 content hashing.
+- **Market Data**: Live price via CoinGecko API (no key), sentiment via Fear & Greed Index. Backend routes: `/api/market/price/:asset`, `/api/market/sentiment`. Auto-fills Market Conditions on asset blur + manual refresh button. Shows 24h price change.
 - **Flow**: Build thesis → AI stress test via Thinking Partner → Risk computation → Sign & store → Optional XMTP send to agent.
 
 ### Key Features (Four Zones, One Loop)
