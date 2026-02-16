@@ -56,7 +56,9 @@ import {
   Video,
   Mic,
   MicOff,
-  Headphones
+  Headphones,
+  Brain,
+  Palette
 } from "lucide-react";
 import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
@@ -80,6 +82,8 @@ import { VideoUpload, VideoPlayer } from "@/components/video-diary";
 import { MusicPanel } from "@/components/music-panel";
 import { QuickSearch } from "@/components/quick-search";
 import { TradeArtifactZone } from "@/components/trade-artifact-composer";
+import { DecisionLogZone } from "@/components/decision-log-zone";
+import { ContentPipelineZone } from "@/components/content-pipeline-zone";
 import {
   exportVaultAsZip,
   importVaultFromZip,
@@ -141,6 +145,8 @@ const V1_ZONES = [
   { id: "journal", name: "Journal", icon: PenLine, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight." },
   { id: "research", name: "Research", icon: Search, description: "Quick research", purpose: "Search and synthesize information related to your thinking." },
   { id: "trade", name: "Trade", icon: Receipt, description: "Trade artifacts", purpose: "Build thesis, stress test, sign & track trade artifacts." },
+  { id: "decisions", name: "Decisions", icon: Brain, description: "Decision log", purpose: "Track high-stakes decisions, stress test reasoning with AI." },
+  { id: "content", name: "Content", icon: Palette, description: "Content pipeline", purpose: "Compose, refine, and track content ideas with AI." },
 ];
 
 const JOURNAL_PROMPTS = [
@@ -1462,13 +1468,23 @@ export default function Chat() {
           </header>
 
           {/* Main Content Area - scrollable */}
-          <div className={`flex-1 overflow-y-auto scroll-smooth ${selectedZone === 'journal' ? 'zone-journal' : selectedZone === 'trade' ? 'zone-trade' : 'zone-research'}`}>
+          <div className={`flex-1 overflow-y-auto scroll-smooth ${selectedZone === 'journal' ? 'zone-journal' : selectedZone === 'trade' ? 'zone-trade' : selectedZone === 'decisions' ? 'zone-decisions' : selectedZone === 'content' ? 'zone-content' : 'zone-research'}`}>
             {selectedZone === 'trade' && (
               <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-4 sm:py-8">
                 <TradeArtifactZone walletAddress={address} />
               </div>
             )}
-            {selectedZone !== 'trade' && (
+            {selectedZone === 'decisions' && (
+              <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-4 sm:py-8">
+                <DecisionLogZone />
+              </div>
+            )}
+            {selectedZone === 'content' && (
+              <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-4 sm:py-8">
+                <ContentPipelineZone />
+              </div>
+            )}
+            {selectedZone !== 'trade' && selectedZone !== 'decisions' && selectedZone !== 'content' && (
             <div className="flex flex-col max-w-2xl w-full mx-auto px-4 sm:px-8">
               {/* Writing Area - vertically centered */}
               <div className={`flex-1 flex flex-col justify-center py-4 sm:py-12 ${

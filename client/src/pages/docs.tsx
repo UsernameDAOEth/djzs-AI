@@ -24,7 +24,8 @@ import {
   FileSearch,
   TrendingUp,
   KeyRound,
-  ShieldCheck
+  ShieldCheck,
+  Palette
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -154,7 +155,7 @@ export default function Docs() {
                 DJ-Z-S is the <strong className="text-white">private AI workspace for the world's most important thinkers: Founders, Traders, Researchers, and Creators</strong>. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. No centralized model training on your thoughts. No cloud surveillance layer.
               </p>
               <p>
-                Four zones — Journal, Research, Trade, and Thinking Partner — form one loop: capture your thinking locally, analyze with a private AI, and compound the results into a living knowledge base. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
+                Six zones — Journal, Research, Trade, Decisions, Content, and Thinking Partner — form one loop: capture your thinking locally, analyze with a private AI, and compound the results into a living knowledge base. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
               </p>
               <p>
                 The AI is your thinking partner, not a chatbot. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your intelligence compounds without becoming platform exhaust. We call this <strong className="text-white">compounding intelligence</strong>.
@@ -523,6 +524,68 @@ export default function Docs() {
               </ul>
             </div>
 
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/20 hover:border-amber-500/30 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-amber-600/20 flex items-center justify-center">
+                  <Brain className="w-6 h-6 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Decisions</h3>
+                  <p className="text-xs text-amber-400/80">Decision log for founders</p>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-5 leading-relaxed">Track high-stakes decisions with structured context, options, and reasoning. AI stress tests your thinking before you commit.</p>
+              <ul className="space-y-3 text-sm text-gray-500">
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-amber-300">Structured Compose</strong> - Title, context, options, reasoning, and stakes level</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-amber-300">AI Review</strong> - Thinking Partner stress tests your reasoning and surfaces blind spots</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-amber-300">Decision History</strong> - Track status (pending, decided, revisited) and outcomes over time</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-amber-300">Encrypted Storage</strong> - All decisions stored locally with optional vault encryption</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-cyan-500/[0.08] to-transparent border border-cyan-500/20 hover:border-cyan-500/30 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-cyan-600/20 flex items-center justify-center">
+                  <Palette className="w-6 h-6 text-cyan-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Content</h3>
+                  <p className="text-xs text-cyan-400/80">Content pipeline for creators</p>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-5 leading-relaxed">Manage content ideas from spark to published. AI sharpens your hook, angle, and key points before you ship.</p>
+              <ul className="space-y-3 text-sm text-gray-500">
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-cyan-300">Structured Compose</strong> - Title, topic, angle, format, audience, hook, and key points</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-cyan-300">AI Refine</strong> - AI sharpens your hook, strengthens your angle, and suggests improvements</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-cyan-300">Pipeline Tracking</strong> - Move ideas through stages: idea, drafting, review, ready, published</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-cyan-300">Encrypted Storage</strong> - All content ideas stored locally with optional vault encryption</span>
+                </li>
+              </ul>
+            </div>
+
             <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/[0.08] to-transparent border border-red-500/20 hover:border-red-500/30 transition-all md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-red-600/20 flex items-center justify-center">
@@ -657,6 +720,14 @@ export default function Docs() {
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
                   <span>The <strong className="text-purple-300">ThinkingPartner</strong> agent works behind the scenes to debate your ideas, identify tensions in your reasoning, and propose reframes — acting as a structured thinking coach, not a chatbot.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
+                  <span>In the <strong className="text-amber-300">Decisions Zone</strong>, AI reviews your decision reasoning, stress tests your options, and identifies blind spots before you commit to high-stakes choices.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
+                  <span>In the <strong className="text-cyan-300">Content Zone</strong>, AI refines your content hook, sharpens your angle, and suggests improvements to make your ideas land with your audience.</span>
                 </li>
               </ul>
             </div>

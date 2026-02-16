@@ -116,6 +116,48 @@ export interface MarketAlert {
   createdAt: Date;
 }
 
+export type DecisionStakes = 'low' | 'medium' | 'high' | 'critical';
+export type DecisionStatus = 'draft' | 'reviewed' | 'decided' | 'revisited';
+export type DecisionOutcome = 'pending' | 'positive' | 'negative' | 'mixed' | 'too_early';
+
+export interface DecisionLog {
+  id?: number;
+  title: string;
+  context: string;
+  optionsConsidered: string[];
+  reasoning: string;
+  stakes: DecisionStakes;
+  status: DecisionStatus;
+  outcome?: DecisionOutcome;
+  outcomeNotes?: string;
+  aiReview?: string;
+  aiCounterArguments?: string[];
+  aiBlindSpots?: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type ContentFormat = 'article' | 'thread' | 'video' | 'newsletter' | 'podcast' | 'post';
+export type ContentStatus = 'idea' | 'drafting' | 'refining' | 'ready' | 'published';
+
+export interface ContentPipelineItem {
+  id?: number;
+  title: string;
+  topic: string;
+  angle: string;
+  format: ContentFormat;
+  audience: string;
+  hook: string;
+  keyPoints: string[];
+  status: ContentStatus;
+  aiRefinement?: string;
+  aiHookSuggestions?: string[];
+  aiAngleSuggestions?: string[];
+  publishedUrl?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 class VaultDatabase extends Dexie {
   entries!: EntityTable<VaultEntry, 'id'>;
   insights!: EntityTable<VaultInsight, 'id'>;
@@ -126,6 +168,8 @@ class VaultDatabase extends Dexie {
   musicTracks!: EntityTable<MusicTrack, 'id'>;
   tradeArtifacts!: EntityTable<TradeArtifactRow, 'id'>;
   marketAlerts!: EntityTable<MarketAlert, 'id'>;
+  decisionLogs!: EntityTable<DecisionLog, 'id'>;
+  contentPipeline!: EntityTable<ContentPipelineItem, 'id'>;
 
   constructor() {
     super('djzs-vault');
@@ -197,6 +241,21 @@ class VaultDatabase extends Dexie {
       musicTracks: '++id, name, zone, uploadedAt',
       tradeArtifacts: '++id, &hash, createdAt, thesisAsset, thesisSide, thesisTimeframe, *linkedJournalEntryIds, *linkedResearchDossierIds',
       marketAlerts: '++id, asset, condition, isActive, createdAt',
+    });
+
+    this.version(8).stores({
+      entries: '++id, type, createdAt, updatedAt, videoAssetId',
+      insights: '++id, entryId, type, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
+      tradeRecords: '++id, action, status, createdAt',
+      researchDossiers: '++id, name, isArchived, createdAt, updatedAt',
+      researchQueries: '++id, dossierId, createdAt',
+      researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
+      musicTracks: '++id, name, zone, uploadedAt',
+      tradeArtifacts: '++id, &hash, createdAt, thesisAsset, thesisSide, thesisTimeframe, *linkedJournalEntryIds, *linkedResearchDossierIds',
+      marketAlerts: '++id, asset, condition, isActive, createdAt',
+      decisionLogs: '++id, status, stakes, outcome, createdAt, updatedAt',
+      contentPipeline: '++id, status, format, createdAt, updatedAt',
     });
   }
 }
@@ -633,4 +692,117 @@ export async function searchJournalEntriesForTopic(keywords: string[], limit: nu
   return matchingEntries
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, limit);
+}
+
+async function encryptStringArray(arr: string[]): Promise<string[]> {
+  return Promise.all(arr.map(s => encryptField(s)));
+}
+
+async function decryptStringArray(arr: string[]): Promise<string[]> {
+  return Promise.all(arr.map(s => decryptField(s)));
+}
+
+export async function saveDecisionLog(decision: Omit<DecisionLog, 'id' | 'createdAt' | 'updatedAt'>): Promise<number> {
+  const now = new Date();
+  const encrypted: Omit<DecisionLog, 'id'> = {
+    ...decision,
+    title: await encryptField(decision.title),
+    context: await encryptField(decision.context),
+    optionsConsidered: await encryptStringArray(decision.optionsConsidered),
+    reasoning: await encryptField(decision.reasoning),
+    outcomeNotes: decision.outcomeNotes ? await encryptField(decision.outcomeNotes) : undefined,
+    aiReview: decision.aiReview ? await encryptField(decision.aiReview) : undefined,
+    aiCounterArguments: decision.aiCounterArguments ? await encryptStringArray(decision.aiCounterArguments) : undefined,
+    aiBlindSpots: decision.aiBlindSpots ? await encryptStringArray(decision.aiBlindSpots) : undefined,
+    createdAt: now,
+    updatedAt: now,
+  };
+  const id = await vault.decisionLogs.add(encrypted);
+  return id as number;
+}
+
+export async function updateDecisionLog(id: number, updates: Partial<DecisionLog>): Promise<void> {
+  const toUpdate: Partial<DecisionLog> = { ...updates, updatedAt: new Date() };
+  if (updates.title) toUpdate.title = await encryptField(updates.title);
+  if (updates.context) toUpdate.context = await encryptField(updates.context);
+  if (updates.optionsConsidered) toUpdate.optionsConsidered = await encryptStringArray(updates.optionsConsidered);
+  if (updates.reasoning) toUpdate.reasoning = await encryptField(updates.reasoning);
+  if (updates.outcomeNotes) toUpdate.outcomeNotes = await encryptField(updates.outcomeNotes);
+  if (updates.aiReview) toUpdate.aiReview = await encryptField(updates.aiReview);
+  if (updates.aiCounterArguments) toUpdate.aiCounterArguments = await encryptStringArray(updates.aiCounterArguments);
+  if (updates.aiBlindSpots) toUpdate.aiBlindSpots = await encryptStringArray(updates.aiBlindSpots);
+  await vault.decisionLogs.update(id, toUpdate);
+}
+
+export async function getAllDecisionLogs(): Promise<DecisionLog[]> {
+  const logs = await vault.decisionLogs.orderBy('createdAt').reverse().toArray();
+  for (const log of logs) {
+    log.title = await decryptField(log.title);
+    log.context = await decryptField(log.context);
+    log.optionsConsidered = await decryptStringArray(log.optionsConsidered);
+    log.reasoning = await decryptField(log.reasoning);
+    if (log.outcomeNotes) log.outcomeNotes = await decryptField(log.outcomeNotes);
+    if (log.aiReview) log.aiReview = await decryptField(log.aiReview);
+    if (log.aiCounterArguments) log.aiCounterArguments = await decryptStringArray(log.aiCounterArguments);
+    if (log.aiBlindSpots) log.aiBlindSpots = await decryptStringArray(log.aiBlindSpots);
+  }
+  return logs;
+}
+
+export async function deleteDecisionLog(id: number): Promise<void> {
+  await vault.decisionLogs.delete(id);
+}
+
+export async function saveContentItem(item: Omit<ContentPipelineItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<number> {
+  const now = new Date();
+  const encrypted: Omit<ContentPipelineItem, 'id'> = {
+    ...item,
+    title: await encryptField(item.title),
+    topic: await encryptField(item.topic),
+    angle: await encryptField(item.angle),
+    audience: await encryptField(item.audience),
+    hook: await encryptField(item.hook),
+    keyPoints: await encryptStringArray(item.keyPoints),
+    aiRefinement: item.aiRefinement ? await encryptField(item.aiRefinement) : undefined,
+    aiHookSuggestions: item.aiHookSuggestions ? await encryptStringArray(item.aiHookSuggestions) : undefined,
+    aiAngleSuggestions: item.aiAngleSuggestions ? await encryptStringArray(item.aiAngleSuggestions) : undefined,
+    createdAt: now,
+    updatedAt: now,
+  };
+  const id = await vault.contentPipeline.add(encrypted);
+  return id as number;
+}
+
+export async function updateContentItem(id: number, updates: Partial<ContentPipelineItem>): Promise<void> {
+  const toUpdate: Partial<ContentPipelineItem> = { ...updates, updatedAt: new Date() };
+  if (updates.title) toUpdate.title = await encryptField(updates.title);
+  if (updates.topic) toUpdate.topic = await encryptField(updates.topic);
+  if (updates.angle) toUpdate.angle = await encryptField(updates.angle);
+  if (updates.audience) toUpdate.audience = await encryptField(updates.audience);
+  if (updates.hook) toUpdate.hook = await encryptField(updates.hook);
+  if (updates.keyPoints) toUpdate.keyPoints = await encryptStringArray(updates.keyPoints);
+  if (updates.aiRefinement) toUpdate.aiRefinement = await encryptField(updates.aiRefinement);
+  if (updates.aiHookSuggestions) toUpdate.aiHookSuggestions = await encryptStringArray(updates.aiHookSuggestions);
+  if (updates.aiAngleSuggestions) toUpdate.aiAngleSuggestions = await encryptStringArray(updates.aiAngleSuggestions);
+  await vault.contentPipeline.update(id, toUpdate);
+}
+
+export async function getAllContentItems(): Promise<ContentPipelineItem[]> {
+  const items = await vault.contentPipeline.orderBy('createdAt').reverse().toArray();
+  for (const item of items) {
+    item.title = await decryptField(item.title);
+    item.topic = await decryptField(item.topic);
+    item.angle = await decryptField(item.angle);
+    item.audience = await decryptField(item.audience);
+    item.hook = await decryptField(item.hook);
+    item.keyPoints = await decryptStringArray(item.keyPoints);
+    if (item.aiRefinement) item.aiRefinement = await decryptField(item.aiRefinement);
+    if (item.aiHookSuggestions) item.aiHookSuggestions = await decryptStringArray(item.aiHookSuggestions);
+    if (item.aiAngleSuggestions) item.aiAngleSuggestions = await decryptStringArray(item.aiAngleSuggestions);
+  }
+  return items;
+}
+
+export async function deleteContentItem(id: number): Promise<void> {
+  await vault.contentPipeline.delete(id);
 }

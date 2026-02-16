@@ -37,6 +37,8 @@ Preferred communication style: Simple, everyday language.
 - **researchDossiers**: Named research folders.
 - **researchQueries**: Search queries within dossiers.
 - **researchClaims**: Claims with trust levels, status, and optional journal links.
+- **decisionLogs**: Decision log entries with title, context, options, reasoning, stakes, status, outcome, AI review.
+- **contentPipeline**: Content pipeline items with title, topic, angle, format, audience, hook, key points, status, AI refinement.
 
 ### Web3 Integration
 - **Wallet Connection**: RainbowKit (Base mainnet and Base Sepolia).
@@ -96,10 +98,12 @@ Preferred communication style: Simple, everyday language.
 - **UI**: Settings panel in chat sidebar — setup passphrase, lock/unlock vault, remove encryption.
 - **Session Key**: Derived key held in memory during session, cleared on lock.
 
-### Key Features (Four Zones, One Loop)
+### Key Features (Six Zones, One Loop)
 - **Journal Zone**: Write daily thinking → AI auto-summarizes and extracts structured insights (key claims, patterns, open questions). Memory pinning carries context forward. Video entries via Livepeer.
 - **Research Zone**: Save articles/links → AI synthesizes research with journal entries. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking.
 - **Trade Zone**: Build trade thesis → AI stress tests → Risk computation → Wallet-sign artifact → Store locally with content hash → Send to trader agent via XMTP.
+- **Decision Zone**: Track high-stakes decisions with structured compose (title, context, options, reasoning, stakes). AI stress tests reasoning via ThinkingPartner. History tracks status/outcome. Amber/yellow accents.
+- **Content Zone**: Content pipeline for creators. Compose (title, topic, angle, format, audience, hook, key points). AI refines hook and angle. Pipeline tracks status from idea → published. Teal/cyan accents.
 - **Thinking Partner**: One AI agent that connects ideas across journal and research, debates points, finds patterns, and surfaces contradictions. Not a chatbot — a structured thinking partner.
 - **Compounding Intelligence**: Memory pins, past-entry connections, and cross-zone synthesis ensure knowledge grows smarter over time, not just larger.
 - **Music Library**: Upload and play your own music while thinking. Tracks stored locally. Organize by Focus/Reflection/Creative zones.
