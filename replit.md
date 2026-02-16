@@ -75,10 +75,26 @@ Preferred communication style: Simple, everyday language.
 - **Types**: `client/src/lib/trade-artifacts.ts` — TradeThesis, ZoneRef, StressTestReport, RiskSummary, TradeArtifactV1, TradeArtifactRow.
 - **XMTP Bridge**: `client/src/lib/trade-artifacts-xmtp.ts` — send artifacts to trader agents, stream ExecutionReports.
 - **Storage**: `tradeArtifacts` table in Dexie vault (version 6), `++id` PK with `&hash` unique index, denormalized fields for indexing.
-- **Component**: `client/src/components/trade-artifact-composer.tsx` — TradeArtifactZone with 4 tabs (Compose, Stress Test, Risk & Sign, History).
+- **Component**: `client/src/components/trade-artifact-composer.tsx` — TradeArtifactZone with 6 tabs (Compose, Stress Test, Risk & Sign, Execute, Monitor, History).
 - **Integration**: Accessible as "Trade" zone in chat sidebar. Uses viem WalletClient for EIP-191 signing, SHA-256 content hashing.
-- **Market Data**: Live price via CoinGecko API (no key), sentiment via Fear & Greed Index. Backend routes: `/api/market/price/:asset`, `/api/market/sentiment`. Auto-fills Market Conditions on asset blur + manual refresh button. Shows 24h price change.
-- **Flow**: Build thesis → AI stress test via Thinking Partner → Risk computation → Sign & store → Optional XMTP send to agent.
+- **Market Data**: Live price via CoinGecko API (no key), sentiment via Fear & Greed Index. Backend routes: `/api/market/price/:asset`, `/api/market/sentiment`, `/api/market/batch-price`. Auto-fills Market Conditions on asset blur + manual refresh button. Shows 24h price change.
+- **Cross-Zone Intelligence**: Auto-surfaces relevant journal entries, research dossiers, and claims matching the asset being traded. Matched items shown first with highlight badges.
+- **Execution Layer**: Execute tab supports paper trading (simulated) and live trading (sends on-chain transaction via connected wallet). Shows execution details from signed artifact, tracks paper executions and live tx hashes with BaseScan links.
+- **Autonomous Monitoring**: Monitor tab with market alert system. Users create alerts (price above/below, 24h change above/below). "Start Watching" activates 60-second polling via batch price API. Alerts auto-deactivate when triggered and show toast notifications. Alerts stored in `marketAlerts` table (vault version 7).
+- **Flow**: Build thesis → AI stress test via Thinking Partner → Risk computation → Sign & store → Execute (paper/live) → Monitor alerts → Optional XMTP send to agent.
+
+### BYOK (Bring Your Own Key)
+- **Settings Panel**: In chat sidebar, users can enter their own Venice API key.
+- **Storage**: Key stored in localStorage (`djzs-venice-api-key`).
+- **Header**: Sent via `x-venice-api-key` header on all API calls (both `apiRequest` and `getQueryFn`).
+- **Backend**: All Venice/agent/openclaw functions accept optional `apiKeyOverride` parameter.
+
+### Vault Encryption
+- **Utility**: `client/src/lib/vault-crypto.ts` — WebCrypto PBKDF2 (600k iterations) + AES-GCM-256.
+- **Integration**: Transparent encryption/decryption integrated into vault save/read functions. Text fields encrypted on write, decrypted on read.
+- **Encrypted Fields**: Entry text, insight fields (said/matters/nextMove/question), memory pin content.
+- **UI**: Settings panel in chat sidebar — setup passphrase, lock/unlock vault, remove encryption.
+- **Session Key**: Derived key held in memory during session, cleared on lock.
 
 ### Key Features (Four Zones, One Loop)
 - **Journal Zone**: Write daily thinking → AI auto-summarizes and extracts structured insights (key claims, patterns, open questions). Memory pinning carries context forward. Video entries via Livepeer.

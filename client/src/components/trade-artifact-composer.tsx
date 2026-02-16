@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useWalletClient } from "wagmi";
 import { useLiveQuery } from "dexie-react-hooks";
 import { nanoid } from "nanoid";
-import { vault } from "@/lib/vault";
+import { vault, type VaultEntry, type ResearchDossier, type MarketAlert, type AlertCondition } from "@/lib/vault";
 import {
   createTradeArtifactV1,
   toTradeArtifactRow,
@@ -43,18 +43,24 @@ import {
   Search,
   Send,
   RefreshCw,
+  Bell,
+  BellRing,
+  Trash2,
+  Eye,
 } from "lucide-react";
 
 interface TradeArtifactZoneProps {
   walletAddress?: string;
 }
 
-type TabId = "compose" | "stress" | "risk" | "history";
+type TabId = "compose" | "stress" | "risk" | "execute" | "monitor" | "history";
 
 const TABS: { id: TabId; label: string; icon: typeof Pen }[] = [
   { id: "compose", label: "Compose", icon: Pen },
   { id: "stress", label: "Stress Test", icon: BarChart3 },
   { id: "risk", label: "Risk & Sign", icon: Shield },
+  { id: "execute", label: "Execute", icon: ArrowRight },
+  { id: "monitor", label: "Monitor", icon: Bell },
   { id: "history", label: "History", icon: Clock },
 ];
 
@@ -170,6 +176,72 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
   const [historyFilter, setHistoryFilter] = useState("");
   const [expandedArtifactId, setExpandedArtifactId] = useState<number | null>(null);
 
+  const [execAmount, setExecAmount] = useState("");
+  const [execMode, setExecMode] = useState<"paper" | "live">("paper");
+  const [executing, setExecuting] = useState(false);
+  const [execTxHash, setExecTxHash] = useState<string | null>(null);
+  const [execError, setExecError] = useState<string | null>(null);
+  const [paperExecutions, setPaperExecutions] = useState<Array<{ id: string; asset: string; side: string; amount: string; price: string; timestamp: number }>>([]);
+
+  const [alertAsset, setAlertAsset] = useState("");
+  const [alertCondition, setAlertCondition] = useState<AlertCondition>("price_above");
+  const [alertThreshold, setAlertThreshold] = useState("");
+  const [monitoringActive, setMonitoringActive] = useState(false);
+  const [triggeredAlerts, setTriggeredAlerts] = useState<Array<{ id: number; asset: string; condition: string; threshold: number; price: number; timestamp: number }>>([]);
+  const monitorInterval = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const activeAlerts = useLiveQuery(
+    () => vault.marketAlerts.where("isActive").equals(1).toArray(),
+    []
+  );
+
+  const checkAlerts = useCallback(async () => {
+    const alerts = await vault.marketAlerts.where("isActive").equals(1).toArray();
+    if (alerts.length === 0) return;
+    const assets = [...new Set(alerts.map((a) => a.asset))];
+    try {
+      const res = await fetch("/api/market/batch-price", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assets }),
+      });
+      if (!res.ok) return;
+      const prices: Record<string, { priceUsd: number; change24h: number | null }> = await res.json();
+      for (const alert of alerts) {
+        const priceData = prices[alert.asset.toUpperCase()];
+        if (!priceData) continue;
+        let triggered = false;
+        if (alert.condition === "price_above" && priceData.priceUsd >= alert.threshold) triggered = true;
+        if (alert.condition === "price_below" && priceData.priceUsd <= alert.threshold) triggered = true;
+        if (alert.condition === "change_above" && priceData.change24h !== null && priceData.change24h >= alert.threshold) triggered = true;
+        if (alert.condition === "change_below" && priceData.change24h !== null && priceData.change24h <= alert.threshold) triggered = true;
+        if (triggered && alert.id) {
+          await vault.marketAlerts.update(alert.id, { isActive: 0, lastTriggered: new Date() });
+          setTriggeredAlerts((prev) => [{
+            id: alert.id!,
+            asset: alert.asset,
+            condition: alert.condition,
+            threshold: alert.threshold,
+            price: priceData.priceUsd,
+            timestamp: Date.now(),
+          }, ...prev]);
+          toast({ title: `Alert triggered: ${alert.asset}`, description: `${alert.condition.replace(/_/g, " ")} ${alert.threshold} — current: $${priceData.priceUsd.toLocaleString()}` });
+        }
+      }
+    } catch {}
+  }, [toast]);
+
+  useEffect(() => {
+    if (monitoringActive) {
+      checkAlerts();
+      monitorInterval.current = setInterval(checkAlerts, 60_000);
+    } else if (monitorInterval.current) {
+      clearInterval(monitorInterval.current);
+      monitorInterval.current = null;
+    }
+    return () => { if (monitorInterval.current) clearInterval(monitorInterval.current); };
+  }, [monitoringActive, checkAlerts]);
+
   const recentJournal = useLiveQuery(
     () =>
       vault.entries
@@ -191,6 +263,34 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
         .then((d) => d.slice(0, 20)),
     []
   );
+
+  const recentClaims = useLiveQuery(
+    () => vault.researchClaims.orderBy("createdAt").reverse().limit(50).toArray(),
+    []
+  );
+
+  const assetLower = asset.trim().toLowerCase();
+
+  const relevantJournal = useMemo(() => {
+    const entries = recentJournal || [];
+    if (!assetLower) return { matched: [] as VaultEntry[], rest: entries };
+    const matched = entries.filter((e) => e.text.toLowerCase().includes(assetLower));
+    const rest = entries.filter((e) => !e.text.toLowerCase().includes(assetLower));
+    return { matched, rest };
+  }, [recentJournal, assetLower]);
+
+  const relevantDossiers = useMemo(() => {
+    const dossiers = recentDossiers || [];
+    if (!assetLower) return { matched: [] as ResearchDossier[], rest: dossiers };
+    const matched = dossiers.filter((d) => d.name.toLowerCase().includes(assetLower) || (d.description || "").toLowerCase().includes(assetLower));
+    const rest = dossiers.filter((d) => !d.name.toLowerCase().includes(assetLower) && !(d.description || "").toLowerCase().includes(assetLower));
+    return { matched, rest };
+  }, [recentDossiers, assetLower]);
+
+  const relevantClaims = useMemo(() => {
+    if (!recentClaims || !assetLower) return [];
+    return recentClaims.filter((c) => c.claim.toLowerCase().includes(assetLower));
+  }, [recentClaims, assetLower]);
 
   const allArtifacts = useLiveQuery(
     () => vault.tradeArtifacts.orderBy("createdAt").reverse().toArray(),
@@ -637,74 +737,125 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
             <div className="flex items-center gap-2 mb-1">
               <FileText size={16} className="text-purple-400" />
               <h3 className="text-sm font-semibold text-white">Link Evidence</h3>
+              {assetLower && (relevantJournal.matched.length > 0 || relevantDossiers.matched.length > 0 || relevantClaims.length > 0) && (
+                <span className="text-[10px] font-medium text-teal-400 ml-auto" data-testid="text-cross-zone-count">
+                  {relevantJournal.matched.length + relevantDossiers.matched.length + relevantClaims.length} related to {asset.trim().toUpperCase()}
+                </span>
+              )}
             </div>
 
-            {recentJournal && recentJournal.length > 0 && (
+            {assetLower && relevantClaims.length > 0 && (
               <div>
-                <p className="text-xs text-gray-500 mb-2">Journal Entries</p>
-                <div className="space-y-1 max-h-40 overflow-y-auto">
-                  {recentJournal.map((e) => (
-                    <label
-                      key={e.id}
-                      className="flex items-start gap-2 p-2 rounded-lg hover:bg-white/[0.03] cursor-pointer"
-                      data-testid={`evidence-journal-${e.id}`}
+                <p className="text-xs text-teal-400 mb-2 font-medium">Research Claims mentioning {asset.trim().toUpperCase()}</p>
+                <div className="space-y-1 max-h-32 overflow-y-auto">
+                  {relevantClaims.map((c) => (
+                    <div
+                      key={c.id}
+                      className="flex items-start gap-2 p-2 rounded-lg bg-teal-500/[0.05] border border-teal-500/10"
+                      data-testid={`claim-relevant-${c.id}`}
                     >
-                      <input
-                        type="checkbox"
-                        className="mt-0.5 accent-orange-500"
-                        checked={e.id !== undefined && selectedJournalIds.has(e.id)}
-                        onChange={() => {
-                          if (e.id === undefined) return;
-                          setSelectedJournalIds((prev) => {
-                            const next = new Set(prev);
-                            if (next.has(e.id!)) next.delete(e.id!);
-                            else next.add(e.id!);
-                            return next;
-                          });
-                        }}
-                      />
-                      <span className="text-xs text-gray-400 line-clamp-2">
-                        {e.text.slice(0, 100)}
-                      </span>
-                    </label>
+                      <Badge variant="outline" className="text-[9px] shrink-0 mt-0.5 border-teal-500/30 text-teal-400">
+                        {c.trustLevel}
+                      </Badge>
+                      <span className="text-xs text-gray-300 line-clamp-2">{c.claim}</span>
+                      <Badge variant="outline" className={`text-[9px] shrink-0 mt-0.5 ${c.status === "verified" ? "border-green-500/30 text-green-400" : c.status === "uncertain" ? "border-yellow-500/30 text-yellow-400" : "border-gray-500/30 text-gray-400"}`}>
+                        {c.status}
+                      </Badge>
+                    </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {recentDossiers && recentDossiers.length > 0 && (
-              <div>
-                <p className="text-xs text-gray-500 mb-2">Research Dossiers</p>
-                <div className="space-y-1 max-h-40 overflow-y-auto">
-                  {recentDossiers.map((d) => (
-                    <label
-                      key={d.id}
-                      className="flex items-start gap-2 p-2 rounded-lg hover:bg-white/[0.03] cursor-pointer"
-                      data-testid={`evidence-dossier-${d.id}`}
-                    >
-                      <input
-                        type="checkbox"
-                        className="mt-0.5 accent-teal-500"
-                        checked={d.id !== undefined && selectedDossierIds.has(d.id)}
-                        onChange={() => {
-                          if (d.id === undefined) return;
-                          setSelectedDossierIds((prev) => {
-                            const next = new Set(prev);
-                            if (next.has(d.id!)) next.delete(d.id!);
-                            else next.add(d.id!);
-                            return next;
-                          });
-                        }}
-                      />
-                      <span className="text-xs text-gray-400">{d.name}</span>
-                    </label>
-                  ))}
+            {(() => {
+              const journalEntries = assetLower ? [...relevantJournal.matched, ...relevantJournal.rest] : (recentJournal || []);
+              const matchedIds = new Set(relevantJournal.matched.map((e) => e.id));
+              if (journalEntries.length === 0) return null;
+              return (
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">Journal Entries</p>
+                  <div className="space-y-1 max-h-40 overflow-y-auto">
+                    {journalEntries.map((e) => {
+                      const isRelevant = assetLower && matchedIds.has(e.id);
+                      return (
+                        <label
+                          key={e.id}
+                          className={`flex items-start gap-2 p-2 rounded-lg hover:bg-white/[0.03] cursor-pointer ${isRelevant ? "bg-orange-500/[0.05] border border-orange-500/10" : ""}`}
+                          data-testid={`evidence-journal-${e.id}`}
+                        >
+                          <input
+                            type="checkbox"
+                            className="mt-0.5 accent-orange-500"
+                            checked={e.id !== undefined && selectedJournalIds.has(e.id)}
+                            onChange={() => {
+                              if (e.id === undefined) return;
+                              setSelectedJournalIds((prev) => {
+                                const next = new Set(prev);
+                                if (next.has(e.id!)) next.delete(e.id!);
+                                else next.add(e.id!);
+                                return next;
+                              });
+                            }}
+                          />
+                          {isRelevant && (
+                            <Badge variant="outline" className="text-[9px] shrink-0 mt-0.5 border-orange-500/30 text-orange-400">match</Badge>
+                          )}
+                          <span className="text-xs text-gray-400 line-clamp-2">
+                            {e.text.slice(0, 100)}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
+
+            {(() => {
+              const dossiers = assetLower ? [...relevantDossiers.matched, ...relevantDossiers.rest] : (recentDossiers || []);
+              const matchedIds = new Set(relevantDossiers.matched.map((d) => d.id));
+              if (dossiers.length === 0) return null;
+              return (
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">Research Dossiers</p>
+                  <div className="space-y-1 max-h-40 overflow-y-auto">
+                    {dossiers.map((d) => {
+                      const isRelevant = assetLower && matchedIds.has(d.id);
+                      return (
+                        <label
+                          key={d.id}
+                          className={`flex items-start gap-2 p-2 rounded-lg hover:bg-white/[0.03] cursor-pointer ${isRelevant ? "bg-teal-500/[0.05] border border-teal-500/10" : ""}`}
+                          data-testid={`evidence-dossier-${d.id}`}
+                        >
+                          <input
+                            type="checkbox"
+                            className="mt-0.5 accent-teal-500"
+                            checked={d.id !== undefined && selectedDossierIds.has(d.id)}
+                            onChange={() => {
+                              if (d.id === undefined) return;
+                              setSelectedDossierIds((prev) => {
+                                const next = new Set(prev);
+                                if (next.has(d.id!)) next.delete(d.id!);
+                                else next.add(d.id!);
+                                return next;
+                              });
+                            }}
+                          />
+                          {isRelevant && (
+                            <Badge variant="outline" className="text-[9px] shrink-0 mt-0.5 border-teal-500/30 text-teal-400">match</Badge>
+                          )}
+                          <span className="text-xs text-gray-400">{d.name}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {(!recentJournal || recentJournal.length === 0) &&
-              (!recentDossiers || recentDossiers.length === 0) && (
+              (!recentDossiers || recentDossiers.length === 0) &&
+              relevantClaims.length === 0 && (
                 <p className="text-xs text-gray-600 text-center py-4">
                   No journal entries or research dossiers to link yet.
                 </p>
@@ -986,6 +1137,335 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                 </>
               )}
             </button>
+          )}
+        </div>
+      )}
+
+      {activeTab === "execute" && (
+        <div className="space-y-4" data-testid="execute-tab">
+          {!createdArtifact ? (
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-center">
+              <Shield size={24} className="mx-auto mb-2 text-gray-600" />
+              <p className="text-sm text-gray-400 mb-1">No signed artifact</p>
+              <p className="text-xs text-gray-600">Create and sign an artifact in the Risk & Sign tab first.</p>
+              <button
+                data-testid="button-go-to-risk"
+                onClick={() => setActiveTab("risk")}
+                className="mt-3 px-4 py-2 rounded-xl text-xs font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 transition-colors"
+              >
+                Go to Risk & Sign
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+                <div className="flex items-center gap-2">
+                  <ArrowRight size={16} className="text-orange-400" />
+                  <h3 className="text-sm font-semibold text-white">Execution Details</h3>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2 rounded-lg bg-white/[0.03]">
+                    <p className="text-[10px] text-gray-500">Asset</p>
+                    <p className="text-sm text-white font-mono">{createdArtifact.thesis.asset}</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-white/[0.03]">
+                    <p className="text-[10px] text-gray-500">Direction</p>
+                    <p className={`text-sm font-mono ${createdArtifact.thesis.side === "LONG" ? "text-green-400" : "text-red-400"}`}>
+                      {createdArtifact.thesis.side}
+                    </p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-white/[0.03]">
+                    <p className="text-[10px] text-gray-500">Entry Type</p>
+                    <p className="text-sm text-white font-mono">{createdArtifact.thesis.entry.type}</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-white/[0.03]">
+                    <p className="text-[10px] text-gray-500">Conviction</p>
+                    <p className="text-sm text-white font-mono">{createdArtifact.thesis.conviction}</p>
+                  </div>
+                </div>
+
+                {createdArtifact.thesis.exits && (
+                  <div className="grid grid-cols-2 gap-2">
+                    {createdArtifact.thesis.exits.takeProfitPct && (
+                      <div className="p-2 rounded-lg bg-green-500/[0.05] border border-green-500/10">
+                        <p className="text-[10px] text-green-600">Take Profit</p>
+                        <p className="text-sm text-green-400 font-mono">+{createdArtifact.thesis.exits.takeProfitPct}%</p>
+                      </div>
+                    )}
+                    {createdArtifact.thesis.exits.stopLossPct && (
+                      <div className="p-2 rounded-lg bg-red-500/[0.05] border border-red-500/10">
+                        <p className="text-[10px] text-red-600">Stop Loss</p>
+                        <p className="text-sm text-red-400 font-mono">-{createdArtifact.thesis.exits.stopLossPct}%</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+                <SectionLabel>Execution Mode</SectionLabel>
+                <ToggleGroup
+                  options={["paper", "live"]}
+                  value={execMode}
+                  onChange={(v) => setExecMode(v as "paper" | "live")}
+                  testIdPrefix="toggle-exec-mode"
+                />
+                {execMode === "live" && (
+                  <div className="flex items-center gap-1.5 text-[10px] text-yellow-500 bg-yellow-500/10 p-2 rounded-lg border border-yellow-500/15">
+                    <AlertCircle size={12} />
+                    <span>Live execution will send a real transaction from your connected wallet.</span>
+                  </div>
+                )}
+
+                <div>
+                  <SectionLabel>Amount (USD)</SectionLabel>
+                  <input
+                    data-testid="input-exec-amount"
+                    type="number"
+                    className={INPUT_CLS}
+                    placeholder="e.g. 100"
+                    value={execAmount}
+                    onChange={(e) => setExecAmount(e.target.value)}
+                  />
+                </div>
+
+                {execError && (
+                  <div className="flex items-center gap-1.5 text-xs text-red-400 bg-red-500/10 p-2 rounded-lg border border-red-500/15">
+                    <AlertCircle size={12} />
+                    <span>{execError}</span>
+                  </div>
+                )}
+
+                {execTxHash && (
+                  <div className="p-3 rounded-xl bg-green-500/[0.05] border border-green-500/20 space-y-2" data-testid="exec-tx-success">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-green-400" />
+                      <span className="text-xs font-medium text-green-400">Transaction Submitted</span>
+                    </div>
+                    <p className="text-[10px] text-gray-400 font-mono break-all">{execTxHash}</p>
+                    <a
+                      href={`https://basescan.org/tx/${execTxHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] text-teal-400 hover:text-teal-300 underline"
+                      data-testid="link-basescan"
+                    >
+                      View on BaseScan
+                    </a>
+                  </div>
+                )}
+
+                <button
+                  data-testid="button-execute-trade"
+                  disabled={executing || !execAmount.trim() || parseFloat(execAmount) <= 0 || (!walletClient && execMode === "live")}
+                  onClick={async () => {
+                    setExecuting(true);
+                    setExecError(null);
+                    setExecTxHash(null);
+                    try {
+                      if (execMode === "paper") {
+                        await new Promise((r) => setTimeout(r, 1200));
+                        const paperExec = {
+                          id: nanoid(),
+                          asset: createdArtifact!.thesis.asset,
+                          side: createdArtifact!.thesis.side,
+                          amount: execAmount,
+                          price: currentPrice || "N/A",
+                          timestamp: Date.now(),
+                        };
+                        setPaperExecutions((prev) => [paperExec, ...prev]);
+                        toast({ title: "Paper trade executed", description: `${createdArtifact!.thesis.side} ${createdArtifact!.thesis.asset} — $${execAmount} at $${currentPrice || "market"}` });
+                      } else {
+                        if (!walletClient) { setExecError("Connect wallet to execute live trades"); return; }
+                        const txHash = await walletClient.sendTransaction({
+                          to: walletAddress as `0x${string}`,
+                          value: BigInt(0),
+                          data: `0x${Buffer.from(JSON.stringify({
+                            type: "DJZS_TRADE_EXEC",
+                            artifact: createdArtifact!.hash,
+                            asset: createdArtifact!.thesis.asset,
+                            side: createdArtifact!.thesis.side,
+                            amount: execAmount,
+                            timestamp: Date.now(),
+                          })).toString("hex")}` as `0x${string}`,
+                        });
+                        setExecTxHash(txHash);
+                        toast({ title: "Transaction submitted", description: `TX: ${txHash.slice(0, 10)}...` });
+                      }
+                    } catch (err: any) {
+                      setExecError(err?.message || "Execution failed");
+                    } finally {
+                      setExecuting(false);
+                    }
+                  }}
+                  className={`w-full py-3 rounded-xl text-sm font-semibold border transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed ${
+                    execMode === "live"
+                      ? "bg-gradient-to-r from-red-500/20 to-orange-500/20 text-white border-red-500/20 hover:from-red-500/30 hover:to-orange-500/30"
+                      : "bg-gradient-to-r from-teal-500/20 to-blue-500/20 text-white border-teal-500/20 hover:from-teal-500/30 hover:to-blue-500/30"
+                  }`}
+                >
+                  {executing ? (
+                    <><Loader2 size={14} className="animate-spin" /> Executing...</>
+                  ) : execMode === "live" ? (
+                    <><ArrowRight size={14} /> Execute Live Trade</>
+                  ) : (
+                    <><FileText size={14} /> Execute Paper Trade</>
+                  )}
+                </button>
+              </div>
+
+              {paperExecutions.length > 0 && (
+                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+                  <div className="flex items-center gap-2">
+                    <FileText size={14} className="text-teal-400" />
+                    <h4 className="text-xs font-medium text-gray-400">Paper Executions</h4>
+                  </div>
+                  {paperExecutions.map((pe) => (
+                    <div key={pe.id} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] space-y-1" data-testid={`paper-exec-${pe.id}`}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-white">{pe.side} {pe.asset}</span>
+                        <span className="text-[10px] text-gray-500">{new Date(pe.timestamp).toLocaleTimeString()}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-[10px] text-gray-400">
+                        <span>Amount: ${pe.amount}</span>
+                        <span>Price: ${pe.price}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {activeTab === "monitor" && (
+        <div className="space-y-4" data-testid="monitor-tab">
+          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Bell size={16} className="text-orange-400" />
+                <h3 className="text-sm font-semibold text-white">Market Alerts</h3>
+              </div>
+              <button
+                data-testid="button-toggle-monitoring"
+                onClick={() => setMonitoringActive(!monitoringActive)}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-colors ${
+                  monitoringActive
+                    ? "bg-green-500/15 text-green-400 border-green-500/20 hover:bg-green-500/25"
+                    : "bg-white/[0.05] text-gray-400 border-white/[0.08] hover:bg-white/[0.08]"
+                }`}
+              >
+                {monitoringActive ? (
+                  <><Eye size={10} className="inline mr-1" />Watching</>
+                ) : (
+                  "Start Watching"
+                )}
+              </button>
+            </div>
+            <p className="text-[10px] text-gray-600">
+              {monitoringActive
+                ? "Checking prices every 60 seconds. Alerts fire once and auto-deactivate."
+                : "Set price or change alerts. Start watching to enable autonomous monitoring."}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+            <SectionLabel>New Alert</SectionLabel>
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                data-testid="input-alert-asset"
+                className={INPUT_CLS}
+                placeholder="Asset (e.g. BTC)"
+                value={alertAsset}
+                onChange={(e) => setAlertAsset(e.target.value)}
+              />
+              <select
+                data-testid="select-alert-condition"
+                className={`${INPUT_CLS} appearance-none`}
+                value={alertCondition}
+                onChange={(e) => setAlertCondition(e.target.value as AlertCondition)}
+              >
+                <option value="price_above">Price Above</option>
+                <option value="price_below">Price Below</option>
+                <option value="change_above">24h Change Above %</option>
+                <option value="change_below">24h Change Below %</option>
+              </select>
+            </div>
+            <input
+              data-testid="input-alert-threshold"
+              type="number"
+              className={INPUT_CLS}
+              placeholder={alertCondition.includes("change") ? "e.g. 5 (percent)" : "e.g. 100000 (USD)"}
+              value={alertThreshold}
+              onChange={(e) => setAlertThreshold(e.target.value)}
+            />
+            <button
+              data-testid="button-create-alert"
+              disabled={!alertAsset.trim() || !alertThreshold.trim()}
+              onClick={async () => {
+                await vault.marketAlerts.add({
+                  asset: alertAsset.toUpperCase().trim(),
+                  condition: alertCondition,
+                  threshold: parseFloat(alertThreshold),
+                  artifactHash: createdHash || undefined,
+                  isActive: 1,
+                  createdAt: new Date(),
+                });
+                toast({ title: "Alert created", description: `${alertAsset.toUpperCase()} ${alertCondition.replace(/_/g, " ")} ${alertThreshold}` });
+                setAlertAsset("");
+                setAlertThreshold("");
+              }}
+              className="w-full py-2.5 rounded-xl text-xs font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1.5"
+            >
+              <Plus size={12} /> Add Alert
+            </button>
+          </div>
+
+          {(activeAlerts?.length ?? 0) > 0 && (
+            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-2">
+              <SectionLabel>Active Alerts ({activeAlerts?.length})</SectionLabel>
+              {activeAlerts?.map((alert) => (
+                <div key={alert.id} className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05]" data-testid={`alert-${alert.id}`}>
+                  <div className="flex items-center gap-2">
+                    <BellRing size={12} className="text-orange-400" />
+                    <div>
+                      <p className="text-xs text-white font-medium">{alert.asset}</p>
+                      <p className="text-[10px] text-gray-500">
+                        {alert.condition.replace(/_/g, " ")} {alert.condition.includes("change") ? `${alert.threshold}%` : `$${alert.threshold.toLocaleString()}`}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    data-testid={`button-delete-alert-${alert.id}`}
+                    onClick={async () => {
+                      if (alert.id) await vault.marketAlerts.delete(alert.id);
+                    }}
+                    className="p-1.5 rounded-lg hover:bg-red-500/10 text-gray-600 hover:text-red-400 transition-colors"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {triggeredAlerts.length > 0 && (
+            <div className="p-4 rounded-2xl bg-green-500/[0.03] border border-green-500/15 space-y-2">
+              <SectionLabel>Triggered Alerts</SectionLabel>
+              {triggeredAlerts.map((ta) => (
+                <div key={ta.id} className="p-2.5 rounded-xl bg-white/[0.03] border border-green-500/10 space-y-1" data-testid={`triggered-${ta.id}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-green-400">{ta.asset}</span>
+                    <span className="text-[10px] text-gray-500">{new Date(ta.timestamp).toLocaleTimeString()}</span>
+                  </div>
+                  <p className="text-[10px] text-gray-400">
+                    {ta.condition.replace(/_/g, " ")} {ta.threshold} — price was ${ta.price.toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}

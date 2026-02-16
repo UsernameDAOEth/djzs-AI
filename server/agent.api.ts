@@ -197,8 +197,8 @@ function validateOutput(data: unknown): AgentOutput {
   return parsed;
 }
 
-async function callVenice(systemPrompt: string, userPrompt: string, useSchema: boolean = true): Promise<unknown> {
-  const apiKey = process.env.VENICE_API_KEY;
+async function callVenice(systemPrompt: string, userPrompt: string, useSchema: boolean = true, apiKeyOverride?: string): Promise<unknown> {
+  const apiKey = apiKeyOverride || process.env.VENICE_API_KEY;
   
   if (!apiKey) {
     throw new Error("VENICE_API_KEY not configured");
@@ -244,7 +244,7 @@ async function callVenice(systemPrompt: string, userPrompt: string, useSchema: b
   return JSON.parse(jsonMatch[0]);
 }
 
-export async function analyzeWithAgent(input: AgentInput): Promise<AgentOutput> {
+export async function analyzeWithAgent(input: AgentInput, apiKeyOverride?: string): Promise<AgentOutput> {
   const userPrompt = buildUserPrompt(input);
   
   const schemaInstruction = `
@@ -289,13 +289,13 @@ Rules:
 - Each question should invite a different direction of thought.`;
 
   try {
-    const result = await callVenice(SYSTEM_PROMPT + modeInstructions + schemaInstruction, userPrompt);
+    const result = await callVenice(SYSTEM_PROMPT + modeInstructions + schemaInstruction, userPrompt, true, apiKeyOverride);
     return validateOutput(result);
   } catch (error) {
     console.log("First attempt failed, retrying with stricter prompt...");
     
     const retryPrompt = userPrompt + "\n\n---\nBe more specific. Remove generic language. Say less.";
-    const result = await callVenice(SYSTEM_PROMPT + modeInstructions + schemaInstruction, retryPrompt);
+    const result = await callVenice(SYSTEM_PROMPT + modeInstructions + schemaInstruction, retryPrompt, true, apiKeyOverride);
     return validateOutput(result);
   }
 }

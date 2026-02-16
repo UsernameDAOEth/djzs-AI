@@ -71,7 +71,8 @@ import { useDisplayName, useMultipleEnsNames, formatAddress } from "@/hooks/use-
 import { useXmtp } from "@/hooks/use-xmtp";
 import { useWeb3Profile, getPrimaryProfile, getAllLinks, getTotalFollowers } from "@/hooks/useWeb3Profile";
 import { MessageCard } from "@/components/chat/message-cards";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest, queryClient, getVeniceApiKey, setVeniceApiKey } from "@/lib/queryClient";
+import { isVaultEncryptionSetUp, isVaultLocked, lockVault, setupVaultPassphrase, unlockVault, removeVaultEncryption } from "@/lib/vault-crypto";
 import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
 import { format } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -675,7 +676,10 @@ export default function Chat() {
         web: String(webModeEnabled),
         brave: String(braveSearchEnabled),
       });
-      const res = await fetch(`/api/research/search?${params}`);
+      const fetchHeaders: Record<string, string> = {};
+      const veniceKey = getVeniceApiKey();
+      if (veniceKey) fetchHeaders["x-venice-api-key"] = veniceKey;
+      const res = await fetch(`/api/research/search?${params}`, { headers: fetchHeaders });
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || "Research failed");
@@ -791,6 +795,11 @@ export default function Chat() {
 
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
   const [securityDialogOpen, setSecurityDialogOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [veniceKeyInput, setVeniceKeyInput] = useState(getVeniceApiKey() || "");
+  const [vaultPassphrase, setVaultPassphrase] = useState("");
+  const [vaultEncrypted, setVaultEncrypted] = useState(isVaultEncryptionSetUp());
+  const [vaultLocked, setVaultLocked] = useState(isVaultLocked());
   const [selectedPinKind, setSelectedPinKind] = useState<string>("pattern");
   
   const handleManualPin = async () => {
@@ -1195,8 +1204,150 @@ export default function Chat() {
               )}
               
               <button
+                onClick={() => setSettingsOpen(!settingsOpen)}
+                className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors border border-white/[0.03]"
+                data-testid="button-settings"
+              >
+                <Settings className="w-3 h-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">Settings</span>
+              </button>
+
+              {settingsOpen && (
+                <div className="mt-2 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-3" data-testid="panel-settings">
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1">Venice API Key (BYOK)</label>
+                    <p className="text-[9px] text-gray-600 mb-2">Use your own Venice key instead of the shared one. Stored locally in your browser.</p>
+                    <input
+                      data-testid="input-venice-api-key"
+                      type="password"
+                      className="w-full px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-[11px] text-white placeholder:text-gray-600 outline-none focus:border-teal-500/50"
+                      placeholder="venice-..."
+                      value={veniceKeyInput}
+                      onChange={(e) => setVeniceKeyInput(e.target.value)}
+                    />
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        data-testid="button-save-venice-key"
+                        onClick={() => {
+                          setVeniceApiKey(veniceKeyInput.trim() || null);
+                          toast({ title: veniceKeyInput.trim() ? "Venice key saved" : "Venice key removed", description: veniceKeyInput.trim() ? "Your own API key will be used for all AI requests." : "Using the shared Venice API key." });
+                        }}
+                        className="flex-1 py-1.5 rounded-lg text-[10px] font-bold bg-teal-500/15 text-teal-400 border border-teal-500/20 hover:bg-teal-500/25 transition-colors"
+                      >
+                        {veniceKeyInput.trim() ? "Save Key" : "Use Shared Key"}
+                      </button>
+                      {getVeniceApiKey() && (
+                        <button
+                          data-testid="button-clear-venice-key"
+                          onClick={() => {
+                            setVeniceKeyInput("");
+                            setVeniceApiKey(null);
+                            toast({ title: "Venice key cleared", description: "Now using the shared Venice API key." });
+                          }}
+                          className="py-1.5 px-3 rounded-lg text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-white/[0.05] pt-3">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1">Vault Encryption</label>
+                    <p className="text-[9px] text-gray-600 mb-2">
+                      {vaultEncrypted
+                        ? "Your vault is passphrase-protected. Lock it when you step away."
+                        : "Set a passphrase to encrypt your local vault data."}
+                    </p>
+                    {!vaultEncrypted ? (
+                      <>
+                        <input
+                          data-testid="input-vault-passphrase"
+                          type="password"
+                          className="w-full px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-[11px] text-white placeholder:text-gray-600 outline-none focus:border-purple-500/50"
+                          placeholder="Choose a passphrase..."
+                          value={vaultPassphrase}
+                          onChange={(e) => setVaultPassphrase(e.target.value)}
+                        />
+                        <button
+                          data-testid="button-enable-encryption"
+                          disabled={!vaultPassphrase.trim() || vaultPassphrase.length < 6}
+                          onClick={async () => {
+                            try {
+                              await setupVaultPassphrase(vaultPassphrase);
+                              setVaultEncrypted(true);
+                              setVaultLocked(false);
+                              setVaultPassphrase("");
+                              toast({ title: "Vault encryption enabled", description: "Your vault is now passphrase-protected." });
+                            } catch { toast({ title: "Encryption failed", variant: "destructive" }); }
+                          }}
+                          className="mt-2 w-full py-1.5 rounded-lg text-[10px] font-bold bg-purple-500/15 text-purple-400 border border-purple-500/20 hover:bg-purple-500/25 disabled:opacity-40 transition-colors"
+                        >
+                          Enable Encryption {vaultPassphrase.length > 0 && vaultPassphrase.length < 6 ? "(min 6 chars)" : ""}
+                        </button>
+                      </>
+                    ) : vaultLocked ? (
+                      <>
+                        <input
+                          data-testid="input-vault-unlock"
+                          type="password"
+                          className="w-full px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-[11px] text-white placeholder:text-gray-600 outline-none focus:border-green-500/50"
+                          placeholder="Enter passphrase to unlock..."
+                          value={vaultPassphrase}
+                          onChange={(e) => setVaultPassphrase(e.target.value)}
+                        />
+                        <button
+                          data-testid="button-unlock-vault"
+                          disabled={!vaultPassphrase.trim()}
+                          onClick={async () => {
+                            const ok = await unlockVault(vaultPassphrase);
+                            if (ok) {
+                              setVaultLocked(false);
+                              setVaultPassphrase("");
+                              toast({ title: "Vault unlocked" });
+                            } else {
+                              toast({ title: "Wrong passphrase", variant: "destructive" });
+                            }
+                          }}
+                          className="mt-2 w-full py-1.5 rounded-lg text-[10px] font-bold bg-green-500/15 text-green-400 border border-green-500/20 hover:bg-green-500/25 disabled:opacity-40 transition-colors"
+                        >
+                          Unlock Vault
+                        </button>
+                      </>
+                    ) : (
+                      <div className="flex gap-2">
+                        <button
+                          data-testid="button-lock-vault"
+                          onClick={() => {
+                            lockVault();
+                            setVaultLocked(true);
+                            toast({ title: "Vault locked", description: "Your data is protected until you unlock." });
+                          }}
+                          className="flex-1 py-1.5 rounded-lg text-[10px] font-bold bg-yellow-500/15 text-yellow-400 border border-yellow-500/20 hover:bg-yellow-500/25 transition-colors"
+                        >
+                          Lock Vault
+                        </button>
+                        <button
+                          data-testid="button-remove-encryption"
+                          onClick={() => {
+                            removeVaultEncryption();
+                            setVaultEncrypted(false);
+                            setVaultLocked(false);
+                            toast({ title: "Encryption removed" });
+                          }}
+                          className="py-1.5 px-3 rounded-lg text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <button
                 onClick={() => disconnect()}
-                className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-white/[0.02] hover:bg-red-500/10 text-gray-500 hover:text-red-400 transition-colors border border-white/[0.03] hover:border-red-500/20"
+                className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-white/[0.02] hover:bg-red-500/10 text-gray-500 hover:text-red-400 transition-colors border border-white/[0.03] hover:border-red-500/20"
                 data-testid="button-disconnect-wallet"
               >
                 <LogOut className="w-3 h-3" />

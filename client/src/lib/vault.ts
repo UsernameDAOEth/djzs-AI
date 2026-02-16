@@ -1,5 +1,26 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type { TradeArtifactRow } from '@/lib/trade-artifacts';
+import { getSessionKey, encryptData, decryptData, isVaultEncryptionSetUp } from '@/lib/vault-crypto';
+
+const ENC_PREFIX = "🔒";
+
+async function encryptField(text: string): Promise<string> {
+  const key = getSessionKey();
+  if (!key || !isVaultEncryptionSetUp()) return text;
+  const encrypted = await encryptData(text, key);
+  return ENC_PREFIX + encrypted;
+}
+
+async function decryptField(text: string): Promise<string> {
+  if (!text.startsWith(ENC_PREFIX)) return text;
+  const key = getSessionKey();
+  if (!key) return text;
+  try {
+    return await decryptData(text.slice(ENC_PREFIX.length), key);
+  } catch {
+    return text;
+  }
+}
 
 export type EntryType = 'journal' | 'research';
 export type MemoryKind = 'goal' | 'pattern' | 'preference' | 'project' | 'principle' | 'question' | 'person';
@@ -82,6 +103,19 @@ export interface ResearchClaim {
   updatedAt: Date;
 }
 
+export type AlertCondition = 'price_above' | 'price_below' | 'change_above' | 'change_below';
+
+export interface MarketAlert {
+  id?: number;
+  asset: string;
+  condition: AlertCondition;
+  threshold: number;
+  artifactHash?: string;
+  isActive: 0 | 1;
+  lastTriggered?: Date;
+  createdAt: Date;
+}
+
 class VaultDatabase extends Dexie {
   entries!: EntityTable<VaultEntry, 'id'>;
   insights!: EntityTable<VaultInsight, 'id'>;
@@ -91,6 +125,7 @@ class VaultDatabase extends Dexie {
   researchClaims!: EntityTable<ResearchClaim, 'id'>;
   musicTracks!: EntityTable<MusicTrack, 'id'>;
   tradeArtifacts!: EntityTable<TradeArtifactRow, 'id'>;
+  marketAlerts!: EntityTable<MarketAlert, 'id'>;
 
   constructor() {
     super('djzs-vault');
@@ -150,6 +185,19 @@ class VaultDatabase extends Dexie {
       musicTracks: '++id, name, zone, uploadedAt',
       tradeArtifacts: '++id, &hash, createdAt, thesisAsset, thesisSide, thesisTimeframe, *linkedJournalEntryIds, *linkedResearchDossierIds',
     });
+
+    this.version(7).stores({
+      entries: '++id, type, createdAt, updatedAt, videoAssetId',
+      insights: '++id, entryId, type, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
+      tradeRecords: '++id, action, status, createdAt',
+      researchDossiers: '++id, name, isArchived, createdAt, updatedAt',
+      researchQueries: '++id, dossierId, createdAt',
+      researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
+      musicTracks: '++id, name, zone, uploadedAt',
+      tradeArtifacts: '++id, &hash, createdAt, thesisAsset, thesisSide, thesisTimeframe, *linkedJournalEntryIds, *linkedResearchDossierIds',
+      marketAlerts: '++id, asset, condition, isActive, createdAt',
+    });
   }
 }
 
@@ -163,9 +211,10 @@ export async function saveEntry(
   videoPlaybackId?: string
 ): Promise<number> {
   const now = new Date();
+  const encryptedText = await encryptField(text);
   const entry: Omit<VaultEntry, 'id'> = {
     type,
-    text,
+    text: encryptedText,
     createdAt: now,
     updatedAt: now,
     tags,
@@ -192,26 +241,37 @@ export async function saveInsight(
   const id = await vault.insights.add({
     entryId,
     type,
-    said: insight.said,
-    matters: insight.matters,
-    nextMove: insight.nextMove,
-    question: insight.question,
+    said: await encryptField(insight.said),
+    matters: await encryptField(insight.matters),
+    nextMove: await encryptField(insight.nextMove),
+    question: await encryptField(insight.question),
     createdAt: new Date(),
   });
   return id as number;
 }
 
 export async function getRecentEntries(type: EntryType, limit: number = 5): Promise<VaultEntry[]> {
-  return vault.entries
+  const entries = await vault.entries
     .where('type')
     .equals(type)
     .reverse()
     .sortBy('createdAt')
     .then(entries => entries.slice(0, limit));
+  for (const entry of entries) {
+    entry.text = await decryptField(entry.text);
+  }
+  return entries;
 }
 
 export async function getInsightForEntry(entryId: number): Promise<VaultInsight | undefined> {
-  return vault.insights.where('entryId').equals(entryId).first();
+  const insight = await vault.insights.where('entryId').equals(entryId).first();
+  if (insight) {
+    insight.said = await decryptField(insight.said);
+    insight.matters = await decryptField(insight.matters);
+    insight.nextMove = await decryptField(insight.nextMove);
+    insight.question = await decryptField(insight.question);
+  }
+  return insight;
 }
 
 export async function pinMemory(
@@ -230,9 +290,10 @@ export async function pinMemory(
     return existing.id;
   }
   
+  const encryptedContent = await encryptField(content);
   const id = await vault.memoryPins.add({
     kind,
-    content,
+    content: encryptedContent,
     sourceEntryId,
     createdAt: new Date(),
     isActive: 1,
@@ -249,12 +310,16 @@ export async function deleteMemory(id: number): Promise<void> {
 }
 
 export async function getActiveMemories(limit: number = 10): Promise<MemoryPin[]> {
-  return vault.memoryPins
+  const memories = await vault.memoryPins
     .where('isActive')
     .equals(1)
     .reverse()
     .sortBy('createdAt')
     .then(memories => memories.slice(0, limit));
+  for (const m of memories) {
+    m.content = await decryptField(m.content);
+  }
+  return memories;
 }
 
 export async function getMemoriesForAgent(): Promise<Array<{ kind: MemoryKind; content: string }>> {
@@ -271,8 +336,16 @@ export async function exportVault(): Promise<{
   researchClaims: ResearchClaim[];
 }> {
   const entries = await vault.entries.toArray();
+  for (const e of entries) { e.text = await decryptField(e.text); }
   const insights = await vault.insights.toArray();
+  for (const i of insights) {
+    i.said = await decryptField(i.said);
+    i.matters = await decryptField(i.matters);
+    i.nextMove = await decryptField(i.nextMove);
+    i.question = await decryptField(i.question);
+  }
   const memories = await vault.memoryPins.where('isActive').equals(1).toArray();
+  for (const m of memories) { m.content = await decryptField(m.content); }
   const researchDossiers = await vault.researchDossiers.toArray();
   const researchQueries = await vault.researchQueries.toArray();
   const researchClaims = await vault.researchClaims.toArray();
@@ -354,10 +427,14 @@ export async function getRecentEntriesForContext(type: EntryType, limit: number 
     .equals(type)
     .toArray();
   
-  return entries
+  const sorted = entries
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    .slice(0, limit)
-    .map(e => ({ text: e.text, createdAt: e.createdAt }));
+    .slice(0, limit);
+  const result: Array<{ text: string; createdAt: Date }> = [];
+  for (const e of sorted) {
+    result.push({ text: await decryptField(e.text), createdAt: e.createdAt });
+  }
+  return result;
 }
 
 export async function createDossier(name: string, description?: string): Promise<number> {

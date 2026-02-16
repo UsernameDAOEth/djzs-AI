@@ -87,6 +87,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ==================== OPENCLAW AGENT RUNNER ====================
   app.post("/api/openclaw/run", async (req, res) => {
     try {
+      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
       const { agent: agentName, payload } = req.body;
 
       if (!agentName || !payload) {
@@ -107,7 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         validatedPayload = thinkingPartnerPayloadSchema.parse(payload);
       }
 
-      const result = await runAgent(agentName, validatedPayload);
+      const result = await runAgent(agentName, validatedPayload, userVeniceKey);
       res.json({ agent: agentName, result });
     } catch (error) {
       console.error("OpenClaw agent error:", error);
@@ -129,6 +130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get("/api/research/search", async (req, res) => {
     try {
+      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
       const query = String(req.query.q ?? "").trim();
       const webMode = req.query.web !== "false"; // Default web mode on, but fallback to explain
       const useBrave = req.query.brave === "true"; // Use Brave Search for privacy-first web search
@@ -151,18 +153,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const braveResults = await searchBrave(query, { count: 8, extra_snippets: true });
           if (braveResults.length > 0) {
-            synthesisResult = await synthesizeWithBraveResults(query, braveResults);
+            synthesisResult = await synthesizeWithBraveResults(query, braveResults, userVeniceKey);
           } else {
-            // Fallback to Venice web search if Brave returns no results
-            synthesisResult = await synthesizeResearch(query, true);
+            synthesisResult = await synthesizeResearch(query, true, userVeniceKey);
           }
         } catch (braveError) {
           console.error("Brave Search error, falling back to Venice:", braveError);
-          synthesisResult = await synthesizeResearch(query, webMode);
+          synthesisResult = await synthesizeResearch(query, webMode, userVeniceKey);
         }
       } else {
-        // Use Venice AI for synthesis (with or without its built-in web search)
-        synthesisResult = await synthesizeResearch(query, webMode);
+        synthesisResult = await synthesizeResearch(query, webMode, userVeniceKey);
       }
       
       // Cache the result
@@ -414,6 +414,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a journal entry and analyze it with Venice AI
   app.post("/api/journal/analyze", async (req, res) => {
     try {
+      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
       const { content, walletAddress, zone = "journal" } = req.body;
       
       if (!content || !walletAddress) {
@@ -437,9 +438,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 3. Call Venice AI with zone-specific analysis
       let analysis;
       if (zone === "research") {
-        analysis = await analyzeResearchEntry(content, contextEntries, pinnedMemories);
+        analysis = await analyzeResearchEntry(content, contextEntries, pinnedMemories, userVeniceKey);
       } else {
-        analysis = await analyzeJournalEntry(content, contextEntries, pinnedMemories);
+        analysis = await analyzeJournalEntry(content, contextEntries, pinnedMemories, userVeniceKey);
       }
       
       // 4. Return entry + analysis + zone
@@ -515,8 +516,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Analyze entry with the Thinking Partner agent
   app.post("/api/agent/analyze", async (req, res) => {
     try {
+      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
       const input = agentInputSchema.parse(req.body);
-      const result = await analyzeWithAgent(input);
+      const result = await analyzeWithAgent(input, userVeniceKey);
       res.json(result);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -665,6 +667,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Sentiment fetch error:", error);
       res.status(500).json({ error: "Failed to fetch market sentiment" });
+    }
+  });
+
+  app.post("/api/market/batch-price", async (req, res) => {
+    try {
+      const { assets } = req.body;
+      if (!Array.isArray(assets) || assets.length === 0) {
+        return res.status(400).json({ error: "assets array required" });
+      }
+      const coinIds = assets.map((a: string) => {
+        const lower = a.toLowerCase().trim();
+        return COINGECKO_IDS[lower] || lower;
+      });
+      const response = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds.join(",")}&vs_currencies=usd&include_24hr_change=true`
+      );
+      if (!response.ok) {
+        return res.status(502).json({ error: "Failed to fetch prices from CoinGecko" });
+      }
+      const data = await response.json();
+      const results: Record<string, { priceUsd: number; change24h: number | null }> = {};
+      assets.forEach((a: string, i: number) => {
+        const entry = data[coinIds[i]];
+        if (entry) {
+          results[a.toUpperCase()] = { priceUsd: entry.usd, change24h: entry.usd_24h_change ?? null };
+        }
+      });
+      res.json(results);
+    } catch (error) {
+      console.error("Batch price fetch error:", error);
+      res.status(500).json({ error: "Failed to fetch batch prices" });
     }
   });
 

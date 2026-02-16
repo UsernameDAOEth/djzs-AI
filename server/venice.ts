@@ -136,9 +136,10 @@ function buildUserPrompt(
 export async function analyzeJournalEntry(
   entry: string,
   recentEntries: JournalEntry[],
-  pinnedMemories: PinnedMemory[]
+  pinnedMemories: PinnedMemory[],
+  apiKeyOverride?: string
 ): Promise<JournalAnalysis> {
-  const apiKey = process.env.VENICE_API_KEY;
+  const apiKey = apiKeyOverride || process.env.VENICE_API_KEY;
   
   if (!apiKey) {
     throw new Error("VENICE_API_KEY not configured");
@@ -182,9 +183,10 @@ export async function analyzeJournalEntry(
 export async function analyzeResearchEntry(
   entry: string,
   recentEntries: JournalEntry[],
-  pinnedMemories: PinnedMemory[]
+  pinnedMemories: PinnedMemory[],
+  apiKeyOverride?: string
 ): Promise<ResearchAnalysis> {
-  const apiKey = process.env.VENICE_API_KEY;
+  const apiKey = apiKeyOverride || process.env.VENICE_API_KEY;
   
   if (!apiKey) {
     throw new Error("VENICE_API_KEY not configured");
@@ -295,8 +297,8 @@ IMPORTANT: Respond with valid JSON only. Use this format:
   "synthesisMarkdown": "Brief 2-3 paragraph synthesis of the topic"
 }`;
 
-export async function synthesizeResearch(query: string, webMode: boolean): Promise<ResearchSynthesis> {
-  const apiKey = process.env.VENICE_API_KEY;
+export async function synthesizeResearch(query: string, webMode: boolean, apiKeyOverride?: string): Promise<ResearchSynthesis> {
+  const apiKey = apiKeyOverride || process.env.VENICE_API_KEY;
   
   if (!apiKey) {
     throw new Error("VENICE_API_KEY not configured");
@@ -386,9 +388,10 @@ export interface BraveResult {
 
 export async function synthesizeWithBraveResults(
   query: string,
-  braveResults: BraveResult[]
+  braveResults: BraveResult[],
+  apiKeyOverride?: string
 ): Promise<ResearchSynthesis> {
-  const apiKey = process.env.VENICE_API_KEY;
+  const apiKey = apiKeyOverride || process.env.VENICE_API_KEY;
   
   if (!apiKey) {
     throw new Error("VENICE_API_KEY not configured");

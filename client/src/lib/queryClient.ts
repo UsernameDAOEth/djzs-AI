@@ -7,14 +7,29 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+export function getVeniceApiKey(): string | null {
+  try { return localStorage.getItem("djzs-venice-api-key"); } catch { return null; }
+}
+
+export function setVeniceApiKey(key: string | null) {
+  try {
+    if (key) localStorage.setItem("djzs-venice-api-key", key);
+    else localStorage.removeItem("djzs-venice-api-key");
+  } catch {}
+}
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  const headers: Record<string, string> = {};
+  if (data) headers["Content-Type"] = "application/json";
+  const veniceKey = getVeniceApiKey();
+  if (veniceKey) headers["x-venice-api-key"] = veniceKey;
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -29,8 +44,12 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    const headers: Record<string, string> = {};
+    const veniceKey = getVeniceApiKey();
+    if (veniceKey) headers["x-venice-api-key"] = veniceKey;
     const res = await fetch(queryKey.join("/") as string, {
       credentials: "include",
+      headers,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

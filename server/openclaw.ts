@@ -74,7 +74,7 @@ export type AgentResult = JournalInsightOutput | ResearchSynthOutput | ThinkingP
 
 interface AgentRunner {
   validate(payload: unknown): boolean;
-  process(payload: AgentPayload): Promise<AgentResult>;
+  process(payload: AgentPayload, apiKeyOverride?: string): Promise<AgentResult>;
 }
 
 class JournalInsightAgent implements AgentRunner {
@@ -82,7 +82,7 @@ class JournalInsightAgent implements AgentRunner {
     return journalInsightPayloadSchema.safeParse(payload).success;
   }
 
-  async process(payload: AgentPayload): Promise<JournalInsightOutput> {
+  async process(payload: AgentPayload, apiKeyOverride?: string): Promise<JournalInsightOutput> {
     const data = payload as JournalInsightPayload;
 
     const recentEntries = (data.recentEntries || []).map((e, i) => ({
@@ -100,7 +100,7 @@ class JournalInsightAgent implements AgentRunner {
       createdAt: new Date(),
     })) as PinnedMemory[];
 
-    const result = await analyzeJournalEntry(data.content, recentEntries, pinnedMemories);
+    const result = await analyzeJournalEntry(data.content, recentEntries, pinnedMemories, apiKeyOverride);
 
     return {
       summary: result.summary,
@@ -140,7 +140,7 @@ class ResearchSynthAgent implements AgentRunner {
     return researchSynthPayloadSchema.safeParse(payload).success;
   }
 
-  async process(payload: AgentPayload): Promise<ResearchSynthOutput> {
+  async process(payload: AgentPayload, apiKeyOverride?: string): Promise<ResearchSynthOutput> {
     const data = payload as ResearchSynthPayload;
 
     const combinedContent = data.batch.map(item => {
@@ -165,7 +165,7 @@ class ResearchSynthAgent implements AgentRunner {
       createdAt: new Date(),
     })) as PinnedMemory[];
 
-    const result = await analyzeResearchEntry(combinedContent, recentEntries, pinnedMemories);
+    const result = await analyzeResearchEntry(combinedContent, recentEntries, pinnedMemories, apiKeyOverride);
 
     return {
       thesis: result.keyClaims.length > 0
@@ -183,7 +183,7 @@ class ThinkingPartnerAgent implements AgentRunner {
     return thinkingPartnerPayloadSchema.safeParse(payload).success;
   }
 
-  async process(payload: AgentPayload): Promise<ThinkingPartnerOutput> {
+  async process(payload: AgentPayload, apiKeyOverride?: string): Promise<ThinkingPartnerOutput> {
     const data = payload as ThinkingPartnerPayload;
 
     const agentInput: AgentInput = {
@@ -197,7 +197,7 @@ class ThinkingPartnerAgent implements AgentRunner {
       priorEntries: [],
     };
 
-    const result: AgentOutput = await analyzeWithAgent(agentInput);
+    const result: AgentOutput = await analyzeWithAgent(agentInput, apiKeyOverride);
 
     const clarifyingQuestions: string[] = [];
     if (result.question) clarifyingQuestions.push(result.question);
@@ -219,7 +219,7 @@ const agents: Record<AgentName, AgentRunner> = {
   ThinkingPartner: new ThinkingPartnerAgent(),
 };
 
-export async function runAgent(agentName: AgentName, payload: AgentPayload): Promise<AgentResult> {
+export async function runAgent(agentName: AgentName, payload: AgentPayload, apiKeyOverride?: string): Promise<AgentResult> {
   const agent = agents[agentName];
   if (!agent) {
     throw new Error(`Unknown agent: ${agentName}`);
@@ -229,7 +229,7 @@ export async function runAgent(agentName: AgentName, payload: AgentPayload): Pro
     throw new Error(`Invalid payload for agent ${agentName}`);
   }
 
-  return agent.process(payload);
+  return agent.process(payload, apiKeyOverride);
 }
 
 export function formatJournalReply(data: JournalInsightOutput): string {
