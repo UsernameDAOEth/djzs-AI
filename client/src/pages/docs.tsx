@@ -1140,7 +1140,7 @@ export default function Docs() {
                 <Users className="w-6 h-6 text-orange-400" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Built by Dj-z-s</h3>
+                <h3 className="text-xl font-bold text-white">Built by Username:Dj-Z-S</h3>
                 <p className="text-xs text-orange-400/80">Solo Founder</p>
               </div>
             </div>
