@@ -100,7 +100,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Key Features (Six Zones, One Loop)
 - **Journal Zone**: Write daily thinking → AI auto-summarizes and extracts structured insights (key claims, patterns, open questions). Memory pinning carries context forward. Video entries via Livepeer.
-- **Research Zone**: Save articles/links → AI synthesizes research with journal entries. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking.
+- **Research Zone**: Save articles/links → AI synthesizes research with journal entries. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking. AI-forward features: Evidence Strength Scoring (4-axis 0-100), AI Observing panel, structured analysis (Consensus, Contradictions, Weak Assumptions), adaptive "More nuanced" mode, seamless Thinking Partner transition.
 - **Trade Zone**: Build trade thesis → AI stress tests → Risk computation → Wallet-sign artifact → Store locally with content hash → Send to trader agent via XMTP.
 - **Decision Zone**: Track high-stakes decisions with structured compose (title, context, options, reasoning, stakes). AI stress tests reasoning via ThinkingPartner. History tracks status/outcome. Amber/yellow accents.
 - **Content Zone**: Content pipeline for creators. Compose (title, topic, angle, format, audience, hook, key points). AI refines hook and angle. Pipeline tracks status from idea → published. Teal/cyan accents.

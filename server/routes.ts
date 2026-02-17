@@ -134,13 +134,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const query = String(req.query.q ?? "").trim();
       const webMode = req.query.web !== "false"; // Default web mode on, but fallback to explain
       const useBrave = req.query.brave === "true"; // Use Brave Search for privacy-first web search
+      const depth = String(req.query.depth ?? "standard") as "standard" | "nuanced";
       
       if (!query || query.length < 3) {
         return res.status(400).json({ error: "Query must be at least 3 characters" });
       }
       
-      // Check cache first
-      const cacheKey = `${query}:${webMode}:${useBrave}`;
+      // Check cache first (include depth in cache key)
+      const cacheKey = `${query}:${webMode}:${useBrave}:${depth}`;
       const cached = researchCache.get(cacheKey);
       if (cached && Date.now() - cached.timestamp < RESEARCH_CACHE_TTL) {
         return res.json({ ...cached.result, cached: true });
@@ -153,16 +154,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const braveResults = await searchBrave(query, { count: 8, extra_snippets: true });
           if (braveResults.length > 0) {
-            synthesisResult = await synthesizeWithBraveResults(query, braveResults, userVeniceKey);
+            synthesisResult = await synthesizeWithBraveResults(query, braveResults, userVeniceKey, depth);
           } else {
-            synthesisResult = await synthesizeResearch(query, true, userVeniceKey);
+            synthesisResult = await synthesizeResearch(query, true, userVeniceKey, depth);
           }
         } catch (braveError) {
           console.error("Brave Search error, falling back to Venice:", braveError);
-          synthesisResult = await synthesizeResearch(query, webMode, userVeniceKey);
+          synthesisResult = await synthesizeResearch(query, webMode, userVeniceKey, depth);
         }
       } else {
-        synthesisResult = await synthesizeResearch(query, webMode, userVeniceKey);
+        synthesisResult = await synthesizeResearch(query, webMode, userVeniceKey, depth);
       }
       
       // Cache the result

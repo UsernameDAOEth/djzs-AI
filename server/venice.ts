@@ -252,52 +252,110 @@ export async function analyzeResearchEntry(
 // Research synthesis for Research Zone search
 export interface ResearchSynthesis {
   query: string;
+  cached?: boolean;
   mode: "web" | "explain" | "brave";
   keyTakeaways: string[];
   whatToCheckNext: string[];
   sources?: { title: string; url: string; snippet: string }[];
   confidence: string;
   synthesisMarkdown: string;
+  aiObserving?: string;
+  evidenceStrength?: {
+    score: number;
+    label: string;
+    breakdown: {
+      sourceQuality: number;
+      consensus: number;
+      recency: number;
+      methodology: number;
+    };
+    summary: string;
+  };
+  contradictions?: string[];
+  weakAssumptions?: string[];
+  consensusPoints?: string[];
 }
 
-const RESEARCH_SYNTHESIS_PROMPT_WEB = `You are a research synthesizer for DJZS with access to real-time web data. Your role is to provide current, accurate information on any topic.
+const RESEARCH_SYNTHESIS_PROMPT_WEB = `You are DJZS Research Engine — an advanced research synthesizer with access to real-time web data. Your role is to provide rigorous, structured analysis.
 
 When given a research query:
-1. Provide 3-5 key takeaways based on the latest web data
-2. Suggest 2-3 things to check or explore next
-3. Rate your confidence based on source quality
-4. Write a brief synthesis paragraph with current information
-5. IMPORTANT: Cite your sources using [REF]0[/REF], [REF]1[/REF] format inline
+1. First, provide an "aiObserving" assessment: What kind of evidence does this claim require? What domains of knowledge are relevant? (1-2 sentences)
+2. Provide 3-5 key takeaways based on the latest web data
+3. Identify any contradictions between sources (array of strings, can be empty)
+4. Identify weak assumptions underlying the claim (array of strings, can be empty)
+5. Identify points of consensus across sources (array of strings, can be empty)
+6. Suggest 2-3 things to check or explore next (evidence gaps)
+7. Compute an Evidence Strength Score:
+   - sourceQuality (0-25): How authoritative and primary are the sources?
+   - consensus (0-25): How much agreement exists across sources?
+   - recency (0-25): How current is the evidence?
+   - methodology (0-25): How rigorous is the methodology behind the evidence?
+   - score: sum of all four (0-100)
+   - label: "Strong" (75-100), "Moderate" (50-74), "Weak" (25-49), "Insufficient" (0-24)
+   - summary: One sentence explaining the overall score
+8. Write a brief synthesis paragraph with current information
+9. IMPORTANT: Cite your sources using [REF]0[/REF], [REF]1[/REF] format inline
 
-Be factual, concise, and cite sources for claims. Include the date or recency of information when relevant.
+Be factual, concise, and cite sources for claims. Be honest about limitations.
 
 IMPORTANT: Respond with valid JSON only. Use this format:
 {
-  "keyTakeaways": ["fact 1 [REF]0[/REF]", "fact 2 [REF]1[/REF]", ...],
-  "whatToCheckNext": ["next step 1", "next step 2", ...],
+  "aiObserving": "This claim involves...",
+  "keyTakeaways": ["fact 1 [REF]0[/REF]", "fact 2 [REF]1[/REF]"],
+  "contradictions": ["contradiction 1", "contradiction 2"],
+  "weakAssumptions": ["assumption 1"],
+  "consensusPoints": ["consensus 1", "consensus 2"],
+  "whatToCheckNext": ["next step 1", "next step 2"],
+  "evidenceStrength": {
+    "score": 65,
+    "label": "Moderate",
+    "breakdown": { "sourceQuality": 18, "consensus": 15, "recency": 20, "methodology": 12 },
+    "summary": "Evidence is moderately strong but lacks primary research sources."
+  },
   "confidence": "High/Medium/Low - brief explanation based on source quality",
   "synthesisMarkdown": "Brief 2-3 paragraph synthesis with [REF]N[/REF] citations"
 }`;
 
-const RESEARCH_SYNTHESIS_PROMPT_EXPLAIN = `You are a research synthesizer for DJZS. Your role is to provide clear, accurate information from your training knowledge.
+const RESEARCH_SYNTHESIS_PROMPT_EXPLAIN = `You are DJZS Research Engine — an advanced research synthesizer. Your role is to provide rigorous, structured analysis from your training knowledge.
 
 When given a research query:
-1. Provide 3-5 key takeaways (bullet points of the most important facts)
-2. Suggest 2-3 things to check or explore next
-3. Rate your confidence and explain any limitations
-4. Write a brief synthesis paragraph
+1. First, provide an "aiObserving" assessment: What kind of evidence does this claim require? What domains of knowledge are relevant? (1-2 sentences)
+2. Provide 3-5 key takeaways from your training knowledge
+3. Identify any contradictions in the available knowledge (array of strings, can be empty)
+4. Identify weak assumptions underlying the claim (array of strings, can be empty)
+5. Identify points of consensus in established knowledge (array of strings, can be empty)
+6. Suggest 2-3 things to check or explore next
+7. Compute an Evidence Strength Score:
+   - sourceQuality (0-25): How authoritative is the knowledge base?
+   - consensus (0-25): How much agreement exists?
+   - recency (0-25): How current is the training data on this topic?
+   - methodology (0-25): How rigorous is the underlying methodology?
+   - score: sum of all four (0-100)
+   - label: "Strong" (75-100), "Moderate" (50-74), "Weak" (25-49), "Insufficient" (0-24)
+   - summary: One sentence explaining the overall score
+8. Write a brief synthesis paragraph
 
-Be factual, concise, and honest about what you don't know. Note that this is EXPLAIN MODE - you do not have access to live web data, so be clear about any information that may be outdated.
+Be factual, concise, and honest about what you don't know. Note that this is EXPLAIN MODE — you do not have access to live web data.
 
 IMPORTANT: Respond with valid JSON only. Use this format:
 {
-  "keyTakeaways": ["fact 1", "fact 2", ...],
-  "whatToCheckNext": ["next step 1", "next step 2", ...],
+  "aiObserving": "This claim involves...",
+  "keyTakeaways": ["fact 1", "fact 2"],
+  "contradictions": ["contradiction 1"],
+  "weakAssumptions": ["assumption 1"],
+  "consensusPoints": ["consensus 1"],
+  "whatToCheckNext": ["next step 1", "next step 2"],
+  "evidenceStrength": {
+    "score": 55,
+    "label": "Moderate",
+    "breakdown": { "sourceQuality": 15, "consensus": 15, "recency": 10, "methodology": 15 },
+    "summary": "Based on training data only — recency score limited."
+  },
   "confidence": "High/Medium/Low - note: based on training data only",
   "synthesisMarkdown": "Brief 2-3 paragraph synthesis of the topic"
 }`;
 
-export async function synthesizeResearch(query: string, webMode: boolean, apiKeyOverride?: string): Promise<ResearchSynthesis> {
+export async function synthesizeResearch(query: string, webMode: boolean, apiKeyOverride?: string, depth: "standard" | "nuanced" = "standard"): Promise<ResearchSynthesis> {
   const apiKey = apiKeyOverride || process.env.VENICE_API_KEY;
   
   if (!apiKey) {
@@ -305,9 +363,12 @@ export async function synthesizeResearch(query: string, webMode: boolean, apiKey
   }
 
   const systemPrompt = webMode ? RESEARCH_SYNTHESIS_PROMPT_WEB : RESEARCH_SYNTHESIS_PROMPT_EXPLAIN;
+  const nuancedSuffix = depth === 'nuanced' 
+    ? '\n\nIMPORTANT: NUANCED MODE ACTIVE. Prioritize edge-case evidence, minority viewpoints, and counter-arguments. Surface contradictions aggressively. Identify unstated assumptions. Be skeptical of consensus — test it. Score evidence strength more critically.'
+    : '';
   const userPrompt = webMode 
-    ? `Research query: "${query}"\n\nSearch the web for the latest information and provide a comprehensive synthesis. Cite your sources inline using [REF]N[/REF] format.`
-    : `Research query: "${query}"\n\nProvide information based on your training knowledge. This is EXPLAIN mode - no live web data is available.`;
+    ? `Research query: "${query}"\n\nSearch the web for the latest information and provide a comprehensive synthesis. Cite your sources inline using [REF]N[/REF] format.${nuancedSuffix}`
+    : `Research query: "${query}"\n\nProvide information based on your training knowledge. This is EXPLAIN mode - no live web data is available.${nuancedSuffix}`;
 
   // Build Venice-specific parameters for web search
   const veniceParameters = webMode ? {
@@ -331,7 +392,7 @@ export async function synthesizeResearch(query: string, webMode: boolean, apiKey
         { role: "user", content: userPrompt },
       ],
       temperature: 0.7,
-      max_tokens: 2000,
+      max_tokens: 3000,
       venice_parameters: veniceParameters,
     }),
   });
@@ -376,6 +437,11 @@ export async function synthesizeResearch(query: string, webMode: boolean, apiKey
     sources,
     confidence: parsed.confidence || (webMode ? "Based on web search results" : "Based on training data only"),
     synthesisMarkdown: parsed.synthesisMarkdown || "",
+    aiObserving: parsed.aiObserving || undefined,
+    evidenceStrength: parsed.evidenceStrength || undefined,
+    contradictions: parsed.contradictions || undefined,
+    weakAssumptions: parsed.weakAssumptions || undefined,
+    consensusPoints: parsed.consensusPoints || undefined,
   };
 }
 
@@ -389,7 +455,8 @@ export interface BraveResult {
 export async function synthesizeWithBraveResults(
   query: string,
   braveResults: BraveResult[],
-  apiKeyOverride?: string
+  apiKeyOverride?: string,
+  depth: "standard" | "nuanced" = "standard"
 ): Promise<ResearchSynthesis> {
   const apiKey = apiKeyOverride || process.env.VENICE_API_KEY;
   
@@ -401,27 +468,57 @@ export async function synthesizeWithBraveResults(
     `[${i + 1}] ${r.title}\nURL: ${r.url}\n${r.description}${r.extra_snippets?.length ? "\n" + r.extra_snippets.join("\n") : ""}`
   ).join("\n\n");
 
-  const systemPrompt = `You are a privacy-focused research synthesis assistant for DJZS.
+  const systemPrompt = `You are DJZS Research Engine — a privacy-focused research synthesis assistant.
 
 Your role is to synthesize web search results into clear, actionable knowledge. The user's search was performed via Brave Search (privacy-first, no tracking).
 
+When given search results:
+1. First, provide an "aiObserving" assessment: What kind of evidence does this claim require? What domains of knowledge are relevant? (1-2 sentences)
+2. Provide 3-5 key takeaways from the search results
+3. Identify any contradictions between sources (array of strings, can be empty)
+4. Identify weak assumptions underlying the claim (array of strings, can be empty)
+5. Identify points of consensus across sources (array of strings, can be empty)
+6. Suggest 2-3 follow-up questions worth exploring
+7. Compute an Evidence Strength Score:
+   - sourceQuality (0-25): How authoritative and primary are the sources?
+   - consensus (0-25): How much agreement exists across sources?
+   - recency (0-25): How current is the evidence?
+   - methodology (0-25): How rigorous is the methodology behind the evidence?
+   - score: sum of all four (0-100)
+   - label: "Strong" (75-100), "Moderate" (50-74), "Weak" (25-49), "Insufficient" (0-24)
+   - summary: One sentence explaining the overall score
+8. Write a 2-3 paragraph synthesis of the key information
+
+Be precise. Cite sources by number [1], [2], etc. Flag conflicting information. Do not hallucinate - only use information from the provided search results.
+
 ALWAYS respond with valid JSON matching this exact schema:
 {
-  "keyTakeaways": ["3-5 main points from the search results"],
-  "whatToCheckNext": ["2-3 follow-up questions worth exploring"],
+  "aiObserving": "This claim involves...",
+  "keyTakeaways": ["main point 1 [1]", "main point 2 [2]"],
+  "contradictions": ["contradiction 1"],
+  "weakAssumptions": ["assumption 1"],
+  "consensusPoints": ["consensus 1"],
+  "whatToCheckNext": ["follow-up 1", "follow-up 2"],
+  "evidenceStrength": {
+    "score": 60,
+    "label": "Moderate",
+    "breakdown": { "sourceQuality": 15, "consensus": 15, "recency": 18, "methodology": 12 },
+    "summary": "Based on Brave Search results — source diversity is moderate."
+  },
   "confidence": "A brief note on the reliability of these findings",
   "synthesisMarkdown": "A 2-3 paragraph synthesis of the key information"
-}
+}`;
 
-Be precise. Cite sources by number [1], [2], etc. Flag conflicting information. Do not hallucinate - only use information from the provided search results.`;
-
+  const nuancedSuffix = depth === 'nuanced' 
+    ? '\n\nIMPORTANT: NUANCED MODE ACTIVE. Prioritize edge-case evidence, minority viewpoints, and counter-arguments. Surface contradictions aggressively. Identify unstated assumptions. Be skeptical of consensus — test it. Score evidence strength more critically.'
+    : '';
   const userPrompt = `Research query: "${query}"
 
 Search results from Brave (privacy-first web search):
 
 ${formattedResults}
 
-Synthesize these results into actionable knowledge.`;
+Synthesize these results into actionable knowledge.${nuancedSuffix}`;
 
   const response = await fetch(`${VENICE_API_BASE}/chat/completions`, {
     method: "POST",
@@ -436,7 +533,7 @@ Synthesize these results into actionable knowledge.`;
         { role: "user", content: userPrompt },
       ],
       temperature: 0.5,
-      max_tokens: 2000,
+      max_tokens: 3000,
       venice_parameters: {
         include_venice_system_prompt: false,
       },
@@ -470,7 +567,7 @@ Synthesize these results into actionable knowledge.`;
     };
   }
   
-  let parsed: { keyTakeaways?: string[]; whatToCheckNext?: string[]; confidence?: string; synthesisMarkdown?: string };
+  let parsed: { keyTakeaways?: string[]; whatToCheckNext?: string[]; confidence?: string; synthesisMarkdown?: string; aiObserving?: string; evidenceStrength?: ResearchSynthesis["evidenceStrength"]; contradictions?: string[]; weakAssumptions?: string[]; consensusPoints?: string[] };
   try {
     const sanitized = jsonMatch[0].replace(/[\x00-\x1F\x7F]/g, (ch: string) => ch === '\n' || ch === '\r' || ch === '\t' ? ch : ' ');
     parsed = JSON.parse(sanitized);
@@ -501,5 +598,10 @@ Synthesize these results into actionable knowledge.`;
     sources,
     confidence: parsed.confidence || "Based on Brave Search results (privacy-first)",
     synthesisMarkdown: parsed.synthesisMarkdown || "",
+    aiObserving: parsed.aiObserving || undefined,
+    evidenceStrength: parsed.evidenceStrength || undefined,
+    contradictions: parsed.contradictions || undefined,
+    weakAssumptions: parsed.weakAssumptions || undefined,
+    consensusPoints: parsed.consensusPoints || undefined,
   };
 }

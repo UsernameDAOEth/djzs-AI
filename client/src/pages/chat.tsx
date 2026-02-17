@@ -202,6 +202,21 @@ interface ResearchResult {
   confidence: string;
   synthesisMarkdown: string;
   cached?: boolean;
+  aiObserving?: string;
+  evidenceStrength?: {
+    score: number;
+    label: string;
+    breakdown: {
+      sourceQuality: number;
+      consensus: number;
+      recency: number;
+      methodology: number;
+    };
+    summary: string;
+  };
+  contradictions?: string[];
+  weakAssumptions?: string[];
+  consensusPoints?: string[];
 }
 
 export default function Chat() {
@@ -241,6 +256,8 @@ export default function Chat() {
   const [quickSearchModalOpen, setQuickSearchModalOpen] = useState(false);
   const [lastEntryId, setLastEntryId] = useState<number | null>(null);
   const [researchResult, setResearchResult] = useState<ResearchResult | null>(null);
+  const [researchDepth, setResearchDepth] = useState<'standard' | 'nuanced'>('standard');
+  const [depthConfirmation, setDepthConfirmation] = useState<string | null>(null);
   const [webModeEnabled, setWebModeEnabled] = useState(true);
   const [braveSearchEnabled, setBraveSearchEnabled] = useState(false);
   const [braveSearchAvailable, setBraveSearchAvailable] = useState(false);
@@ -681,6 +698,7 @@ export default function Chat() {
         q: query,
         web: String(webModeEnabled),
         brave: String(braveSearchEnabled),
+        depth: researchDepth,
       });
       const fetchHeaders: Record<string, string> = {};
       const veniceKey = getVeniceApiKey();
@@ -1487,11 +1505,7 @@ export default function Chat() {
             {selectedZone !== 'trade' && selectedZone !== 'decisions' && selectedZone !== 'content' && (
             <div className="flex flex-col max-w-2xl w-full mx-auto px-4 sm:px-8">
               {/* Writing Area - vertically centered */}
-              <div className={`flex-1 flex flex-col justify-center py-4 sm:py-12 ${
-                selectedZone === 'research' 
-                  ? 'min-h-[40vh] sm:min-h-[60vh]' 
-                  : 'min-h-[60vh] sm:min-h-[70vh]'
-              }`}>
+              <div className={`flex-1 flex flex-col justify-center py-4 sm:py-12 min-h-[60vh] sm:min-h-[70vh]`}>
                 {/* Stats bar - streak, last entry, total (Journal only) */}
                 {selectedZone === 'journal' && entryStats && entryStats.totalEntries > 0 && (
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-8 p-3 sm:p-4 rounded-lg animate-in fade-in duration-500" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -1593,189 +1607,205 @@ export default function Chat() {
                   </>
                 ) : (
                   <>
-                    {/* Research: Futuristic AI-forward claim interface */}
-                    <div className="space-y-6 sm:space-y-10 text-center">
-                      <div className="space-y-3">
-                        <p className="rz-heading text-[10px] sm:text-xs font-bold tracking-[0.25em]" style={{ color: 'var(--rz-text-muted)' }}>
-                          DJZS Research Engine
-                        </p>
-                        <p className="text-sm sm:text-base font-medium transition-all duration-500" style={{ color: isFocused ? 'var(--rz-teal)' : 'var(--rz-text-secondary)' }}>
-                          {currentPrompts[currentPromptIndex]}
-                        </p>
-                      </div>
+                    {/* Research: Label */}
+                    <p className="rz-heading text-[10px] sm:text-xs font-bold tracking-[0.25em] mb-2" style={{ color: 'var(--rz-text-muted)' }}>
+                      DJZS Research Engine
+                    </p>
 
-                      <div className={`relative transition-all duration-500 ${isFocused ? 'rz-input-glow' : ''}`} style={{ borderRadius: '1rem' }}>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            value={messageInput}
-                            onChange={(e) => setMessageInput(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" && !e.shiftKey) {
-                                e.preventDefault();
-                                handleAnalyze();
-                              }
-                            }}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setIsFocused(false)}
-                            placeholder="State the claim you want to test."
-                            className="w-full bg-transparent border-none outline-none focus:ring-0 text-xl sm:text-2xl font-light text-center tracking-wide placeholder:tracking-wide py-6 sm:py-8"
-                            style={{ color: 'var(--rz-text-primary)', fontFamily: 'var(--font-body)' }}
-                            data-testid="input-research"
-                          />
-                          <div className="mx-auto" style={{ width: messageInput.length > 0 ? '60%' : '30%', maxWidth: '300px', transition: 'width 0.5s ease' }}>
-                            <div className={`h-[2px] mx-auto rounded-full ${messageInput.length > 0 ? '' : 'rz-underline-pulse'}`} style={{ background: messageInput.length > 0 ? 'var(--rz-teal)' : 'var(--rz-text-muted)', transition: 'background 0.4s ease' }} />
-                          </div>
-                        </div>
-                      </div>
+                    {/* Research: Prompt hint (left-aligned, matching Journal) */}
+                    <p className={`text-sm sm:text-base font-medium mb-4 transition-all duration-500 break-words ${isFocused ? 'opacity-100' : 'opacity-60 text-gray-400'}`} style={{ color: isFocused ? 'var(--rz-teal)' : undefined }}>
+                      {currentPrompts[currentPromptIndex]}
+                    </p>
 
-                      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-                        <div className="relative">
-                          <button
-                            onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-medium transition-all ${
-                              activeDossierId 
-                                ? 'text-teal-400 border' 
-                                : 'text-gray-500 hover:text-gray-300 border'
-                            }`}
-                            style={{ borderColor: activeDossierId ? 'rgba(45,212,191,0.25)' : 'var(--rz-border)', background: activeDossierId ? 'rgba(45,212,191,0.06)' : 'transparent' }}
-                            data-testid="button-dossier-selector"
-                          >
-                            <FolderOpen className="w-3.5 h-3.5" />
-                            <span className="max-w-[100px] sm:max-w-[120px] truncate">
-                              {activeDossierId && dossiers?.find(d => d.id === activeDossierId)?.name || "Research tracker"}
-                            </span>
-                            <ChevronDown className={`w-3 h-3 transition-transform ${dossierDropdownOpen ? 'rotate-180' : ''}`} />
-                          </button>
-                          
-                          {dossierDropdownOpen && (
-                            <div className="absolute top-full left-0 mt-1 w-64 rounded-lg shadow-2xl z-50 overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="dossier-dropdown">
-                              <div className="p-2" style={{ borderBottom: '1px solid var(--rz-border)' }}>
-                                <button
-                                  onClick={() => handleSelectDossier(null)}
-                                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all ${
-                                    !activeDossierId ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'
-                                  }`}
-                                  style={{ background: !activeDossierId ? 'rgba(45,212,191,0.08)' : 'transparent' }}
-                                  data-testid="button-no-dossier"
-                                >
-                                  <Search className="w-3.5 h-3.5" />
-                                  Quick search (no dossier)
-                                </button>
-                              </div>
-                              
-                              {dossiers && dossiers.length > 0 && (
-                                <div className="p-2 max-h-48 overflow-y-auto">
-                                  {dossiers.map(dossier => (
-                                    <div key={dossier.id} className="flex items-center gap-1 group">
-                                      <button
-                                        onClick={() => handleSelectDossier(dossier.id!)}
-                                        className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all ${
-                                          activeDossierId === dossier.id ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'
-                                        }`}
-                                        style={{ background: activeDossierId === dossier.id ? 'rgba(45,212,191,0.08)' : 'transparent' }}
-                                        data-testid={`button-dossier-${dossier.id}`}
-                                      >
-                                        <FolderOpen className="w-3.5 h-3.5" />
-                                        <span className="truncate">{dossier.name}</span>
-                                      </button>
-                                      <button
-                                        onClick={(e) => { e.stopPropagation(); handleDeleteDossier(dossier.id!); }}
-                                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-gray-600 hover:text-red-400 transition-all"
-                                        data-testid={`button-delete-dossier-${dossier.id}`}
-                                      >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                      </button>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                              
-                              <div className="p-2" style={{ borderTop: '1px solid var(--rz-border)' }}>
-                                {showNewDossierInput ? (
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      type="text"
-                                      value={dossierName}
-                                      onChange={(e) => setDossierName(e.target.value)}
-                                      onKeyDown={(e) => {
-                                        if (e.key === 'Enter') handleCreateDossier();
-                                        if (e.key === 'Escape') { setShowNewDossierInput(false); setDossierName(''); }
-                                      }}
-                                      placeholder="Dossier name..."
-                                      className="flex-1 px-3 py-2 rounded-md text-xs text-white placeholder:text-gray-600 outline-none"
-                                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--rz-border)' }}
-                                      autoFocus
-                                      data-testid="input-new-dossier"
-                                    />
-                                    <button
-                                      onClick={handleCreateDossier}
-                                      disabled={!dossierName.trim()}
-                                      className="p-2 rounded-md text-white hover:opacity-90 disabled:opacity-40 transition-all"
-                                      style={{ background: 'var(--rz-teal)' }}
-                                      data-testid="button-create-dossier"
-                                    >
-                                      <Check className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <button
-                                    onClick={() => setShowNewDossierInput(true)}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium text-gray-500 hover:text-gray-300 transition-all"
-                                    data-testid="button-new-dossier"
-                                  >
-                                    <FolderPlus className="w-3.5 h-3.5" />
-                                    New dossier
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                    {/* Research: Tall writing pad (matching Journal textarea) */}
+                    <div className={`relative transition-all duration-500 rounded-lg ${isFocused ? 'rz-input-glow' : ''}`}>
+                      <textarea
+                        ref={textareaRef}
+                        autoFocus
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            handleAnalyze();
+                          }
+                        }}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        placeholder="State the claim you want to test."
+                        className={`w-full bg-transparent border-none outline-none focus:ring-0 text-lg sm:text-xl font-normal text-white/95 placeholder:text-gray-600 resize-none leading-[1.9] tracking-normal p-4 sm:p-6 overflow-hidden ${isFocused ? 'placeholder:text-gray-500' : ''}`}
+                        style={{ 
+                          minHeight: 'max(180px, calc(50vh - 100px))',
+                          height: 'auto',
+                          color: 'var(--rz-text-primary)',
+                          fontFamily: 'var(--font-body)'
+                        }}
+                        data-testid="input-research"
+                      />
+                    </div>
+                  </>
+                )}
 
-                        {activeDossierId && dossierClaims && dossierClaims.length > 0 && (
-                          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px]" style={{ color: 'var(--rz-text-muted)', border: '1px solid var(--rz-border)' }}>
-                            <span>{dossierClaims.length} claim{dossierClaims.length !== 1 ? 's' : ''}</span>
-                          </div>
-                        )}
-                        
+                {/* Action bar - Research zone */}
+                {selectedZone === 'research' && (
+                <div className="mt-4 sm:mt-6 py-3 sm:py-4 px-1 space-y-3">
+                  {/* Top row: dossier + toggles + character count */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <div className="relative">
                         <button
-                          onClick={() => setWebModeEnabled(!webModeEnabled)}
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-medium transition-all border"
-                          style={{ 
-                            borderColor: webModeEnabled ? 'rgba(45,212,191,0.25)' : 'var(--rz-border)', 
-                            color: webModeEnabled ? 'var(--rz-teal)' : 'var(--rz-text-muted)',
-                            background: webModeEnabled ? 'rgba(45,212,191,0.06)' : 'transparent'
-                          }}
-                          title={webModeEnabled ? "Web search enabled (uses live data)" : "Explain mode (AI knowledge only)"}
-                          data-testid="button-web-toggle"
+                          onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
+                          className={`group relative h-9 sm:h-10 sm:px-4 px-3 rounded-lg flex items-center gap-2 transition-all ${
+                            activeDossierId 
+                              ? 'text-teal-400 border' 
+                              : 'text-gray-400 hover:text-gray-300 border'
+                          }`}
+                          style={{ borderColor: activeDossierId ? 'rgba(45,212,191,0.25)' : 'rgba(255,255,255,0.08)', background: activeDossierId ? 'rgba(45,212,191,0.06)' : 'rgba(255,255,255,0.04)' }}
+                          data-testid="button-dossier-selector"
                         >
-                          <Globe className="w-3.5 h-3.5" />
-                          <span className="hidden sm:inline">{webModeEnabled ? 'Web' : 'Explain'}</span>
+                          <FolderOpen className="w-4 h-4" />
+                          <span className="hidden sm:inline text-xs font-medium max-w-[120px] truncate">
+                            {activeDossierId && dossiers?.find(d => d.id === activeDossierId)?.name || "Research tracker"}
+                          </span>
+                          <ChevronDown className={`w-3 h-3 transition-transform ${dossierDropdownOpen ? 'rotate-180' : ''}`} />
                         </button>
                         
-                        {webModeEnabled && braveSearchAvailable && (
-                          <button
-                            onClick={() => setBraveSearchEnabled(!braveSearchEnabled)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-medium transition-all border"
-                            style={{ 
-                              borderColor: braveSearchEnabled ? 'rgba(45,212,191,0.25)' : 'var(--rz-border)', 
-                              color: braveSearchEnabled ? 'var(--rz-teal)' : 'var(--rz-text-muted)',
-                              background: braveSearchEnabled ? 'rgba(45,212,191,0.06)' : 'transparent'
-                            }}
-                            title={braveSearchEnabled ? "Brave Search (privacy-first, no tracking)" : "Use default web search"}
-                            data-testid="button-brave-toggle"
-                          >
-                            <Shield className="w-3.5 h-3.5" />
-                            <span className="hidden sm:inline">{braveSearchEnabled ? 'Brave' : 'Default'}</span>
-                          </button>
+                        {dossierDropdownOpen && (
+                          <div className="absolute top-full left-0 mt-1 w-64 rounded-lg shadow-2xl z-50 overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="dossier-dropdown">
+                            <div className="p-2" style={{ borderBottom: '1px solid var(--rz-border)' }}>
+                              <button
+                                onClick={() => handleSelectDossier(null)}
+                                className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all ${
+                                  !activeDossierId ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'
+                                }`}
+                                style={{ background: !activeDossierId ? 'rgba(45,212,191,0.08)' : 'transparent' }}
+                                data-testid="button-no-dossier"
+                              >
+                                <Search className="w-3.5 h-3.5" />
+                                Quick search (no dossier)
+                              </button>
+                            </div>
+                            
+                            {dossiers && dossiers.length > 0 && (
+                              <div className="p-2 max-h-48 overflow-y-auto">
+                                {dossiers.map(dossier => (
+                                  <div key={dossier.id} className="flex items-center gap-1 group">
+                                    <button
+                                      onClick={() => handleSelectDossier(dossier.id!)}
+                                      className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all ${
+                                        activeDossierId === dossier.id ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'
+                                      }`}
+                                      style={{ background: activeDossierId === dossier.id ? 'rgba(45,212,191,0.08)' : 'transparent' }}
+                                      data-testid={`button-dossier-${dossier.id}`}
+                                    >
+                                      <FolderOpen className="w-3.5 h-3.5" />
+                                      <span className="truncate">{dossier.name}</span>
+                                    </button>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); handleDeleteDossier(dossier.id!); }}
+                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-gray-600 hover:text-red-400 transition-all"
+                                      data-testid={`button-delete-dossier-${dossier.id}`}
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            
+                            <div className="p-2" style={{ borderTop: '1px solid var(--rz-border)' }}>
+                              {showNewDossierInput ? (
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="text"
+                                    value={dossierName}
+                                    onChange={(e) => setDossierName(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') handleCreateDossier();
+                                      if (e.key === 'Escape') { setShowNewDossierInput(false); setDossierName(''); }
+                                    }}
+                                    placeholder="Dossier name..."
+                                    className="flex-1 px-3 py-2 rounded-md text-xs text-white placeholder:text-gray-600 outline-none"
+                                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--rz-border)' }}
+                                    autoFocus
+                                    data-testid="input-new-dossier"
+                                  />
+                                  <button
+                                    onClick={handleCreateDossier}
+                                    disabled={!dossierName.trim()}
+                                    className="p-2 rounded-md text-white hover:opacity-90 disabled:opacity-40 transition-all"
+                                    style={{ background: 'var(--rz-teal)' }}
+                                    data-testid="button-create-dossier"
+                                  >
+                                    <Check className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setShowNewDossierInput(true)}
+                                  className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium text-gray-500 hover:text-gray-300 transition-all"
+                                  data-testid="button-new-dossier"
+                                >
+                                  <FolderPlus className="w-3.5 h-3.5" />
+                                  New dossier
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         )}
                       </div>
 
+                      {activeDossierId && dossierClaims && dossierClaims.length > 0 && (
+                        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px]" style={{ color: 'var(--rz-text-muted)', border: '1px solid var(--rz-border)' }}>
+                          <span>{dossierClaims.length} claim{dossierClaims.length !== 1 ? 's' : ''}</span>
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => setWebModeEnabled(!webModeEnabled)}
+                        className="group relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg flex items-center justify-center gap-2 transition-all border"
+                        style={{ 
+                          borderColor: webModeEnabled ? 'rgba(45,212,191,0.25)' : 'rgba(255,255,255,0.08)', 
+                          color: webModeEnabled ? 'var(--rz-teal)' : 'rgba(156,163,175,1)',
+                          background: webModeEnabled ? 'rgba(45,212,191,0.06)' : 'rgba(255,255,255,0.04)'
+                        }}
+                        title={webModeEnabled ? "Web search enabled (uses live data)" : "Explain mode (AI knowledge only)"}
+                        data-testid="button-web-toggle"
+                      >
+                        <Globe className="w-4 h-4" />
+                        <span className="hidden sm:inline text-xs font-medium">{webModeEnabled ? 'Web' : 'Explain'}</span>
+                      </button>
+                      
+                      {webModeEnabled && braveSearchAvailable && (
+                        <button
+                          onClick={() => setBraveSearchEnabled(!braveSearchEnabled)}
+                          className="group relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg flex items-center justify-center gap-2 transition-all border"
+                          style={{ 
+                            borderColor: braveSearchEnabled ? 'rgba(45,212,191,0.25)' : 'rgba(255,255,255,0.08)', 
+                            color: braveSearchEnabled ? 'var(--rz-teal)' : 'rgba(156,163,175,1)',
+                            background: braveSearchEnabled ? 'rgba(45,212,191,0.06)' : 'rgba(255,255,255,0.04)'
+                          }}
+                          title={braveSearchEnabled ? "Brave Search (privacy-first, no tracking)" : "Use default web search"}
+                          data-testid="button-brave-toggle"
+                        >
+                          <Shield className="w-4 h-4" />
+                          <span className="hidden sm:inline text-xs font-medium">{braveSearchEnabled ? 'Brave' : 'Default'}</span>
+                        </button>
+                      )}
+                    </div>
+                    <span className="text-[11px] tabular-nums text-gray-600 font-medium">
+                      {messageInput.length > 0 ? messageInput.length.toLocaleString() : ''}
+                    </span>
+                  </div>
+
+                  {/* Bottom row: primary action */}
+                  <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div />
+                    <div className="flex items-center gap-3">
                       <Button
                         onClick={handleAnalyze}
                         disabled={!messageInput.trim() || searchResearch.isPending}
-                        className="h-12 px-10 rounded-lg font-medium text-sm tracking-wide transition-all active:scale-[0.98] touch-target disabled:opacity-30"
+                        className="h-10 sm:h-11 px-6 sm:px-8 rounded-lg font-medium text-sm tracking-wide transition-all active:scale-[0.98] touch-target disabled:opacity-30"
                         style={{ background: messageInput.trim() ? 'var(--rz-teal)' : 'rgba(45,212,191,0.15)', color: messageInput.trim() ? '#0F1115' : 'var(--rz-text-muted)', boxShadow: messageInput.trim() ? '0 4px 24px rgba(45,212,191,0.2)' : 'none' }}
                         data-testid="button-search"
                       >
@@ -1788,30 +1818,14 @@ export default function Chat() {
                           </>
                         )}
                       </Button>
-
-                      <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-hide">
-                        <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0 justify-center">
-                          {["Latest trends", "How does X work?", "Compare A vs B", "Deep dive on topic"].map((suggestion, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => setMessageInput(suggestion)}
-                              className="px-3 py-2 sm:py-1.5 rounded-md text-[11px] font-medium transition-all whitespace-nowrap touch-target hover:text-teal-300"
-                              style={{ color: 'var(--rz-text-muted)', border: '1px solid var(--rz-border)', background: 'transparent' }}
-                              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(45,212,191,0.3)'; e.currentTarget.style.background = 'rgba(45,212,191,0.04)'; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--rz-border)'; e.currentTarget.style.background = 'transparent'; }}
-                              data-testid={`button-suggestion-${idx}`}
-                            >
-                              {suggestion}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <p className="hidden sm:block text-[10px] tracking-wider" style={{ color: 'var(--rz-text-muted)' }}>
-                        Enter to analyze
-                      </p>
                     </div>
-                  </>
+                  </div>
+
+                  {/* Keyboard hint */}
+                  <p className="hidden sm:block text-[10px] tracking-wider text-right" style={{ color: 'var(--rz-text-muted)' }}>
+                    Enter to analyze
+                  </p>
+                </div>
                 )}
 
                 {/* Action bar - Journal zone only */}
@@ -2040,20 +2054,107 @@ export default function Chat() {
                             </p>
                           </div>
                         </div>
-                        <button 
-                          onClick={clearAndReset}
-                          className="p-2 rounded-lg transition-colors touch-target"
-                          style={{ color: 'var(--rz-text-muted)' }}
+                        <button onClick={clearAndReset} className="p-2 rounded-lg transition-colors touch-target" style={{ color: 'var(--rz-text-muted)' }}
                           onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = 'var(--rz-text-primary)'; }}
                           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--rz-text-muted)'; }}
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
-                      
-                      <div className="p-5 sm:p-7 space-y-6">
+
+                      <div className="p-5 sm:p-7 space-y-8">
+                        {researchResult.aiObserving && (
+                          <div className="rz-fade-up rz-fade-up-delay-1 flex items-start gap-3 p-4 rounded-lg" style={{ background: 'rgba(45,212,191,0.04)', border: '1px solid rgba(45,212,191,0.12)' }} data-testid="ai-observing-panel">
+                            <Brain className="w-4 h-4 mt-0.5 shrink-0" style={{ color: 'var(--rz-teal)' }} />
+                            <div>
+                              <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-1.5" style={{ color: 'var(--rz-teal)' }}>AI Observing</p>
+                              <p className="text-sm leading-relaxed" style={{ color: 'var(--rz-text-primary)' }}>{researchResult.aiObserving}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {researchResult.evidenceStrength && (
+                          <div className="rz-fade-up rz-fade-up-delay-2 space-y-4" data-testid="evidence-strength-panel">
+                            <div className="flex items-center justify-between">
+                              <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Evidence Strength</p>
+                              <div className="flex items-center gap-2">
+                                <span className="text-2xl font-bold tabular-nums" style={{ color: researchResult.evidenceStrength.score >= 75 ? '#34d399' : researchResult.evidenceStrength.score >= 50 ? 'var(--rz-teal)' : researchResult.evidenceStrength.score >= 25 ? 'var(--rz-amber)' : '#ef4444' }}>
+                                  {researchResult.evidenceStrength.score}
+                                </span>
+                                <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ 
+                                  background: researchResult.evidenceStrength.score >= 75 ? 'rgba(52,211,153,0.1)' : researchResult.evidenceStrength.score >= 50 ? 'rgba(45,212,191,0.1)' : researchResult.evidenceStrength.score >= 25 ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)',
+                                  color: researchResult.evidenceStrength.score >= 75 ? '#34d399' : researchResult.evidenceStrength.score >= 50 ? 'var(--rz-teal)' : researchResult.evidenceStrength.score >= 25 ? 'var(--rz-amber)' : '#ef4444'
+                                }}>
+                                  {researchResult.evidenceStrength.label}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-4 gap-2">
+                              {[
+                                { label: 'Sources', value: researchResult.evidenceStrength.breakdown.sourceQuality, max: 25 },
+                                { label: 'Consensus', value: researchResult.evidenceStrength.breakdown.consensus, max: 25 },
+                                { label: 'Recency', value: researchResult.evidenceStrength.breakdown.recency, max: 25 },
+                                { label: 'Method', value: researchResult.evidenceStrength.breakdown.methodology, max: 25 },
+                              ].map((item) => (
+                                <div key={item.label} className="space-y-1.5">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-medium" style={{ color: 'var(--rz-text-muted)' }}>{item.label}</span>
+                                    <span className="text-[10px] font-bold tabular-nums" style={{ color: 'var(--rz-text-secondary)' }}>{item.value}/{item.max}</span>
+                                  </div>
+                                  <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                                    <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${(item.value / item.max) * 100}%`, background: item.value >= 20 ? '#34d399' : item.value >= 13 ? 'var(--rz-teal)' : item.value >= 7 ? 'var(--rz-amber)' : '#ef4444' }} />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            <p className="text-xs" style={{ color: 'var(--rz-text-secondary)' }}>{researchResult.evidenceStrength.summary}</p>
+                          </div>
+                        )}
+
+                        {researchResult.consensusPoints && researchResult.consensusPoints.length > 0 && (
+                          <div className="rz-fade-up rz-fade-up-delay-2 space-y-3" data-testid="consensus-panel">
+                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'rgba(52,211,153,0.7)' }}>Consensus</p>
+                            <ul className="space-y-2.5">
+                              {researchResult.consensusPoints.map((point, idx) => (
+                                <li key={idx} className="flex items-start gap-3">
+                                  <CheckCircle className="w-3.5 h-3.5 mt-1 shrink-0" style={{ color: 'rgba(52,211,153,0.6)' }} />
+                                  <p className="text-[15px] leading-relaxed" style={{ color: 'var(--rz-text-primary)' }}>{point}</p>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {researchResult.contradictions && researchResult.contradictions.length > 0 && (
+                          <div className="rz-fade-up rz-fade-up-delay-3 space-y-3" data-testid="contradictions-panel">
+                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-amber)' }}>Contradictions</p>
+                            <ul className="space-y-2.5">
+                              {researchResult.contradictions.map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-3 p-3 rounded-lg" style={{ background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.1)' }}>
+                                  <AlertCircle className="w-3.5 h-3.5 mt-1 shrink-0" style={{ color: 'var(--rz-amber)' }} />
+                                  <p className="text-sm leading-relaxed" style={{ color: 'var(--rz-text-primary)' }}>{item}</p>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {researchResult.weakAssumptions && researchResult.weakAssumptions.length > 0 && (
+                          <div className="rz-fade-up rz-fade-up-delay-3 space-y-3" data-testid="weak-assumptions-panel">
+                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Weak Assumptions</p>
+                            <ul className="space-y-2.5">
+                              {researchResult.weakAssumptions.map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-3">
+                                  <HelpCircle className="w-3.5 h-3.5 mt-1 shrink-0" style={{ color: 'rgba(156,163,175,0.5)' }} />
+                                  <p className="text-sm leading-relaxed" style={{ color: 'var(--rz-text-secondary)' }}>{item}</p>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
                         {researchResult.keyTakeaways && researchResult.keyTakeaways.length > 0 && (
-                          <div className="rz-fade-up rz-fade-up-delay-1 space-y-4">
+                          <div className="rz-fade-up rz-fade-up-delay-4 space-y-4">
                             <div className="flex items-center justify-between">
                               <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Key Takeaways</p>
                               {activeDossierId && (
@@ -2083,16 +2184,16 @@ export default function Chat() {
                             </ul>
                           </div>
                         )}
-                        
+
                         {researchResult.synthesisMarkdown && (
-                          <div className="rz-fade-up rz-fade-up-delay-2 rz-section">
+                          <div className="rz-fade-up rz-fade-up-delay-5 rz-section">
                             <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-4" style={{ color: 'var(--rz-teal)' }}>Synthesis</p>
                             <p className="leading-[1.8] whitespace-pre-wrap text-[15px]" style={{ color: 'var(--rz-text-primary)' }}>{researchResult.synthesisMarkdown}</p>
                           </div>
                         )}
-                        
+
                         {researchResult.whatToCheckNext && researchResult.whatToCheckNext.length > 0 && (
-                          <div className="rz-fade-up rz-fade-up-delay-3 space-y-4">
+                          <div className="rz-fade-up rz-fade-up-delay-6 space-y-4">
                             <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Evidence Gaps</p>
                             <div className="overflow-x-auto -mx-5 sm:mx-0 px-5 sm:px-0 scrollbar-hide">
                               <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
@@ -2117,9 +2218,9 @@ export default function Chat() {
                             </div>
                           </div>
                         )}
-                        
+
                         {researchResult.confidence && (
-                          <div className="rz-fade-up rz-fade-up-delay-4 p-4 rounded-lg" style={{ background: 'var(--rz-amber-glow)', border: '1px solid rgba(245,158,11,0.12)' }}>
+                          <div className="rz-fade-up rz-fade-up-delay-7 p-4 rounded-lg" style={{ background: 'var(--rz-amber-glow)', border: '1px solid rgba(245,158,11,0.12)' }}>
                             <p className="text-xs flex items-center gap-2.5" style={{ color: 'var(--rz-amber)' }}>
                               <Info className="w-3.5 h-3.5 shrink-0" />
                               {researchResult.confidence}
@@ -2128,7 +2229,7 @@ export default function Chat() {
                         )}
                       </div>
 
-                      <div className="rz-fade-up rz-fade-up-delay-5 px-5 sm:px-7 py-5" style={{ borderTop: '1px solid var(--rz-border)' }}>
+                      <div className="rz-fade-up rz-fade-up-delay-7 px-5 sm:px-7 py-5" style={{ borderTop: '1px solid var(--rz-border)' }}>
                         <button
                           onClick={() => {
                             const topic = researchResult.query || messageInput;
@@ -2146,7 +2247,22 @@ export default function Chat() {
                           <span className="text-sm font-medium" style={{ color: 'var(--rz-accent)' }}>Continue reasoning with your Thinking Partner</span>
                           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" style={{ color: 'var(--rz-accent)' }} />
                         </button>
-                        <div className="flex justify-center mt-3">
+                        <div className="flex items-center justify-center gap-4 mt-3">
+                          <button
+                            onClick={() => {
+                              setResearchDepth('nuanced');
+                              setDepthConfirmation('Position complexity increased. Future research will prioritize edge-case evidence.');
+                              setTimeout(() => setDepthConfirmation(null), 4000);
+                            }}
+                            className={`text-[11px] font-medium transition-colors ${researchDepth === 'nuanced' ? 'text-teal-400' : ''}`}
+                            style={{ color: researchDepth === 'nuanced' ? 'var(--rz-teal)' : 'var(--rz-text-muted)' }}
+                            onMouseEnter={(e) => { if (researchDepth !== 'nuanced') e.currentTarget.style.color = 'var(--rz-text-primary)'; }}
+                            onMouseLeave={(e) => { if (researchDepth !== 'nuanced') e.currentTarget.style.color = 'var(--rz-text-muted)'; }}
+                            data-testid="button-more-nuanced"
+                          >
+                            {researchDepth === 'nuanced' ? 'Nuanced mode active' : 'More nuanced'}
+                          </button>
+                          <span className="text-gray-700">·</span>
                           <button
                             onClick={clearAndReset}
                             className="text-[11px] font-medium transition-colors"
@@ -2157,6 +2273,11 @@ export default function Chat() {
                             New Search
                           </button>
                         </div>
+                        {depthConfirmation && (
+                          <div className="mt-3 p-3 rounded-lg animate-in fade-in duration-300 text-center" style={{ background: 'rgba(45,212,191,0.04)', border: '1px solid rgba(45,212,191,0.12)' }}>
+                            <p className="text-xs font-medium" style={{ color: 'var(--rz-teal)' }}>{depthConfirmation}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -2683,7 +2804,7 @@ export default function Chat() {
                       data-testid="button-toggle-history"
                     >
                       <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
-                      Past Entries ({localEntries.length})
+                      {selectedZone === 'research' ? 'Past Research' : 'Past Entries'} ({localEntries.length})
                     </button>
                     <button
                       onClick={() => setQuickSearchModalOpen(true)}
@@ -2721,7 +2842,7 @@ export default function Chat() {
                                         onClick={() => setExpandedEntryId(isExpanded ? null : entry.id!)}
                                         className={`w-full text-left p-3 sm:p-4 rounded-lg border transition-all ${
                                           isExpanded
-                                            ? 'bg-white/[0.04] border-orange-500/20'
+                                            ? selectedZone === 'research' ? 'bg-white/[0.04] border-teal-500/20' : 'bg-white/[0.04] border-orange-500/20'
                                             : 'bg-[#14171D] border-white/[0.04] hover:border-white/[0.08]'
                                         }`}
                                         data-testid={`entry-card-${entry.id}`}
@@ -2745,11 +2866,16 @@ export default function Chat() {
                                                     setExpandedEntryId(null);
                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                                   }}
-                                                  className="text-[10px] font-semibold px-2.5 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors"
+                                                  className={`text-[10px] font-semibold px-2.5 py-1.5 rounded-lg transition-colors ${
+                                                    selectedZone === 'research' 
+                                                      ? 'bg-teal-500/10 text-teal-400 hover:bg-teal-500/20'
+                                                      : 'bg-orange-500/10 text-orange-400 hover:bg-orange-500/20'
+                                                  }`}
                                                   data-testid={`button-reuse-entry-${entry.id}`}
                                                 >
-                                                  Continue this thought
+                                                  {selectedZone === 'research' ? 'Research again' : 'Continue this thought'}
                                                 </button>
+                                                {selectedZone !== 'research' && (
                                                 <button
                                                   onClick={(e) => {
                                                     e.stopPropagation();
@@ -2763,6 +2889,22 @@ export default function Chat() {
                                                 >
                                                   Research this
                                                 </button>
+                                                )}
+                                                {selectedZone === 'research' && (
+                                                <button
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    const topic = entry.text.slice(0, 100);
+                                                    setExpandedEntryId(null);
+                                                    setSelectedZone('journal');
+                                                    setTimeout(() => setMessageInput(`Thinking about: ${topic}`), 100);
+                                                  }}
+                                                  className="text-[10px] font-semibold px-2.5 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors"
+                                                  data-testid={`button-journal-entry-${entry.id}`}
+                                                >
+                                                  Journal about this
+                                                </button>
+                                                )}
                                               </div>
                                             )}
                                           </div>
