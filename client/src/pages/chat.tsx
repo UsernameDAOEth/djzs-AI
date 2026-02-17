@@ -1049,7 +1049,7 @@ export default function Chat() {
   return (
     <>
     <TooltipProvider>
-      <div className="h-screen text-gray-300 flex overflow-hidden font-sans selection:bg-orange-500/30" style={{ background: selectedZone === 'research' ? '#0F1115' : '#2A2E3F' }}>
+      <div className="h-screen text-gray-300 flex overflow-hidden font-sans selection:bg-teal-500/30" style={{ background: '#0F1115' }}>
         {/* Mobile sidebar overlay */}
         {mobileSidebarOpen && (
           <div 
@@ -1063,13 +1063,13 @@ export default function Chat() {
           ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
           md:translate-x-0
           fixed md:relative z-50 md:z-auto
-          w-64 h-full border-r border-white/[0.03] flex flex-col bg-[#1a1d26] md:bg-[#1a1d26]/80 
-          transition-all duration-300 
+          w-64 h-full border-r flex flex-col 
+          transition-all duration-300
           ${isFocused && !mobileSidebarOpen ? 'md:opacity-40' : 'opacity-100'}
-        `}>
+        `} style={{ background: '#0D0F13', borderColor: 'rgba(255,255,255,0.04)' }}>
           <div className="p-8 pb-4 flex items-center justify-between">
             <Link href="/">
-              <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-orange-400 transition-all group">
+              <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-teal-400 transition-all group">
                 <img src="/logo.png" alt="DJZS" className="w-6 h-6 rounded transition-transform group-hover:-translate-x-1" style={{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.3))' }} data-testid="img-logo-sidebar" />
                 <span>DJZS v1</span>
               </button>
@@ -1101,9 +1101,9 @@ export default function Chat() {
                       : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-orange-400" : "text-gray-600 group-hover:text-gray-400"}`} />
+                  <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-teal-400" : "text-gray-600 group-hover:text-gray-400"}`} />
                   <span className="text-sm font-bold tracking-tight">{zone.name}</span>
-                  {isActive && <div className="ml-auto w-1 h-1 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(243,126,32,0.5)]"></div>}
+                  {isActive && <div className="ml-auto w-1 h-1 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]"></div>}
                 </button>
               );
             })}
@@ -1120,19 +1120,19 @@ export default function Chat() {
           </nav>
 
           <div className="p-4 mt-auto">
-            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.03]">
+            <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
               <div className="flex items-center gap-3 mb-3">
                 {primaryProfile?.avatar ? (
                   <img 
                     src={primaryProfile.avatar} 
                     alt={primaryProfile.displayName} 
-                    className="w-10 h-10 rounded-full border border-orange-500/20 object-cover"
+                    className="w-10 h-10 rounded-full object-cover" style={{ border: '1px solid rgba(45,212,191,0.2)' }}
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none';
                     }}
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-orange-600/20 flex items-center justify-center text-sm font-black text-orange-400 border border-orange-500/20">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black" style={{ background: 'rgba(45,212,191,0.1)', color: 'var(--rz-teal)', border: '1px solid rgba(45,212,191,0.2)' }}>
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -1366,7 +1366,7 @@ export default function Chat() {
         {/* Main Interface */}
         <main className="flex-1 flex flex-col relative">
           {/* Transparent Glassy Header */}
-          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 backdrop-blur-xl border-b sticky top-0 z-30" style={{ background: selectedZone === 'research' ? 'rgba(15,17,21,0.85)' : 'rgba(42,46,63,0.8)', borderColor: selectedZone === 'research' ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.03)' }}>
+          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 backdrop-blur-xl border-b sticky top-0 z-30" style={{ background: 'rgba(15,17,21,0.85)', borderColor: 'rgba(255,255,255,0.04)' }}>
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Hamburger menu for mobile */}
               <button 
@@ -1386,15 +1386,15 @@ export default function Chat() {
               {/* Status badges - hidden on mobile, E2E badge is clickable */}
               <Dialog open={securityDialogOpen} onOpenChange={setSecurityDialogOpen}>
                 <DialogTrigger asChild>
-                  <button className="hidden lg:flex items-center gap-4 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-white/[0.08] transition-all cursor-pointer" data-testid="button-security-info">
+                  <button className="hidden lg:flex items-center gap-4 px-4 py-2 rounded-lg transition-all cursor-pointer" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)'; }} data-testid="button-security-info">
                     <div className="flex items-center gap-2">
                       <Lock className="w-3 h-3 text-green-500/50" />
-                      <span className="text-[10px] font-medium text-gray-500">Local-First</span>
+                      <span className="text-[10px] font-medium" style={{ color: 'var(--rz-text-muted)' }}>Local-First</span>
                     </div>
-                    <div className="w-px h-3 bg-white/10"></div>
+                    <div className="w-px h-3" style={{ background: 'rgba(255,255,255,0.06)' }}></div>
                     <div className="flex items-center gap-2">
-                      <Bot className="w-3 h-3 text-orange-500/50" />
-                      <span className="text-[10px] font-medium text-gray-500">Thinking Partner</span>
+                      <Bot className="w-3 h-3" style={{ color: 'rgba(45,212,191,0.5)' }} />
+                      <span className="text-[10px] font-medium" style={{ color: 'var(--rz-text-muted)' }}>Thinking Partner</span>
                     </div>
                   </button>
                 </DialogTrigger>
@@ -1494,18 +1494,18 @@ export default function Chat() {
               }`}>
                 {/* Stats bar - streak, last entry, total (Journal only) */}
                 {selectedZone === 'journal' && entryStats && entryStats.totalEntries > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-8 p-3 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04] animate-in fade-in duration-500">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-8 p-3 sm:p-4 rounded-xl animate-in fade-in duration-500" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }}>
                     {entryStats.streak > 0 && (
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10" data-testid="streak-badge">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(45,212,191,0.08)' }} data-testid="streak-badge">
                         <span className="text-sm">🔥</span>
-                        <span className="text-xs font-bold text-orange-400 tabular-nums">
+                        <span className="text-xs font-bold tabular-nums" style={{ color: 'var(--rz-teal)' }}>
                           {entryStats.streak} day{entryStats.streak !== 1 ? 's' : ''}
                         </span>
                       </div>
                     )}
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03]">
-                      <Clock className="w-3.5 h-3.5 text-gray-500" />
-                      <span className="text-xs font-medium text-gray-400">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                      <Clock className="w-3.5 h-3.5" style={{ color: 'var(--rz-text-muted)' }} />
+                      <span className="text-xs font-medium" style={{ color: 'var(--rz-text-secondary)' }}>
                         {entryStats.daysSinceLastEntry === 0 
                           ? "Today" 
                           : entryStats.daysSinceLastEntry === 1 
@@ -1513,9 +1513,9 @@ export default function Chat() {
                             : `${entryStats.daysSinceLastEntry} days ago`}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03]">
-                      <BookOpen className="w-3.5 h-3.5 text-gray-500" />
-                      <span className="text-xs font-medium text-gray-400">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                      <BookOpen className="w-3.5 h-3.5" style={{ color: 'var(--rz-text-muted)' }} />
+                      <span className="text-xs font-medium" style={{ color: 'var(--rz-text-secondary)' }}>
                         {entryStats.totalEntries} {entryStats.totalEntries === 1 ? 'entry' : 'entries'}
                       </span>
                     </div>
