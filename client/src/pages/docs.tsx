@@ -25,7 +25,11 @@ import {
   TrendingUp,
   KeyRound,
   ShieldCheck,
-  Palette
+  Palette,
+  BarChart3,
+  Eye,
+  Layers,
+  ArrowRightLeft
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -478,6 +482,18 @@ export default function Docs() {
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
                   <span><strong className="text-teal-300">Cross-Zone Linking</strong> - Connect research claims to journal entries</span>
                 </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-teal-300">Evidence Scoring</strong> - 4-axis strength scoring (Sources, Consensus, Recency, Method) with color-coded bars</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-teal-300">AI Observing</strong> - Meta-observations panel reveals what the AI noticed during analysis</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-teal-300">More Nuanced</strong> - Adaptive depth mode that prioritizes edge cases and counter-arguments</span>
+                </li>
               </ul>
             </div>
 
@@ -685,6 +701,133 @@ export default function Docs() {
             <div className="p-4 rounded-lg bg-teal-500/[0.06] border border-teal-500/15">
               <p className="text-sm text-gray-400 leading-relaxed">
                 All dossiers and claims are stored locally in your browser's IndexedDB. Nothing is sent to a server. Your research stays private and portable.
+              </p>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-8">AI-Forward Research Intelligence</h2>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20 mb-8">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-lg bg-teal-600/20 flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-teal-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Algorithmic Analysis, Not Guesswork</h3>
+                <p className="text-xs text-teal-400/80">Evidence scoring, structured contradictions, and adaptive depth</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              Every research result in DJZS is more than a summary. The AI breaks down its analysis into structured, scorable dimensions so you can see exactly how strong the evidence is — and where the gaps are. No hand-waving, no "it depends." Algorithmic transparency for sovereign thinkers.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-evidence-scoring">
+                <div className="flex items-center gap-2 mb-3">
+                  <BarChart3 className="w-5 h-5 text-teal-400" />
+                  <h4 className="text-sm font-bold text-white">Evidence Strength Scoring</h4>
+                </div>
+                <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+                  Each research result gets a 4-axis score from 0 to 100, visualized as progress bars with color-coded thresholds:
+                </p>
+                <ul className="space-y-2 text-xs text-gray-500">
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#2E8B8B' }}></span>
+                    <span><strong className="text-teal-300">Sources</strong> — Number and diversity of references backing the synthesis</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#2E8B8B' }}></span>
+                    <span><strong className="text-teal-300">Consensus</strong> — Degree of agreement across sources</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#2E8B8B' }}></span>
+                    <span><strong className="text-teal-300">Recency</strong> — How current the information is</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#2E8B8B' }}></span>
+                    <span><strong className="text-teal-300">Method</strong> — Rigor of the underlying methodology</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-600 mt-3">Scores above 70 show green, 40-70 amber, below 40 red — instant signal quality at a glance.</p>
+              </div>
+
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-ai-observing">
+                <div className="flex items-center gap-2 mb-3">
+                  <Eye className="w-5 h-5 text-teal-400" />
+                  <h4 className="text-sm font-bold text-white">AI Observing Panel</h4>
+                </div>
+                <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+                  A dedicated panel where the AI shares what it noticed while analyzing your query — meta-observations about patterns, information gaps, or surprising connections that don't fit neatly into the main synthesis.
+                </p>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Think of it as the AI's margin notes: "I noticed the strongest sources agree on X but diverge sharply on Y" or "There's a gap in recent data that older sources filled differently." These observations help you calibrate how much to trust the synthesis.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-structured-analysis">
+                <div className="flex items-center gap-2 mb-3">
+                  <Layers className="w-5 h-5 text-teal-400" />
+                  <h4 className="text-sm font-bold text-white">Structured Analysis</h4>
+                </div>
+                <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+                  Research results are broken into three clearly labeled sections:
+                </p>
+                <ul className="space-y-2 text-xs text-gray-500">
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-green-300">Consensus Points</strong> — Where multiple sources agree. The foundation you can likely trust.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-amber-300">Contradictions</strong> — Where sources disagree. The fault lines worth investigating.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0"></span>
+                    <span><strong className="text-red-300">Weak Assumptions</strong> — Claims that lack strong evidence. The risks in your research.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-nuanced-mode">
+                <div className="flex items-center gap-2 mb-3">
+                  <ArrowRightLeft className="w-5 h-5 text-teal-400" />
+                  <h4 className="text-sm font-bold text-white">Adaptive Depth: "More Nuanced" Mode</h4>
+                </div>
+                <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+                  After getting an initial synthesis, click "More nuanced" to re-run the query with a depth modifier. The AI shifts its approach:
+                </p>
+                <ul className="space-y-2 text-xs text-gray-500">
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
+                    <span>Prioritizes edge-case evidence and minority viewpoints</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
+                    <span>Surfaces contradictions more aggressively</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
+                    <span>Highlights counter-arguments the initial pass may have glossed over</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-600 mt-3">This isn't just "search again." The AI modifies its internal prompt to actively seek dissenting evidence.</p>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-lg bg-teal-500/[0.06] border border-teal-500/15 mb-4" data-testid="card-thinking-partner-transition">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <p className="text-sm font-bold text-purple-300">Seamless Thinking Partner Transition</p>
+              </div>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                Found something worth thinking deeper about? Click the "Think deeper with Thinking Partner" button on any research result. It auto-loads your research context into the Journal Zone so you can reflect on it with the AI Thinking Partner — no copy-pasting, no context loss. Research flows into reflection in one click.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-teal-500/[0.04] border border-teal-500/10">
+              <p className="text-xs text-gray-500 leading-relaxed">
+                All AI analysis features are powered by Venice AI with no data retention. Evidence scores are algorithmically determined by the AI based on the quality of available information — they are not editable by users. Results with staggered fade-in animations reveal each section sequentially for focused reading.
               </p>
             </div>
           </div>
