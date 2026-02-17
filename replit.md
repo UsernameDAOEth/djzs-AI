@@ -34,8 +34,8 @@ Preferred communication style: Simple, everyday language.
 - **entries**: Journal and research entries stored on-device.
 - **insights**: AI-generated insights linked to entries.
 - **memoryPins**: User-pinned memories (goals, patterns, preferences, etc.).
-- **researchDossiers**: Named research folders.
-- **researchQueries**: Search queries within dossiers.
+- **researchDossiers**: Named research trackers (folders).
+- **researchQueries**: Search queries within trackers.
 - **researchClaims**: Claims with trust levels, status, and optional journal links.
 - **decisionLogs**: Decision log entries with title, context, options, reasoning, stakes, status, outcome, AI review.
 - **contentPipeline**: Content pipeline items with title, topic, angle, format, audience, hook, key points, status, AI refinement.
@@ -80,7 +80,7 @@ Preferred communication style: Simple, everyday language.
 - **Component**: `client/src/components/trade-artifact-composer.tsx` — TradeArtifactZone with 6 tabs (Compose, Stress Test, Risk & Sign, Execute, Monitor, History).
 - **Integration**: Accessible as "Trade" zone in chat sidebar. Uses viem WalletClient for EIP-191 signing, SHA-256 content hashing.
 - **Market Data**: Live price via CoinGecko API (no key), sentiment via Fear & Greed Index. Backend routes: `/api/market/price/:asset`, `/api/market/sentiment`, `/api/market/batch-price`. Auto-fills Market Conditions on asset blur + manual refresh button. Shows 24h price change.
-- **Cross-Zone Intelligence**: Auto-surfaces relevant journal entries, research dossiers, and claims matching the asset being traded. Matched items shown first with highlight badges.
+- **Cross-Zone Intelligence**: Auto-surfaces relevant journal entries, research trackers, and claims matching the asset being traded. Matched items shown first with highlight badges.
 - **Execution Layer**: Execute tab supports paper trading (simulated) and live trading (sends on-chain transaction via connected wallet). Shows execution details from signed artifact, tracks paper executions and live tx hashes with BaseScan links.
 - **Autonomous Monitoring**: Monitor tab with market alert system. Users create alerts (price above/below, 24h change above/below). "Start Watching" activates 60-second polling via batch price API. Alerts auto-deactivate when triggered and show toast notifications. Alerts stored in `marketAlerts` table (vault version 7).
 - **Flow**: Build thesis → AI stress test via Thinking Partner → Risk computation → Sign & store → Execute (paper/live) → Monitor alerts → Optional XMTP send to agent.
@@ -100,7 +100,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Key Features (Six Zones, One Loop)
 - **Journal Zone**: Write daily thinking → AI auto-summarizes and extracts structured insights (key claims, patterns, open questions). Memory pinning carries context forward. Video entries via Livepeer.
-- **Research Zone**: Save articles/links → AI synthesizes research with journal entries. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Dossiers, claim tracking with trust levels, cross-zone linking. AI-forward features: Evidence Strength Scoring (4-axis 0-100), AI Observing panel, structured analysis (Consensus, Contradictions, Weak Assumptions), adaptive "More nuanced" mode, seamless Thinking Partner transition.
+- **Research Zone**: Save articles/links → AI synthesizes research with journal entries. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Research trackers, claim tracking with trust levels, cross-zone linking. AI-forward features: Evidence Strength Scoring (4-axis 0-100), AI Observing panel, structured analysis (Consensus, Contradictions, Weak Assumptions), adaptive "More nuanced" mode, seamless Thinking Partner transition.
 - **Trade Zone**: Build trade thesis → AI stress tests → Risk computation → Wallet-sign artifact → Store locally with content hash → Send to trader agent via XMTP.
 - **Decision Zone**: Track high-stakes decisions with structured compose (title, context, options, reasoning, stakes). AI stress tests reasoning via ThinkingPartner. History tracks status/outcome. Amber/yellow accents.
 - **Content Zone**: Content pipeline for creators. Compose (title, topic, angle, format, audience, hook, key points). AI refines hook and angle. Pipeline tracks status from idea → published. Teal/cyan accents.

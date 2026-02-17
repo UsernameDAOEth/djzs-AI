@@ -90,7 +90,7 @@ export default function About() {
                     </div>
                     <h3 className="text-white font-bold">Research Zone</h3>
                   </div>
-                  <p className="text-gray-400 mb-3">Save articles, on-chain data, competitor analysis, and research notes. The AI synthesizes your research, identifies where sources agree or contradict, and suggests what to investigate next. Organize everything into dossiers with tracked claims and trust levels.</p>
+                  <p className="text-gray-400 mb-3">Save articles, on-chain data, competitor analysis, and research notes. The AI synthesizes your research, identifies where sources agree or contradict, and suggests what to investigate next. Organize everything into research trackers with tracked claims and trust levels.</p>
                   <p className="text-xs text-gray-500">Three modes: <strong className="text-teal-400">Brave Mode</strong> (privacy-first web search), <strong className="text-teal-400">Web Mode</strong> (AI web search with citations), <strong className="text-teal-400">Explain Mode</strong> (AI knowledge synthesis).</p>
                 </div>
                 <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }} data-testid="card-zone-thinking">
@@ -188,7 +188,7 @@ export default function About() {
                   <HardDrive className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-white font-bold text-xs mb-1">Your Data</p>
-                    <p className="text-xs text-gray-500">Your journal entries, memory vault, research dossiers, and claims are stored locally in your browser's IndexedDB. They never touch our servers.</p>
+                    <p className="text-xs text-gray-500">Your journal entries, memory vault, research trackers, and claims are stored locally in your browser's IndexedDB. They never touch our servers.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">

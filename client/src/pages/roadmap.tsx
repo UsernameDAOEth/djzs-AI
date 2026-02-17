@@ -23,7 +23,7 @@ const roadmapPhases = [
     items: [
       { text: "Thinking Partner: challenges assumptions in Journal, synthesizes in Research", done: true },
       { text: "Research Zone: Brave Mode privacy-first search + Web Mode + Explain Mode", done: true },
-      { text: "Dossier management & claim tracking with trust levels", done: true },
+      { text: "Research tracker management & claim tracking with trust levels", done: true },
       { text: "Cross-zone linking (claims ↔ journal entries)", done: true },
       { text: "Vault export & data portability", done: true },
     ],

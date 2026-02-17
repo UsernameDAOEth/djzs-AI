@@ -370,7 +370,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Build dossiers on protocols, tokens, and market narratives
+                    Build research trackers on protocols, tokens, and market narratives
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
@@ -574,7 +574,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Build dossiers on papers, datasets, and source materials
+                    Build research trackers on papers, datasets, and source materials
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
@@ -930,7 +930,7 @@ export default function Home() {
 
               <FAQItem question="Where is my data stored?">
                 <p className="text-white font-semibold">In your browser's local database (IndexedDB) on this device.</p>
-                <p className="mt-2">DJZS does not use cloud servers for storage. Your journal entries, research dossiers, memory pins, and music tracks all live in your browser's IndexedDB. This data persists across sessions but never leaves your device unless you explicitly send text to the AI or export it.</p>
+                <p className="mt-2">DJZS does not use cloud servers for storage. Your journal entries, research trackers, memory pins, and music tracks all live in your browser's IndexedDB. This data persists across sessions but never leaves your device unless you explicitly send text to the AI or export it.</p>
                 <p className="mt-2">Clearing your browser data will permanently delete this information. We recommend regular backups.</p>
               </FAQItem>
 
@@ -940,7 +940,7 @@ export default function Home() {
                 <ul className="list-disc list-inside ml-2">
                   <li>A manifest with version info and checksums</li>
                   <li>Each entry as structured JSON + human-readable Markdown</li>
-                  <li>Memory pins, research dossiers, queries, and claims</li>
+                  <li>Memory pins, research trackers, queries, and claims</li>
                   <li>Music tracks (if any)</li>
                 </ul>
                 <p className="mt-2">Import merges new data with your existing vault — it won't overwrite or delete anything. Duplicates are automatically skipped.</p>

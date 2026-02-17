@@ -334,7 +334,7 @@ export default function Docs() {
               <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <HardDrive className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-white mb-1">Local-First Storage</h4>
-                <p className="text-xs text-gray-500">All entries, insights, memory pins, research dossiers, and claims live in your browser's IndexedDB. We don't have a database of your thoughts. There's nothing to hack, subpoena, or sell.</p>
+                <p className="text-xs text-gray-500">All entries, insights, memory pins, research trackers, and claims live in your browser's IndexedDB. We don't have a database of your thoughts. There's nothing to hack, subpoena, or sell.</p>
               </div>
               <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <ShieldCheck className="w-5 h-5 text-green-400 mb-2" />
@@ -472,7 +472,7 @@ export default function Docs() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Dossiers</strong> - Organize research into named folders</span>
+                  <span><strong className="text-teal-300">Research Trackers</strong> - Organize research into named folders</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
@@ -515,7 +515,7 @@ export default function Docs() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Cross-Zone Intelligence</strong> - Auto-surfaces relevant journal entries, research dossiers, and claims matching your asset</span>
+                  <span><strong className="text-purple-300">Cross-Zone Intelligence</strong> - Auto-surfaces relevant journal entries, research trackers, and claims matching your asset</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
@@ -640,23 +640,23 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-white mb-8">Research Dossiers & Claims</h2>
+          <h2 className="text-2xl font-bold text-white mb-8">Research Trackers & Claims</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20 mb-8">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 rounded-lg bg-teal-600/20 flex items-center justify-center">
                 <FileSearch className="w-6 h-6 text-teal-400" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Organize Research into Dossiers</h3>
+                <h3 className="text-xl font-bold text-white">Organize Research into Trackers</h3>
                 <p className="text-xs text-teal-400/80">Named folders for structured knowledge building</p>
               </div>
             </div>
             <p className="text-gray-400 mb-6 leading-relaxed">
-              Dossiers are research folders that let you organize findings by topic. Each dossier holds claims — key takeaways from your research — with trust levels and status tracking. Think of them as structured evidence files for any topic you're investigating.
+              Research trackers are folders that let you organize findings by topic. Each tracker holds claims — key takeaways from your research — with trust levels and status tracking. Think of them as structured evidence files for any topic you're investigating.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="space-y-4">
-                <h4 className="text-sm font-bold text-teal-300">How Dossiers Work</h4>
+                <h4 className="text-sm font-bold text-teal-300">How Trackers Work</h4>
                 <ul className="space-y-3 text-sm text-gray-500">
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
@@ -664,15 +664,15 @@ export default function Docs() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Create a Dossier</strong> — Click the folder icon, then "New dossier" to create a named research folder (e.g., "AI Agents", "DeFi Yields")</span>
+                    <span><strong className="text-teal-300">Create a Tracker</strong> — Click the folder icon, then "New tracker" to create a named research folder (e.g., "AI Agents", "DeFi Yields")</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Select a Dossier</strong> — Pick an existing dossier from the dropdown before searching. All claims you save will go into that folder</span>
+                    <span><strong className="text-teal-300">Select a Tracker</strong> — Pick an existing tracker from the dropdown before searching. All claims you save will go into that folder</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Delete a Dossier</strong> — Hover over a dossier name in the dropdown and click the trash icon to remove it</span>
+                    <span><strong className="text-teal-300">Delete a Tracker</strong> — Hover over a tracker name in the dropdown and click the trash icon to remove it</span>
                   </li>
                 </ul>
               </div>
@@ -681,7 +681,7 @@ export default function Docs() {
                 <ul className="space-y-3 text-sm text-gray-500">
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Save Claims</strong> — After a research result, click the + button next to any key takeaway to save it as a claim in your active dossier</span>
+                    <span><strong className="text-teal-300">Save Claims</strong> — After a research result, click the + button next to any key takeaway to save it as a claim in your active tracker</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
@@ -700,7 +700,7 @@ export default function Docs() {
             </div>
             <div className="p-4 rounded-lg bg-teal-500/[0.06] border border-teal-500/15">
               <p className="text-sm text-gray-400 leading-relaxed">
-                All dossiers and claims are stored locally in your browser's IndexedDB. Nothing is sent to a server. Your research stays private and portable.
+                All trackers and claims are stored locally in your browser's IndexedDB. Nothing is sent to a server. Your research stays private and portable.
               </p>
             </div>
           </div>

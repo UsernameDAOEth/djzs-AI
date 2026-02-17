@@ -55,7 +55,7 @@ export default function Privacy() {
               <ul className="space-y-3 list-none">
                 <li><span className="text-white">• Personal Information:</span> We do not collect names, emails, phone numbers, or any personally identifiable information.</li>
                 <li><span className="text-white">• Journal Entries:</span> Your thoughts, reflections, and journal content remain stored locally in your browser's IndexedDB.</li>
-                <li><span className="text-white">• Research Data:</span> Your research notes and dossiers are stored locally. When you run a research query, the query text is sent to AI providers for synthesis.</li>
+                <li><span className="text-white">• Research Data:</span> Your research notes and trackers are stored locally. When you run a research query, the query text is sent to AI providers for synthesis.</li>
               </ul>
             </section>
 

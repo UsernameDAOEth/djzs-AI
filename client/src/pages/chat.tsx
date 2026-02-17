@@ -909,9 +909,9 @@ export default function Chat() {
       setActiveDossierId(id);
       setDossierName("");
       setShowNewDossierInput(false);
-      toast({ title: "Dossier created", description: `"${dossierName.trim()}" is now active` });
+      toast({ title: "Tracker created", description: `"${dossierName.trim()}" is now active` });
     } catch (err) {
-      toast({ title: "Error", description: "Failed to create dossier", variant: "destructive" });
+      toast({ title: "Error", description: "Failed to create tracker", variant: "destructive" });
     }
   };
   
@@ -921,9 +921,9 @@ export default function Chat() {
       if (activeDossierId === id) {
         setActiveDossierId(null);
       }
-      toast({ title: "Dossier deleted" });
+      toast({ title: "Tracker deleted" });
     } catch (err) {
-      toast({ title: "Error", description: "Failed to delete dossier", variant: "destructive" });
+      toast({ title: "Error", description: "Failed to delete tracker", variant: "destructive" });
     }
   };
   
@@ -934,12 +934,12 @@ export default function Chat() {
   
   const handleSaveClaimToDossier = async (claim: string, queryId?: number, openForEditing: boolean = false) => {
     if (!activeDossierId) {
-      toast({ title: "Select a dossier first", description: "Create or select a dossier to save claims", variant: "destructive" });
+      toast({ title: "Select a tracker first", description: "Create or select a tracker to save claims", variant: "destructive" });
       return;
     }
     try {
       const newClaimId = await addClaim(activeDossierId, claim, 'to_check', 'unknown', queryId);
-      toast({ title: "Claim saved", description: "Added to your dossier for tracking" });
+      toast({ title: "Claim saved", description: "Added to your tracker" });
       
       // Optionally open the claim for editing to allow linking
       if (openForEditing) {
@@ -1724,7 +1724,7 @@ export default function Chat() {
                                       if (e.key === 'Enter') handleCreateDossier();
                                       if (e.key === 'Escape') { setShowNewDossierInput(false); setDossierName(''); }
                                     }}
-                                    placeholder="Dossier name..."
+                                    placeholder="Tracker name..."
                                     className="flex-1 px-3 py-2 rounded-md text-xs text-white placeholder:text-gray-600 outline-none"
                                     style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--rz-border)' }}
                                     autoFocus
@@ -1747,7 +1747,7 @@ export default function Chat() {
                                   data-testid="button-new-dossier"
                                 >
                                   <FolderPlus className="w-3.5 h-3.5" />
-                                  New dossier
+                                  New tracker
                                 </button>
                               )}
                             </div>
