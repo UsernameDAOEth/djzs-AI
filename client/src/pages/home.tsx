@@ -1042,29 +1042,19 @@ export default function Home() {
       <RevealSection>
         <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-final-cta-headline">
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-12 tracking-tight" data-testid="text-final-cta-headline">
               The AI that challenges you. Not the one that agrees with you.
             </h2>
-            <p className="text-xl mb-12" style={{ color: '#7a7b90' }}>
-              Local-first data. Decentralized AI. No surveillance. No soothing. Just sharper decisions.
-            </p>
-            <div className="flex flex-col items-center gap-4">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <Link href="/chat">
-                  <button
-                    className="inline-flex items-center gap-3 rounded-lg px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
-                    style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
-                    data-testid="button-final-get-started"
-                  >
-                    Start Thinking
-                    <ArrowRight className="w-6 h-6" />
-                  </button>
-                </Link>
-              </div>
-              <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-final-cta-microcopy">
-                No account needed. Local-first. Decentralized AI. Quantum-resilient by design.
-              </p>
-            </div>
+            <Link href="/chat">
+              <button
+                className="inline-flex items-center gap-3 rounded-lg px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
+                data-testid="button-final-get-started"
+              >
+                Start Thinking
+                <ArrowRight className="w-6 h-6" />
+              </button>
+            </Link>
           </div>
         </section>
       </RevealSection>
