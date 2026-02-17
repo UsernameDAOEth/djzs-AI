@@ -1682,7 +1682,7 @@ export default function Chat() {
                                 data-testid="button-no-dossier"
                               >
                                 <Search className="w-3.5 h-3.5" />
-                                Quick search (no dossier)
+                                Quick search
                               </button>
                             </div>
                             

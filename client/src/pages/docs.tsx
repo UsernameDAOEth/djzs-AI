@@ -660,7 +660,7 @@ export default function Docs() {
                 <ul className="space-y-3 text-sm text-gray-500">
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Quick Search</strong> — Select "No dossier" for standalone research queries that don't need to be organized</span>
+                    <span><strong className="text-teal-300">Quick Search</strong> — Use Quick search for standalone research queries that don't need to be organized</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
