@@ -1643,7 +1643,7 @@ export default function Chat() {
                           >
                             <FolderOpen className="w-3.5 h-3.5" />
                             <span className="max-w-[100px] sm:max-w-[120px] truncate">
-                              {activeDossierId && dossiers?.find(d => d.id === activeDossierId)?.name || "No dossier"}
+                              {activeDossierId && dossiers?.find(d => d.id === activeDossierId)?.name || "Research tracker"}
                             </span>
                             <ChevronDown className={`w-3 h-3 transition-transform ${dossierDropdownOpen ? 'rotate-180' : ''}`} />
                           </button>
