@@ -125,7 +125,7 @@ export default function Home() {
         <title>DJZS - Decentralized AI That Cuts Through the Noise</title>
         <meta name="description" content="Adversarial AI for sovereign thinkers. Pressure-tests your reasoning, flags FOMO and narrative dependency, calls out weak logic. Local-first data, decentralized inference, E2E encrypted messaging." />
         <meta property="og:title" content="DJZS - Decentralized AI That Cuts Through the Noise" />
-        <meta property="og:description" content="Not here to validate your narrative. Here to pressure-test your thinking, call out bias, and make sure your decisions survive volatility. Local-first. No surveillance. No soothing." />
+        <meta property="og:description" content="Pressure-test your thinking. DJZS exposes hidden bias and stress-tests your logic, ensuring your decisions survive market volatility—not just the next hype cycle. Local-first. No surveillance." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -172,7 +172,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            Not here to validate your narrative. Here to pressure-test your thinking, call out bias, and make sure your decisions survive volatility — not just the next hype cycle.
+            Pressure-test your thinking. DJZS exposes hidden bias and stress-tests your logic, ensuring your decisions survive market volatility—not just the next hype cycle.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
