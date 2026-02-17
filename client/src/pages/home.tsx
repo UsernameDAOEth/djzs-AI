@@ -172,7 +172,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            Pressure-test your thinking. DJZS exposes hidden bias and stress-tests your logic, ensuring your decisions survive market volatility—not just the next hype cycle.
+            Pressure-test your thinking. DJZS is a Decentralized Journaling Zone System designed to expose hidden bias and stress-test your logic, ensuring your decisions survive volatility—not just the next hype cycle.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
