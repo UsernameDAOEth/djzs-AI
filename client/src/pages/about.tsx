@@ -27,8 +27,8 @@ export default function About() {
       <main className="max-w-3xl mx-auto px-6 pt-32 pb-20">
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase" data-testid="text-about-title">About DJ-Z-S</h1>
-          <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">Your strategy, your alpha, your research. They shouldn't live on someone else's server.</p>
-          <p className="text-sm text-gray-400 mb-12 leading-relaxed">DJ-Z-S is the private AI workspace for the world's most important thinkers: <strong className="text-white">Founders, Traders, Researchers, and Creators.</strong> We help you build a "compounding intelligence" that is 100% yours.</p>
+          <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">Most AI tools validate your thinking. DJZS destroys the weak parts.</p>
+          <p className="text-sm text-gray-400 mb-12 leading-relaxed">DJ-Z-S is a decentralized adversarial AI system for <strong className="text-white">Founders, Traders, Researchers, and Creators.</strong> It pressure-tests your reasoning, flags FOMO and narrative dependency, and makes sure your decisions survive volatility.</p>
 
           <div className="space-y-14 text-sm leading-relaxed border-l border-white/[0.06] pl-8">
 
@@ -70,7 +70,7 @@ export default function About() {
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> The Solution — Three Zones, One Loop
               </h2>
               <p className="mb-6">
-                DJ-Z-S is built around a simple, powerful workflow: capture your thoughts, analyze them with a private AI, and compound the results into a living knowledge base. We call it the <strong className="text-white">Thinking Loop</strong>.
+                DJ-Z-S is built around a simple, powerful workflow: capture your thinking, pressure-test it with an adversarial AI, and compound what survives into a living knowledge base. We call it the <strong className="text-white">Thinking Loop</strong>.
               </p>
               <div className="space-y-4 mb-8">
                 <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }} data-testid="card-zone-journal">
@@ -80,7 +80,7 @@ export default function About() {
                     </div>
                     <h3 className="text-white font-bold">Journal Zone</h3>
                   </div>
-                  <p className="text-gray-400 mb-3">Write your daily thinking — strategy sessions, trade analysis, content ideas, decision logs. When you're ready, click <strong className="text-white">"Think with me"</strong> and the AI analyzes your entry, extracts patterns, surfaces open questions, and generates reflective prompts to deepen your thinking.</p>
+                  <p className="text-gray-400 mb-3">Write your daily thinking — strategy sessions, trade analysis, content ideas, decision logs. When you're ready, click <strong className="text-white">"Think with me"</strong> and the AI interrogates your entry — flags contradictions, calls out FOMO-driven logic, exposes blind spots, and asks the questions you're avoiding.</p>
                   <p className="text-xs text-gray-500">Supports text entries, voice-to-text, and video journal recordings via Livepeer.</p>
                 </div>
                 <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }} data-testid="card-zone-research">
@@ -90,7 +90,7 @@ export default function About() {
                     </div>
                     <h3 className="text-white font-bold">Research Zone</h3>
                   </div>
-                  <p className="text-gray-400 mb-3">Save articles, on-chain data, competitor analysis, and research notes. The AI synthesizes your research, identifies where sources agree or contradict, and suggests what to investigate next. Organize everything into research trackers with tracked claims and trust levels.</p>
+                  <p className="text-gray-400 mb-3">Save articles, on-chain data, competitor analysis, and research notes. The AI interrogates your research — flags echo chamber consensus, scores evidence strength, and kills weak assumptions before you build on them. Organize everything into research trackers with tracked claims and trust levels.</p>
                   <p className="text-xs text-gray-500">Three modes: <strong className="text-teal-400">Brave Mode</strong> (privacy-first web search), <strong className="text-teal-400">Web Mode</strong> (AI web search with citations), <strong className="text-teal-400">Explain Mode</strong> (AI knowledge synthesis).</p>
                 </div>
                 <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }} data-testid="card-zone-thinking">
@@ -100,7 +100,7 @@ export default function About() {
                     </div>
                     <h3 className="text-white font-bold">Thinking Partner</h3>
                   </div>
-                  <p className="text-gray-400">Your AI sparring partner that connects ideas across your journal and research, debates your thesis, stress-tests your strategy, finds patterns, and surfaces contradictions. Not a chatbot — a structured thinking coach that helps you see what you might be missing.</p>
+                  <p className="text-gray-400">An adversarial AI that attacks your reasoning, calls out when narrative is driving your strategy instead of data, flags FOMO and ego, and asks whether you'd still do this if nobody was watching.</p>
                 </div>
               </div>
 
@@ -112,7 +112,7 @@ export default function About() {
                   accent="#F37E20"
                   steps={[
                     { step: "Capture", text: "Journaling about a new feature idea and potential go-to-market challenges." },
-                    { step: "Analyze", text: "Use 'Think with me' to ask: 'What are the biggest risks here?' The AI pulls in your pinned notes about past competitor failures." },
+                    { step: "Analyze", text: "Click 'Think with me' — AI flags that your pivot is a reaction to Twitter hype, not market data. Exposes the confirmation bias in your competitive analysis." },
                     { step: "Compound", text: "Pin the synthesized risk analysis to your 'Product Roadmap' memory, making it instantly accessible for the next planning session." },
                   ]}
                 />
@@ -122,7 +122,7 @@ export default function About() {
                   accent="#2E8B8B"
                   steps={[
                     { step: "Capture", text: "Paste in on-chain data about a new token and your initial gut reaction." },
-                    { step: "Analyze", text: "Prompt: 'What bullish and bearish signals are present in this data compared to my thesis on DePIN?'" },
+                    { step: "Analyze", text: "AI flags that your 'gut reaction' is FOMO — same pattern as three failed trades ago. Scores the evidence as weak on methodology, strong on narrative." },
                     { step: "Compound", text: "Pin the AI-generated summary to your 'DePIN Thesis' memory, building a living, analyzable database of your trade logic." },
                   ]}
                 />
@@ -132,7 +132,7 @@ export default function About() {
                   accent="#2E8B8B"
                   steps={[
                     { step: "Capture", text: "Paste in notes from three different academic papers and a dataset." },
-                    { step: "Analyze", text: "Prompt: 'What are the conflicting findings in these sources, and what are the potential research gaps?'" },
+                    { step: "Analyze", text: "AI surfaces that all three papers share the same funding source and methodology — consensus may be artificial. Flags the assumption you forgot to question." },
                     { step: "Compound", text: "Pin the synthesized literature review and identified gaps to a 'Thesis Chapter 2' memory, building the paper incrementally." },
                   ]}
                 />
@@ -142,7 +142,7 @@ export default function About() {
                   accent="#7B6B8D"
                   steps={[
                     { step: "Capture", text: "Brainstorm a chaotic list of video ideas for the next quarter." },
-                    { step: "Analyze", text: "Ask: 'Group these ideas by theme and identify the most unique angle.' The AI cross-references your pinned notes on audience feedback." },
+                    { step: "Analyze", text: "AI shows you're repeating the same take you've published twice before. Flags that your 'unique angle' is consensus repackaged. Forces you to articulate what's genuinely new." },
                     { step: "Compound", text: "Pin the refined content pillars to your 'Q2 Strategy' memory, creating a clear plan from a messy brainstorm." },
                   ]}
                 />
@@ -171,9 +171,9 @@ export default function About() {
                 <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
                   <div className="flex items-center gap-3 mb-3">
                     <Brain className="w-5 h-5 text-purple-400" />
-                    <h3 className="text-white font-bold">Uncensored</h3>
+                    <h3 className="text-white font-bold">Adversarial by Design</h3>
                   </div>
-                  <p className="text-gray-400">Our AI is designed to be your thinking partner, not your censor. It won't refuse to explore controversial ideas or sensitive strategies. Your thoughts are your own.</p>
+                  <p className="text-gray-400">The AI actively pushes back. It doesn't validate — it interrogates. It looks for the weakest link in your reasoning and applies maximum pressure there.</p>
                 </div>
               </div>
             </section>
@@ -234,26 +234,26 @@ export default function About() {
                 <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-agent-insight">
                   <div className="flex items-center gap-3 mb-2">
                     <Brain className="w-4 h-4 text-orange-400" />
-                    <h3 className="text-white font-bold text-xs">Your AI Analyst</h3>
+                    <h3 className="text-white font-bold text-xs">Your Adversarial Analyst</h3>
                     <span className="text-[10px] text-gray-600 ml-auto">Triggered by "Think with me"</span>
                   </div>
-                  <p className="text-xs text-gray-500">Analyzes your journal entry alongside recent entries and memory pins. Returns structured insights: what you said, why it matters, patterns detected, open questions, and a reflective prompt to push your thinking deeper.</p>
+                  <p className="text-xs text-gray-500">Interrogates your journal entry. Doesn't summarize — pressure-tests. Flags when your reasoning contradicts past entries, calls out FOMO and narrative dependency, and asks the hard questions you're avoiding.</p>
                 </div>
                 <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-agent-synth">
                   <div className="flex items-center gap-3 mb-2">
                     <Brain className="w-4 h-4 text-teal-400" />
-                    <h3 className="text-white font-bold text-xs">Your Research Synthesizer</h3>
+                    <h3 className="text-white font-bold text-xs">Your Research Interrogator</h3>
                     <span className="text-[10px] text-gray-600 ml-auto">Triggered by research actions</span>
                   </div>
-                  <p className="text-xs text-gray-500">Synthesizes batches of research into a unified thesis. Identifies where sources agree, where they contradict, and suggests follow-up directions. Turns scattered research into actionable intelligence.</p>
+                  <p className="text-xs text-gray-500">Attacks your research. Flags echo chamber consensus, scores evidence strength across four axes, surfaces methodological weaknesses, and kills unfounded assumptions before you build on them.</p>
                 </div>
                 <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-agent-partner">
                   <div className="flex items-center gap-3 mb-2">
                     <Brain className="w-4 h-4 text-purple-400" />
-                    <h3 className="text-white font-bold text-xs">Your Thinking Coach</h3>
+                    <h3 className="text-white font-bold text-xs">Your Adversarial Thinking Partner</h3>
                     <span className="text-[10px] text-gray-600 ml-auto">Your sparring partner</span>
                   </div>
-                  <p className="text-xs text-gray-500">Debates your ideas, stress-tests your thesis, identifies core tensions in your reasoning, suggests reframes, and provides actionable next steps. Connects insights across journal and research zones.</p>
+                  <p className="text-xs text-gray-500">Tries to break your reasoning. Names the real driver behind your decisions — is it strategy or ego? Data or narrative addiction? Finds the gap between what you claim and what you actually do.</p>
                 </div>
               </div>
             </section>

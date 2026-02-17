@@ -140,7 +140,7 @@ export default function Docs() {
             DJZS Documentation
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            The private AI workspace for Founders, Traders, Researchers, and Creators. Build a "compounding intelligence" that is 100% yours.
+            Adversarial AI for sovereign thinkers. Pressure-tests your reasoning, flags FOMO and narrative dependency, calls out weak logic. Not here to be liked.
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
@@ -156,13 +156,13 @@ export default function Docs() {
             <h2 className="text-2xl font-bold text-white mb-4">What is DJZS?</h2>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p className="text-lg">
-                DJ-Z-S is the <strong className="text-white">private AI workspace for the world's most important thinkers: Founders, Traders, Researchers, and Creators</strong>. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. No centralized model training on your thoughts. No cloud surveillance layer.
+                DJ-Z-S is the <strong className="text-white">adversarial AI system for sovereign thinkers: Founders, Traders, Researchers, and Creators</strong>. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. No centralized model training on your thoughts. No cloud surveillance layer.
               </p>
               <p>
-                Six zones — Journal, Research, Trade, Decisions, Content, and Thinking Partner — form one loop: capture your thinking locally, analyze with a private AI, and compound the results into a living knowledge base. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
+                Six zones — Journal, Research, Trade, Decisions, Content, and Thinking Partner — form one loop: capture your thinking locally, pressure-test it with an adversarial AI, and compound the results into a living knowledge base. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
               </p>
               <p>
-                The AI is your thinking partner, not a chatbot. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your intelligence compounds without becoming platform exhaust. We call this <strong className="text-white">compounding intelligence</strong>.
+                The AI is your adversarial thinking partner — not a chatbot, not a validator. It actively pushes back on weak reasoning, FOMO-driven logic, and narrative dependency. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your intelligence compounds without becoming platform exhaust. DJZS is designed to be honest, not helpful. It tells you what's wrong with your thinking, not what's right.
               </p>
             </div>
           </div>
@@ -344,7 +344,7 @@ export default function Docs() {
               <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <Bot className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-white mb-1">User-Controlled AI</h4>
-                <p className="text-xs text-gray-500">Your text is only sent to AI when you explicitly click "Think with me." Venice AI processes it without storing or training on your data. Nothing happens in the background.</p>
+                <p className="text-xs text-gray-500">Your text is only sent to AI when you explicitly click "Think with me." The AI then pressure-tests your reasoning via Venice AI, which processes it without storing or training on your data. Nothing happens in the background.</p>
               </div>
               <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <KeyRound className="w-5 h-5 text-orange-400 mb-2" style={{ color: '#FFB84D' }} />
@@ -392,8 +392,8 @@ export default function Docs() {
             />
             <FeatureCard 
               icon={Bot}
-              title="Thinking Partner"
-              description="The AI helps you think, not think for you. It surfaces patterns and asks questions rather than generating answers."
+              title="Adversarial Thinking Partner"
+              description="The AI challenges your thinking, not validates it. It exposes contradictions, flags weak logic, and asks the questions you're avoiding."
             />
             <FeatureCard 
               icon={Lock}
@@ -423,18 +423,18 @@ export default function Docs() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Journal</h3>
-                  <p className="text-xs text-orange-400/80">AI thinking partner</p>
+                  <p className="text-xs text-orange-400/80">Adversarial thinking partner</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Your private space to think, reflect, and achieve clarity with an AI thinking partner that helps you see patterns.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Your private space to think — and have your thinking challenged. The adversarial AI exposes contradictions, flags weak logic, and asks the questions you're avoiding.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Deep Reasoning</strong> - AI analyzes patterns, connections, and blind spots</span>
+                  <span><strong className="text-orange-300">Deep Reasoning</strong> - AI interrogates your entry for contradictions, blind spots, and weak assumptions</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Reflective Questions</strong> - Powerful questions to deepen your thinking</span>
+                  <span><strong className="text-orange-300">Hard Questions</strong> - Asks the questions you're avoiding to pressure-test your reasoning</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
@@ -442,7 +442,7 @@ export default function Docs() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Context Awareness</strong> - AI considers your recent entries and pinned memories</span>
+                  <span><strong className="text-orange-300">Context Awareness</strong> - AI uses your recent entries and pinned memories to call out inconsistencies</span>
                 </li>
               </ul>
             </div>
@@ -453,10 +453,10 @@ export default function Docs() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Research</h3>
-                  <p className="text-xs text-teal-400/80">AI-powered knowledge synthesis</p>
+                  <p className="text-xs text-teal-400/80">AI-powered research interrogation</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Search the web for real-time data or use AI knowledge to synthesize information and track claims.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Search the web for real-time data or use AI knowledge to interrogate information, expose contradictions, and track claims.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
@@ -519,7 +519,7 @@ export default function Docs() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">AI Stress Test</strong> - Thinking Partner challenges your thesis, identifies risks and blind spots</span>
+                  <span><strong className="text-purple-300">AI Stress Test</strong> - Adversarial Thinking Partner pressure-tests your thesis, calls out FOMO and weak logic</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
@@ -550,7 +550,7 @@ export default function Docs() {
                   <p className="text-xs text-amber-400/80">Decision log for founders</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Track high-stakes decisions with structured context, options, and reasoning. AI stress tests your thinking before you commit.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Track high-stakes decisions with structured context, options, and reasoning. AI pressure-tests your thinking and calls out blind spots before you commit.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
@@ -558,7 +558,7 @@ export default function Docs() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-amber-300">AI Review</strong> - Thinking Partner stress tests your reasoning and surfaces blind spots</span>
+                  <span><strong className="text-amber-300">AI Review</strong> - Adversarial Thinking Partner pressure-tests your reasoning and exposes blind spots</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
@@ -581,7 +581,7 @@ export default function Docs() {
                   <p className="text-xs text-cyan-400/80">Content pipeline for creators</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Manage content ideas from spark to published. AI sharpens your hook, angle, and key points before you ship.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Manage content ideas from spark to published. AI challenges your hook, interrogates your angle, and flags weak points before you ship.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
@@ -589,7 +589,7 @@ export default function Docs() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-cyan-300">AI Refine</strong> - AI sharpens your hook, strengthens your angle, and suggests improvements</span>
+                  <span><strong className="text-cyan-300">AI Refine</strong> - AI challenges your hook, pressure-tests your angle, and flags weaknesses</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
@@ -821,7 +821,7 @@ export default function Docs() {
                 <p className="text-sm font-bold text-purple-300">Seamless Thinking Partner Transition</p>
               </div>
               <p className="text-xs text-gray-400 leading-relaxed">
-                Found something worth thinking deeper about? Click the "Think deeper with Thinking Partner" button on any research result. It auto-loads your research context into the Journal Zone so you can reflect on it with the AI Thinking Partner — no copy-pasting, no context loss. Research flows into reflection in one click.
+                Found something worth pressure-testing? Click the "Think deeper with Thinking Partner" button on any research result. It auto-loads your research context into the Journal Zone so the adversarial AI can challenge your conclusions — no copy-pasting, no context loss. Research flows into interrogation in one click.
               </p>
             </div>
 
@@ -854,23 +854,23 @@ export default function Docs() {
               <ul className="space-y-3 text-sm text-gray-400">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span>When you write in the <strong className="text-orange-300">Journal Zone</strong> and click <strong className="text-white">"Think with me"</strong>, the JournalInsight agent analyzes your entry, pulls in your recent entries and memory pins as context, and returns a structured summary with patterns, emotions, and reflective questions.</span>
+                  <span>When you write in the <strong className="text-orange-300">Journal Zone</strong> and click <strong className="text-white">"Think with me"</strong>, the JournalInsight agent interrogates your entry, pulls in your recent entries and memory pins as context, and returns a structured breakdown of contradictions, blind spots, emotional biases, and adversarial questions.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span>When you search in the <strong className="text-teal-300">Research Zone</strong> and click <strong className="text-white">"Research"</strong>, the ResearchSynth agent synthesizes information from web results or AI knowledge, identifies agreements and contradictions across sources, and suggests what to investigate next.</span>
+                  <span>When you search in the <strong className="text-teal-300">Research Zone</strong> and click <strong className="text-white">"Research"</strong>, the ResearchSynth agent interrogates information from web results or AI knowledge, exposes contradictions across sources, flags weak assumptions, and calls out what you haven't investigated yet.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span>The <strong className="text-purple-300">ThinkingPartner</strong> agent works behind the scenes to debate your ideas, identify tensions in your reasoning, and propose reframes — acting as a structured thinking coach, not a chatbot.</span>
+                  <span>The <strong className="text-purple-300">ThinkingPartner</strong> agent works behind the scenes to challenge your ideas, expose tensions in your reasoning, and flag narrative dependency — acting as an adversarial pressure-tester, not a chatbot.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span>In the <strong className="text-amber-300">Decisions Zone</strong>, AI reviews your decision reasoning, stress tests your options, and identifies blind spots before you commit to high-stakes choices.</span>
+                  <span>In the <strong className="text-amber-300">Decisions Zone</strong>, AI interrogates your decision reasoning, pressure-tests your options, and calls out blind spots before you commit to high-stakes choices.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
-                  <span>In the <strong className="text-cyan-300">Content Zone</strong>, AI refines your content hook, sharpens your angle, and suggests improvements to make your ideas land with your audience.</span>
+                  <span>In the <strong className="text-cyan-300">Content Zone</strong>, AI challenges your content hook, pressure-tests your angle, and flags weaknesses before your ideas reach your audience.</span>
                 </li>
               </ul>
             </div>
@@ -887,23 +887,23 @@ export default function Docs() {
                 </div>
                 <h3 className="text-lg font-bold text-white">JournalInsight</h3>
               </div>
-              <p className="text-sm text-gray-400 mb-4">Analyzes journal entries for patterns, claims, open questions, and emotional trends.</p>
+              <p className="text-sm text-gray-400 mb-4">Interrogates journal entries for contradictions, weak claims, blind spots, and emotional biases.</p>
               <ul className="space-y-2 text-xs text-gray-500">
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
-                  <span>Extracts key claims and patterns</span>
+                  <span>Exposes contradictions and blind spots</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
-                  <span>Surfaces open questions</span>
+                  <span>Asks the questions you're avoiding</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
-                  <span>Infers emotion trends</span>
+                  <span>Flags emotional bias and FOMO patterns</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
-                  <span>Generates reflective questions</span>
+                  <span>Generates adversarial questions that pressure-test your logic</span>
                 </li>
               </ul>
             </div>
@@ -914,23 +914,23 @@ export default function Docs() {
                 </div>
                 <h3 className="text-lg font-bold text-white">ResearchSynth</h3>
               </div>
-              <p className="text-sm text-gray-400 mb-4">Synthesizes batches of research entries into a unified thesis with agreements and contradictions.</p>
+              <p className="text-sm text-gray-400 mb-4">Interrogates batches of research entries, exposes contradictions across sources, and flags weak assumptions.</p>
               <ul className="space-y-2 text-xs text-gray-500">
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                  <span>Builds unified thesis from sources</span>
+                  <span>Pressure-tests claims across sources</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                  <span>Identifies agreements across claims</span>
+                  <span>Exposes where sources contradict each other</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                  <span>Surfaces contradictions</span>
+                  <span>Flags weak assumptions and narrative dependency</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                  <span>Suggests follow-up research</span>
+                  <span>Calls out what you haven't investigated yet</span>
                 </li>
               </ul>
             </div>
@@ -941,23 +941,23 @@ export default function Docs() {
                 </div>
                 <h3 className="text-lg font-bold text-white">ThinkingPartner</h3>
               </div>
-              <p className="text-sm text-gray-400 mb-4">Your AI thinking coach — debates ideas, finds patterns, and surfaces tensions in your reasoning.</p>
+              <p className="text-sm text-gray-400 mb-4">Your adversarial AI — debates your ideas, exposes weak reasoning, and calls out what you're not seeing.</p>
               <ul className="space-y-2 text-xs text-gray-500">
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
-                  <span>Asks clarifying questions</span>
+                  <span>Asks adversarial questions that challenge your assumptions</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
-                  <span>Identifies core tensions</span>
+                  <span>Exposes core tensions and contradictions</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
-                  <span>Suggests reframes</span>
+                  <span>Flags narrative dependency and FOMO-driven logic</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
-                  <span>Provides actionable next steps</span>
+                  <span>Forces you to confront what you'd rather ignore</span>
                 </li>
               </ul>
             </div>

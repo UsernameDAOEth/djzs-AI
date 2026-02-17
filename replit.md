@@ -1,16 +1,17 @@
 # DJZS - Decentralized AI for Sovereign Thinking
 
 ## Overview
-DJZS is a decentralized, quantum-resilient AI thinking system designed for sovereign users. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. Four zones (Journal, Research, Trade, Thinking Partner) form one loop: capture locally → reflect with decentralized AI → compound insights securely. No centralized model training on your thoughts. No cloud surveillance layer. No silent data extraction.
+DJZS is a decentralized, adversarial AI thinking system designed for sovereign users. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. Six zones (Journal, Research, Trade, Decisions, Content, Thinking Partner) form one loop: capture locally → pressure-test with adversarial AI → compound what survives. The AI actively calls out FOMO-driven logic, narrative dependency, echo chamber consensus, and weak reasoning. No centralized model training on your thoughts. No cloud surveillance layer. No silent data extraction.
 
 ## Strategic Positioning
-- **Category**: Decentralized cognitive infrastructure for sovereign users (NOT journaling, NOT note-taking)
-- **Value prop**: "Decentralized AI for sovereign thinking" — not "Remember your life beautifully"
+- **Category**: Adversarial cognitive infrastructure for sovereign users (NOT journaling, NOT note-taking, NOT a supportive AI)
+- **Value prop**: "Decentralized AI that cuts through the noise" — not "Remember your life beautifully"
+- **AI Identity**: Direct, blunt, anti-hype. Calls out bias, FOMO, ego, Twitter narrative dependency, and weak assumptions. No first-person ("I think/notice/see"), no "great insight," no softening. Precision over politeness.
 - **Target users**: Crypto-native builders, privacy maximalists, founders, traders (crypto analysts, DeFi researchers), content creators, researchers, strategists, long-term thinkers
-- **NOT for**: Casual diary-keeping, photo memories, lifestyle journaling, emotional reflection
-- **Competition**: Centralized AI tools (ChatGPT, Notion AI), scattered notes, browser bookmarks (NOT other journal apps)
-- **Moat**: Decentralized AI + E2E encryption + local-first = no centralized platform can replicate the sovereignty guarantee
-- **Positioning statement**: Cognitive infrastructure for a decentralized, post-surveillance world
+- **NOT for**: Casual diary-keeping, photo memories, lifestyle journaling, emotional reflection, people who want an AI that tells them they're brilliant
+- **Competition**: Centralized AI tools (ChatGPT, Notion AI) that validate instead of challenge, scattered notes, browser bookmarks (NOT other journal apps)
+- **Moat**: Adversarial AI + decentralized inference + E2E encryption + local-first = no centralized platform can replicate the sovereignty + adversarial pressure-testing guarantee
+- **Positioning statement**: Cognitive infrastructure for a decentralized, post-surveillance world. Not here to be liked — here to make sure decisions survive volatility.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -99,12 +100,12 @@ Preferred communication style: Simple, everyday language.
 - **Session Key**: Derived key held in memory during session, cleared on lock.
 
 ### Key Features (Six Zones, One Loop)
-- **Journal Zone**: Write daily thinking → AI auto-summarizes and extracts structured insights (key claims, patterns, open questions). Memory pinning carries context forward. Video entries via Livepeer.
-- **Research Zone**: Save articles/links → AI synthesizes research with journal entries. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Research trackers, claim tracking with trust levels, cross-zone linking. AI-forward features: Evidence Strength Scoring (4-axis 0-100), AI Observing panel, structured analysis (Consensus, Contradictions, Weak Assumptions), adaptive "More nuanced" mode, seamless Thinking Partner transition.
-- **Trade Zone**: Build trade thesis → AI stress tests → Risk computation → Wallet-sign artifact → Store locally with content hash → Send to trader agent via XMTP.
-- **Decision Zone**: Track high-stakes decisions with structured compose (title, context, options, reasoning, stakes). AI stress tests reasoning via ThinkingPartner. History tracks status/outcome. Amber/yellow accents.
-- **Content Zone**: Content pipeline for creators. Compose (title, topic, angle, format, audience, hook, key points). AI refines hook and angle. Pipeline tracks status from idea → published. Teal/cyan accents.
-- **Thinking Partner**: One AI agent that connects ideas across journal and research, debates points, finds patterns, and surfaces contradictions. Not a chatbot — a structured thinking partner.
+- **Journal Zone**: Write daily thinking → AI interrogates entry, flags contradictions with past claims, calls out FOMO-driven logic, exposes blind spots. Memory pinning carries context forward. Video entries via Livepeer.
+- **Research Zone**: Save articles/links → AI interrogates research, flags echo chamber consensus, scores evidence strength (4-axis 0-100), kills weak assumptions. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Research trackers, claim tracking with trust levels, cross-zone linking. AI Observing panel, structured analysis (Consensus, Contradictions, Weak Assumptions), adaptive "maximum skepticism" mode, seamless Thinking Partner transition.
+- **Trade Zone**: Build trade thesis → AI stress tests (tries to kill the thesis — is it conviction or FOMO?) → Risk computation → Wallet-sign artifact → Store locally with content hash → Send to trader agent via XMTP.
+- **Decision Zone**: Track high-stakes decisions with structured compose (title, context, options, reasoning, stakes). AI pressure-tests reasoning via adversarial ThinkingPartner. History tracks status/outcome. Amber/yellow accents.
+- **Content Zone**: Content pipeline for creators. Compose (title, topic, angle, format, audience, hook, key points). AI challenges hook and angle — flags trendjacking and consensus repackaging. Pipeline tracks status from idea → published. Teal/cyan accents.
+- **Thinking Partner**: Adversarial AI that attacks your reasoning, calls out FOMO and narrative dependency, finds contradictions between stated goals and actual behavior. Not a chatbot — not here to be liked.
 - **Compounding Intelligence**: Memory pins, past-entry connections, and cross-zone synthesis ensure knowledge grows smarter over time, not just larger.
 - **Music Library**: Upload and play your own music while thinking. Tracks stored locally. Organize by Focus/Reflection/Creative zones.
 - **Local-First Storage**: All data stored in browser IndexedDB. Works offline for writing/browsing.

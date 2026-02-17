@@ -122,15 +122,15 @@ export default function Home() {
       </header>
 
       <Helmet>
-        <title>DJZS - Decentralized AI for Sovereign Thinking</title>
-        <meta name="description" content="A local-first AI thinking system with E2E encrypted messaging (XMTP) and AI inference via Venice (HTTPS/TLS, not E2E). Your thoughts stay on your device. Your intelligence compounds securely." />
-        <meta property="og:title" content="DJZS - Decentralized AI for Sovereign Thinking" />
-        <meta property="og:description" content="Local-first storage. E2E encrypted messaging via XMTP. AI inference via Venice (HTTPS, not E2E). A thinking system that compounds your intelligence without giving it away." />
+        <title>DJZS - Decentralized AI That Cuts Through the Noise</title>
+        <meta name="description" content="Adversarial AI for sovereign thinkers. Pressure-tests your reasoning, flags FOMO and narrative dependency, calls out weak logic. Local-first data, decentralized inference, E2E encrypted messaging." />
+        <meta property="og:title" content="DJZS - Decentralized AI That Cuts Through the Noise" />
+        <meta property="og:description" content="Not here to validate your narrative. Here to pressure-test your thinking, call out bias, and make sure your decisions survive volatility. Local-first. No surveillance. No soothing." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="DJZS - Decentralized AI for Sovereign Thinking" />
-        <meta name="twitter:description" content="Local-first AI thinking system. E2E encrypted messaging via XMTP. AI inference via Venice (HTTPS, not E2E). Your thoughts stay local. Your intelligence compounds securely." />
+        <meta name="twitter:title" content="DJZS - Decentralized AI That Cuts Through the Noise" />
+        <meta name="twitter:description" content="Adversarial AI for sovereign thinkers. Pressure-tests your reasoning, flags FOMO, calls out weak logic. Local-first. Decentralized. No soothing." />
       </Helmet>
 
       <motion.section
@@ -164,7 +164,7 @@ export default function Home() {
             variants={fadeUp}
             className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[1] mb-8"
           >
-            Decentralized AI for sovereign thinking.
+            Decentralized AI that cuts through the noise.
           </motion.h1>
 
           <motion.p
@@ -172,7 +172,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            Your thoughts stay local. AI inference runs through Venice — no data stored, no logs kept. Messages to your agents? Fully encrypted via XMTP. Your intelligence compounds — securely, privately, on your terms.
+            Not here to validate your narrative. Here to pressure-test your thinking, call out bias, and make sure your decisions survive volatility — not just the next hype cycle.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
@@ -213,7 +213,7 @@ export default function Home() {
               )}
             </div>
             <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-cta-microcopy">
-              Local-first storage. E2E encrypted messaging. Privacy-focused AI.
+              Local-first. No data extraction. AI that pushes back, not agrees.
             </p>
           </motion.div>
 
@@ -251,10 +251,10 @@ export default function Home() {
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>For Founders</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-founders-headline">
-                Build with clarity. Ship with conviction.
+                Your echo chamber is killing your company.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                Founders make hundreds of decisions daily. DJZS turns scattered thinking into structured strategy — track your reasoning, test your assumptions, and compound your founder intelligence.
+                If your roadmap is a reaction to governance drama instead of long-term goals, DJZS will tell you. If you're pivoting because Twitter is pumping a narrative, it'll flag that too. No soothing. No validation. Just sharper decisions.
               </p>
             </div>
 
@@ -268,15 +268,15 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Save competitor analysis, market data, user feedback
+                    Pressure-test competitor claims and market narratives
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    AI synthesizes across all your research sources
+                    AI flags when "evidence" is just echo chamber consensus
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Connects market signals to your product strategy
+                    Separates signal from noise — kills weak theses early
                   </li>
                 </ul>
               </div>
@@ -290,15 +290,15 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Document pivots, strategy shifts, and key decisions
+                    Document pivots and strategy shifts — see when emotion drove the call
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    AI tracks your reasoning patterns over time
+                    AI exposes contradictions between your stated goals and actual moves
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Surfaces blind spots before they become costly
+                    Surfaces blind spots before they become expensive
                   </li>
                 </ul>
               </div>
@@ -308,27 +308,27 @@ export default function Home() {
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
-                <h3 className="text-xl font-bold text-white mb-3">Strategic Advisor</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Adversarial Advisor</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Stress-tests your strategy before you commit resources
+                    Calls out when you're reacting to hype instead of building strategy
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Connects today's decisions to past lessons learned
+                    Finds the gap between what you say and what you actually do
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Asks the hard questions your team won't
+                    Asks the question your team is too polite to ask
                   </li>
                 </ul>
               </div>
             </div>
 
             <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.04), rgba(255,184,77,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-founder-cta">
-              <p className="text-lg font-bold text-white mb-2">Stop building on gut feel. Start compounding founder intelligence.</p>
-              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every decision documented. Every pattern tracked. Every lesson carried forward.</p>
+              <p className="text-lg font-bold text-white mb-2">Your decisions need to survive volatility, not just the next board meeting.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>DJZS doesn't exist to soothe egos. It exists to cut through the noise.</p>
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
@@ -353,10 +353,10 @@ export default function Home() {
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Traders</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-traders-headline">
-                Trade with conviction. Track every thesis.
+                Is it conviction or FOMO? DJZS will tell you.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                Crypto moves fast. Your analysis shouldn't live in Discord threads and scattered notes. DJZS turns market thinking into structured strategy — track your theses, stress-test assumptions, and compound your trading intelligence.
+                If you're allocating capital because Twitter is pumping a narrative, DJZS flags it. If your thesis is driven by fear or community pressure instead of data, it calls that out too. The market doesn't care about your feelings. Neither does DJZS.
               </p>
             </div>
 
@@ -374,7 +374,7 @@ export default function Home() {
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    AI synthesizes on-chain analysis, whitepapers, and alpha
+                    AI interrogates sources — flags when "alpha" is just recycled opinion
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
@@ -392,15 +392,15 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Document your thesis before entering a position
+                    Document your thesis — so you can't rewrite history after
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    AI tracks how your market views evolve over time
+                    AI exposes when emotion drove the trade, not strategy
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Surfaces biases and emotional patterns in your trading
+                    Tracks your FOMO patterns so you stop repeating them
                   </li>
                 </ul>
               </div>
@@ -410,27 +410,27 @@ export default function Home() {
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
-                <h3 className="text-xl font-bold text-white mb-3">Strategy Stress-Test</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Thesis Killer</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Challenges your thesis before you risk capital
+                    Tries to destroy your thesis before you risk capital
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Connects current market view to past trade reasoning
+                    Names the real driver — is it data or narrative addiction?
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Finds contradictions between your research and your bets
+                    Finds the gap between your research and your actual bets
                   </li>
                 </ul>
               </div>
             </div>
 
             <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(123,107,141,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-trader-cta">
-              <p className="text-lg font-bold text-white mb-2">Stop trading on vibes. Start compounding trading intelligence.</p>
-              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every thesis documented. Every pattern tracked. Every lesson carried forward to the next trade.</p>
+              <p className="text-lg font-bold text-white mb-2">The market will be brutal. Your thinking partner should be too.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every thesis stress-tested. Every bias exposed. Every lesson weaponized for the next trade.</p>
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
@@ -455,10 +455,10 @@ export default function Home() {
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#7B6B8D' }}>For Content Creators</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-creators-headline">
-                Stop creating in a vacuum. Start building a content brain.
+                If your takes can't survive a stress test, they're not takes.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                Great content comes from deep thinking, not just trending topics. DJZS helps you develop original perspectives, track what resonates, and build a content strategy that compounds.
+                Publishing hot takes that fall apart under scrutiny is embarrassing. DJZS challenges your thinking before the audience does — finds the holes, flags the lazy logic, and asks if your angle is genuinely original or just trendjacking.
               </p>
             </div>
 
@@ -472,15 +472,15 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Save trends, audience insights, competitor content
+                    Pressure-test trends before you build content around them
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    AI identifies patterns across your research
+                    AI flags when your "original take" is just consensus repackaged
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Builds a knowledge base that informs every piece
+                    Separates durable insight from ephemeral noise
                   </li>
                 </ul>
               </div>
@@ -494,15 +494,15 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Draft ideas, angles, and narratives in one place
+                    Draft ideas and angles — AI shows you when you're repeating yourself
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    AI tracks which themes keep surfacing
+                    Tracks which themes you keep circling back to without resolution
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Never lose a content idea again
+                    Forces you to articulate why your angle matters
                   </li>
                 </ul>
               </div>
@@ -512,27 +512,27 @@ export default function Home() {
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
-                <h3 className="text-xl font-bold text-white mb-3">Creative Sparring Partner</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Adversarial Editor</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Tests your takes before you publish
+                    Stress-tests your takes before you publish them
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Connects new ideas to your existing body of work
+                    Asks: is this genuinely new or just trendjacking?
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Helps you find your unique angle on any topic
+                    Finds where your argument breaks under pressure
                   </li>
                 </ul>
               </div>
             </div>
 
             <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(123,107,141,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(123,107,141,0.15)' }} data-testid="card-creator-cta">
-              <p className="text-lg font-bold text-white mb-2">Your content gets better because your thinking gets better.</p>
-              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every idea tracked. Every angle explored. Every piece backed by a growing knowledge base.</p>
+              <p className="text-lg font-bold text-white mb-2">Audiences can smell lazy thinking. DJZS makes sure yours isn't.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every take stress-tested. Every angle challenged. Every piece backed by thinking that survives scrutiny.</p>
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
@@ -557,10 +557,10 @@ export default function Home() {
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Researchers</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-researchers-headline">
-                Synthesize faster. Think deeper. Publish with confidence.
+                Your thesis is only as strong as the hardest question you've answered.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                Research means drowning in sources — papers, datasets, conflicting findings. DJZS turns fragmented knowledge into structured insight, helping you identify gaps, resolve contradictions, and build your thesis incrementally.
+                Confirmation bias is the default mode of research. DJZS actively looks for what contradicts your thesis, flags methodological weaknesses, and asks whether your conclusion would survive if your two strongest sources disappeared.
               </p>
             </div>
 
@@ -574,15 +574,15 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Build research trackers on papers, datasets, and source materials
+                    Build research trackers — AI flags when your sources all say the same thing
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    AI identifies conflicting findings and research gaps
+                    Surfaces contradictions, methodological gaps, and weak citations
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Track claims with trust levels — separate signal from noise
+                    Track claims with trust levels — kills unfounded assumptions early
                   </li>
                 </ul>
               </div>
@@ -596,15 +596,15 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Document hypotheses, observations, and methodology notes
+                    Document hypotheses — AI shows you when they're drifting from evidence
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    AI tracks how your thinking evolves across studies
+                    Exposes when your conclusion was decided before your research started
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Surfaces assumptions and blind spots in your reasoning
+                    Surfaces the assumptions you forgot to question
                   </li>
                 </ul>
               </div>
@@ -614,27 +614,27 @@ export default function Home() {
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
-                <h3 className="text-xl font-bold text-white mb-3">Thesis Advisor</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Adversarial Reviewer</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Challenges your thesis before peer review does
+                    Attacks your thesis harder than peer review will
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Connects findings across papers and datasets
+                    Asks what happens if your key finding is an artifact
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    Identifies gaps in your argument before you publish
+                    Finds the gaps in your argument before your critics do
                   </li>
                 </ul>
               </div>
             </div>
 
             <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-researcher-cta">
-              <p className="text-lg font-bold text-white mb-2">Stop drowning in sources. Start compounding research intelligence.</p>
-              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every finding documented. Every contradiction surfaced. Every thesis built incrementally.</p>
+              <p className="text-lg font-bold text-white mb-2">Better to find the flaw now than after publication.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every assumption interrogated. Every contradiction surfaced. Every thesis stress-tested before it ships.</p>
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
@@ -763,15 +763,15 @@ export default function Home() {
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Structured summary of your thinking
+                    What you actually said vs. what you think you said
                   </li>
                   <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Key claims extracted (with connections to past entries)
+                    Claims extracted — flagged when they contradict past entries
                   </li>
                   <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Open questions and contradictions to explore
+                    Open questions, blind spots, and weak reasoning exposed
                   </li>
                   <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
@@ -888,21 +888,20 @@ export default function Home() {
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
               <FAQItem question="How is DJZS different from ChatGPT or Notion AI?">
-                <p>DJZS is not a chat app, not a note organizer, and not a general AI assistant.</p>
-                <p className="mt-2" style={{ color: '#7a7b90' }}>ChatGPT and Notion AI are tools for responding to prompts:</p>
+                <p>ChatGPT and Notion AI are designed to be helpful. DJZS is designed to be honest.</p>
+                <p className="mt-2" style={{ color: '#7a7b90' }}>Centralized AI tools:</p>
                 <ul className="list-disc list-inside ml-2" style={{ color: '#7a7b90' }}>
-                  <li>They answer questions you ask</li>
-                  <li>Memory is platform-controlled or absent</li>
-                  <li>Your data lives on their servers</li>
+                  <li>Validate whatever you say — "Great thinking!" even when it's not</li>
+                  <li>Store your data on their servers and train on your inputs</li>
+                  <li>Have zero memory of your past reasoning</li>
                 </ul>
-                <p className="mt-3" style={{ color: '#9a9bb0' }}>DJZS is a daily thinking system:</p>
+                <p className="mt-3" style={{ color: '#9a9bb0' }}>DJZS is an adversarial thinking system:</p>
                 <ul className="list-disc list-inside ml-2" style={{ color: '#9a9bb0' }}>
-                  <li>You write first — the AI analyzes second</li>
-                  <li>Insights compound over time as your knowledge base grows</li>
-                  <li>Research and daily thinking connect into one system</li>
-                  <li>Everything stays on your device</li>
+                  <li>Challenges your claims, flags FOMO, and calls out weak reasoning</li>
+                  <li>Tracks your thinking over time — surfaces contradictions</li>
+                  <li>Data stays on your device. AI doesn't train on your inputs</li>
                 </ul>
-                <p className="text-white mt-3 font-semibold">DJZS makes you think better. It doesn't think for you.</p>
+                <p className="text-white mt-3 font-semibold">DJZS doesn't think for you. It makes sure you're actually thinking.</p>
               </FAQItem>
 
               <FAQItem question="What does 'compounding intelligence' mean?">
@@ -971,46 +970,46 @@ export default function Home() {
               </FAQItem>
 
               <FAQItem question="How does the AI thinking partner work?">
-                <p>The AI is not a chatbot — it's a structured thinking partner.</p>
+                <p>The AI is not a chatbot — it's an adversarial thinking partner. It actively tries to break your reasoning.</p>
                 <p className="mt-2">When you click "Think with me," the AI:</p>
                 <ul className="list-disc list-inside ml-2">
-                  <li>Analyzes your current entry</li>
-                  <li>Connects it to your memory pins and past entries</li>
-                  <li>Generates structured output — summaries, key claims, patterns, open questions</li>
-                  <li>Suggests memories worth pinning for future sessions</li>
+                  <li>Interrogates your current entry — not summarizes, interrogates</li>
+                  <li>Cross-references against your past claims and pins contradictions</li>
+                  <li>Flags FOMO, narrative dependency, ego-driven reasoning</li>
+                  <li>Asks: "Would you still do this if nobody was watching?"</li>
                 </ul>
-                <p className="text-white mt-2 font-semibold">There is no background scanning. There is no silent learning. You control every interaction.</p>
+                <p className="text-white mt-2 font-semibold">No soothing. No "great insight." Just sharper thinking.</p>
               </FAQItem>
 
-              <FAQItem question="What are the three zones?">
-                <p>Three zones, one compounding loop:</p>
+              <FAQItem question="What are the zones?">
+                <p>Six zones, one compounding loop. Each designed to pressure-test a different part of your thinking:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
                   <div>
                     <p className="font-semibold mb-1" style={{ color: '#F37E20' }}>Journal Zone</p>
                     <ul className="list-disc list-inside ml-2 text-sm">
                       <li>Write daily thinking</li>
-                      <li>AI extracts insights</li>
-                      <li>Patterns surface over time</li>
+                      <li>AI exposes blind spots</li>
+                      <li>Contradictions surface over time</li>
                     </ul>
                   </div>
                   <div>
                     <p className="font-semibold mb-1" style={{ color: '#2E8B8B' }}>Research Zone</p>
                     <ul className="list-disc list-inside ml-2 text-sm">
                       <li>Save and analyze sources</li>
-                      <li>Track claims and evidence</li>
-                      <li>Synthesize with entries</li>
+                      <li>AI scores evidence strength</li>
+                      <li>Kills weak claims early</li>
                     </ul>
                   </div>
                   <div>
                     <p className="font-semibold mb-1" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
                     <ul className="list-disc list-inside ml-2 text-sm">
-                      <li>Debates your points</li>
-                      <li>Connects ideas</li>
-                      <li>Finds patterns</li>
+                      <li>Attacks your reasoning</li>
+                      <li>Finds contradictions</li>
+                      <li>Calls out FOMO</li>
                     </ul>
                   </div>
                 </div>
-                <p className="mt-3 text-white font-semibold">Each zone feeds the others. Your thinking compounds.</p>
+                <p className="mt-3 text-white font-semibold">Plus Trade, Decision, and Content zones. Each feeds the others. Your thinking compounds.</p>
               </FAQItem>
 
               <FAQItem question="What is a Memory Pin?">
@@ -1024,16 +1023,16 @@ export default function Home() {
               </FAQItem>
 
               <FAQItem question="Who is DJZS for?">
-                <p className="text-white font-semibold">Sovereign thinkers who refuse to trade intelligence for convenience.</p>
+                <p className="text-white font-semibold">People who want to be challenged, not validated.</p>
                 <ul className="list-disc list-inside ml-2 mt-2">
-                  <li>Crypto-native builders and privacy maximalists</li>
-                  <li>Founders structuring their reasoning</li>
-                  <li>Researchers and strategists synthesizing complex domains</li>
-                  <li>Traders tracking evolving theses</li>
-                  <li>Anyone who thinks long-term</li>
+                  <li>Crypto-native builders tired of echo chamber consensus</li>
+                  <li>Founders who want their reasoning stress-tested, not applauded</li>
+                  <li>Traders who need to separate FOMO from strategy</li>
+                  <li>Researchers who want their thesis attacked before peer review does</li>
+                  <li>Anyone whose decisions have real consequences</li>
                 </ul>
-                <p className="mt-3" style={{ color: '#7a7b90' }}>DJZS is not for casual diary-keeping, photo memories, or lifestyle journaling.</p>
-                <p className="mt-2 text-white font-semibold">DJZS is cognitive infrastructure for a decentralized, post-surveillance world.</p>
+                <p className="mt-3" style={{ color: '#7a7b90' }}>DJZS is not for casual diary-keeping, photo memories, or people who want an AI that tells them they're brilliant.</p>
+                <p className="mt-2 text-white font-semibold">Cognitive infrastructure for a decentralized, post-surveillance world.</p>
               </FAQItem>
             </div>
           </div>
@@ -1044,10 +1043,10 @@ export default function Home() {
         <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-final-cta-headline">
-              Build intelligence that compounds — without giving it away.
+              The AI that challenges you. Not the one that agrees with you.
             </h2>
             <p className="text-xl mb-12" style={{ color: '#7a7b90' }}>
-              Your thoughts stay local. Your AI runs decentralized. Start thinking sovereignly.
+              Local-first data. Decentralized AI. No surveillance. No soothing. Just sharper decisions.
             </p>
             <div className="flex flex-col items-center gap-4">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
