@@ -1069,7 +1069,7 @@ export default function Chat() {
         `} style={{ background: '#0D0F13', borderColor: 'rgba(255,255,255,0.04)' }}>
           <div className="p-8 pb-4 flex items-center justify-between">
             <Link href="/">
-              <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-teal-400 transition-all group">
+              <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-orange-400 transition-all group">
                 <img src="/logo.png" alt="DJZS" className="w-6 h-6 rounded transition-transform group-hover:-translate-x-1" style={{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.3))' }} data-testid="img-logo-sidebar" />
                 <span>DJZS v1</span>
               </button>
@@ -1101,9 +1101,9 @@ export default function Chat() {
                       : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-teal-400" : "text-gray-600 group-hover:text-gray-400"}`} />
+                  <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-orange-400" : "text-gray-600 group-hover:text-gray-400"}`} />
                   <span className="text-sm font-bold tracking-tight">{zone.name}</span>
-                  {isActive && <div className="ml-auto w-1 h-1 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]"></div>}
+                  {isActive && <div className="ml-auto w-1 h-1 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(243,126,32,0.5)]"></div>}
                 </button>
               );
             })}
@@ -1126,13 +1126,13 @@ export default function Chat() {
                   <img 
                     src={primaryProfile.avatar} 
                     alt={primaryProfile.displayName} 
-                    className="w-10 h-10 rounded-full object-cover" style={{ border: '1px solid rgba(45,212,191,0.2)' }}
+                    className="w-10 h-10 rounded-full object-cover" style={{ border: '1px solid rgba(243,126,32,0.2)' }}
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none';
                     }}
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black" style={{ background: 'rgba(45,212,191,0.1)', color: 'var(--rz-teal)', border: '1px solid rgba(45,212,191,0.2)' }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black" style={{ background: 'rgba(243,126,32,0.1)', color: '#F37E20', border: '1px solid rgba(243,126,32,0.2)' }}>
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -1393,7 +1393,7 @@ export default function Chat() {
                     </div>
                     <div className="w-px h-3" style={{ background: 'rgba(255,255,255,0.06)' }}></div>
                     <div className="flex items-center gap-2">
-                      <Bot className="w-3 h-3" style={{ color: 'rgba(45,212,191,0.5)' }} />
+                      <Bot className="w-3 h-3" style={{ color: 'rgba(243,126,32,0.5)' }} />
                       <span className="text-[10px] font-medium" style={{ color: 'var(--rz-text-muted)' }}>Thinking Partner</span>
                     </div>
                   </button>
@@ -1494,18 +1494,18 @@ export default function Chat() {
               }`}>
                 {/* Stats bar - streak, last entry, total (Journal only) */}
                 {selectedZone === 'journal' && entryStats && entryStats.totalEntries > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-8 p-3 sm:p-4 rounded-xl animate-in fade-in duration-500" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }}>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-8 p-3 sm:p-4 rounded-xl animate-in fade-in duration-500" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
                     {entryStats.streak > 0 && (
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(45,212,191,0.08)' }} data-testid="streak-badge">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(243,126,32,0.08)' }} data-testid="streak-badge">
                         <span className="text-sm">🔥</span>
-                        <span className="text-xs font-bold tabular-nums" style={{ color: 'var(--rz-teal)' }}>
+                        <span className="text-xs font-bold tabular-nums" style={{ color: '#F37E20' }}>
                           {entryStats.streak} day{entryStats.streak !== 1 ? 's' : ''}
                         </span>
                       </div>
                     )}
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                      <Clock className="w-3.5 h-3.5" style={{ color: 'var(--rz-text-muted)' }} />
-                      <span className="text-xs font-medium" style={{ color: 'var(--rz-text-secondary)' }}>
+                      <Clock className="w-3.5 h-3.5 text-gray-500" />
+                      <span className="text-xs font-medium text-gray-400">
                         {entryStats.daysSinceLastEntry === 0 
                           ? "Today" 
                           : entryStats.daysSinceLastEntry === 1 
@@ -1514,8 +1514,8 @@ export default function Chat() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                      <BookOpen className="w-3.5 h-3.5" style={{ color: 'var(--rz-text-muted)' }} />
-                      <span className="text-xs font-medium" style={{ color: 'var(--rz-text-secondary)' }}>
+                      <BookOpen className="w-3.5 h-3.5 text-gray-500" />
+                      <span className="text-xs font-medium text-gray-400">
                         {entryStats.totalEntries} {entryStats.totalEntries === 1 ? 'entry' : 'entries'}
                       </span>
                     </div>
