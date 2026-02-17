@@ -4,9 +4,9 @@ import { ArrowLeft, Shield, HardDrive, Lock, Fingerprint, Eye, Server, Smartphon
 
 export default function Security() {
   return (
-    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#0F1115' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.06]" style={{ background: 'rgba(15,17,21,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -32,7 +32,7 @@ export default function Security() {
           </p>
 
           {/* Security Commitment Banner */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 mb-12">
+          <div className="p-6 rounded-lg bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 mb-12">
             <div className="flex items-start gap-4">
               <Shield className="w-8 h-8 text-green-400 shrink-0" />
               <div>
@@ -45,7 +45,7 @@ export default function Security() {
             </div>
           </div>
 
-          <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
+          <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.06] pl-8">
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> No Custody, No Risk
@@ -80,21 +80,21 @@ export default function Security() {
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> Local-First Architecture
               </h2>
               <div className="grid gap-4">
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] flex gap-4">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] flex gap-4">
                   <HardDrive className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-1">Data Stays on Your Device</h3>
                     <p className="text-xs">All journal entries, research notes, and memories are stored in your browser's IndexedDB. This data never leaves your device unless you explicitly ask the AI for insights or export it.</p>
                   </div>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] flex gap-4">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] flex gap-4">
                   <Smartphone className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-1">Works Offline</h3>
                     <p className="text-xs">The core journaling functionality works without an internet connection. Your thinking doesn't depend on our servers being online.</p>
                   </div>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] flex gap-4">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] flex gap-4">
                   <Server className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-white font-bold mb-1">No Server-Side Storage</h3>
@@ -135,7 +135,7 @@ export default function Security() {
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> Wallet Security
               </h2>
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] mb-4">
                 <div className="flex items-start gap-3">
                   <Fingerprint className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
@@ -148,7 +148,7 @@ export default function Security() {
                   </div>
                 </div>
               </div>
-              <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/20">
+              <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/20">
                 <div className="flex items-start gap-3">
                   <Eye className="w-5 h-5 text-red-400 shrink-0" />
                   <div>
@@ -173,7 +173,7 @@ export default function Security() {
               </p>
 
               <div className="grid gap-4 mb-6">
-                <div className="p-5 rounded-xl border" style={{ background: 'rgba(46,139,139,0.08)', borderColor: 'rgba(46,139,139,0.25)' }}>
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(46,139,139,0.08)', borderColor: 'rgba(46,139,139,0.25)' }}>
                   <div className="flex items-start gap-4">
                     <MessageSquareLock className="w-6 h-6 shrink-0" style={{ color: '#2E8B8B' }} />
                     <div>
@@ -201,7 +201,7 @@ export default function Security() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-xl border" style={{ background: 'rgba(243,126,32,0.06)', borderColor: 'rgba(243,126,32,0.2)' }}>
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(243,126,32,0.06)', borderColor: 'rgba(243,126,32,0.2)' }}>
                   <div className="flex items-start gap-4">
                     <Cpu className="w-6 h-6 text-orange-400 shrink-0" />
                     <div>
@@ -230,7 +230,7 @@ export default function Security() {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <p className="text-xs leading-relaxed">
                   <strong className="text-white">In short:</strong> XMTP handles messaging with full E2E encryption. Venice handles AI inference over standard HTTPS — encrypted in transit but not end-to-end. We are transparent about this distinction because trust requires honesty.
                 </p>
@@ -291,7 +291,7 @@ export default function Security() {
             </section>
           </div>
 
-          <div className="mt-20 pt-12 border-t border-white/[0.05] text-center">
+          <div className="mt-20 pt-12 border-t border-white/[0.06] text-center">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600">
               © 2026 DJZS SYSTEM / SECURITY THROUGH SIMPLICITY
             </p>

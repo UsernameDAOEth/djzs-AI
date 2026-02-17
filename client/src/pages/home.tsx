@@ -19,16 +19,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen text-white overflow-hidden" style={{ background: '#2A2E3F' }}>
+    <div className="min-h-screen text-white overflow-hidden" style={{ background: '#0F1115' }}>
       <style>{`
         @keyframes breathe {
           0%, 100% { opacity: 0.4; transform: scale(1); }
           50% { opacity: 0.6; transform: scale(1.03); }
         }
         ::selection { background: rgba(243,126,32,0.3); }
+        .calm-card { transition: box-shadow 0.3s ease; }
+        .calm-card:hover { box-shadow: 0 0 24px rgba(255,255,255,0.02), 0 4px 32px rgba(0,0,0,0.3); }
       `}</style>
 
-      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.06]" style={{ background: 'rgba(42,46,63,0.88)', boxShadow: '0 1px 20px rgba(0,0,0,0.15)' }}>
+      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.06]" style={{ background: 'rgba(15,17,21,0.88)', boxShadow: '0 1px 20px rgba(0,0,0,0.15)' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <Link href="/">
             <span className="flex items-center gap-2.5" data-testid="link-home-logo">
@@ -59,7 +61,7 @@ export default function Home() {
             {isConnected ? (
               <Link href="/chat">
                 <button
-                  className="relative inline-flex items-center gap-2 rounded-xl px-5 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.98]"
+                  className="relative inline-flex items-center gap-2 rounded-md px-5 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.98]"
                   style={{ background: '#F37E20', boxShadow: '0 4px 20px rgba(243,126,32,0.3), 0 0 40px rgba(243,126,32,0.1)' }}
                   data-testid="button-header-enter"
                 >
@@ -91,8 +93,8 @@ export default function Home() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="md:hidden border-t border-white/[0.05] overflow-hidden"
-              style={{ background: 'rgba(26,29,38,0.98)' }}
+              className="md:hidden border-t border-white/[0.06] overflow-hidden"
+              style={{ background: 'rgba(15,17,21,0.98)' }}
             >
               <nav className="flex flex-col px-4 py-3 gap-1">
                 {[
@@ -105,7 +107,7 @@ export default function Home() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:bg-white/[0.04] hover:text-white"
+                    className="px-4 py-3 rounded-md text-sm font-medium transition-colors hover:bg-white/[0.04] hover:text-white"
                     style={{ color: '#9a9bb0' }}
                     onClick={() => setMobileMenuOpen(false)}
                     data-testid={`link-mobile-${link.label.toLowerCase()}`}
@@ -136,6 +138,7 @@ export default function Home() {
         initial="hidden"
         animate="show"
         className="relative min-h-[92vh] flex items-center justify-center overflow-hidden"
+        style={{ background: 'radial-gradient(ellipse at top, rgba(243,126,32,0.03) 0%, #0F1115 70%)' }}
       >
         <div
           className="absolute inset-0 pointer-events-none"
@@ -151,7 +154,7 @@ export default function Home() {
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <motion.div variants={fadeUp} className="mb-6">
-            <span className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-base font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
+            <span className="inline-flex items-center gap-3 px-6 py-3 rounded-md text-base font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
               <Shield className="w-6 h-6" />
               Decentralized Journaling Zone System
             </span>
@@ -177,7 +180,7 @@ export default function Home() {
               {isConnected ? (
                 <Link href="/chat">
                   <button
-                    className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                    className="inline-flex items-center gap-3 rounded-lg px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
                     style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                     data-testid="button-start-thinking"
                   >
@@ -189,7 +192,7 @@ export default function Home() {
                 <>
                   <Link href="/chat">
                     <button
-                      className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold transition-all duration-250 hover:-translate-y-1"
+                      className="inline-flex items-center gap-3 rounded-lg px-10 py-5 text-lg font-bold transition-all duration-250 hover:-translate-y-1"
                       style={{ background: '#F37E20', color: '#fff', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                       data-testid="button-start-thinking"
                     >
@@ -199,7 +202,7 @@ export default function Home() {
                   </Link>
                   <button
                     onClick={scrollToHowItWorks}
-                    className="inline-flex items-center gap-3 rounded-2xl border px-8 py-5 text-lg font-bold transition-all duration-250 hover:text-white"
+                    className="inline-flex items-center gap-3 rounded-lg border px-8 py-5 text-lg font-bold transition-all duration-250 hover:text-white"
                     style={{ borderColor: 'rgba(46,139,139,0.3)', color: '#9a9bb0' }}
                     data-testid="button-see-how-it-works"
                   >
@@ -240,10 +243,10 @@ export default function Home() {
       </motion.section>
 
       <RevealSection>
-        <section id="how-it-works" className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+        <section id="how-it-works" className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
                 <Briefcase className="w-6 h-6" style={{ color: '#F37E20' }} />
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>For Founders</span>
               </div>
@@ -256,8 +259,8 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-founder-research">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-founder-research">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
@@ -278,8 +281,8 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-founder-journal">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-founder-journal">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
@@ -300,8 +303,8 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-founder-partner">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-founder-partner">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
@@ -323,12 +326,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.04), rgba(255,184,77,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-founder-cta">
+            <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.04), rgba(255,184,77,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-founder-cta">
               <p className="text-lg font-bold text-white mb-2">Stop building on gut feel. Start compounding founder intelligence.</p>
               <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every decision documented. Every pattern tracked. Every lesson carried forward.</p>
               <Link href="/chat">
                 <button
-                  className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                  className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
                   style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }}
                   data-testid="button-start-founder-thinking"
                 >
@@ -342,10 +345,10 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
                 <BarChart3 className="w-6 h-6" style={{ color: '#2E8B8B' }} />
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Traders</span>
               </div>
@@ -358,8 +361,8 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              <div className="p-8 rounded-2xl border transition-all hover:border-teal-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-trader-research">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-teal-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-trader-research">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
@@ -380,8 +383,8 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-trader-journal">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-trader-journal">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
@@ -402,8 +405,8 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-trader-partner">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-trader-partner">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
@@ -425,12 +428,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(123,107,141,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-trader-cta">
+            <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(123,107,141,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-trader-cta">
               <p className="text-lg font-bold text-white mb-2">Stop trading on vibes. Start compounding trading intelligence.</p>
               <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every thesis documented. Every pattern tracked. Every lesson carried forward to the next trade.</p>
               <Link href="/chat">
                 <button
-                  className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                  className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
                   style={{ background: '#2E8B8B', boxShadow: '0 6px 24px rgba(46,139,139,0.3)' }}
                   data-testid="button-start-trader-thinking"
                 >
@@ -444,10 +447,10 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(123,107,141,0.08)', border: '1px solid rgba(123,107,141,0.2)' }}>
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(123,107,141,0.08)', border: '1px solid rgba(123,107,141,0.2)' }}>
                 <Video className="w-6 h-6" style={{ color: '#7B6B8D' }} />
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#7B6B8D' }}>For Content Creators</span>
               </div>
@@ -460,8 +463,8 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-creator-research">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-creator-research">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
@@ -482,8 +485,8 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-creator-journal">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-creator-journal">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
@@ -504,8 +507,8 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-creator-partner">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-creator-partner">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
@@ -527,12 +530,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(123,107,141,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(123,107,141,0.15)' }} data-testid="card-creator-cta">
+            <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(123,107,141,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(123,107,141,0.15)' }} data-testid="card-creator-cta">
               <p className="text-lg font-bold text-white mb-2">Your content gets better because your thinking gets better.</p>
               <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every idea tracked. Every angle explored. Every piece backed by a growing knowledge base.</p>
               <Link href="/chat">
                 <button
-                  className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                  className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
                   style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }}
                   data-testid="button-start-creator-thinking"
                 >
@@ -546,10 +549,10 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
                 <FlaskConical className="w-6 h-6" style={{ color: '#2E8B8B' }} />
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Researchers</span>
               </div>
@@ -562,8 +565,8 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              <div className="p-8 rounded-2xl border transition-all hover:border-teal-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-researcher-research">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-teal-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-researcher-research">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Research Zone</p>
@@ -584,8 +587,8 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-researcher-journal">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-researcher-journal">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#F37E20' }}>Journal Zone</p>
@@ -606,8 +609,8 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/20" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-researcher-partner">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-researcher-partner">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Thinking Partner</p>
@@ -629,12 +632,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl border text-center" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-researcher-cta">
+            <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(46,139,139,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(46,139,139,0.15)' }} data-testid="card-researcher-cta">
               <p className="text-lg font-bold text-white mb-2">Stop drowning in sources. Start compounding research intelligence.</p>
               <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every finding documented. Every contradiction surfaced. Every thesis built incrementally.</p>
               <Link href="/chat">
                 <button
-                  className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                  className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
                   style={{ background: '#2E8B8B', boxShadow: '0 6px 24px rgba(46,139,139,0.3)' }}
                   data-testid="button-start-researcher-thinking"
                 >
@@ -648,10 +651,10 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
                 <Zap className="w-6 h-6" style={{ color: '#2E8B8B' }} />
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>Decentralized AI by Design</span>
               </div>
@@ -664,8 +667,8 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="p-8 rounded-2xl border transition-all hover:border-orange-500/15 group" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-pillar-privacy">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/15 group calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-pillar-privacy">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <Shield className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">No Centralized Surveillance</h3>
@@ -677,8 +680,8 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-teal-500/15 group" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-pillar-longevity">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-teal-500/15 group calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-pillar-longevity">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <Layers className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Interoperable & Future-Proof</h3>
@@ -690,8 +693,8 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-purple-500/15 group" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-pillar-ai">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/15 group calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-pillar-ai">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Sovereign Data Ownership</h3>
@@ -703,8 +706,8 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="p-8 rounded-2xl border transition-all hover:border-yellow-500/15 group" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-pillar-calm">
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
+              <div className="p-8 rounded-lg border transition-all hover:border-yellow-500/15 group calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-pillar-calm">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
                   <Eye className="w-7 h-7" style={{ color: '#FFB84D' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Quantum-Resilient Design</h3>
@@ -721,10 +724,10 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
                 <Zap className="w-6 h-6" style={{ color: '#FFB84D' }} />
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#FFB84D' }}>How It Actually Works</span>
               </div>
@@ -737,7 +740,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-think-input">
+              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-think-input">
                 <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: '#F37E20' }}>What you send</p>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
@@ -755,7 +758,7 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-think-output">
+              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-think-output">
                 <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: '#2E8B8B' }}>What you get back</p>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
@@ -778,9 +781,9 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl border" style={{ background: 'linear-gradient(135deg, rgba(255,184,77,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-memory-pins">
+            <div className="p-8 rounded-lg border calm-card" style={{ background: 'linear-gradient(135deg, rgba(255,184,77,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-memory-pins">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
+                <div className="w-12 h-12 rounded-md flex items-center justify-center shrink-0" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
                   <Pin className="w-6 h-6" style={{ color: '#FFB84D' }} />
                 </div>
                 <div>
@@ -799,10 +802,10 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+        <section className="relative py-24 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
                 <Shield className="w-6 h-6" style={{ color: '#F37E20' }} />
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Privacy Architecture</span>
               </div>
@@ -815,8 +818,8 @@ export default function Home() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-10">
-              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
+              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }}>
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
                   <HardDrive className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Local-First Storage</h3>
@@ -824,8 +827,8 @@ export default function Home() {
                   All entries, research, and insights stored in your browser's IndexedDB. Works offline. No cloud database. No server-side copies.
                 </p>
               </div>
-              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }}>
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
                   <Bot className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">User-Controlled AI</h3>
@@ -833,8 +836,8 @@ export default function Home() {
                   AI only sees your data when you click "Think with me." Nothing is sent automatically. No background scanning. No silent learning.
                 </p>
               </div>
-              <div className="p-8 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
+              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }}>
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
                   <Shield className="w-7 h-7" style={{ color: '#FFB84D' }} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Decentralized Inference</h3>
@@ -845,7 +848,7 @@ export default function Home() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 mb-10">
-              <div className="p-6 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-xmtp-e2e">
+              <div className="p-6 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-xmtp-e2e">
                 <div className="flex items-center gap-3 mb-3">
                   <Lock className="w-5 h-5" style={{ color: '#2E8B8B' }} />
                   <h4 className="text-base font-bold text-white">XMTP: E2E Encrypted Messaging</h4>
@@ -854,7 +857,7 @@ export default function Home() {
                   Agent communication via XMTP uses MLS protocol with forward secrecy and post-compromise security. Messages are end-to-end encrypted by default.
                 </p>
               </div>
-              <div className="p-6 rounded-2xl border" style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }} data-testid="card-xmtp-quantum">
+              <div className="p-6 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-xmtp-quantum">
                 <div className="flex items-center gap-3 mb-3">
                   <Shield className="w-5 h-5" style={{ color: '#7B6B8D' }} />
                   <h4 className="text-base font-bold text-white">Quantum-Resistant Key Exchange</h4>
@@ -865,7 +868,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl border" style={{ background: 'linear-gradient(to right, rgba(243,126,32,0.04), rgba(46,139,139,0.04))', borderColor: 'rgba(255,255,255,0.08)' }}>
+            <div className="p-8 rounded-lg border calm-card" style={{ background: 'linear-gradient(to right, rgba(243,126,32,0.04), rgba(46,139,139,0.04))', borderColor: 'rgba(255,255,255,0.08)' }}>
               <p className="text-center text-lg leading-relaxed" style={{ color: '#b0b1c0' }}>
                 When you request AI insights, only the text you select is sent to privacy-focused providers via HTTPS. The response is saved locally on your device. We do not permanently store your data on any server.
               </p>
@@ -881,9 +884,9 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-white/[0.05]" style={{ background: '#2A2E3F' }}>
+        <section className="relative py-24 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
-            <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+            <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
               <FAQItem question="How is DJZS different from ChatGPT or Notion AI?">
                 <p>DJZS is not a chat app, not a note organizer, and not a general AI assistant.</p>
                 <p className="mt-2" style={{ color: '#7a7b90' }}>ChatGPT and Notion AI are tools for responding to prompts:</p>
@@ -1038,7 +1041,7 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.05]" style={{ background: '#1a1d26' }}>
+        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-final-cta-headline">
               Build intelligence that compounds — without giving it away.
@@ -1050,7 +1053,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                 <Link href="/chat">
                   <button
-                    className="inline-flex items-center gap-3 rounded-2xl px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
+                    className="inline-flex items-center gap-3 rounded-lg px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
                     style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                     data-testid="button-final-get-started"
                   >
@@ -1067,10 +1070,10 @@ export default function Home() {
         </section>
       </RevealSection>
 
-      <footer className="border-t border-white/[0.05] py-24" style={{ background: '#2A2E3F' }}>
+      <footer className="border-t border-white/[0.06] py-24" style={{ background: '#0D0F13' }}>
         <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-10">
           <div className="flex flex-col items-center gap-3">
-            <img src="/logo.png" alt="DJZS" className="w-16 h-16 rounded-2xl" style={{ filter: 'drop-shadow(0 0 4px rgba(243,126,32,0.2))' }} data-testid="img-logo-footer" />
+            <img src="/logo.png" alt="DJZS" className="w-16 h-16 rounded-lg" style={{ filter: 'drop-shadow(0 0 4px rgba(243,126,32,0.2))' }} data-testid="img-logo-footer" />
             <h2 className="text-3xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }}>
               DJZS
             </h2>
@@ -1080,26 +1083,26 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-            <Link href="/about" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-about">
+            <Link href="/about" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-about">
               About
             </Link>
-            <Link href="/docs" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-docs">
+            <Link href="/docs" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-docs">
               Docs
             </Link>
-            <Link href="/privacy" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-privacy">
+            <Link href="/privacy" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-privacy">
               Privacy
             </Link>
-            <Link href="/security" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-security">
+            <Link href="/security" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-security">
               Security
             </Link>
-            <Link href="/terms" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-terms">
+            <Link href="/terms" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-terms">
               Terms
             </Link>
-            <Link href="/roadmap" className="px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-roadmap">
+            <Link href="/roadmap" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-white/[0.05] hover:border-white/20" style={{ color: '#9a9bac', borderColor: 'rgba(255,255,255,0.1)' }} data-testid="link-footer-roadmap">
               Roadmap
             </Link>
             {isConnected && (
-              <Link href="/chat" className="px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-white transition-all hover:opacity-90" style={{ background: '#F37E20' }} data-testid="link-footer-enter">
+              <Link href="/chat" className="px-6 py-2 rounded-md text-xs font-bold uppercase tracking-widest text-white transition-all hover:opacity-90" style={{ background: '#F37E20' }} data-testid="link-footer-enter">
                 Enter
               </Link>
             )}
@@ -1126,11 +1129,11 @@ export default function Home() {
       </footer>
 
       {!isConnected && !mobileBarDismissed && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden backdrop-blur-xl border-t border-white/[0.05] p-4 safe-area-inset-bottom" style={{ background: 'rgba(42,46,63,0.95)' }}>
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden backdrop-blur-xl border-t border-white/[0.06] p-4 safe-area-inset-bottom" style={{ background: 'rgba(15,17,21,0.95)' }}>
           <div className="flex items-center gap-3 max-w-lg mx-auto">
             <Link href="/chat" className="flex-1">
               <button
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-bold text-white transition-colors min-h-[48px]"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-md px-5 py-3.5 text-sm font-bold text-white transition-colors min-h-[48px]"
                 style={{ background: '#F37E20' }}
                 data-testid="button-mobile-try-demo"
               >
@@ -1158,7 +1161,7 @@ function FAQItem({ question, children }: { question: string; children: ReactNode
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="py-8 group" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+    <div className="py-8 group" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between gap-6 text-left"

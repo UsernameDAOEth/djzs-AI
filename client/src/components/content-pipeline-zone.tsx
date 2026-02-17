@@ -14,7 +14,8 @@ const TABS: { id: TabId; label: string; icon: typeof Pen }[] = [
 ];
 
 const INPUT_CLS =
-  "w-full px-3 py-2 bg-white/[0.05] border border-white/[0.08] rounded-xl text-sm text-white placeholder:text-gray-600 outline-none focus:border-teal-500/50 transition-colors";
+  "w-full px-3 py-2 rounded-md text-sm text-white placeholder:text-gray-600 outline-none focus:border-teal-500/50 transition-colors"
+  + " " + "bg-[#0F1115] border border-white/[0.06]";
 
 const FORMAT_OPTIONS: ContentFormat[] = ["article", "thread", "video", "newsletter", "podcast", "post"];
 const STATUS_OPTIONS: ContentStatus[] = ["idea", "drafting", "refining", "ready", "published"];
@@ -56,8 +57,8 @@ function ToggleGroup({
           onClick={() => onChange(opt)}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
             value === opt
-              ? "bg-teal-500/20 text-teal-400 border border-teal-500/30"
-              : "bg-white/[0.03] text-gray-500 border border-white/[0.05] hover:text-gray-300"
+              ? "bg-[rgba(46,139,139,0.1)] text-teal-400 border border-[rgba(46,139,139,0.3)]"
+              : "bg-[#14171D] text-gray-500 border border-white/[0.06] hover:text-gray-300 hover:border-white/[0.08]"
           }`}
         >
           {opt}
@@ -229,7 +230,7 @@ export function ContentPipelineZone() {
         <h2 className="text-sm font-semibold text-white">Content Pipeline</h2>
       </div>
 
-      <div className="flex items-center gap-1 mb-4 p-1 bg-white/[0.02] rounded-2xl border border-white/[0.05] overflow-x-auto">
+      <div className="flex items-center gap-1 mb-4 p-1 bg-[#14171D] rounded-lg border border-white/[0.06] overflow-x-auto">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -237,9 +238,9 @@ export function ContentPipelineZone() {
               key={tab.id}
               data-testid={`tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap ${
+              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "bg-teal-500/15 text-teal-400 border border-teal-500/20"
+                  ? "bg-[rgba(46,139,139,0.1)] text-teal-400 border border-[rgba(46,139,139,0.3)]"
                   : "text-gray-500 hover:text-gray-300"
               }`}
             >
@@ -252,7 +253,7 @@ export function ContentPipelineZone() {
 
       {activeTab === "compose" && (
         <div className="space-y-4" data-testid="compose-tab">
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-4">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Pen size={16} className="text-teal-400" />
               <h3 className="text-sm font-semibold text-white">Compose Content Idea</h3>
@@ -362,7 +363,7 @@ export function ContentPipelineZone() {
             <button
               data-testid="button-save-content"
               onClick={handleSave}
-              className="w-full py-2.5 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30 text-sm font-medium hover:bg-teal-500/30 transition-all"
+              className="w-full py-2.5 rounded-lg bg-teal-500/20 text-teal-400 border border-teal-500/30 text-sm font-medium hover:bg-teal-500/30 transition-all"
             >
               Save to Pipeline
             </button>
@@ -373,20 +374,20 @@ export function ContentPipelineZone() {
       {activeTab === "refine" && (
         <div className="space-y-4" data-testid="refine-tab">
           {!savedItemId ? (
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-center">
+            <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] text-center">
               <Sparkles size={24} className="text-gray-600 mx-auto mb-2" />
               <p className="text-sm text-gray-500" data-testid="text-compose-first">
                 Compose and save a content idea first to refine it with AI.
               </p>
             </div>
           ) : (
-            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-4">
+            <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles size={16} className="text-teal-400" />
                 <h3 className="text-sm font-semibold text-white">AI Refinement</h3>
               </div>
 
-              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+              <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                 <p className="text-xs text-gray-400 mb-1">Content idea:</p>
                 <p className="text-sm text-white font-medium" data-testid="text-refine-title">{title}</p>
                 <p className="text-xs text-gray-500 mt-1">{format} · {audience || "General audience"}</p>
@@ -396,7 +397,7 @@ export function ContentPipelineZone() {
                 <button
                   data-testid="button-refine-ai"
                   onClick={handleRefine}
-                  className="w-full py-2.5 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30 text-sm font-medium hover:bg-teal-500/30 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-2.5 rounded-lg bg-teal-500/20 text-teal-400 border border-teal-500/30 text-sm font-medium hover:bg-teal-500/30 transition-all flex items-center justify-center gap-2"
                 >
                   <Sparkles size={14} />
                   Refine with AI
@@ -412,19 +413,19 @@ export function ContentPipelineZone() {
 
               {refineResult && (
                 <div className="space-y-3">
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                     <p className="text-xs font-medium text-teal-400 mb-1">Analysis</p>
                     <p className="text-sm text-gray-300" data-testid="text-refine-said">{refineResult.said}</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                     <p className="text-xs font-medium text-teal-400 mb-1">Why It Matters</p>
                     <p className="text-sm text-gray-300" data-testid="text-refine-matters">{refineResult.matters}</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                     <p className="text-xs font-medium text-teal-400 mb-1">Suggested Next Move</p>
                     <p className="text-sm text-gray-300" data-testid="text-refine-nextmove">{refineResult.nextMove}</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                     <p className="text-xs font-medium text-teal-400 mb-1">Reflective Question</p>
                     <p className="text-sm text-gray-300 italic" data-testid="text-refine-question">{refineResult.question}</p>
                   </div>
@@ -432,7 +433,7 @@ export function ContentPipelineZone() {
                   <button
                     data-testid="button-save-refinement"
                     onClick={handleSaveRefinement}
-                    className="w-full py-2.5 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30 text-sm font-medium hover:bg-teal-500/30 transition-all"
+                    className="w-full py-2.5 rounded-lg bg-teal-500/20 text-teal-400 border border-teal-500/30 text-sm font-medium hover:bg-teal-500/30 transition-all"
                   >
                     Save AI Refinement
                   </button>
@@ -446,7 +447,7 @@ export function ContentPipelineZone() {
       {activeTab === "pipeline" && (
         <div className="space-y-3" data-testid="pipeline-tab">
           {pipelineItems.length === 0 ? (
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-center">
+            <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] text-center">
               <Clock size={24} className="text-gray-600 mx-auto mb-2" />
               <p className="text-sm text-gray-500" data-testid="text-empty-pipeline">No content ideas in your pipeline yet.</p>
             </div>
@@ -456,7 +457,7 @@ export function ContentPipelineZone() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-2xl bg-white/[0.02] border border-white/[0.05] overflow-hidden"
+                  className="rounded-lg bg-[#14171D] border border-white/[0.06] overflow-hidden"
                   data-testid={`card-content-${item.id}`}
                 >
                   <button
@@ -478,14 +479,14 @@ export function ContentPipelineZone() {
                         </span>
                         <Badge
                           variant="outline"
-                          className={`text-[10px] px-1.5 py-0 border ${FORMAT_COLORS[item.format]}`}
+                          className={`text-[10px] px-1.5 py-0 rounded-md border ${FORMAT_COLORS[item.format]}`}
                           data-testid={`badge-format-${item.id}`}
                         >
                           {item.format}
                         </Badge>
                         <Badge
                           variant="outline"
-                          className={`text-[10px] px-1.5 py-0 border ${STATUS_COLORS[item.status]}`}
+                          className={`text-[10px] px-1.5 py-0 rounded-md border ${STATUS_COLORS[item.status]}`}
                           data-testid={`badge-status-${item.id}`}
                         >
                           {item.status}
@@ -501,7 +502,7 @@ export function ContentPipelineZone() {
                   </button>
 
                   {isExpanded && (
-                    <div className="px-4 pb-4 pt-0 border-t border-white/[0.05] space-y-3">
+                    <div className="px-4 pb-4 pt-0 border-t border-white/[0.06] space-y-3">
                       {item.topic && (
                         <div className="pt-3">
                           <p className="text-xs font-medium text-gray-400 mb-0.5">Topic</p>
@@ -537,7 +538,7 @@ export function ContentPipelineZone() {
                         </div>
                       )}
                       {item.aiRefinement && (
-                        <div className="p-3 rounded-xl bg-teal-500/5 border border-teal-500/10">
+                        <div className="p-3 rounded-lg bg-teal-500/5 border border-teal-500/10">
                           <p className="text-xs font-medium text-teal-400 mb-1">AI Refinement</p>
                           <p className="text-sm text-gray-300 whitespace-pre-wrap" data-testid={`text-refinement-${item.id}`}>
                             {item.aiRefinement}
@@ -551,7 +552,7 @@ export function ContentPipelineZone() {
                           data-testid={`select-status-${item.id}`}
                           value={item.status}
                           onChange={(e) => item.id !== undefined && handleStatusChange(item.id, e.target.value as ContentStatus)}
-                          className="px-2 py-1 bg-white/[0.05] border border-white/[0.08] rounded-lg text-xs text-white outline-none"
+                          className="px-2 py-1 bg-[#0F1115] border border-white/[0.06] rounded-md text-xs text-white outline-none"
                         >
                           {STATUS_OPTIONS.map((s) => (
                             <option key={s} value={s} className="bg-gray-900">

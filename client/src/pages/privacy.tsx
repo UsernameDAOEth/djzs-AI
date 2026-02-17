@@ -4,9 +4,9 @@ import { ArrowLeft } from "lucide-react";
 
 export default function Privacy() {
   return (
-    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#0F1115' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.06]" style={{ background: 'rgba(15,17,21,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -29,13 +29,13 @@ export default function Privacy() {
           <p className="text-sm text-gray-500 mb-12 font-mono">Last updated: January 23, 2026</p>
 
           {/* Security Commitment Banner */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 mb-12">
+          <div className="p-6 rounded-lg bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 mb-12">
             <p className="text-sm leading-relaxed">
               <strong className="text-white">DJ-Z-S does not store private keys, custody assets, or initiate transactions on behalf of users.</strong> Wallet connections are used only with explicit user consent for authentication purposes. No funds are accessed or moved.
             </p>
           </div>
 
-          <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
+          <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.06] pl-8">
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> Core Principle
@@ -93,13 +93,13 @@ export default function Privacy() {
                 DJZS uses two separate channels with different privacy properties. We distinguish them clearly:
               </p>
               <div className="space-y-4 mb-4">
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <h3 className="text-white font-bold mb-2">XMTP Messaging — End-to-End Encrypted</h3>
                   <p className="text-xs leading-relaxed">
                     Messages between you and the DJZS agent travel over the XMTP network with end-to-end encryption (MLS protocol). XMTP nodes cannot read message content. This channel includes forward secrecy, post-compromise security, and quantum-resistant key encapsulation (XWING KEM) on Welcome messages.
                   </p>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <h3 className="text-white font-bold mb-2">Venice AI Inference — HTTPS/TLS (Not E2E)</h3>
                   <p className="text-xs leading-relaxed">
                     When you click "Think with me" or run a research query, your selected text is sent to Venice AI over HTTPS/TLS. This means your data is encrypted in transit, but Venice must see the plaintext to compute a response. This is standard for all AI inference APIs — it is <strong className="text-white">not end-to-end encrypted</strong>. Venice claims no data retention and does not train on your inputs. Quantum resistance does not apply to these API calls.
@@ -158,7 +158,7 @@ export default function Privacy() {
             </section>
           </div>
 
-          <div className="mt-20 pt-12 border-t border-white/[0.05] text-center">
+          <div className="mt-20 pt-12 border-t border-white/[0.06] text-center">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600">
               © 2026 DJZS SYSTEM / YOUR DATA, YOUR CONTROL
             </p>

@@ -46,8 +46,8 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
   return (
-    <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/20 transition-all group">
-      <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4 group-hover:bg-orange-500/20 transition-colors">
+    <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-orange-500/20 transition-all group">
+      <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center mb-4 group-hover:bg-orange-500/20 transition-colors">
         <Icon className="w-5 h-5 text-orange-400" />
       </div>
       <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
@@ -66,7 +66,7 @@ interface QuickLinkProps {
 
 function QuickLink({ href, title, description, external, testId }: QuickLinkProps) {
   const content = (
-    <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/30 hover:bg-orange-500/[0.03] transition-all group cursor-pointer" data-testid={testId}>
+    <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-orange-500/30 hover:bg-orange-500/[0.03] transition-all group cursor-pointer" data-testid={testId}>
       <div className="flex items-center justify-between mb-2">
         <h4 className="font-bold text-white group-hover:text-orange-300 transition-colors">{title}</h4>
         {external ? (
@@ -92,7 +92,7 @@ interface TechStackItemProps {
 
 function TechStackItem({ category, items }: TechStackItemProps) {
   return (
-    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.03]">
+    <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.03]">
       <h4 className="text-[10px] font-bold text-orange-400 uppercase tracking-wide mb-3">{category}</h4>
       <div className="flex flex-wrap gap-2">
         {items.map((item, i) => (
@@ -107,8 +107,8 @@ function TechStackItem({ category, items }: TechStackItemProps) {
 
 export default function Docs() {
   return (
-    <div className="min-h-screen text-gray-300 selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
-      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.02]" style={{ background: 'rgba(42,46,63,0.8)' }}>
+    <div className="min-h-screen text-gray-300 selection:bg-orange-500/30" style={{ background: '#0F1115' }}>
+      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.02]" style={{ background: 'rgba(15,17,21,0.8)' }}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
             <button className="flex items-center gap-2 text-sm font-bold text-white tracking-wide uppercase opacity-60 hover:opacity-100 hover:text-orange-400 transition-all group">
@@ -140,7 +140,7 @@ export default function Docs() {
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
-              <button className="px-6 py-3 rounded-xl text-white font-bold transition-colors" style={{ background: '#F37E20' }} data-testid="button-start-writing">
+              <button className="px-6 py-3 rounded-lg text-white font-bold transition-colors" style={{ background: '#F37E20' }} data-testid="button-start-writing">
                 Start Thinking
               </button>
             </Link>
@@ -172,9 +172,9 @@ export default function Docs() {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
             {/* Web2 Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/[0.05] to-transparent border border-red-500/20">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-red-500/[0.05] to-transparent border border-red-500/20">
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-12 h-12 rounded-xl bg-red-600/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-red-600/20 flex items-center justify-center">
                   <Building2 className="w-6 h-6 text-red-400" />
                 </div>
                 <div>
@@ -210,9 +210,9 @@ export default function Docs() {
             </div>
             
             {/* Web3 Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/[0.05] to-transparent border border-green-500/20">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-green-500/[0.05] to-transparent border border-green-500/20">
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-12 h-12 rounded-xl bg-green-600/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-green-600/20 flex items-center justify-center">
                   <Network className="w-6 h-6 text-green-400" />
                 </div>
                 <div>
@@ -299,7 +299,7 @@ export default function Docs() {
           </div>
 
           {/* Why DJZS uses Web3 */}
-          <div className="mt-10 p-6 rounded-2xl bg-orange-500/[0.08] border border-orange-500/20">
+          <div className="mt-10 p-6 rounded-lg bg-orange-500/[0.08] border border-orange-500/20">
             <h3 className="text-lg font-bold text-white mb-3">Why DJZS Uses Web3 Principles</h3>
             <p className="text-gray-400 leading-relaxed">
               Your private thoughts deserve better than Web2. DJZS combines Web3's decentralized identity (wallet login) with local-first storage (your device). This means your journal entries, research, and memories are never stored on our servers. You authenticate with your wallet—no email, no password, no account to hack. Your thinking stays yours.
@@ -311,7 +311,7 @@ export default function Docs() {
           <h2 className="text-2xl font-bold text-white mb-8">Your Thinking is a Data Mine</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20 mb-8" data-testid="card-why-privacy-docs">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
                 <Shield className="w-6 h-6 text-orange-400" />
               </div>
               <div>
@@ -327,46 +327,46 @@ export default function Docs() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 mb-6">
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <HardDrive className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-white mb-1">Local-First Storage</h4>
                 <p className="text-xs text-gray-500">All entries, insights, memory pins, research dossiers, and claims live in your browser's IndexedDB. We don't have a database of your thoughts. There's nothing to hack, subpoena, or sell.</p>
               </div>
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <ShieldCheck className="w-5 h-5 text-green-400 mb-2" />
                 <h4 className="text-sm font-bold text-white mb-1">Vault Encryption</h4>
                 <p className="text-xs text-gray-500">Set a passphrase to encrypt your vault with AES-256-GCM. Journal entries, AI insights, and memory pins are encrypted at rest. Even with device access, your thoughts stay locked.</p>
               </div>
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <Bot className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-white mb-1">User-Controlled AI</h4>
                 <p className="text-xs text-gray-500">Your text is only sent to AI when you explicitly click "Think with me." Venice AI processes it without storing or training on your data. Nothing happens in the background.</p>
               </div>
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <KeyRound className="w-5 h-5 text-orange-400 mb-2" style={{ color: '#FFB84D' }} />
                 <h4 className="text-sm font-bold text-white mb-1">Bring Your Own Key</h4>
                 <p className="text-xs text-gray-500">Use your own Venice API key for full control over AI usage and billing. Your key stays in your browser's local storage, never on our servers.</p>
               </div>
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <Search className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-white mb-1">Privacy-First Search</h4>
                 <p className="text-xs text-gray-500">Brave Search doesn't track or profile you. Venice AI's web search doesn't log queries. Your research stays your research.</p>
               </div>
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <Lock className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-white mb-1">Wallet-Based Identity</h4>
                 <p className="text-xs text-gray-500">No email, no password, no account to breach. Your wallet is your identity. No personal information is required or stored.</p>
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-amber-500/[0.04] border border-amber-500/15">
+            <div className="p-4 rounded-lg bg-amber-500/[0.04] border border-amber-500/15">
               <p className="text-xs text-amber-300 font-semibold mb-1">What we're honest about</p>
               <p className="text-xs text-gray-500 leading-relaxed">When you click "Think with me," your entry text is sent to Venice AI over the internet for processing. This is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because we believe you deserve to know exactly when your data leaves your device.</p>
             </div>
-            <div className="p-4 rounded-xl bg-green-500/[0.04] border border-green-500/15 mt-4">
+            <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15 mt-4">
               <p className="text-xs text-green-300 font-semibold mb-1">What IS encrypted at rest</p>
               <p className="text-xs text-gray-500 leading-relaxed">When you set a vault passphrase, your journal entries, AI insights, and memory pins are encrypted locally using AES-256-GCM with PBKDF2 key derivation (600k iterations). Your passphrase never leaves your device. Even if someone copies your browser data, they cannot read your thoughts without your passphrase.</p>
             </div>
-            <div className="p-4 rounded-xl bg-green-500/[0.04] border border-green-500/15 mt-4">
+            <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15 mt-4">
               <p className="text-xs text-green-300 font-semibold mb-1">What IS end-to-end encrypted</p>
               <p className="text-xs text-gray-500 leading-relaxed">XMTP messaging is fully end-to-end encrypted using the MLS protocol with quantum-resistant key encapsulation (XWING KEM). When you interact with DJZS agents via XMTP, your messages are protected with forward secrecy, post-compromise security, and quantum resistance — the same level of protection as Signal and WhatsApp, using a newer standard. See the <a href="https://docs.xmtp.org/protocol/security" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 underline underline-offset-2">XMTP Security Documentation</a> for full details.</p>
             </div>
@@ -412,9 +412,9 @@ export default function Docs() {
         <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-white mb-8">Zones</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
                   <BookOpen className="w-6 h-6 text-orange-400" />
                 </div>
                 <div>
@@ -442,9 +442,9 @@ export default function Docs() {
                 </li>
               </ul>
             </div>
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20 hover:border-teal-500/30 transition-all">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20 hover:border-teal-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-teal-600/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-teal-600/20 flex items-center justify-center">
                   <Search className="w-6 h-6 text-teal-400" />
                 </div>
                 <div>
@@ -481,9 +481,9 @@ export default function Docs() {
               </ul>
             </div>
 
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20 hover:border-purple-500/30 transition-all">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20 hover:border-purple-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-purple-600/20 flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-purple-400" />
                 </div>
                 <div>
@@ -524,9 +524,9 @@ export default function Docs() {
               </ul>
             </div>
 
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/20 hover:border-amber-500/30 transition-all">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/20 hover:border-amber-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-600/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-amber-600/20 flex items-center justify-center">
                   <Brain className="w-6 h-6 text-amber-400" />
                 </div>
                 <div>
@@ -555,9 +555,9 @@ export default function Docs() {
               </ul>
             </div>
 
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-cyan-500/[0.08] to-transparent border border-cyan-500/20 hover:border-cyan-500/30 transition-all">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-cyan-500/[0.08] to-transparent border border-cyan-500/20 hover:border-cyan-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-cyan-600/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-cyan-600/20 flex items-center justify-center">
                   <Palette className="w-6 h-6 text-cyan-400" />
                 </div>
                 <div>
@@ -586,9 +586,9 @@ export default function Docs() {
               </ul>
             </div>
 
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/[0.08] to-transparent border border-red-500/20 hover:border-red-500/30 transition-all md:col-span-2">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-red-500/[0.08] to-transparent border border-red-500/20 hover:border-red-500/30 transition-all md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-red-600/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-red-600/20 flex items-center justify-center">
                   <Video className="w-6 h-6 text-red-400" />
                 </div>
                 <div>
@@ -627,7 +627,7 @@ export default function Docs() {
           <h2 className="text-2xl font-bold text-white mb-8">Research Dossiers & Claims</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20 mb-8">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-teal-600/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-teal-600/20 flex items-center justify-center">
                 <FileSearch className="w-6 h-6 text-teal-400" />
               </div>
               <div>
@@ -682,7 +682,7 @@ export default function Docs() {
                 </ul>
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-teal-500/[0.06] border border-teal-500/15">
+            <div className="p-4 rounded-lg bg-teal-500/[0.06] border border-teal-500/15">
               <p className="text-sm text-gray-400 leading-relaxed">
                 All dossiers and claims are stored locally in your browser's IndexedDB. Nothing is sent to a server. Your research stays private and portable.
               </p>
@@ -694,7 +694,7 @@ export default function Docs() {
           <h2 className="text-2xl font-bold text-white mb-8">OpenClaw Agent Runner</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 mb-8">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-purple-600/20 flex items-center justify-center">
                 <Brain className="w-6 h-6 text-purple-400" />
               </div>
               <div>
@@ -706,7 +706,7 @@ export default function Docs() {
               OpenClaw is DJZS's agent runner — a clean dispatcher that routes requests to three specialized AI agents. Each agent wraps Venice AI calls and returns strictly typed, structured JSON. No thinking happens in the dispatcher; all intelligence lives in the agent classes.
             </p>
 
-            <div className="p-5 rounded-xl bg-purple-500/[0.06] border border-purple-500/15 mb-6">
+            <div className="p-5 rounded-lg bg-purple-500/[0.06] border border-purple-500/15 mb-6">
               <p className="text-sm font-bold text-purple-300 mb-3">How It Connects to What You See</p>
               <ul className="space-y-3 text-sm text-gray-400">
                 <li className="flex items-start gap-3">
@@ -737,9 +737,9 @@ export default function Docs() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20" data-testid="card-agent-journal">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20" data-testid="card-agent-journal">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
                   <BookOpen className="w-5 h-5 text-orange-400" />
                 </div>
                 <h3 className="text-lg font-bold text-white">JournalInsight</h3>
@@ -764,9 +764,9 @@ export default function Docs() {
                 </li>
               </ul>
             </div>
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20" data-testid="card-agent-research">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20" data-testid="card-agent-research">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-teal-600/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-teal-600/20 flex items-center justify-center">
                   <Search className="w-5 h-5 text-teal-400" />
                 </div>
                 <h3 className="text-lg font-bold text-white">ResearchSynth</h3>
@@ -791,9 +791,9 @@ export default function Docs() {
                 </li>
               </ul>
             </div>
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20" data-testid="card-agent-thinking">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20" data-testid="card-agent-thinking">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-purple-400" />
                 </div>
                 <h3 className="text-lg font-bold text-white">ThinkingPartner</h3>
@@ -820,9 +820,9 @@ export default function Docs() {
             </div>
           </div>
 
-          <div className="mt-8 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+          <div className="mt-8 p-6 rounded-lg bg-[#14171D] border border-white/[0.06]">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
                 <Network className="w-5 h-5 text-purple-400" />
               </div>
               <div>
@@ -834,15 +834,15 @@ export default function Docs() {
               You can also interact with OpenClaw agents through XMTP messaging. Send a message with one of these prefixes and the agent will process your request and respond directly:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="px-4 py-3 rounded-xl bg-orange-500/[0.06] border border-orange-500/15">
+              <div className="px-4 py-3 rounded-lg bg-orange-500/[0.06] border border-orange-500/15">
                 <p className="text-xs font-bold text-orange-300 mb-1">Journal:</p>
                 <p className="text-xs text-gray-500">e.g. "Journal: Today I realized..."</p>
               </div>
-              <div className="px-4 py-3 rounded-xl bg-teal-500/[0.06] border border-teal-500/15">
+              <div className="px-4 py-3 rounded-lg bg-teal-500/[0.06] border border-teal-500/15">
                 <p className="text-xs font-bold text-teal-300 mb-1">Research:</p>
                 <p className="text-xs text-gray-500">e.g. "Research: DeFi yield trends"</p>
               </div>
-              <div className="px-4 py-3 rounded-xl bg-purple-500/[0.06] border border-purple-500/15">
+              <div className="px-4 py-3 rounded-lg bg-purple-500/[0.06] border border-purple-500/15">
                 <p className="text-xs font-bold text-purple-300 mb-1">Thinking:</p>
                 <p className="text-xs text-gray-500">e.g. "Thinking: Should I pivot?"</p>
               </div>
@@ -852,9 +852,9 @@ export default function Docs() {
             </p>
           </div>
 
-          <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-green-500/[0.06] to-transparent border border-green-500/20" data-testid="card-xmtp-security">
+          <div className="mt-8 p-6 rounded-lg bg-gradient-to-br from-green-500/[0.06] to-transparent border border-green-500/20" data-testid="card-xmtp-security">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-green-600/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-green-600/20 flex items-center justify-center">
                 <Shield className="w-5 h-5 text-green-400" />
               </div>
               <div>
@@ -866,7 +866,7 @@ export default function Docs() {
               All XMTP conversations — including messages to DJZS agents — are secured with the <strong className="text-white">Messaging Layer Security (MLS) protocol</strong>, providing the same level of encryption as Signal and WhatsApp but using a newer, more efficient standard.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <h4 className="text-xs font-bold text-green-300 uppercase tracking-wide mb-3">Security Properties</h4>
                 <ul className="space-y-2 text-xs text-gray-500">
                   <li className="flex items-start gap-2">
@@ -887,7 +887,7 @@ export default function Docs() {
                   </li>
                 </ul>
               </div>
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <h4 className="text-xs font-bold text-green-300 uppercase tracking-wide mb-3">Quantum Resistance</h4>
                 <ul className="space-y-2 text-xs text-gray-500">
                   <li className="flex items-start gap-2">
@@ -909,7 +909,7 @@ export default function Docs() {
                 </ul>
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-green-500/[0.04] border border-green-500/15">
+            <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15">
               <p className="text-xs text-gray-400 leading-relaxed">
                 According to XMTP's documentation, the protocol uses the ciphersuite <span className="font-mono text-green-300">MLS_128_HPKEX25519_CHACHA20POLY1305_SHA256_Ed25519</span> for conventional security, with XWING KEM layered on top for quantum resistance. For full details, see the{' '}
                 <a href="https://docs.xmtp.org/protocol/security" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 underline underline-offset-2" data-testid="link-xmtp-security-docs">XMTP Security Documentation</a>.
@@ -922,7 +922,7 @@ export default function Docs() {
           <h2 className="text-2xl font-bold text-white mb-8">Quick Search</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
                 <FileSearch className="w-6 h-6 text-orange-400" />
               </div>
               <div>
@@ -958,7 +958,7 @@ export default function Docs() {
           <h2 className="text-2xl font-bold text-white mb-8">Music Library</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-gold-500/10 to-transparent border border-yellow-500/20" style={{ background: 'linear-gradient(135deg, rgba(255,184,77,0.08), transparent)' }}>
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,184,77,0.2)' }}>
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ background: 'rgba(255,184,77,0.2)' }}>
                 <Music className="w-6 h-6" style={{ color: '#FFB84D' }} />
               </div>
               <div>
@@ -994,7 +994,7 @@ export default function Docs() {
           <h2 className="text-2xl font-bold text-white mb-8">Vault Encryption</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-green-600/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-green-600/20 flex items-center justify-center">
                 <ShieldCheck className="w-6 h-6 text-green-400" />
               </div>
               <div>
@@ -1051,7 +1051,7 @@ export default function Docs() {
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-green-500/[0.06] border border-green-500/15">
+            <div className="p-4 rounded-lg bg-green-500/[0.06] border border-green-500/15">
               <p className="text-sm text-gray-400 leading-relaxed">
                 Encryption uses <strong className="text-white">PBKDF2 with 600,000 iterations</strong> for key derivation and <strong className="text-white">AES-GCM-256</strong> for encryption — all running locally in your browser via the WebCrypto API. Your passphrase never leaves your device.
               </p>
@@ -1063,7 +1063,7 @@ export default function Docs() {
           <h2 className="text-2xl font-bold text-white mb-8">Bring Your Own Key (BYOK)</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20" style={{ background: 'linear-gradient(135deg, rgba(255,184,77,0.08), transparent)' }}>
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,184,77,0.2)' }}>
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ background: 'rgba(255,184,77,0.2)' }}>
                 <KeyRound className="w-6 h-6" style={{ color: '#FFB84D' }} />
               </div>
               <div>
@@ -1092,7 +1092,7 @@ export default function Docs() {
                 <span><strong style={{ color: '#FFB84D' }}>Easy Removal</strong> — Clear your key anytime to switch back to the shared key</span>
               </li>
             </ul>
-            <div className="p-4 rounded-xl border border-yellow-500/15" style={{ background: 'rgba(255,184,77,0.04)' }}>
+            <div className="p-4 rounded-lg border border-yellow-500/15" style={{ background: 'rgba(255,184,77,0.04)' }}>
               <p className="text-sm text-gray-400 leading-relaxed">
                 Get a Venice API key at <a href="https://venice.ai" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-white transition-colors" style={{ color: '#FFB84D' }} data-testid="link-venice-ai">venice.ai</a>. Venice is a privacy-first AI provider that claims no data retention on inference requests.
               </p>
@@ -1176,24 +1176,24 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.03]">
+          <div className="p-8 rounded-3xl bg-[#14171D] border border-white/[0.03]">
             <h2 className="text-2xl font-bold text-white mb-6">Our Philosophy</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-5 rounded-xl border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }}>
+              <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }}>
                 <div className="flex items-center gap-3 mb-3">
                   <HardDrive className="w-5 h-5 text-orange-400" />
                   <h3 className="text-sm font-bold text-white">Local-First</h3>
                 </div>
                 <p className="text-xs text-gray-500 leading-relaxed">Your journal and memory vault are stored locally in your browser. They are never on our servers. This isn't a feature; it's the foundation of our privacy model.</p>
               </div>
-              <div className="p-5 rounded-xl border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }}>
+              <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }}>
                 <div className="flex items-center gap-3 mb-3">
                   <Shield className="w-5 h-5 text-teal-400" />
                   <h3 className="text-sm font-bold text-white">Sovereign</h3>
                 </div>
                 <p className="text-xs text-gray-500 leading-relaxed">We believe you should have a digital space that is truly yours. DJ-Z-S is your sovereign workspace, free from the prying eyes of ad-tech and AI companies.</p>
               </div>
-              <div className="p-5 rounded-xl border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
+              <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
                 <div className="flex items-center gap-3 mb-3">
                   <Brain className="w-5 h-5 text-purple-400" />
                   <h3 className="text-sm font-bold text-white">Uncensored</h3>
@@ -1207,7 +1207,7 @@ export default function Docs() {
         <motion.section variants={fadeUp} className="mb-20">
           <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
                 <Users className="w-6 h-6 text-orange-400" />
               </div>
               <div>

@@ -14,7 +14,7 @@ const TABS: { id: TabId; label: string; icon: typeof Pen }[] = [
 ];
 
 const INPUT_CLS =
-  "w-full px-3 py-2 bg-white/[0.05] border border-white/[0.08] rounded-xl text-sm text-white placeholder:text-gray-600 outline-none focus:border-amber-500/50 transition-colors";
+  "w-full px-3 py-2 bg-[#0F1115] border border-white/[0.06] rounded-md text-sm text-white placeholder:text-gray-600 outline-none focus:border-amber-500/50 transition-colors";
 
 function ToggleGroup({
   options,
@@ -36,8 +36,8 @@ function ToggleGroup({
           onClick={() => onChange(opt)}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
             value === opt
-              ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-              : "bg-white/[0.03] text-gray-500 border border-white/[0.05] hover:text-gray-300"
+              ? "bg-[rgba(255,184,77,0.1)] text-amber-400 border border-[rgba(255,184,77,0.3)]"
+              : "bg-[#14171D] text-gray-500 border border-white/[0.06] hover:text-gray-300 hover:border-white/[0.08]"
           }`}
         >
           {opt}
@@ -229,7 +229,7 @@ export function DecisionLogZone() {
         <h2 className="text-sm font-semibold text-white">Decision Log</h2>
       </div>
 
-      <div className="flex items-center gap-1 mb-4 p-1 bg-white/[0.02] rounded-2xl border border-white/[0.05] overflow-x-auto">
+      <div className="flex items-center gap-1 mb-4 p-1 bg-[#14171D] rounded-lg border border-white/[0.06] overflow-x-auto">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -237,9 +237,9 @@ export function DecisionLogZone() {
               key={tab.id}
               data-testid={`tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === tab.id
-                  ? "bg-amber-500/15 text-amber-400 border border-amber-500/20"
+                  ? "bg-[rgba(255,184,77,0.1)] text-amber-400 border border-[rgba(255,184,77,0.3)]"
                   : "text-gray-500 hover:text-gray-300"
               }`}
             >
@@ -252,7 +252,7 @@ export function DecisionLogZone() {
 
       {activeTab === "compose" && (
         <div className="space-y-4" data-testid="compose-tab">
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-4">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Pen size={16} className="text-amber-400" />
               <h3 className="text-sm font-semibold text-white">Log a Decision</h3>
@@ -341,7 +341,7 @@ export function DecisionLogZone() {
               data-testid="button-save-decision"
               onClick={handleSave}
               disabled={!title.trim()}
-              className="w-full py-2.5 rounded-xl text-sm font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full py-2.5 rounded-lg text-sm font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Save Decision
             </button>
@@ -352,7 +352,7 @@ export function DecisionLogZone() {
       {activeTab === "review" && (
         <div className="space-y-4" data-testid="review-tab">
           {!savedDecision ? (
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-center">
+            <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] text-center">
               <AlertCircle size={24} className="mx-auto text-gray-500 mb-2" />
               <p className="text-sm text-gray-400">Compose and save a decision first before requesting AI review.</p>
               <button
@@ -364,17 +364,17 @@ export function DecisionLogZone() {
               </button>
             </div>
           ) : (
-            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-4">
+            <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <Brain size={16} className="text-amber-400" />
                 <h3 className="text-sm font-semibold text-white">AI Review: {savedDecision.title}</h3>
               </div>
 
-              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+              <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                 <p className="text-xs text-gray-400 mb-1">Decision Summary</p>
                 <p className="text-sm text-gray-300">{savedDecision.context || "No context provided."}</p>
                 <div className="flex gap-2 mt-2">
-                  <Badge className={`text-[10px] ${STAKES_COLORS[savedDecision.stakes]}`}>
+                  <Badge className={`text-[10px] rounded-md ${STAKES_COLORS[savedDecision.stakes]}`}>
                     {savedDecision.stakes}
                   </Badge>
                 </div>
@@ -384,7 +384,7 @@ export function DecisionLogZone() {
                 <button
                   data-testid="button-ai-review"
                   onClick={handleAiReview}
-                  className="w-full py-2.5 rounded-xl text-sm font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-2.5 rounded-lg text-sm font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 transition-all flex items-center justify-center gap-2"
                 >
                   <Brain size={14} />
                   Review with AI
@@ -400,7 +400,7 @@ export function DecisionLogZone() {
 
               {aiResponse && (
                 <div className="space-y-3">
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <BarChart3 size={12} className="text-amber-400" />
                       <p className="text-xs font-medium text-amber-400">Analysis</p>
@@ -408,7 +408,7 @@ export function DecisionLogZone() {
                     <p className="text-sm text-gray-300 whitespace-pre-wrap">{aiResponse.said}</p>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <AlertCircle size={12} className="text-yellow-400" />
                       <p className="text-xs font-medium text-yellow-400">Why It Matters</p>
@@ -416,7 +416,7 @@ export function DecisionLogZone() {
                     <p className="text-sm text-gray-300 whitespace-pre-wrap">{aiResponse.matters}</p>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <CheckCircle size={12} className="text-green-400" />
                       <p className="text-xs font-medium text-green-400">Suggested Next Move</p>
@@ -424,7 +424,7 @@ export function DecisionLogZone() {
                     <p className="text-sm text-gray-300 whitespace-pre-wrap">{aiResponse.nextMove}</p>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <Brain size={12} className="text-purple-400" />
                       <p className="text-xs font-medium text-purple-400">Reflective Question</p>
@@ -435,7 +435,7 @@ export function DecisionLogZone() {
                   <button
                     data-testid="button-save-ai-review"
                     onClick={handleSaveAiReview}
-                    className="w-full py-2.5 rounded-xl text-sm font-medium bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-lg text-sm font-medium bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 transition-all flex items-center justify-center gap-2"
                   >
                     <CheckCircle size={14} />
                     Save AI Review
@@ -450,7 +450,7 @@ export function DecisionLogZone() {
       {activeTab === "history" && (
         <div className="space-y-3" data-testid="history-tab">
           {historyLogs.length === 0 ? (
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-center">
+            <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] text-center">
               <Clock size={24} className="mx-auto text-gray-500 mb-2" />
               <p className="text-sm text-gray-400">No decisions logged yet.</p>
             </div>
@@ -461,7 +461,7 @@ export function DecisionLogZone() {
                 <div
                   key={log.id}
                   data-testid={`card-decision-${log.id}`}
-                  className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] transition-all"
+                  className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-white/[0.08] transition-all"
                 >
                   <div
                     className="flex items-start gap-2 cursor-pointer"
@@ -476,14 +476,14 @@ export function DecisionLogZone() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-medium text-white truncate">{log.title}</span>
-                        <Badge className={`text-[10px] ${STAKES_COLORS[log.stakes]}`}>
+                        <Badge className={`text-[10px] rounded-md ${STAKES_COLORS[log.stakes]}`}>
                           {log.stakes}
                         </Badge>
-                        <Badge className={`text-[10px] ${STATUS_COLORS[log.status]}`}>
+                        <Badge className={`text-[10px] rounded-md ${STATUS_COLORS[log.status]}`}>
                           {log.status}
                         </Badge>
                         {log.outcome && (
-                          <Badge className={`text-[10px] ${OUTCOME_COLORS[log.outcome]}`}>
+                          <Badge className={`text-[10px] rounded-md ${OUTCOME_COLORS[log.outcome]}`}>
                             {log.outcome.replace("_", " ")}
                           </Badge>
                         )}
@@ -526,7 +526,7 @@ export function DecisionLogZone() {
                       )}
 
                       {log.aiReview && (
-                        <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10">
+                        <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
                           <div className="flex items-center gap-1.5 mb-1.5">
                             <Brain size={12} className="text-amber-400" />
                             <p className="text-xs font-medium text-amber-400">AI Review</p>
@@ -542,7 +542,7 @@ export function DecisionLogZone() {
                             data-testid={`select-status-${log.id}`}
                             value={log.status}
                             onChange={(e) => log.id !== undefined && handleStatusChange(log.id, e.target.value as DecisionStatus)}
-                            className="bg-white/[0.05] border border-white/[0.08] rounded-lg text-xs text-white px-2 py-1 outline-none"
+                            className="bg-[#0F1115] border border-white/[0.06] rounded-md text-xs text-white px-2 py-1 outline-none"
                           >
                             <option value="draft">Draft</option>
                             <option value="reviewed">Reviewed</option>
@@ -558,7 +558,7 @@ export function DecisionLogZone() {
                               data-testid={`select-outcome-${log.id}`}
                               value={log.outcome || "pending"}
                               onChange={(e) => log.id !== undefined && handleOutcomeChange(log.id, e.target.value as DecisionOutcome)}
-                              className="bg-white/[0.05] border border-white/[0.08] rounded-lg text-xs text-white px-2 py-1 outline-none"
+                              className="bg-[#0F1115] border border-white/[0.06] rounded-md text-xs text-white px-2 py-1 outline-none"
                             >
                               <option value="pending">Pending</option>
                               <option value="positive">Positive</option>

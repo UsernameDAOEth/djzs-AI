@@ -19,8 +19,8 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend
 - **Technology Stack**: React 18 with TypeScript, Vite.
-- **UI**: Radix UI components with Tailwind CSS (Ghibli-inspired warm theme).
-- **Design System**: Ghibli palette — orange #F37E20 (primary), teal #2E8B8B (research zone), navy #2A2E3F (backgrounds), gold #FFB84D (accents), surface #1a1d26. Fonts: Merriweather (headings), Nunito (body).
+- **UI**: Radix UI components with Tailwind CSS (futuristic "calm intelligence" dark theme).
+- **Design System**: Futuristic dark palette — charcoal #0F1115 (base background), #14171D (surface/cards), orange #F37E20 (primary accent), teal #2E8B8B (research/secondary), purple #7B6B8D (thinking partner), gold #FFB84D (decision zone). Sharp corners (rounded-lg), subtle borders (rgba 0.06 opacity), no rounded-2xl. Fonts: Merriweather (headings), Nunito (body).
 - **Routing**: Wouter for client-side navigation (`/`, `/chat`, `/docs`, `/privacy`, `/security`, `/about`, `/terms`, `/roadmap`, `*`).
 - **State Management**: React hooks for local state, TanStack Query for server state, Dexie (IndexedDB) for local-first vault.
 - **Component Structure**: Organized by pages (Home, Chat, Docs, Privacy, Security, About, Terms, Roadmap, NotFound) and specific UI components.

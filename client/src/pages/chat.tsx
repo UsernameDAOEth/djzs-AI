@@ -996,9 +996,9 @@ export default function Chat() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#2A2E3F' }}>
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#0F1115' }}>
         <div className="text-center max-w-sm">
-          <div className="w-20 h-20 rounded-3xl bg-orange-600/10 flex items-center justify-center mx-auto mb-8 border border-orange-500/20">
+          <div className="w-20 h-20 rounded-lg bg-orange-600/10 flex items-center justify-center mx-auto mb-8 border border-orange-500/20">
             <Shield className="w-10 h-10 text-orange-400" />
           </div>
           <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Access Locked</h2>
@@ -1013,8 +1013,8 @@ export default function Chat() {
 
   if (memberLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: '#2A2E3F' }}>
-        <img src="/logo.png" alt="DJZS" className="w-16 h-16 rounded-2xl logo-pulse" style={{ filter: 'drop-shadow(0 0 8px rgba(243,126,32,0.3))' }} data-testid="img-logo-loading" />
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: '#0F1115' }}>
+        <img src="/logo.png" alt="DJZS" className="w-16 h-16 rounded-lg logo-pulse" style={{ filter: 'drop-shadow(0 0 8px rgba(243,126,32,0.3))' }} data-testid="img-logo-loading" />
         <p className="text-sm font-medium" style={{ color: '#7a7b90' }}>Loading your vault...</p>
       </div>
     );
@@ -1022,14 +1022,14 @@ export default function Chat() {
 
   if (!member) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#2A2E3F' }}>
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#0F1115' }}>
         <div className="text-center max-w-md">
           <h2 className="text-3xl font-black text-white mb-4 tracking-tight">Initialize Your Zone</h2>
           <p className="mb-8" style={{ color: '#9a9bb0' }}>Ready to start extracting insight from your daily thinking?</p>
           <Button
             onClick={() => registerMember.mutate()}
             disabled={registerMember.isPending}
-            className="h-14 px-10 rounded-2xl font-bold text-lg text-white border-0 hover:opacity-90"
+            className="h-14 px-10 rounded-lg font-bold text-lg text-white border-0 hover:opacity-90"
             style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.25)' }}
           >
             {registerMember.isPending && <Loader2 className="w-5 h-5 mr-3 animate-spin" />}
@@ -1095,7 +1095,7 @@ export default function Chat() {
                     setSelectedZone(zone.id);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all group ${
+                  className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all group ${
                     isActive 
                       ? "bg-white/[0.03] text-white" 
                       : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
@@ -1110,7 +1110,7 @@ export default function Chat() {
 
             <button
               onClick={() => setQuickSearchModalOpen(true)}
-              className="w-full flex items-center gap-4 px-4 py-3 mt-3 rounded-xl text-gray-500 hover:text-gray-300 hover:bg-white/[0.03] transition-all group"
+              className="w-full flex items-center gap-4 px-4 py-3 mt-3 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-white/[0.03] transition-all group"
               data-testid="button-sidebar-quick-search"
             >
               <Search className="w-5 h-5 text-gray-600 group-hover:text-gray-400 transition-colors" />
@@ -1120,7 +1120,7 @@ export default function Chat() {
           </nav>
 
           <div className="p-4 mt-auto">
-            <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+            <div className="p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
               <div className="flex items-center gap-3 mb-3">
                 {primaryProfile?.avatar ? (
                   <img 
@@ -1163,7 +1163,7 @@ export default function Chat() {
                       href={profileLinks.twitter.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
                       title={`@${profileLinks.twitter.handle}`}
                       data-testid="link-twitter"
                     >
@@ -1175,7 +1175,7 @@ export default function Chat() {
                       href={profileLinks.github.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
                       title={profileLinks.github.handle}
                       data-testid="link-github"
                     >
@@ -1187,7 +1187,7 @@ export default function Chat() {
                       href={profileLinks.farcaster.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-orange-400 transition-colors"
+                      className="p-1.5 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-orange-400 transition-colors"
                       title={profileLinks.farcaster.handle}
                       data-testid="link-farcaster"
                     >
@@ -1199,7 +1199,7 @@ export default function Chat() {
                       href={profileLinks.website.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
                       title={profileLinks.website.handle}
                       data-testid="link-website"
                     >
@@ -1211,7 +1211,7 @@ export default function Chat() {
               
               <button
                 onClick={() => setSettingsOpen(!settingsOpen)}
-                className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors border border-white/[0.03]"
+                className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors border border-white/[0.03]"
                 data-testid="button-settings"
               >
                 <Settings className="w-3 h-3" />
@@ -1219,7 +1219,7 @@ export default function Chat() {
               </button>
 
               {settingsOpen && (
-                <div className="mt-2 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-3" data-testid="panel-settings">
+                <div className="mt-2 p-3 rounded-lg bg-white/[0.03] border border-white/[0.06] space-y-3" data-testid="panel-settings">
                   <div>
                     <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1">Venice API Key (BYOK)</label>
                     <p className="text-[9px] text-gray-600 mb-2">Use your own Venice key instead of the shared one. Stored locally in your browser.</p>
@@ -1258,7 +1258,7 @@ export default function Chat() {
                     </div>
                   </div>
 
-                  <div className="border-t border-white/[0.05] pt-3">
+                  <div className="border-t border-white/[0.06] pt-3">
                     <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1">Vault Encryption</label>
                     <p className="text-[9px] text-gray-600 mb-2">
                       {vaultEncrypted
@@ -1353,7 +1353,7 @@ export default function Chat() {
 
               <button
                 onClick={() => disconnect()}
-                className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-white/[0.02] hover:bg-red-500/10 text-gray-500 hover:text-red-400 transition-colors border border-white/[0.03] hover:border-red-500/20"
+                className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-[#14171D] hover:bg-red-500/10 text-gray-500 hover:text-red-400 transition-colors border border-white/[0.03] hover:border-red-500/20"
                 data-testid="button-disconnect-wallet"
               >
                 <LogOut className="w-3 h-3" />
@@ -1398,10 +1398,10 @@ export default function Chat() {
                     </div>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="border-white/10 max-w-lg p-8 rounded-[2rem] shadow-2xl" style={{ background: '#1a1d26' }}>
+                <DialogContent className="border-white/10 max-w-lg p-8 rounded-lg shadow-2xl" style={{ background: '#1a1d26' }}>
                   <DialogHeader>
                     <DialogTitle className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-md bg-green-500/10 border border-green-500/20 flex items-center justify-center">
                         <Lock className="w-5 h-5 text-green-400" />
                       </div>
                       Privacy Architecture
@@ -1412,21 +1412,21 @@ export default function Chat() {
                       Your journal and research data is stored locally on your device using IndexedDB. AI only sees what you explicitly share by clicking "Think with me" or running a research query.
                     </p>
                     
-                    <div className="p-4 rounded-xl bg-orange-500/[0.05] border border-orange-500/20">
+                    <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
                       <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Local-First Storage</p>
                       <p className="text-sm text-gray-400 leading-relaxed">
                         All entries, insights, and memories are stored in your browser's IndexedDB. This data stays on your device and works offline for writing and browsing.
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-xl bg-orange-500/[0.05] border border-orange-500/20">
+                    <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
                       <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Privacy-Focused AI</p>
                       <p className="text-sm text-gray-400 leading-relaxed">
                         Your Thinking Partner is powered by Venice AI — privacy-first AI infrastructure with no data retention. Your prompts are never stored or used to train models.
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                    <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                       <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Privacy Stack</p>
                       <ul className="space-y-2 text-sm text-gray-400">
                         <li className="flex items-start gap-2">
@@ -1458,7 +1458,7 @@ export default function Chat() {
               {/* Memory/Insights toggle button - more visible on mobile */}
               <button 
                 onClick={() => setMemoryDrawerOpen(!memoryDrawerOpen)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all touch-target ${memoryDrawerOpen ? 'bg-orange-600/15 text-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5 bg-white/[0.03]'}`}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all touch-target ${memoryDrawerOpen ? 'bg-orange-600/15 text-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5 bg-white/[0.03]'}`}
                 data-testid="button-toggle-memory"
               >
                 <Zap className="w-4 h-4" />
@@ -1494,7 +1494,7 @@ export default function Chat() {
               }`}>
                 {/* Stats bar - streak, last entry, total (Journal only) */}
                 {selectedZone === 'journal' && entryStats && entryStats.totalEntries > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-8 p-3 sm:p-4 rounded-xl animate-in fade-in duration-500" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-8 p-3 sm:p-4 rounded-lg animate-in fade-in duration-500" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
                     {entryStats.streak > 0 && (
                       <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(243,126,32,0.08)' }} data-testid="streak-badge">
                         <span className="text-sm">🔥</span>
@@ -1524,8 +1524,8 @@ export default function Chat() {
                 
                 {/* First time welcome (Journal only) */}
                 {selectedZone === 'journal' && entryStats && entryStats.totalEntries === 0 && (
-                  <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl bg-orange-500/[0.03] border border-orange-500/10 animate-in fade-in duration-700 flex flex-col items-center text-center" data-testid="first-time-welcome">
-                    <img src="/logo.png" alt="DJZS" className="w-12 h-12 rounded-xl mb-4 logo-pulse" style={{ filter: 'drop-shadow(0 0 6px rgba(243,126,32,0.2))' }} data-testid="img-logo-first-entry" />
+                  <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-lg bg-orange-500/[0.03] border border-orange-500/10 animate-in fade-in duration-700 flex flex-col items-center text-center" data-testid="first-time-welcome">
+                    <img src="/logo.png" alt="DJZS" className="w-12 h-12 rounded-md mb-4 logo-pulse" style={{ filter: 'drop-shadow(0 0 6px rgba(243,126,32,0.2))' }} data-testid="img-logo-first-entry" />
                     <p className="text-[10px] sm:text-[11px] font-black text-orange-400/70 uppercase tracking-widest mb-2">First entry</p>
                     <p className="text-xs sm:text-sm text-gray-400 leading-relaxed break-words">
                       Write whatever's on your mind. The more you return, the more this becomes yours.
@@ -1542,7 +1542,7 @@ export default function Chat() {
                     </p>
                     
                     {/* Journal: Tall writing pad */}
-                    <div className={`relative transition-all duration-500 rounded-2xl sm:rounded-3xl ${isFocused ? 'zone-glow writing-area-focused' : ''}`}>
+                    <div className={`relative transition-all duration-500 rounded-lg ${isFocused ? 'zone-glow writing-area-focused' : ''}`}>
                       <textarea
                         ref={textareaRef}
                         autoFocus
@@ -1578,7 +1578,7 @@ export default function Chat() {
                     )}
 
                     {pendingVideoAssetId && !showVideoUpload && (
-                      <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                      <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
                         <Video className="w-4 h-4 text-orange-400" />
                         <span className="text-xs text-orange-300 font-medium">Video attached</span>
                         <button
@@ -1824,7 +1824,7 @@ export default function Chat() {
                         <DialogTrigger asChild>
                           <button
                             disabled={!messageInput.trim()}
-                            className="group relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
+                            className="group relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-lg flex items-center justify-center gap-2 bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
                             title="Pin to vault"
                             data-testid="button-pin"
                           >
@@ -1832,7 +1832,7 @@ export default function Chat() {
                             <span className="hidden sm:inline text-xs font-medium">Pin</span>
                           </button>
                         </DialogTrigger>
-                        <DialogContent className="border-white/10 max-w-md p-8 rounded-[2rem] shadow-2xl" style={{ background: '#1a1d26' }}>
+                        <DialogContent className="border-white/10 max-w-md p-8 rounded-lg shadow-2xl" style={{ background: '#1a1d26' }}>
                           <DialogHeader>
                             <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">Pin Memory</DialogTitle>
                           </DialogHeader>
@@ -1840,8 +1840,8 @@ export default function Chat() {
                             <p className="text-sm text-gray-500 leading-relaxed font-medium">This thought will be stored in your local vault and used as context for future thinking partners.</p>
                             
                             <div className="relative group">
-                              <div className="absolute -inset-2 bg-gradient-to-r from-orange-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                              <div className="relative p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] shadow-inner">
+                              <div className="absolute -inset-2 bg-gradient-to-r from-orange-500/20 to-blue-500/20 rounded-lg blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                              <div className="relative p-5 rounded-lg bg-[#14171D] border border-white/[0.06] shadow-inner">
                                 <p className="text-sm text-gray-300 leading-relaxed line-clamp-4 font-medium italic">"{messageInput}"</p>
                               </div>
                             </div>
@@ -1853,10 +1853,10 @@ export default function Chat() {
                                   <button
                                     key={kind}
                                     onClick={() => setSelectedPinKind(kind)}
-                                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${
+                                    className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${
                                       selectedPinKind === kind 
                                         ? "text-white shadow-lg shadow-orange-900/40 border-transparent [background:#F37E20]" 
-                                        : "bg-white/[0.02] text-gray-500 hover:text-white hover:bg-white/5 border border-white/[0.05]"
+                                        : "bg-[#14171D] text-gray-500 hover:text-white hover:bg-white/5 border border-white/[0.06]"
                                     }`}
                                     data-testid={`button-kind-${kind}`}
                                   >
@@ -1867,7 +1867,7 @@ export default function Chat() {
                             </div>
                             <Button
                               onClick={handleManualPin}
-                              className="w-full hover:opacity-90 h-14 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-orange-900/20 transition-all active:scale-[0.98]"
+                              className="w-full hover:opacity-90 h-14 rounded-lg font-black text-xs uppercase tracking-widest shadow-xl shadow-orange-900/20 transition-all active:scale-[0.98]"
                               style={{ background: '#F37E20' }}
                               data-testid="button-confirm-pin"
                             >
@@ -1881,7 +1881,7 @@ export default function Chat() {
                       {speechSupported && (
                         <button
                           onClick={toggleVoiceInput}
-                          className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
+                          className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-lg flex items-center justify-center gap-2 border transition-all active:scale-95 ${
                             isListening
                               ? 'text-red-400 bg-red-500/15 border-red-500/30 animate-pulse'
                               : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
@@ -1899,7 +1899,7 @@ export default function Chat() {
 
                       <button
                         onClick={() => setShowVideoUpload(!showVideoUpload)}
-                        className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
+                        className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-lg flex items-center justify-center gap-2 border transition-all active:scale-95 ${
                           showVideoUpload
                             ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
                             : pendingVideoAssetId
@@ -1918,7 +1918,7 @@ export default function Chat() {
 
                       <button
                         onClick={() => setShowMusicPanel(!showMusicPanel)}
-                        className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 border transition-all active:scale-95 ${
+                        className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-lg flex items-center justify-center gap-2 border transition-all active:scale-95 ${
                           showMusicPanel
                             ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
                             : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
@@ -1946,7 +1946,7 @@ export default function Chat() {
                       onClick={handleSendText}
                       disabled={!messageInput.trim() || sendMessage.isPending}
                       variant="ghost"
-                      className="flex-1 sm:flex-none h-11 sm:h-12 px-4 sm:px-6 rounded-xl font-semibold text-sm text-gray-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] disabled:opacity-30 disabled:border-transparent transition-all active:scale-95"
+                      className="flex-1 sm:flex-none h-11 sm:h-12 px-4 sm:px-6 rounded-lg font-semibold text-sm text-gray-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/[0.15] disabled:opacity-30 disabled:border-transparent transition-all active:scale-95"
                       data-testid="button-save"
                     >
                       {sendMessage.isPending ? (
@@ -1962,7 +1962,7 @@ export default function Chat() {
                     <Button
                       onClick={handleAnalyze}
                       disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className="flex-[2] sm:flex-none h-11 sm:h-12 px-5 sm:px-8 rounded-xl font-bold text-sm shadow-lg shadow-orange-900/40 transition-all active:scale-95 hover:opacity-90 disabled:opacity-30 disabled:shadow-none"
+                      className="flex-[2] sm:flex-none h-11 sm:h-12 px-5 sm:px-8 rounded-lg font-bold text-sm shadow-lg shadow-orange-900/40 transition-all active:scale-95 hover:opacity-90 disabled:opacity-30 disabled:shadow-none"
                       style={{ background: '#F37E20' }}
                       data-testid="button-analyze"
                     >
@@ -2010,9 +2010,9 @@ export default function Chat() {
                         </div>
                       </>
                     ) : (
-                      <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl thinking-card" data-testid="analyzing-loader">
+                      <div className="p-6 sm:p-8 rounded-lg thinking-card" data-testid="analyzing-loader">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center bg-orange-600/20">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-md flex items-center justify-center bg-orange-600/20">
                             <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-orange-400" />
                           </div>
                           <div>
@@ -2026,7 +2026,7 @@ export default function Chat() {
 
                   {/* Research Result Card */}
                   {researchResult && (
-                    <div className="rounded-xl rz-result-card" data-testid="research-result-card">
+                    <div className="rounded-lg rz-result-card" data-testid="research-result-card">
                       <div className="flex items-center justify-between p-5 sm:p-7" style={{ borderBottom: '1px solid var(--rz-border)' }}>
                         <div className="flex items-center gap-4">
                           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(45,212,191,0.1)' }}>
@@ -2163,7 +2163,7 @@ export default function Chat() {
                   
                   {/* Claims Panel - Show when dossier is active */}
                   {activeDossierId && (
-                    <div className="mt-5 rounded-xl overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="claims-panel">
+                    <div className="mt-5 rounded-lg overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="claims-panel">
                       <div className="p-5" style={{ borderBottom: '1px solid var(--rz-border)' }}>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5">
@@ -2212,10 +2212,10 @@ export default function Chat() {
                         {dossierClaims.map((claim) => (
                           <div 
                             key={claim.id} 
-                            className={`group p-3 rounded-xl border transition-all ${
+                            className={`group p-3 rounded-lg border transition-all ${
                               editingClaimId === claim.id 
                                 ? 'bg-teal-500/[0.05] border-teal-500/30' 
-                                : 'bg-white/[0.02] border-white/[0.05] hover:border-white/[0.1]'
+                                : 'bg-[#14171D] border-white/[0.06] hover:border-white/[0.1]'
                             }`}
                           >
                             <div className="flex items-start gap-3">
@@ -2304,7 +2304,7 @@ export default function Chat() {
                             
                             {/* Inline edit panel for source notes and trust */}
                             {editingClaimId === claim.id && (
-                              <div className="mt-3 pt-3 border-t border-white/[0.05] space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                              <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
                                 <div className="space-y-1.5">
                                   <label className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">Source Note</label>
                                   <input
@@ -2359,7 +2359,7 @@ export default function Chat() {
                   
                   {/* Related Journal Entries - Show when research finds related thinking */}
                   {relatedJournalEntries && relatedJournalEntries.length > 0 && (
-                    <div className="mt-5 rounded-xl overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="related-entries-panel">
+                    <div className="mt-5 rounded-lg overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="related-entries-panel">
                       <div className="p-5" style={{ borderBottom: '1px solid var(--rz-border)' }}>
                         <div className="flex items-center gap-2.5">
                           <PenLine className="w-4 h-4" style={{ color: 'var(--rz-accent)' }} />
@@ -2398,11 +2398,11 @@ export default function Chat() {
 
                   {/* Agent Response Card - Improved Design */}
                   {agentResponse && (
-                    <div className="rounded-2xl sm:rounded-3xl thinking-card overflow-hidden" data-testid="agent-response-card">
+                    <div className="rounded-lg thinking-card overflow-hidden" data-testid="agent-response-card">
                       {/* Header */}
-                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
+                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.06]">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-orange-600/20">
+                          <div className="w-10 h-10 rounded-md flex items-center justify-center bg-orange-600/20">
                             <Bot className="w-5 h-5 text-orange-400" />
                           </div>
                           <div>
@@ -2434,7 +2434,7 @@ export default function Chat() {
                         
                         {/* Connection to prior thinking */}
                         {agentResponse.connectionToPrior && (
-                          <div className="p-4 rounded-xl bg-orange-500/[0.08] border border-orange-500/20">
+                          <div className="p-4 rounded-lg bg-orange-500/[0.08] border border-orange-500/20">
                             <p className="text-xs font-medium text-orange-400/80 mb-2">Connected to your earlier thinking</p>
                             <p className="text-orange-200/80 leading-relaxed text-sm">{agentResponse.connectionToPrior}</p>
                           </div>
@@ -2449,7 +2449,7 @@ export default function Chat() {
                         )}
                         
                         {/* Question to sit with - highlighted */}
-                        <div className="p-4 rounded-xl border bg-orange-500/[0.06] border-orange-500/20">
+                        <div className="p-4 rounded-lg border bg-orange-500/[0.06] border-orange-500/20">
                           <p className="text-xs font-medium mb-2 text-orange-400/80">Question to sit with</p>
                           <p className="font-medium italic leading-relaxed text-orange-200">{agentResponse.question}</p>
                         </div>
@@ -2471,7 +2471,7 @@ export default function Chat() {
                                       setMessageInput(q);
                                       setTimeout(() => textareaRef.current?.focus(), 100);
                                     }}
-                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-teal-500/[0.08] border border-teal-500/20 text-teal-200/80 hover:bg-teal-500/15 hover:border-teal-500/30 hover:text-teal-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    className="px-3 py-2.5 sm:py-2 rounded-lg text-sm text-left bg-teal-500/[0.08] border border-teal-500/20 text-teal-200/80 hover:bg-teal-500/15 hover:border-teal-500/30 hover:text-teal-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
                                     data-testid={`button-reflective-${idx}`}
                                   >
                                     {q}
@@ -2484,7 +2484,7 @@ export default function Chat() {
 
                         {/* Memory suggestion */}
                         {agentResponse.memorySuggestion.shouldSuggest && (
-                          <div className="p-4 rounded-xl bg-amber-500/[0.08] border border-amber-500/20">
+                          <div className="p-4 rounded-lg bg-amber-500/[0.08] border border-amber-500/20">
                             <p className="text-xs font-medium text-amber-400/80 mb-2">Worth remembering?</p>
                             <p className="text-sm text-gray-300 mb-4">{agentResponse.memorySuggestion.content}</p>
                             <div className="flex items-center gap-2">
@@ -2513,7 +2513,7 @@ export default function Chat() {
                       </div>
 
                       {/* Footer */}
-                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
+                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.06] flex items-center justify-between">
                         <Button
                           onClick={() => {
                             const topic = agentResponse.said || messageInput;
@@ -2541,11 +2541,11 @@ export default function Chat() {
                   )}
 
                   {latestAnalysis && (
-                    <div className="rounded-2xl sm:rounded-3xl thinking-card overflow-hidden" data-testid="insight-card">
+                    <div className="rounded-lg thinking-card overflow-hidden" data-testid="insight-card">
                       {/* Header */}
-                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
+                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.06]">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-orange-600/20">
+                          <div className="w-10 h-10 rounded-md flex items-center justify-center bg-orange-600/20">
                             <Sparkles className="w-5 h-5 text-orange-400" />
                           </div>
                           <div>
@@ -2577,17 +2577,17 @@ export default function Chat() {
                               <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
                             </div>
                             
-                            <div className="p-4 rounded-xl bg-orange-500/[0.06] border border-orange-500/20">
+                            <div className="p-4 rounded-lg bg-orange-500/[0.06] border border-orange-500/20">
                               <p className="text-xs font-medium text-orange-400/80 mb-2">Reflection Question</p>
                               <p className="text-orange-200 font-medium leading-relaxed">{latestAnalysis.analysis.question}</p>
                             </div>
                             
                             {latestAnalysis.analysis.memoryCandidates.length > 0 && (
-                              <div className="p-4 rounded-xl bg-amber-500/[0.06] border border-amber-500/20">
+                              <div className="p-4 rounded-lg bg-amber-500/[0.06] border border-amber-500/20">
                                 <p className="text-xs font-medium text-amber-400/80 mb-3">Worth Remembering</p>
                                 <div className="space-y-2">
                                   {latestAnalysis.analysis.memoryCandidates.map((memory, idx) => (
-                                    <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.05]">
+                                    <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
                                       <p className="flex-1 text-sm text-gray-300">{memory}</p>
                                       <Button
                                         size="sm"
@@ -2648,7 +2648,7 @@ export default function Chat() {
                               </div>
                             )}
                               
-                            <div className="p-4 rounded-xl bg-orange-500/[0.06] border border-orange-500/20">
+                            <div className="p-4 rounded-lg bg-orange-500/[0.06] border border-orange-500/20">
                               <p className="text-xs font-medium text-orange-400/80 mb-2">Next Question</p>
                               <p className="text-orange-200 font-medium leading-relaxed">{latestAnalysis.analysis.nextQuestion}</p>
                             </div>
@@ -2657,7 +2657,7 @@ export default function Chat() {
                       </div>
 
                       {/* Footer */}
-                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
+                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.06] flex items-center justify-between">
                         <p className="text-xs text-gray-600 italic">You don't need to resolve this now.</p>
                         <Button
                           onClick={clearAnalysis}
@@ -2719,10 +2719,10 @@ export default function Chat() {
                                       <button
                                         key={entry.id}
                                         onClick={() => setExpandedEntryId(isExpanded ? null : entry.id!)}
-                                        className={`w-full text-left p-3 sm:p-4 rounded-xl border transition-all ${
+                                        className={`w-full text-left p-3 sm:p-4 rounded-lg border transition-all ${
                                           isExpanded
                                             ? 'bg-white/[0.04] border-orange-500/20'
-                                            : 'bg-white/[0.02] border-white/[0.04] hover:border-white/[0.08]'
+                                            : 'bg-[#14171D] border-white/[0.04] hover:border-white/[0.08]'
                                         }`}
                                         data-testid={`entry-card-${entry.id}`}
                                       >
@@ -2800,7 +2800,7 @@ export default function Chat() {
               className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden" 
               onClick={() => setMemoryDrawerOpen(false)}
             />
-            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-white/[0.05] flex flex-col md:bg-[#1a1d26]/80 backdrop-blur-xl animate-in slide-in-from-right duration-300" style={{ background: '#1a1d26' }}>
+            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-white/[0.06] flex flex-col md:bg-[#1a1d26]/80 backdrop-blur-xl animate-in slide-in-from-right duration-300" style={{ background: '#1a1d26' }}>
               <Tabs defaultValue="memories" className="flex-1 flex flex-col">
                 <div className="px-5 pt-5 pb-4 border-b border-white/[0.04]">
                   <div className="flex items-center justify-between mb-4 md:hidden">
@@ -2813,7 +2813,7 @@ export default function Chat() {
                       <X className="w-5 h-5" />
                     </button>
                   </div>
-                  <TabsList className="w-full bg-white/[0.03] p-1 rounded-xl h-11">
+                  <TabsList className="w-full bg-white/[0.03] p-1 rounded-lg h-11">
                     <TabsTrigger value="memories" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-orange-600/20 data-[state=active]:text-orange-300">
                       <Pin className="w-3.5 h-3.5 mr-2" />
                       Memories
@@ -2833,7 +2833,7 @@ export default function Chat() {
                   <div className="p-4 space-y-3">
                     {!localMemories || localMemories.length === 0 ? (
                       <div className="text-center py-12 px-4">
-                        <div className="w-12 h-12 rounded-2xl bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
+                        <div className="w-12 h-12 rounded-lg bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
                           <Pin className="w-6 h-6 text-gray-600" />
                         </div>
                         <p className="text-sm text-gray-500 font-medium">No patterns pinned yet</p>
@@ -2841,7 +2841,7 @@ export default function Chat() {
                       </div>
                     ) : (
                       localMemories.map((memory) => (
-                        <div key={memory.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] entry-card">
+                        <div key={memory.id} className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] entry-card">
                           <div className="flex items-center gap-2 mb-2">
                             <Badge variant="outline" className="text-[9px] font-medium border-orange-500/30 text-orange-400/70 px-2 py-0.5">
                               {memory.kind}
@@ -2896,7 +2896,7 @@ export default function Chat() {
                   </p>
                   <Button 
                     variant="outline" 
-                    className="w-full border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-xl font-medium text-xs transition-all touch-target"
+                    className="w-full border-white/[0.06] bg-[#14171D] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-lg font-medium text-xs transition-all touch-target"
                     disabled={isExporting}
                     onClick={async () => {
                       setIsExporting(true);
@@ -2953,7 +2953,7 @@ export default function Chat() {
                   />
                   <Button
                     variant="outline"
-                    className="w-full border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-xl font-medium text-xs transition-all touch-target"
+                    className="w-full border-white/[0.06] bg-[#14171D] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-lg font-medium text-xs transition-all touch-target"
                     disabled={isImporting}
                     onClick={() => importFileRef.current?.click()}
                     data-testid="button-import-vault"
@@ -2971,7 +2971,7 @@ export default function Chat() {
                 <ScrollArea className="flex-1">
                   <div className="p-4 space-y-3">
                     {agentResponse ? (
-                      <div className="p-4 rounded-xl bg-orange-500/[0.05] border border-orange-500/20">
+                      <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
                         <div className="flex items-center gap-2 mb-3">
                           <Bot className="w-4 h-4 text-orange-400" />
                           <span className="text-xs font-medium text-orange-400">
@@ -2987,7 +2987,7 @@ export default function Chat() {
                       </div>
                     ) : (
                       <div className="text-center py-12 px-4">
-                        <div className="w-12 h-12 rounded-2xl bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
+                        <div className="w-12 h-12 rounded-lg bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
                           <Bot className="w-6 h-6 text-gray-600" />
                         </div>
                         <p className="text-sm text-gray-500 font-medium">No thinking yet</p>

@@ -12,8 +12,8 @@ const fadeUp = {
 
 export default function About() {
   return (
-    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#0F1115' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.06]" style={{ background: 'rgba(15,17,21,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group" data-testid="link-back-home">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -30,7 +30,7 @@ export default function About() {
           <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">Your strategy, your alpha, your research. They shouldn't live on someone else's server.</p>
           <p className="text-sm text-gray-400 mb-12 leading-relaxed">DJ-Z-S is the private AI workspace for the world's most important thinkers: <strong className="text-white">Founders, Traders, Researchers, and Creators.</strong> We help you build a "compounding intelligence" that is 100% yours.</p>
 
-          <div className="space-y-14 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
+          <div className="space-y-14 text-sm leading-relaxed border-l border-white/[0.06] pl-8">
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
@@ -73,7 +73,7 @@ export default function About() {
                 DJ-Z-S is built around a simple, powerful workflow: capture your thoughts, analyze them with a private AI, and compound the results into a living knowledge base. We call it the <strong className="text-white">Thinking Loop</strong>.
               </p>
               <div className="space-y-4 mb-8">
-                <div className="p-5 rounded-xl border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }} data-testid="card-zone-journal">
+                <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }} data-testid="card-zone-journal">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-9 h-9 rounded-lg bg-orange-500/15 flex items-center justify-center">
                       <BookOpen className="w-4 h-4 text-orange-400" />
@@ -83,7 +83,7 @@ export default function About() {
                   <p className="text-gray-400 mb-3">Write your daily thinking — strategy sessions, trade analysis, content ideas, decision logs. When you're ready, click <strong className="text-white">"Think with me"</strong> and the AI analyzes your entry, extracts patterns, surfaces open questions, and generates reflective prompts to deepen your thinking.</p>
                   <p className="text-xs text-gray-500">Supports text entries, voice-to-text, and video journal recordings via Livepeer.</p>
                 </div>
-                <div className="p-5 rounded-xl border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }} data-testid="card-zone-research">
+                <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }} data-testid="card-zone-research">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-9 h-9 rounded-lg bg-teal-600/15 flex items-center justify-center">
                       <Search className="w-4 h-4 text-teal-400" />
@@ -93,7 +93,7 @@ export default function About() {
                   <p className="text-gray-400 mb-3">Save articles, on-chain data, competitor analysis, and research notes. The AI synthesizes your research, identifies where sources agree or contradict, and suggests what to investigate next. Organize everything into dossiers with tracked claims and trust levels.</p>
                   <p className="text-xs text-gray-500">Three modes: <strong className="text-teal-400">Brave Mode</strong> (privacy-first web search), <strong className="text-teal-400">Web Mode</strong> (AI web search with citations), <strong className="text-teal-400">Explain Mode</strong> (AI knowledge synthesis).</p>
                 </div>
-                <div className="p-5 rounded-xl border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }} data-testid="card-zone-thinking">
+                <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }} data-testid="card-zone-thinking">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-9 h-9 rounded-lg bg-purple-600/15 flex items-center justify-center">
                       <Sparkles className="w-4 h-4 text-purple-400" />
@@ -154,21 +154,21 @@ export default function About() {
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>03</span> Our Philosophy
               </h2>
               <div className="space-y-4">
-                <div className="p-5 rounded-xl border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }}>
+                <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }}>
                   <div className="flex items-center gap-3 mb-3">
                     <HardDrive className="w-5 h-5 text-orange-400" />
                     <h3 className="text-white font-bold">Local-First</h3>
                   </div>
                   <p className="text-gray-400">Your journal and memory vault are stored locally in your browser. They are never on our servers. This isn't a feature; it's the foundation of our privacy model. There's nothing to hack, subpoena, or sell.</p>
                 </div>
-                <div className="p-5 rounded-xl border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }}>
+                <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }}>
                   <div className="flex items-center gap-3 mb-3">
                     <Shield className="w-5 h-5 text-teal-400" />
                     <h3 className="text-white font-bold">Sovereign</h3>
                   </div>
                   <p className="text-gray-400">We believe you should have a digital space that is truly yours. DJ-Z-S is designed to be your sovereign workspace, free from the prying eyes of ad-tech and AI companies. Your roadmap stays your roadmap. Your thesis stays your thesis.</p>
                 </div>
-                <div className="p-5 rounded-xl border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
+                <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
                   <div className="flex items-center gap-3 mb-3">
                     <Brain className="w-5 h-5 text-purple-400" />
                     <h3 className="text-white font-bold">Uncensored</h3>
@@ -184,28 +184,28 @@ export default function About() {
               </h2>
               <p className="mb-6">We use a hybrid architecture to balance powerful AI with uncompromising privacy.</p>
               <div className="space-y-3 mb-6">
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <HardDrive className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-white font-bold text-xs mb-1">Your Data</p>
                     <p className="text-xs text-gray-500">Your journal entries, memory vault, research dossiers, and claims are stored locally in your browser's IndexedDB. They never touch our servers.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <Bot className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-white font-bold text-xs mb-1">AI Inference</p>
                     <p className="text-xs text-gray-500">When you use "Think with me," your prompt is sent to a decentralized inference network (via Venice AI) for processing. Your prompts are not stored or used for training. No centralized AI company owns the interaction.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <Wallet className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-white font-bold text-xs mb-1">Identity</p>
                     <p className="text-xs text-gray-500">You connect with a crypto wallet. It's a login you own, not an email address we can sell. No marketing emails. Ever.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <Lock className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-white font-bold text-xs mb-1">Messaging (XMTP + MLS)</p>
@@ -214,7 +214,7 @@ export default function About() {
                 </div>
               </div>
               <p className="text-xs text-gray-500 mb-4">This is the most private way to access powerful AI today. We are actively researching on-device models to eliminate the inference step in the future.</p>
-              <div className="p-4 rounded-xl bg-amber-500/[0.04] border border-amber-500/15">
+              <div className="p-4 rounded-lg bg-amber-500/[0.04] border border-amber-500/15">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
                   <div>
@@ -231,7 +231,7 @@ export default function About() {
               </h2>
               <p className="mb-5">Three specialized AI agents power the system. Each one is triggered only when you take action — never automatically. They work for you, not on you.</p>
               <div className="space-y-3">
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]" data-testid="card-agent-insight">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-agent-insight">
                   <div className="flex items-center gap-3 mb-2">
                     <Brain className="w-4 h-4 text-orange-400" />
                     <h3 className="text-white font-bold text-xs">Your AI Analyst</h3>
@@ -239,7 +239,7 @@ export default function About() {
                   </div>
                   <p className="text-xs text-gray-500">Analyzes your journal entry alongside recent entries and memory pins. Returns structured insights: what you said, why it matters, patterns detected, open questions, and a reflective prompt to push your thinking deeper.</p>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]" data-testid="card-agent-synth">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-agent-synth">
                   <div className="flex items-center gap-3 mb-2">
                     <Brain className="w-4 h-4 text-teal-400" />
                     <h3 className="text-white font-bold text-xs">Your Research Synthesizer</h3>
@@ -247,7 +247,7 @@ export default function About() {
                   </div>
                   <p className="text-xs text-gray-500">Synthesizes batches of research into a unified thesis. Identifies where sources agree, where they contradict, and suggests follow-up directions. Turns scattered research into actionable intelligence.</p>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]" data-testid="card-agent-partner">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-agent-partner">
                   <div className="flex items-center gap-3 mb-2">
                     <Brain className="w-4 h-4 text-purple-400" />
                     <h3 className="text-white font-bold text-xs">Your Thinking Coach</h3>
@@ -262,7 +262,7 @@ export default function About() {
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Memory Pins & Compounding Intelligence
               </h2>
-              <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-4" data-testid="card-memory-pins">
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06] mb-4" data-testid="card-memory-pins">
                 <div className="flex items-center gap-3 mb-3">
                   <Pin className="w-4 h-4 text-orange-400" />
                   <h3 className="text-white font-bold">Memory Pins</h3>
@@ -270,7 +270,7 @@ export default function About() {
                 <p className="text-gray-400 mb-3">Pin the patterns, goals, theses, and questions that matter most to you. These pins are carried forward as context every time you ask the AI to think with you — so it understands your ongoing projects, evolving strategy, and active priorities.</p>
                 <p className="text-xs text-gray-500">Pin types: goals, patterns, preferences, projects, principles, questions, people. All stored locally. You control what the AI remembers about your edge.</p>
               </div>
-              <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06]">
                 <div className="flex items-center gap-3 mb-3">
                   <RefreshCw className="w-4 h-4 text-orange-400" />
                   <h3 className="text-white font-bold">Compounding Intelligence</h3>
@@ -284,22 +284,22 @@ export default function About() {
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Additional Tools
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <Video className="w-5 h-5 text-orange-400 mb-3" />
                   <h3 className="text-white font-bold mb-2">Video Journal</h3>
                   <p className="text-xs text-gray-500">Record video entries directly in your browser. Videos are stored via Livepeer's decentralized network and linked to your journal entries for playback.</p>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <Headphones className="w-5 h-5 text-orange-400 mb-3" />
                   <h3 className="text-white font-bold mb-2">Music Library</h3>
                   <p className="text-xs text-gray-500">Upload your own music and play it while you think. Organize tracks into Focus, Reflection, and Creative zones. All stored locally in your browser.</p>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <MessageSquare className="w-5 h-5 text-orange-400 mb-3" />
                   <h3 className="text-white font-bold mb-2">XMTP Messaging</h3>
                   <p className="text-xs text-gray-500">Interact with AI agents through XMTP decentralized messaging — fully end-to-end encrypted with quantum-resistant key protection. Send journal entries, research queries, or thinking questions from any XMTP-compatible app.</p>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <Search className="w-5 h-5 text-orange-400 mb-3" />
                   <h3 className="text-white font-bold mb-2">Quick Search</h3>
                   <p className="text-xs text-gray-500">Instantly search all your past entries with real-time filtering. Filter by journal or research, with highlighted match previews. Open with Cmd+K from anywhere.</p>
@@ -311,7 +311,7 @@ export default function About() {
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Built by Dj-z-s
               </h2>
-              <div className="p-6 rounded-xl border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.03)' }}>
+              <div className="p-6 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.03)' }}>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-orange-500/15 flex items-center justify-center">
                     <User className="w-5 h-5 text-orange-400" />
@@ -338,7 +338,7 @@ export default function About() {
                   href="https://github.com/UsernameDAOEth/djzs-box" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/30 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-orange-500/30 transition-colors"
                   data-testid="link-github"
                 >
                   <Globe className="w-4 h-4 text-orange-400" />
@@ -348,7 +348,7 @@ export default function About() {
                   href="https://x.com/Dj_Z_S" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/30 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-orange-500/30 transition-colors"
                   data-testid="link-twitter"
                 >
                   <Sparkles className="w-4 h-4 text-orange-400" />
@@ -356,7 +356,7 @@ export default function About() {
                 </a>
                 <Link 
                   href="/docs"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05] hover:border-orange-500/30 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-orange-500/30 transition-colors"
                   data-testid="link-docs"
                 >
                   <BookOpen className="w-4 h-4 text-orange-400" />
@@ -390,7 +390,7 @@ export default function About() {
 
           </div>
 
-          <div className="mt-16 pt-12 border-t border-white/[0.05]">
+          <div className="mt-16 pt-12 border-t border-white/[0.06]">
             <div className="text-center">
               <p className="text-white font-bold text-lg mb-3">Ready to protect your best ideas and sharpen your edge?</p>
               <p className="text-gray-500 text-sm mb-6">Start using DJ-Z-S today.</p>
@@ -414,7 +414,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="mt-16 pt-8 border-t border-white/[0.05] text-center">
+          <div className="mt-16 pt-8 border-t border-white/[0.06] text-center">
             <p className="text-xs text-gray-600">
               &copy; 2026 DJZS SYSTEM / DECENTRALIZED AI FOR SOVEREIGN THINKING
             </p>
@@ -433,7 +433,7 @@ function PersonaCallout({ icon, label, accent, text }: {
 }) {
   return (
     <div
-      className="p-4 rounded-xl"
+      className="p-4 rounded-lg"
       style={{ background: `${accent}08`, border: `1px solid ${accent}25` }}
       data-testid={`callout-${label.toLowerCase().replace(/\s+/g, '-')}`}
     >
@@ -456,7 +456,7 @@ function PersonaWorkflow({ icon, label, accent, steps }: {
 
   return (
     <div
-      className="rounded-xl overflow-hidden"
+      className="rounded-lg overflow-hidden"
       style={{ background: `${accent}06`, border: `1px solid ${accent}20` }}
       data-testid={`workflow-${label.toLowerCase().replace(/\s+/g, '-')}`}
     >
@@ -512,7 +512,7 @@ function PracticalItem({ icon, question, answer }: {
 
   return (
     <div
-      className="rounded-xl bg-white/[0.02] border border-white/[0.05] overflow-hidden"
+      className="rounded-lg bg-[#14171D] border border-white/[0.06] overflow-hidden"
       data-testid={`faq-${question.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}`}
     >
       <button

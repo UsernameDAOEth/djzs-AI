@@ -65,7 +65,7 @@ const TABS: { id: TabId; label: string; icon: typeof Pen }[] = [
 ];
 
 const INPUT_CLS =
-  "w-full px-3 py-2 bg-white/[0.05] border border-white/[0.08] rounded-xl text-sm text-white placeholder:text-gray-600 outline-none focus:border-orange-500/50 transition-colors";
+  "w-full px-3 py-2 bg-[#0F1115] border border-white/[0.06] rounded-md text-sm text-white placeholder:text-gray-600 outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/30 transition-colors";
 
 function ToggleGroup({
   options,
@@ -88,7 +88,7 @@ function ToggleGroup({
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
             value === opt
               ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
-              : "bg-white/[0.03] text-gray-500 border border-white/[0.05] hover:text-gray-300"
+              : "bg-[#14171D] text-gray-500 border border-white/[0.06] hover:text-gray-300"
           }`}
         >
           {opt}
@@ -99,7 +99,7 @@ function ToggleGroup({
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <label className="block text-xs font-medium text-gray-400 mb-1.5">{children}</label>;
+  return <label className="block text-[10px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">{children}</label>;
 }
 
 export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
@@ -505,7 +505,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
 
   return (
     <div className="w-full max-w-2xl mx-auto" data-testid="trade-artifact-zone">
-      <div className="flex items-center gap-1 mb-4 p-1 bg-white/[0.02] rounded-2xl border border-white/[0.05]">
+      <div className="flex items-center gap-1 mb-4 p-1 bg-[#14171D] rounded-lg border border-white/[0.06]">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -513,10 +513,10 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
               key={tab.id}
               data-testid={`tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium transition-all ${
                 activeTab === tab.id
-                  ? "bg-orange-500/15 text-orange-400 border border-orange-500/20"
-                  : "text-gray-500 hover:text-gray-300"
+                  ? "bg-[rgba(243,126,32,0.1)] text-orange-400 border border-[rgba(243,126,32,0.3)]"
+                  : "bg-[#14171D] text-gray-500 border border-white/[0.06] hover:text-gray-300 hover:border-white/[0.08]"
               }`}
             >
               <Icon size={14} />
@@ -528,7 +528,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
 
       {activeTab === "compose" && (
         <div className="space-y-4" data-testid="compose-tab">
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-4">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Pen size={16} className="text-orange-400" />
               <h3 className="text-sm font-semibold text-white">Build Trade Thesis</h3>
@@ -659,7 +659,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-4">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
             <div className="flex items-center gap-2 mb-1">
               <BarChart3 size={16} className="text-teal-400" />
               <h3 className="text-sm font-semibold text-white">Market Conditions</h3>
@@ -714,7 +714,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-3">
             <SectionLabel>Notes</SectionLabel>
             <textarea
               data-testid="input-notes"
@@ -733,7 +733,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
             />
           </div>
 
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-3">
             <div className="flex items-center gap-2 mb-1">
               <FileText size={16} className="text-purple-400" />
               <h3 className="text-sm font-semibold text-white">Link Evidence</h3>
@@ -780,7 +780,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                       return (
                         <label
                           key={e.id}
-                          className={`flex items-start gap-2 p-2 rounded-lg hover:bg-white/[0.03] cursor-pointer ${isRelevant ? "bg-orange-500/[0.05] border border-orange-500/10" : ""}`}
+                          className={`flex items-start gap-2 p-2 rounded-lg hover:bg-[rgba(255,255,255,0.015)] cursor-pointer ${isRelevant ? "bg-orange-500/[0.05] border border-orange-500/10" : ""}`}
                           data-testid={`evidence-journal-${e.id}`}
                         >
                           <input
@@ -824,7 +824,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                       return (
                         <label
                           key={d.id}
-                          className={`flex items-start gap-2 p-2 rounded-lg hover:bg-white/[0.03] cursor-pointer ${isRelevant ? "bg-teal-500/[0.05] border border-teal-500/10" : ""}`}
+                          className={`flex items-start gap-2 p-2 rounded-lg hover:bg-[rgba(255,255,255,0.015)] cursor-pointer ${isRelevant ? "bg-teal-500/[0.05] border border-teal-500/10" : ""}`}
                           data-testid={`evidence-dossier-${d.id}`}
                         >
                           <input
@@ -866,7 +866,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
             data-testid="button-next-stress"
             onClick={() => setActiveTab("stress")}
             disabled={!asset.trim()}
-            className="w-full py-2.5 rounded-xl text-sm font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-lg text-sm font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
           >
             Next: Stress Test <ArrowRight size={14} />
           </button>
@@ -875,7 +875,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
 
       {activeTab === "stress" && (
         <div className="space-y-4" data-testid="stress-tab">
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
             <div className="flex items-center gap-2 mb-3">
               <BarChart3 size={16} className="text-orange-400" />
               <h3 className="text-sm font-semibold text-white">AI Stress Test</h3>
@@ -891,7 +891,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
               data-testid="button-run-stress-test"
               onClick={handleStressTest}
               disabled={stressLoading || !asset.trim()}
-              className="w-full py-2.5 rounded-xl text-sm font-medium bg-teal-600/20 text-teal-400 border border-teal-500/20 hover:bg-teal-600/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-lg text-sm font-medium bg-teal-600/20 text-teal-400 border border-teal-500/20 hover:bg-teal-600/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
             >
               {stressLoading ? (
                 <>
@@ -906,7 +906,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
           </div>
 
           {stressReport && (
-            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-4">
+            <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
               <div className="flex items-center gap-2">
                 {stressReport.approved ? (
                   <Badge className="bg-green-500/20 text-green-400 border-green-500/30" data-testid="badge-approved">
@@ -921,7 +921,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
 
               {stressReport.reasons.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-gray-400 mb-1">Analysis</p>
+                  <p className="text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">Analysis</p>
                   {stressReport.reasons.map((r, i) => (
                     <p key={i} className="text-xs text-gray-300 leading-relaxed whitespace-pre-wrap">
                       {r}
@@ -932,7 +932,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
 
               {stressReport.counterArguments.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-gray-400 mb-1">Counter Arguments</p>
+                  <p className="text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">Counter Arguments</p>
                   <ul className="space-y-1">
                     {stressReport.counterArguments.map((c, i) => (
                       <li key={i} className="text-xs text-gray-400 flex gap-1.5">
@@ -946,7 +946,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
 
               {stressReport.missingInfo.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-gray-400 mb-1">Missing Info</p>
+                  <p className="text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">Missing Info</p>
                   <ul className="space-y-1">
                     {stressReport.missingInfo.map((m, i) => (
                       <li key={i} className="text-xs text-gray-500 flex gap-1.5">
@@ -967,7 +967,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
           <button
             data-testid="button-next-risk"
             onClick={() => setActiveTab("risk")}
-            className="w-full py-2.5 rounded-xl text-sm font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 transition-all flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-lg text-sm font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 transition-all flex items-center justify-center gap-2"
           >
             Next: Risk & Sign <ArrowRight size={14} />
           </button>
@@ -976,7 +976,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
 
       {activeTab === "risk" && (
         <div className="space-y-4" data-testid="risk-tab">
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-4">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
             <div className="flex items-center gap-2 mb-1">
               <Shield size={16} className="text-orange-400" />
               <h3 className="text-sm font-semibold text-white">Risk Parameters</h3>
@@ -1007,9 +1007,9 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
           </div>
 
           {riskSummary && (
-            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+            <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-3">
               <div className="flex items-center gap-2">
-                <h4 className="text-xs font-medium text-gray-400">Risk Summary</h4>
+                <h4 className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Risk Summary</h4>
                 {riskSummary.withinLimits ? (
                   <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-[10px]" data-testid="badge-within-limits">
                     Within Limits
@@ -1022,15 +1022,15 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
               </div>
 
               <div className="grid grid-cols-3 gap-2">
-                <div className="p-2 rounded-lg bg-white/[0.03]">
+                <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                   <p className="text-[10px] text-gray-500">Position Size</p>
                   <p className="text-sm text-white font-mono">{riskSummary.computed.proposedPositionSizePct}%</p>
                 </div>
-                <div className="p-2 rounded-lg bg-white/[0.03]">
+                <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                   <p className="text-[10px] text-gray-500">Daily Loss</p>
                   <p className="text-sm text-white font-mono">{riskSummary.computed.dailyLossPct.toFixed(1)}%</p>
                 </div>
-                <div className="p-2 rounded-lg bg-white/[0.03]">
+                <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                   <p className="text-[10px] text-gray-500">Worst Case</p>
                   <p className="text-sm text-white font-mono">{riskSummary.computed.estWorstCaseLossPct}%</p>
                 </div>
@@ -1049,7 +1049,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
           )}
 
           {createdHash ? (
-            <div className="p-4 rounded-2xl bg-green-500/[0.05] border border-green-500/20 space-y-3" data-testid="success-state">
+            <div className="p-4 rounded-lg bg-green-500/[0.05] border border-green-500/20 space-y-3" data-testid="success-state">
               <div className="flex items-center gap-2">
                 <CheckCircle size={16} className="text-green-400" />
                 <h3 className="text-sm font-semibold text-green-400">Artifact Created</h3>
@@ -1079,7 +1079,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                       <div className="space-y-1.5">
                         <p className="text-[10px] text-gray-500">Execution Reports</p>
                         {execReports.map((r, i) => (
-                          <div key={i} className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-xs">
+                          <div key={i} className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06] text-xs">
                             <span className={`font-medium ${r.status === "LIVE_CONFIRMED" || r.status === "PAPER_EXECUTED" ? "text-green-400" : r.status === "REJECTED" || r.status === "FAILED" ? "text-red-400" : "text-yellow-400"}`}>
                               {r.status}
                             </span>
@@ -1103,7 +1103,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                       data-testid="button-send-xmtp"
                       onClick={handleSendXmtp}
                       disabled={xmtpSending || !agentAddress.trim() || xmtpConnecting}
-                      className="px-3 py-2 rounded-xl text-xs font-medium bg-teal-500/20 text-teal-400 border border-teal-500/20 hover:bg-teal-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1.5"
+                      className="px-3 py-2 rounded-lg text-xs font-medium bg-teal-500/20 text-teal-400 border border-teal-500/20 hover:bg-teal-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1.5"
                     >
                       {xmtpSending || xmtpConnecting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
                       Send
@@ -1115,7 +1115,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
               <button
                 data-testid="button-view-history"
                 onClick={() => setActiveTab("history")}
-                className="w-full py-2 rounded-xl text-xs font-medium bg-white/[0.05] text-gray-300 hover:bg-white/[0.08] transition-all"
+                className="w-full py-2 rounded-lg text-xs font-medium bg-white/[0.05] text-gray-300 hover:bg-white/[0.08] transition-all"
               >
                 View in History
               </button>
@@ -1125,7 +1125,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
               data-testid="button-create-sign"
               onClick={handleCreateAndSign}
               disabled={signing || !asset.trim()}
-              className="w-full py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-orange-500/20 to-teal-500/20 text-white border border-orange-500/20 hover:from-orange-500/30 hover:to-teal-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg text-sm font-semibold bg-gradient-to-r from-orange-500/20 to-teal-500/20 text-white border border-orange-500/20 hover:from-orange-500/30 hover:to-teal-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
             >
               {signing ? (
                 <>
@@ -1144,42 +1144,42 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
       {activeTab === "execute" && (
         <div className="space-y-4" data-testid="execute-tab">
           {!createdArtifact ? (
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-center">
+            <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] text-center">
               <Shield size={24} className="mx-auto mb-2 text-gray-600" />
               <p className="text-sm text-gray-400 mb-1">No signed artifact</p>
               <p className="text-xs text-gray-600">Create and sign an artifact in the Risk & Sign tab first.</p>
               <button
                 data-testid="button-go-to-risk"
                 onClick={() => setActiveTab("risk")}
-                className="mt-3 px-4 py-2 rounded-xl text-xs font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 transition-colors"
+                className="mt-3 px-4 py-2 rounded-lg text-xs font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 transition-colors"
               >
                 Go to Risk & Sign
               </button>
             </div>
           ) : (
             <>
-              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-3">
                 <div className="flex items-center gap-2">
                   <ArrowRight size={16} className="text-orange-400" />
                   <h3 className="text-sm font-semibold text-white">Execution Details</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="p-2 rounded-lg bg-white/[0.03]">
+                  <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                     <p className="text-[10px] text-gray-500">Asset</p>
                     <p className="text-sm text-white font-mono">{createdArtifact.thesis.asset}</p>
                   </div>
-                  <div className="p-2 rounded-lg bg-white/[0.03]">
+                  <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                     <p className="text-[10px] text-gray-500">Direction</p>
-                    <p className={`text-sm font-mono ${createdArtifact.thesis.side === "LONG" ? "text-green-400" : "text-red-400"}`}>
+                    <p className={`text-sm font-mono ${createdArtifact.thesis.side === "BUY" ? "text-green-400" : "text-red-400"}`}>
                       {createdArtifact.thesis.side}
                     </p>
                   </div>
-                  <div className="p-2 rounded-lg bg-white/[0.03]">
+                  <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                     <p className="text-[10px] text-gray-500">Entry Type</p>
                     <p className="text-sm text-white font-mono">{createdArtifact.thesis.entry.type}</p>
                   </div>
-                  <div className="p-2 rounded-lg bg-white/[0.03]">
+                  <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                     <p className="text-[10px] text-gray-500">Conviction</p>
                     <p className="text-sm text-white font-mono">{createdArtifact.thesis.conviction}</p>
                   </div>
@@ -1203,7 +1203,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                 )}
               </div>
 
-              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-3">
                 <SectionLabel>Execution Mode</SectionLabel>
                 <ToggleGroup
                   options={["paper", "live"]}
@@ -1238,7 +1238,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                 )}
 
                 {execTxHash && (
-                  <div className="p-3 rounded-xl bg-green-500/[0.05] border border-green-500/20 space-y-2" data-testid="exec-tx-success">
+                  <div className="p-3 rounded-lg bg-green-500/[0.05] border border-green-500/20 space-y-2" data-testid="exec-tx-success">
                     <div className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-green-400" />
                       <span className="text-xs font-medium text-green-400">Transaction Submitted</span>
@@ -1299,7 +1299,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                       setExecuting(false);
                     }
                   }}
-                  className={`w-full py-3 rounded-xl text-sm font-semibold border transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed ${
+                  className={`w-full py-3 rounded-lg text-sm font-semibold border transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed ${
                     execMode === "live"
                       ? "bg-gradient-to-r from-red-500/20 to-orange-500/20 text-white border-red-500/20 hover:from-red-500/30 hover:to-orange-500/30"
                       : "bg-gradient-to-r from-teal-500/20 to-blue-500/20 text-white border-teal-500/20 hover:from-teal-500/30 hover:to-blue-500/30"
@@ -1316,13 +1316,13 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
               </div>
 
               {paperExecutions.length > 0 && (
-                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-3">
                   <div className="flex items-center gap-2">
                     <FileText size={14} className="text-teal-400" />
-                    <h4 className="text-xs font-medium text-gray-400">Paper Executions</h4>
+                    <h4 className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Paper Executions</h4>
                   </div>
                   {paperExecutions.map((pe) => (
-                    <div key={pe.id} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] space-y-1" data-testid={`paper-exec-${pe.id}`}>
+                    <div key={pe.id} className="p-2.5 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06] space-y-1" data-testid={`paper-exec-${pe.id}`}>
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-white">{pe.side} {pe.asset}</span>
                         <span className="text-[10px] text-gray-500">{new Date(pe.timestamp).toLocaleTimeString()}</span>
@@ -1342,7 +1342,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
 
       {activeTab === "monitor" && (
         <div className="space-y-4" data-testid="monitor-tab">
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Bell size={16} className="text-orange-400" />
@@ -1371,7 +1371,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-3">
             <SectionLabel>New Alert</SectionLabel>
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -1417,17 +1417,17 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                 setAlertAsset("");
                 setAlertThreshold("");
               }}
-              className="w-full py-2.5 rounded-xl text-xs font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1.5"
+              className="w-full py-2.5 rounded-lg text-xs font-medium bg-orange-500/15 text-orange-400 border border-orange-500/20 hover:bg-orange-500/25 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1.5"
             >
               <Plus size={12} /> Add Alert
             </button>
           </div>
 
           {(activeAlerts?.length ?? 0) > 0 && (
-            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-2">
+            <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-2">
               <SectionLabel>Active Alerts ({activeAlerts?.length})</SectionLabel>
               {activeAlerts?.map((alert) => (
-                <div key={alert.id} className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05]" data-testid={`alert-${alert.id}`}>
+                <div key={alert.id} className="flex items-center justify-between p-2.5 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]" data-testid={`alert-${alert.id}`}>
                   <div className="flex items-center gap-2">
                     <BellRing size={12} className="text-orange-400" />
                     <div>
@@ -1452,10 +1452,10 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
           )}
 
           {triggeredAlerts.length > 0 && (
-            <div className="p-4 rounded-2xl bg-green-500/[0.03] border border-green-500/15 space-y-2">
+            <div className="p-4 rounded-lg bg-green-500/[0.03] border border-green-500/15 space-y-2">
               <SectionLabel>Triggered Alerts</SectionLabel>
               {triggeredAlerts.map((ta) => (
-                <div key={ta.id} className="p-2.5 rounded-xl bg-white/[0.03] border border-green-500/10 space-y-1" data-testid={`triggered-${ta.id}`}>
+                <div key={ta.id} className="p-2.5 rounded-lg bg-[rgba(255,255,255,0.015)] border border-green-500/10 space-y-1" data-testid={`triggered-${ta.id}`}>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-green-400">{ta.asset}</span>
                     <span className="text-[10px] text-gray-500">{new Date(ta.timestamp).toLocaleTimeString()}</span>
@@ -1496,7 +1496,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
             return (
               <div
                 key={a.id ?? a.hash}
-                className="rounded-2xl bg-white/[0.02] border border-white/[0.05] overflow-hidden"
+                className="rounded-lg bg-[#14171D] border border-white/[0.06] overflow-hidden"
                 data-testid={`artifact-card-${a.id}`}
               >
                 <button
@@ -1551,17 +1551,17 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                 </button>
 
                 {expanded && (
-                  <div className="p-3 pt-0 space-y-3 border-t border-white/[0.05]" data-testid={`artifact-details-${a.id}`}>
+                  <div className="p-3 pt-0 space-y-3 border-t border-white/[0.06]" data-testid={`artifact-details-${a.id}`}>
                     <div className="grid grid-cols-3 gap-2 mt-3">
-                      <div className="p-2 rounded-lg bg-white/[0.03]">
+                      <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                         <p className="text-[10px] text-gray-500">Conviction</p>
                         <p className="text-sm text-white">{a.thesis.conviction}/10</p>
                       </div>
-                      <div className="p-2 rounded-lg bg-white/[0.03]">
+                      <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                         <p className="text-[10px] text-gray-500">Size</p>
                         <p className="text-sm text-white">{a.thesis.positionSizePct}%</p>
                       </div>
-                      <div className="p-2 rounded-lg bg-white/[0.03]">
+                      <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                         <p className="text-[10px] text-gray-500">Entry</p>
                         <p className="text-sm text-white">{a.thesis.entry.type}</p>
                       </div>
@@ -1570,19 +1570,19 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
                     {a.thesis.exits && (
                       <div className="grid grid-cols-3 gap-2">
                         {a.thesis.exits.takeProfitPct !== undefined && (
-                          <div className="p-2 rounded-lg bg-white/[0.03]">
+                          <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                             <p className="text-[10px] text-gray-500">TP</p>
                             <p className="text-sm text-green-400">{a.thesis.exits.takeProfitPct}%</p>
                           </div>
                         )}
                         {a.thesis.exits.stopLossPct !== undefined && (
-                          <div className="p-2 rounded-lg bg-white/[0.03]">
+                          <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)]">
                             <p className="text-[10px] text-gray-500">SL</p>
                             <p className="text-sm text-red-400">{a.thesis.exits.stopLossPct}%</p>
                           </div>
                         )}
                         {a.thesis.exits.invalidation && (
-                          <div className="p-2 rounded-lg bg-white/[0.03] col-span-full">
+                          <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.015)] col-span-full">
                             <p className="text-[10px] text-gray-500">Invalidation</p>
                             <p className="text-xs text-gray-400">{a.thesis.exits.invalidation}</p>
                           </div>

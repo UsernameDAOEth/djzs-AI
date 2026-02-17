@@ -72,9 +72,9 @@ const cutItems = [
 
 export default function Roadmap() {
   return (
-    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#0F1115' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.06]" style={{ background: 'rgba(15,17,21,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group" data-testid="link-back-to-system">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -179,8 +179,8 @@ export default function Roadmap() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="mt-16 p-8 rounded-2xl border border-white/[0.05]"
-            style={{ background: 'rgba(42,46,63,0.6)' }}
+            className="mt-16 p-8 rounded-lg border border-white/[0.06]"
+            style={{ background: 'rgba(15,17,21,0.6)' }}
           >
             <div className="flex items-center gap-3 mb-6">
               <Scissors className="w-5 h-5 text-gray-500" />
@@ -209,8 +209,8 @@ export default function Roadmap() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.7 }}
-            className="mt-8 p-8 rounded-2xl border border-orange-500/20"
-            style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.08) 0%, rgba(42,46,63,0.6) 100%)' }}
+            className="mt-8 p-8 rounded-lg border border-orange-500/20"
+            style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.08) 0%, rgba(15,17,21,0.6) 100%)' }}
           >
             <div className="flex items-center gap-3 mb-6">
               <Sun className="w-5 h-5" style={{ color: '#FFB84D' }} />
@@ -224,7 +224,7 @@ export default function Roadmap() {
 
             <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
               {/* Morning */}
-              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(255,184,77,0.06)' }} data-testid="card-morning-reflection">
+              <div className="flex-1 p-5 rounded-lg border border-white/[0.06]" style={{ background: 'rgba(255,184,77,0.06)' }} data-testid="card-morning-reflection">
                 <div className="flex items-center gap-2 mb-3">
                   <Sun className="w-4 h-4" style={{ color: '#FFB84D' }} />
                   <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#FFB84D' }} data-testid="text-morning-title">Morning Reflection</span>
@@ -241,7 +241,7 @@ export default function Roadmap() {
               </div>
 
               {/* Evening */}
-              <div className="flex-1 p-5 rounded-xl border border-white/[0.05]" style={{ background: 'rgba(46,139,139,0.06)' }} data-testid="card-evening-synthesis">
+              <div className="flex-1 p-5 rounded-lg border border-white/[0.06]" style={{ background: 'rgba(46,139,139,0.06)' }} data-testid="card-evening-synthesis">
                 <div className="flex items-center gap-2 mb-3">
                   <Moon className="w-4 h-4" style={{ color: '#2E8B8B' }} />
                   <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#2E8B8B' }} data-testid="text-evening-title">Evening Synthesis</span>
@@ -259,7 +259,7 @@ export default function Roadmap() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="mt-8 p-8 rounded-2xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20"
+            className="mt-8 p-8 rounded-lg bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20"
           >
             <div className="flex items-center gap-3 mb-4">
               <Compass className="w-5 h-5" style={{ color: '#F37E20' }} />
@@ -282,7 +282,7 @@ export default function Roadmap() {
             </div>
           </motion.div>
 
-          <div className="mt-20 pt-12 border-t border-white/[0.05] text-center">
+          <div className="mt-20 pt-12 border-t border-white/[0.06] text-center">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600" data-testid="text-roadmap-footer">
               © 2026 DJZS SYSTEM / EVOLVING
             </p>

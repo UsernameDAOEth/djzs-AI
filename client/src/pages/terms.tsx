@@ -4,9 +4,9 @@ import { ArrowLeft } from "lucide-react";
 
 export default function Terms() {
   return (
-    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
+    <div className="min-h-screen text-gray-400 font-medium selection:bg-orange-500/30" style={{ background: '#0F1115' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.05]" style={{ background: 'rgba(42,46,63,0.8)' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/[0.06]" style={{ background: 'rgba(15,17,21,0.8)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -29,7 +29,7 @@ export default function Terms() {
           </h1>
           <p className="text-sm text-gray-500 mb-12 font-mono">Last updated: January 03, 2026</p>
 
-          <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.05] pl-8">
+          <div className="space-y-12 text-sm leading-relaxed border-l border-white/[0.06] pl-8">
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> Purpose
@@ -111,7 +111,7 @@ export default function Terms() {
             </section>
           </div>
 
-          <div className="mt-20 pt-12 border-t border-white/[0.05] text-center">
+          <div className="mt-20 pt-12 border-t border-white/[0.06] text-center">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600">
               © 2026 DJZS SYSTEM / OPERATIONAL
             </p>
