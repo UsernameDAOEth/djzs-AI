@@ -164,7 +164,7 @@ export default function Home() {
             variants={fadeUp}
             className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[1] mb-8"
           >
-            Decentralized AI that cuts through the noise.
+            Decentralized AI for sovereign thinking.
           </motion.h1>
 
           <motion.p
