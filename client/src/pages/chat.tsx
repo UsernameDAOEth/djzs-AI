@@ -1049,7 +1049,7 @@ export default function Chat() {
   return (
     <>
     <TooltipProvider>
-      <div className="h-screen text-gray-300 flex overflow-hidden font-sans selection:bg-orange-500/30" style={{ background: '#2A2E3F' }}>
+      <div className="h-screen text-gray-300 flex overflow-hidden font-sans selection:bg-orange-500/30" style={{ background: selectedZone === 'research' ? '#0F1115' : '#2A2E3F' }}>
         {/* Mobile sidebar overlay */}
         {mobileSidebarOpen && (
           <div 
@@ -1366,7 +1366,7 @@ export default function Chat() {
         {/* Main Interface */}
         <main className="flex-1 flex flex-col relative">
           {/* Transparent Glassy Header */}
-          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 backdrop-blur-xl border-b border-white/[0.03] sticky top-0 z-30" style={{ background: 'rgba(42,46,63,0.8)' }}>
+          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 backdrop-blur-xl border-b sticky top-0 z-30" style={{ background: selectedZone === 'research' ? 'rgba(15,17,21,0.85)' : 'rgba(42,46,63,0.8)', borderColor: selectedZone === 'research' ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.03)' }}>
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Hamburger menu for mobile */}
               <button 
@@ -1593,21 +1593,55 @@ export default function Chat() {
                   </>
                 ) : (
                   <>
-                    {/* Research: Search bar style - centered */}
-                    <div className="space-y-3 sm:space-y-4 text-center">
-                      {/* Dossier selector */}
-                      <div className="flex flex-wrap items-center justify-center gap-2 mb-2 sm:mb-4 px-2 sm:px-0">
+                    {/* Research: Futuristic AI-forward claim interface */}
+                    <div className="space-y-6 sm:space-y-10 text-center">
+                      <div className="space-y-3">
+                        <p className="rz-heading text-[10px] sm:text-xs font-bold tracking-[0.25em]" style={{ color: 'var(--rz-text-muted)' }}>
+                          DJZS Research Engine
+                        </p>
+                        <p className="text-sm sm:text-base font-medium transition-all duration-500" style={{ color: isFocused ? 'var(--rz-teal)' : 'var(--rz-text-secondary)' }}>
+                          {currentPrompts[currentPromptIndex]}
+                        </p>
+                      </div>
+
+                      <div className={`relative transition-all duration-500 ${isFocused ? 'rz-input-glow' : ''}`} style={{ borderRadius: '1rem' }}>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={messageInput}
+                            onChange={(e) => setMessageInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                handleAnalyze();
+                              }
+                            }}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
+                            placeholder="State the claim you want to test."
+                            className="w-full bg-transparent border-none outline-none focus:ring-0 text-xl sm:text-2xl font-light text-center tracking-wide placeholder:tracking-wide py-6 sm:py-8"
+                            style={{ color: 'var(--rz-text-primary)', fontFamily: 'var(--font-body)' }}
+                            data-testid="input-research"
+                          />
+                          <div className="mx-auto" style={{ width: messageInput.length > 0 ? '60%' : '30%', maxWidth: '300px', transition: 'width 0.5s ease' }}>
+                            <div className={`h-[2px] mx-auto rounded-full ${messageInput.length > 0 ? '' : 'rz-underline-pulse'}`} style={{ background: messageInput.length > 0 ? 'var(--rz-teal)' : 'var(--rz-text-muted)', transition: 'background 0.4s ease' }} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                         <div className="relative">
                           <button
                             onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-medium transition-all ${
                               activeDossierId 
-                                ? 'bg-teal-500/10 border border-teal-500/30 text-teal-400' 
-                                : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
+                                ? 'text-teal-400 border' 
+                                : 'text-gray-500 hover:text-gray-300 border'
                             }`}
+                            style={{ borderColor: activeDossierId ? 'rgba(45,212,191,0.25)' : 'var(--rz-border)', background: activeDossierId ? 'rgba(45,212,191,0.06)' : 'transparent' }}
                             data-testid="button-dossier-selector"
                           >
-                            <FolderOpen className="w-4 h-4" />
+                            <FolderOpen className="w-3.5 h-3.5" />
                             <span className="max-w-[100px] sm:max-w-[120px] truncate">
                               {activeDossierId && dossiers?.find(d => d.id === activeDossierId)?.name || "No dossier"}
                             </span>
@@ -1615,16 +1649,17 @@ export default function Chat() {
                           </button>
                           
                           {dossierDropdownOpen && (
-                            <div className="absolute top-full left-0 mt-1 w-64 border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden" style={{ background: '#1a1d26' }} data-testid="dossier-dropdown">
-                              <div className="p-2 border-b border-white/5">
+                            <div className="absolute top-full left-0 mt-1 w-64 rounded-lg shadow-2xl z-50 overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="dossier-dropdown">
+                              <div className="p-2" style={{ borderBottom: '1px solid var(--rz-border)' }}>
                                 <button
                                   onClick={() => handleSelectDossier(null)}
-                                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                    !activeDossierId ? 'bg-teal-500/10 text-teal-400' : 'text-gray-400 hover:bg-white/5'
+                                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all ${
+                                    !activeDossierId ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'
                                   }`}
+                                  style={{ background: !activeDossierId ? 'rgba(45,212,191,0.08)' : 'transparent' }}
                                   data-testid="button-no-dossier"
                                 >
-                                  <Search className="w-4 h-4" />
+                                  <Search className="w-3.5 h-3.5" />
                                   Quick search (no dossier)
                                 </button>
                               </div>
@@ -1635,17 +1670,18 @@ export default function Chat() {
                                     <div key={dossier.id} className="flex items-center gap-1 group">
                                       <button
                                         onClick={() => handleSelectDossier(dossier.id!)}
-                                        className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                          activeDossierId === dossier.id ? 'bg-teal-500/10 text-teal-400' : 'text-gray-400 hover:bg-white/5'
+                                        className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all ${
+                                          activeDossierId === dossier.id ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'
                                         }`}
+                                        style={{ background: activeDossierId === dossier.id ? 'rgba(45,212,191,0.08)' : 'transparent' }}
                                         data-testid={`button-dossier-${dossier.id}`}
                                       >
-                                        <FolderOpen className="w-4 h-4" />
+                                        <FolderOpen className="w-3.5 h-3.5" />
                                         <span className="truncate">{dossier.name}</span>
                                       </button>
                                       <button
                                         onClick={(e) => { e.stopPropagation(); handleDeleteDossier(dossier.id!); }}
-                                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-gray-600 hover:text-red-400 transition-all"
                                         data-testid={`button-delete-dossier-${dossier.id}`}
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
@@ -1655,7 +1691,7 @@ export default function Chat() {
                                 </div>
                               )}
                               
-                              <div className="p-2 border-t border-white/5">
+                              <div className="p-2" style={{ borderTop: '1px solid var(--rz-border)' }}>
                                 {showNewDossierInput ? (
                                   <div className="flex items-center gap-2">
                                     <input
@@ -1667,27 +1703,28 @@ export default function Chat() {
                                         if (e.key === 'Escape') { setShowNewDossierInput(false); setDossierName(''); }
                                       }}
                                       placeholder="Dossier name..."
-                                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-gray-500 outline-none focus:border-teal-500/50"
+                                      className="flex-1 px-3 py-2 rounded-md text-xs text-white placeholder:text-gray-600 outline-none"
+                                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--rz-border)' }}
                                       autoFocus
                                       data-testid="input-new-dossier"
                                     />
                                     <button
                                       onClick={handleCreateDossier}
                                       disabled={!dossierName.trim()}
-                                      className="p-2 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                                      style={{ background: '#2E8B8B' }}
+                                      className="p-2 rounded-md text-white hover:opacity-90 disabled:opacity-40 transition-all"
+                                      style={{ background: 'var(--rz-teal)' }}
                                       data-testid="button-create-dossier"
                                     >
-                                      <Check className="w-3.5 h-3.5 text-white" />
+                                      <Check className="w-3.5 h-3.5" />
                                     </button>
                                   </div>
                                 ) : (
                                   <button
                                     onClick={() => setShowNewDossierInput(true)}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:bg-white/5 transition-all"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium text-gray-500 hover:text-gray-300 transition-all"
                                     data-testid="button-new-dossier"
                                   >
-                                    <FolderPlus className="w-4 h-4" />
+                                    <FolderPlus className="w-3.5 h-3.5" />
                                     New dossier
                                   </button>
                                 )}
@@ -1695,104 +1732,73 @@ export default function Chat() {
                             </div>
                           )}
                         </div>
-                        
+
                         {activeDossierId && dossierClaims && dossierClaims.length > 0 && (
-                          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/[0.03] text-xs text-gray-500">
+                          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px]" style={{ color: 'var(--rz-text-muted)', border: '1px solid var(--rz-border)' }}>
                             <span>{dossierClaims.length} claim{dossierClaims.length !== 1 ? 's' : ''}</span>
                           </div>
                         )}
                         
-                        {/* Web search toggle */}
                         <button
                           onClick={() => setWebModeEnabled(!webModeEnabled)}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                            webModeEnabled 
-                              ? 'bg-green-500/10 border border-green-500/30 text-green-400' 
-                              : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
-                          }`}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-medium transition-all border"
+                          style={{ 
+                            borderColor: webModeEnabled ? 'rgba(45,212,191,0.25)' : 'var(--rz-border)', 
+                            color: webModeEnabled ? 'var(--rz-teal)' : 'var(--rz-text-muted)',
+                            background: webModeEnabled ? 'rgba(45,212,191,0.06)' : 'transparent'
+                          }}
                           title={webModeEnabled ? "Web search enabled (uses live data)" : "Explain mode (AI knowledge only)"}
                           data-testid="button-web-toggle"
                         >
-                          <Globe className={`w-4 h-4 ${webModeEnabled ? 'text-green-400' : 'text-gray-500'}`} />
+                          <Globe className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">{webModeEnabled ? 'Web' : 'Explain'}</span>
                         </button>
                         
-                        {/* Brave Search toggle (privacy-first) - only show when available */}
                         {webModeEnabled && braveSearchAvailable && (
                           <button
                             onClick={() => setBraveSearchEnabled(!braveSearchEnabled)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                              braveSearchEnabled 
-                                ? 'bg-teal-500/10 border border-teal-500/30 text-teal-400' 
-                                : 'bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:border-white/[0.15]'
-                            }`}
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-medium transition-all border"
+                            style={{ 
+                              borderColor: braveSearchEnabled ? 'rgba(45,212,191,0.25)' : 'var(--rz-border)', 
+                              color: braveSearchEnabled ? 'var(--rz-teal)' : 'var(--rz-text-muted)',
+                              background: braveSearchEnabled ? 'rgba(45,212,191,0.06)' : 'transparent'
+                            }}
                             title={braveSearchEnabled ? "Brave Search (privacy-first, no tracking)" : "Use default web search"}
                             data-testid="button-brave-toggle"
                           >
-                            <Shield className={`w-4 h-4 ${braveSearchEnabled ? 'text-teal-400' : 'text-gray-500'}`} />
+                            <Shield className="w-3.5 h-3.5" />
                             <span className="hidden sm:inline">{braveSearchEnabled ? 'Brave' : 'Default'}</span>
                           </button>
                         )}
                       </div>
-                      
-                      {/* Rotating prompt - centered, truncated on mobile */}
-                      <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 px-2">
-                        <Search className="w-4 h-4 sm:w-5 sm:h-5 text-teal-400/60 shrink-0" />
-                        <span className="text-xs sm:text-sm font-medium text-teal-300/70 truncate">{currentPrompts[currentPromptIndex]}</span>
-                      </div>
-                      
-                      <div className={`relative transition-all duration-500 rounded-2xl ${isFocused ? 'zone-glow' : ''}`}>
-                        <div className={`flex flex-col gap-3 px-3 sm:px-5 py-3 sm:py-4 rounded-2xl border transition-all ${
-                          isFocused 
-                            ? 'border-teal-500/40 bg-teal-500/[0.03]' 
-                            : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.12]'
-                        }`}>
-                          <div className="flex items-center gap-3">
-                            <Search className={`w-5 h-5 shrink-0 transition-colors ${isFocused ? 'text-teal-400' : 'text-gray-500'}`} />
-                            <input
-                              type="text"
-                              value={messageInput}
-                              onChange={(e) => setMessageInput(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                  e.preventDefault();
-                                  handleAnalyze();
-                                }
-                              }}
-                              onFocus={() => setIsFocused(true)}
-                              onBlur={() => setIsFocused(false)}
-                              placeholder="What do you want to research?"
-                              className="flex-1 bg-transparent border-none outline-none focus:ring-0 text-base sm:text-lg font-normal text-white/95 placeholder:text-gray-500"
-                              data-testid="input-research"
-                            />
-                          </div>
-                          <Button
-                            onClick={handleAnalyze}
-                            disabled={!messageInput.trim() || searchResearch.isPending}
-                            className="w-full hover:opacity-90 h-11 px-5 rounded-xl font-medium text-sm shadow-lg shadow-teal-900/30 transition-all active:scale-95 touch-target"
-                            style={{ background: '#2E8B8B' }}
-                            data-testid="button-search"
-                          >
-                            {searchResearch.isPending ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <>
-                                <ArrowUpRight className="w-4 h-4 mr-1.5" />
-                                Research
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      {/* Research quick suggestions - horizontal scroll on mobile */}
-                      <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 mt-3 scrollbar-hide">
-                        <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
+
+                      <Button
+                        onClick={handleAnalyze}
+                        disabled={!messageInput.trim() || searchResearch.isPending}
+                        className="h-12 px-10 rounded-lg font-medium text-sm tracking-wide transition-all active:scale-[0.98] touch-target disabled:opacity-30"
+                        style={{ background: messageInput.trim() ? 'var(--rz-teal)' : 'rgba(45,212,191,0.15)', color: messageInput.trim() ? '#0F1115' : 'var(--rz-text-muted)', boxShadow: messageInput.trim() ? '0 4px 24px rgba(45,212,191,0.2)' : 'none' }}
+                        data-testid="button-search"
+                      >
+                        {searchResearch.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <>
+                            <ArrowUpRight className="w-4 h-4 mr-2" />
+                            Start Analysis
+                          </>
+                        )}
+                      </Button>
+
+                      <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-hide">
+                        <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0 justify-center">
                           {["Latest trends", "How does X work?", "Compare A vs B", "Deep dive on topic"].map((suggestion, idx) => (
                             <button
                               key={idx}
                               onClick={() => setMessageInput(suggestion)}
-                              className="px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium text-gray-500 bg-white/[0.03] border border-white/[0.06] hover:border-teal-500/30 hover:text-teal-400 hover:bg-teal-500/[0.05] transition-all whitespace-nowrap touch-target"
+                              className="px-3 py-2 sm:py-1.5 rounded-md text-[11px] font-medium transition-all whitespace-nowrap touch-target hover:text-teal-300"
+                              style={{ color: 'var(--rz-text-muted)', border: '1px solid var(--rz-border)', background: 'transparent' }}
+                              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(45,212,191,0.3)'; e.currentTarget.style.background = 'rgba(45,212,191,0.04)'; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--rz-border)'; e.currentTarget.style.background = 'transparent'; }}
                               data-testid={`button-suggestion-${idx}`}
                             >
                               {suggestion}
@@ -1800,6 +1806,10 @@ export default function Chat() {
                           ))}
                         </div>
                       </div>
+
+                      <p className="hidden sm:block text-[10px] tracking-wider" style={{ color: 'var(--rz-text-muted)' }}>
+                        Enter to analyze
+                      </p>
                     </div>
                   </>
                 )}
@@ -1984,69 +1994,85 @@ export default function Chat() {
               {(isAnalyzing || agentResponse || researchResult || latestAnalysis) && (
                 <div className="pb-12 sm:pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
                   {isAnalyzing && !agentResponse && !researchResult && !latestAnalysis && (
-                    <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl thinking-card" data-testid="analyzing-loader">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center bg-orange-600/20">
-                          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-orange-400" />
+                    selectedZone === 'research' ? (
+                      <>
+                        <div className="rz-analyzing-overlay" />
+                        <div className="relative z-30 flex flex-col items-center gap-6 py-12 sm:py-20" data-testid="analyzing-loader">
+                          <p className="rz-heading text-[10px] sm:text-xs font-bold tracking-[0.3em]" style={{ color: 'var(--rz-text-muted)' }}>
+                            Analyzing Evidence
+                          </p>
+                          <div className="w-48 sm:w-64 overflow-hidden rounded-full">
+                            <div className="rz-progress-line" />
+                          </div>
+                          <p className="text-xs font-medium" style={{ color: 'var(--rz-text-secondary)' }}>
+                            Synthesizing information from sources
+                          </p>
                         </div>
-                        <div>
-                          <p className="text-xs font-semibold mb-1 text-orange-400">
-                            {selectedZone === 'research' ? 'Researching...' : 'Thinking...'}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {selectedZone === 'research' ? 'Synthesizing information' : 'Processing your entry'}
-                          </p>
+                      </>
+                    ) : (
+                      <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl thinking-card" data-testid="analyzing-loader">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center bg-orange-600/20">
+                            <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-orange-400" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold mb-1 text-orange-400">Thinking...</p>
+                            <p className="text-sm text-gray-500">Processing your entry</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )
                   )}
 
                   {/* Research Result Card */}
                   {researchResult && (
-                    <div className="rounded-2xl sm:rounded-3xl thinking-card overflow-hidden" data-testid="research-result-card">
-                      {/* Header */}
-                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.05]">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-teal-600/20">
-                            <Search className="w-5 h-5 text-teal-400" />
+                    <div className="rounded-xl rz-result-card" data-testid="research-result-card">
+                      <div className="flex items-center justify-between p-5 sm:p-7" style={{ borderBottom: '1px solid var(--rz-border)' }}>
+                        <div className="flex items-center gap-4">
+                          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(45,212,191,0.1)' }}>
+                            <Search className="w-4 h-4" style={{ color: 'var(--rz-teal)' }} />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-teal-400">Research Results</p>
-                            <p className="text-xs text-gray-600">
-                              {researchResult.mode === 'explain' ? 'Explain mode' : researchResult.mode === 'brave' ? 'Brave Search (private)' : 'Web search'} 
-                              {researchResult.cached && ' • cached'}
+                            <p className="text-sm font-semibold" style={{ color: 'var(--rz-text-primary)' }}>Analysis Complete</p>
+                            <p className="text-[11px] mt-0.5" style={{ color: 'var(--rz-text-muted)' }}>
+                              {researchResult.mode === 'explain' ? 'Explain mode' : researchResult.mode === 'brave' ? 'Brave Search' : 'Web search'} 
+                              {researchResult.cached && ' · cached'}
                             </p>
                           </div>
                         </div>
                         <button 
                           onClick={clearAndReset}
-                          className="p-2 rounded-full hover:bg-white/5 transition-colors touch-target"
+                          className="p-2 rounded-lg transition-colors touch-target"
+                          style={{ color: 'var(--rz-text-muted)' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = 'var(--rz-text-primary)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--rz-text-muted)'; }}
                         >
-                          <X className="w-5 h-5 text-gray-500" />
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
                       
-                      {/* Content */}
-                      <div className="p-4 sm:p-6 space-y-5">
-                        {/* Key Takeaways - saveable as claims */}
+                      <div className="p-5 sm:p-7 space-y-6">
                         {researchResult.keyTakeaways && researchResult.keyTakeaways.length > 0 && (
-                          <div className="space-y-3">
+                          <div className="rz-fade-up rz-fade-up-delay-1 space-y-4">
                             <div className="flex items-center justify-between">
-                              <p className="text-xs font-medium text-gray-500">Key takeaways</p>
+                              <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Key Takeaways</p>
                               {activeDossierId && (
-                                <p className="text-[10px] text-teal-400/60">Click + to save as claim</p>
+                                <p className="text-[10px]" style={{ color: 'rgba(45,212,191,0.5)' }}>Click + to save as claim</p>
                               )}
                             </div>
-                            <ul className="space-y-2">
+                            <ul className="space-y-3">
                               {researchResult.keyTakeaways.map((takeaway, idx) => (
                                 <li key={idx} className="flex items-start gap-3 group">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                                  <p className="text-white/90 leading-relaxed flex-1">{takeaway}</p>
+                                  <span className="w-1 h-1 rounded-full mt-2.5 shrink-0" style={{ background: 'var(--rz-teal)' }} />
+                                  <p className="leading-relaxed flex-1 text-[15px]" style={{ color: 'var(--rz-text-primary)' }}>{takeaway}</p>
                                   {activeDossierId && (
                                     <button
                                       onClick={() => handleSaveClaimToDossier(takeaway, undefined, true)}
-                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-teal-400 hover:bg-teal-500/10 transition-all shrink-0"
-                                      title="Save as claim and add details"
+                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md transition-all shrink-0"
+                                      style={{ color: 'var(--rz-text-muted)' }}
+                                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--rz-teal)'; e.currentTarget.style.background = 'rgba(45,212,191,0.08)'; }}
+                                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--rz-text-muted)'; e.currentTarget.style.background = 'transparent'; }}
+                                      title="Save as claim"
                                       data-testid={`button-save-claim-${idx}`}
                                     >
                                       <Plus className="w-4 h-4" />
@@ -2058,19 +2084,17 @@ export default function Chat() {
                           </div>
                         )}
                         
-                        {/* Synthesis */}
                         {researchResult.synthesisMarkdown && (
-                          <div className="p-4 rounded-xl bg-teal-500/[0.06] border border-teal-500/20">
-                            <p className="text-xs font-medium text-teal-400/80 mb-3">Synthesis</p>
-                            <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{researchResult.synthesisMarkdown}</p>
+                          <div className="rz-fade-up rz-fade-up-delay-2 rz-section">
+                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-4" style={{ color: 'var(--rz-teal)' }}>Synthesis</p>
+                            <p className="leading-[1.8] whitespace-pre-wrap text-[15px]" style={{ color: 'var(--rz-text-primary)' }}>{researchResult.synthesisMarkdown}</p>
                           </div>
                         )}
                         
-                        {/* What to Check Next - horizontal scroll on mobile */}
                         {researchResult.whatToCheckNext && researchResult.whatToCheckNext.length > 0 && (
-                          <div className="space-y-3">
-                            <p className="text-xs font-medium text-gray-500">What to check next</p>
-                            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-hide">
+                          <div className="rz-fade-up rz-fade-up-delay-3 space-y-4">
+                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Evidence Gaps</p>
+                            <div className="overflow-x-auto -mx-5 sm:mx-0 px-5 sm:px-0 scrollbar-hide">
                               <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
                                 {researchResult.whatToCheckNext.map((item, idx) => (
                                   <button
@@ -2080,7 +2104,10 @@ export default function Chat() {
                                       setAgentResponse(null);
                                       setMessageInput(item);
                                     }}
-                                    className="px-3 py-2.5 sm:py-2 rounded-xl text-sm text-left bg-teal-500/[0.08] border border-teal-500/20 text-teal-200/80 hover:bg-teal-500/15 hover:border-teal-500/30 hover:text-teal-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    className="px-3.5 py-2.5 sm:py-2 rounded-lg text-sm text-left transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
+                                    style={{ background: 'rgba(91,141,239,0.06)', border: '1px solid rgba(91,141,239,0.15)', color: 'rgba(91,141,239,0.8)' }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(91,141,239,0.1)'; e.currentTarget.style.borderColor = 'rgba(91,141,239,0.3)'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(91,141,239,0.06)'; e.currentTarget.style.borderColor = 'rgba(91,141,239,0.15)'; }}
                                     data-testid={`button-next-check-${idx}`}
                                   >
                                     {item}
@@ -2091,20 +2118,18 @@ export default function Chat() {
                           </div>
                         )}
                         
-                        {/* Confidence */}
                         {researchResult.confidence && (
-                          <div className="p-3 rounded-lg bg-amber-500/[0.06] border border-amber-500/15">
-                            <p className="text-xs text-amber-400/70 flex items-center gap-2">
-                              <Info className="w-3.5 h-3.5" />
+                          <div className="rz-fade-up rz-fade-up-delay-4 p-4 rounded-lg" style={{ background: 'var(--rz-amber-glow)', border: '1px solid rgba(245,158,11,0.12)' }}>
+                            <p className="text-xs flex items-center gap-2.5" style={{ color: 'var(--rz-amber)' }}>
+                              <Info className="w-3.5 h-3.5 shrink-0" />
                               {researchResult.confidence}
                             </p>
                           </div>
                         )}
                       </div>
 
-                      {/* Footer */}
-                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-                        <Button
+                      <div className="rz-fade-up rz-fade-up-delay-5 px-5 sm:px-7 py-5" style={{ borderTop: '1px solid var(--rz-border)' }}>
+                        <button
                           onClick={() => {
                             const topic = researchResult.query || messageInput;
                             const synthesis = researchResult.synthesisMarkdown ? `\n\nResearch notes:\n${researchResult.synthesisMarkdown.slice(0, 300)}` : '';
@@ -2112,46 +2137,51 @@ export default function Chat() {
                             setSelectedZone('journal');
                             setTimeout(() => setMessageInput(`Thinking about: ${topic}${synthesis}`), 100);
                           }}
-                          variant="ghost"
-                          className="text-teal-400/70 hover:text-teal-300 hover:bg-teal-500/10 h-9 touch-target"
+                          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-lg transition-all group touch-target"
+                          style={{ background: 'rgba(91,141,239,0.04)', border: '1px solid rgba(91,141,239,0.1)' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(91,141,239,0.08)'; e.currentTarget.style.borderColor = 'rgba(91,141,239,0.2)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(91,141,239,0.04)'; e.currentTarget.style.borderColor = 'rgba(91,141,239,0.1)'; }}
                           data-testid="button-journal-about-this"
                         >
-                          <PenLine className="w-4 h-4 mr-2" />
-                          Journal about this
-                        </Button>
-                        <Button
-                          onClick={clearAndReset}
-                          variant="ghost"
-                          className="text-gray-500 hover:text-white hover:bg-white/5 h-9 touch-target"
-                        >
-                          New Search
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
+                          <span className="text-sm font-medium" style={{ color: 'var(--rz-accent)' }}>Continue reasoning with your Thinking Partner</span>
+                          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" style={{ color: 'var(--rz-accent)' }} />
+                        </button>
+                        <div className="flex justify-center mt-3">
+                          <button
+                            onClick={clearAndReset}
+                            className="text-[11px] font-medium transition-colors"
+                            style={{ color: 'var(--rz-text-muted)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--rz-text-primary)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--rz-text-muted)'; }}
+                          >
+                            New Search
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
                   
                   {/* Claims Panel - Show when dossier is active */}
                   {activeDossierId && (
-                    <div className="mt-4 rounded-2xl sm:rounded-3xl border border-white/[0.06] bg-white/[0.02] overflow-hidden" data-testid="claims-panel">
-                      <div className="p-4 border-b border-white/[0.05]">
+                    <div className="mt-5 rounded-xl overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="claims-panel">
+                      <div className="p-5" style={{ borderBottom: '1px solid var(--rz-border)' }}>
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <FolderOpen className="w-4 h-4 text-teal-400" />
-                            <p className="text-sm font-medium text-white">
+                          <div className="flex items-center gap-2.5">
+                            <FolderOpen className="w-4 h-4" style={{ color: 'var(--rz-teal)' }} />
+                            <p className="text-sm font-semibold" style={{ color: 'var(--rz-text-primary)' }}>
                               {dossiers?.find(d => d.id === activeDossierId)?.name} Claims
                             </p>
                             {dossierClaims && dossierClaims.length > 0 && (
-                              <span className="text-xs text-gray-500">({dossierClaims.length})</span>
+                              <span className="text-[11px]" style={{ color: 'var(--rz-text-muted)' }}>({dossierClaims.length})</span>
                             )}
                           </div>
                         </div>
-                        {/* Manual claim input */}
                         <div className="mt-3 flex gap-2">
                           <input
                             type="text"
                             placeholder="Add a claim manually..."
-                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-teal-500/50"
+                            className="flex-1 px-3 py-2 rounded-md text-sm text-white placeholder:text-gray-600 outline-none"
+                            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--rz-border)' }}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' && e.currentTarget.value.trim()) {
                                 handleSaveClaimToDossier(e.currentTarget.value.trim(), undefined, true);
@@ -2168,7 +2198,8 @@ export default function Chat() {
                                 input.value = '';
                               }
                             }}
-                            className="px-3 py-2 rounded-lg bg-teal-500/20 text-teal-400 hover:bg-teal-500/30 transition-colors"
+                            className="px-3 py-2 rounded-md transition-colors"
+                            style={{ background: 'rgba(45,212,191,0.12)', color: 'var(--rz-teal)' }}
                             title="Add claim"
                             data-testid="button-add-manual-claim"
                           >
@@ -2328,34 +2359,35 @@ export default function Chat() {
                   
                   {/* Related Journal Entries - Show when research finds related thinking */}
                   {relatedJournalEntries && relatedJournalEntries.length > 0 && (
-                    <div className="mt-4 rounded-2xl sm:rounded-3xl border border-teal-500/20 bg-teal-500/[0.02] overflow-hidden" data-testid="related-entries-panel">
-                      <div className="p-4 border-b border-teal-500/10">
-                        <div className="flex items-center gap-2">
-                          <PenLine className="w-4 h-4 text-teal-400" />
-                          <p className="text-sm font-medium text-white">Related from your Journal</p>
-                          <span className="text-xs text-gray-500">({relatedJournalEntries.length})</span>
+                    <div className="mt-5 rounded-xl overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="related-entries-panel">
+                      <div className="p-5" style={{ borderBottom: '1px solid var(--rz-border)' }}>
+                        <div className="flex items-center gap-2.5">
+                          <PenLine className="w-4 h-4" style={{ color: 'var(--rz-accent)' }} />
+                          <p className="text-sm font-semibold" style={{ color: 'var(--rz-text-primary)' }}>Related from your Journal</p>
+                          <span className="text-[11px]" style={{ color: 'var(--rz-text-muted)' }}>({relatedJournalEntries.length})</span>
                         </div>
                         {editingClaimId && (
-                          <p className="text-[10px] text-teal-400/70 mt-1">Click an entry to link it to the claim you're editing</p>
+                          <p className="text-[10px] mt-1.5" style={{ color: 'rgba(91,141,239,0.6)' }}>Click an entry to link it to the claim you're editing</p>
                         )}
                       </div>
-                      <div className="p-4 space-y-3 max-h-[200px] overflow-y-auto">
+                      <div className="p-5 space-y-3 max-h-[200px] overflow-y-auto">
                         {relatedJournalEntries.map((entry, idx) => (
                           <div 
                             key={entry.id || idx} 
-                            className={`p-3 rounded-xl bg-white/[0.02] border transition-all ${
-                              editingClaimId 
-                                ? 'border-teal-500/20 hover:border-teal-500/40 cursor-pointer' 
-                                : 'border-white/[0.05]'
-                            }`}
+                            className="p-3.5 rounded-lg transition-all"
+                            style={{ 
+                              background: 'rgba(255,255,255,0.015)', 
+                              border: editingClaimId ? '1px solid rgba(91,141,239,0.15)' : '1px solid var(--rz-border)',
+                              cursor: editingClaimId ? 'pointer' : 'default'
+                            }}
                             onClick={() => {
                               if (editingClaimId && entry.id) {
                                 handleLinkClaimToJournalEntry(editingClaimId, entry.id);
                               }
                             }}
                           >
-                            <p className="text-sm text-white/80 leading-relaxed line-clamp-3">{entry.text}</p>
-                            <p className="text-[10px] text-gray-500 mt-2">
+                            <p className="text-sm leading-relaxed line-clamp-3" style={{ color: 'var(--rz-text-primary)' }}>{entry.text}</p>
+                            <p className="text-[10px] mt-2" style={{ color: 'var(--rz-text-muted)' }}>
                               {new Date(entry.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                             </p>
                           </div>

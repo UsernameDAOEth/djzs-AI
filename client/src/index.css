@@ -81,7 +81,7 @@ input, textarea, [contenteditable] {
 }
 
 .gradient-research {
-  background: linear-gradient(135deg, #1d2e2e, #2a3f3f);
+  background: #0F1115;
 }
 
 .gradient-thinking {
@@ -177,6 +177,19 @@ input, textarea, [contenteditable] {
   .zone-research {
     --zone-accent: 180, 50%, 36%;
     --zone-glow: rgba(46, 139, 139, 0.15);
+    --rz-bg: #0F1115;
+    --rz-surface: #14171D;
+    --rz-border: rgba(255, 255, 255, 0.06);
+    --rz-accent: #5B8DEF;
+    --rz-accent-glow: rgba(91, 141, 239, 0.12);
+    --rz-teal: #2DD4BF;
+    --rz-teal-glow: rgba(45, 212, 191, 0.10);
+    --rz-amber: #F59E0B;
+    --rz-amber-glow: rgba(245, 158, 11, 0.08);
+    --rz-consensus: #60A5FA;
+    --rz-text-primary: #E2E8F0;
+    --rz-text-secondary: #64748B;
+    --rz-text-muted: #475569;
   }
 
   .zone-glow {
@@ -186,6 +199,94 @@ input, textarea, [contenteditable] {
   /* Improved textarea focus styles */
   .writing-area-focused {
     background: radial-gradient(ellipse at center, var(--zone-glow) 0%, transparent 70%);
+  }
+
+  /* ===== Futuristic Research Zone ===== */
+  @keyframes rz-underline-pulse {
+    0%, 100% { opacity: 0.3; transform: scaleX(0.6); }
+    50% { opacity: 1; transform: scaleX(1); }
+  }
+
+  @keyframes rz-scan-line {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes rz-fade-up {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes rz-glow-border {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  .rz-underline-pulse {
+    animation: rz-underline-pulse 2s ease-in-out infinite;
+  }
+
+  .rz-fade-up {
+    animation: rz-fade-up 0.6s ease-out forwards;
+  }
+
+  .rz-fade-up-delay-1 { animation: rz-fade-up 0.6s ease-out 0.1s forwards; opacity: 0; }
+  .rz-fade-up-delay-2 { animation: rz-fade-up 0.6s ease-out 0.2s forwards; opacity: 0; }
+  .rz-fade-up-delay-3 { animation: rz-fade-up 0.6s ease-out 0.35s forwards; opacity: 0; }
+  .rz-fade-up-delay-4 { animation: rz-fade-up 0.6s ease-out 0.5s forwards; opacity: 0; }
+  .rz-fade-up-delay-5 { animation: rz-fade-up 0.6s ease-out 0.65s forwards; opacity: 0; }
+
+  .rz-result-card {
+    background: var(--rz-surface);
+    border: 1px solid var(--rz-border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rz-result-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(45, 212, 191, 0.2), transparent 40%, rgba(91, 141, 239, 0.15));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+
+  .rz-section {
+    padding: 1.25rem 1.5rem;
+    background: rgba(255, 255, 255, 0.015);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  .rz-analyzing-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 17, 21, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  .rz-progress-line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--rz-teal), var(--rz-accent), transparent);
+    animation: rz-scan-line 1.8s ease-in-out infinite;
+    border-radius: 2px;
+  }
+
+  .rz-input-glow {
+    box-shadow: 0 0 40px -10px var(--rz-teal-glow), 0 0 80px -20px var(--rz-accent-glow);
+  }
+
+  .rz-heading {
+    font-family: var(--font-heading), Georgia, serif;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
   }
 
   /* Thinking partner card styles */
