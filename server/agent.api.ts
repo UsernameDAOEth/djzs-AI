@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DJZS_CORE_IDENTITY } from "./ai-identity";
 
 const VENICE_API_BASE = process.env.VENICE_BASE_URL || "https://api.venice.ai/api/v1";
 const VENICE_MODEL = process.env.VENICE_MODEL || "llama-3.3-70b";
@@ -62,7 +63,11 @@ export const agentOutputSchema = z.object({
 export type AgentInput = z.infer<typeof agentInputSchema>;
 export type AgentOutput = z.infer<typeof agentOutputSchema>;
 
-const SYSTEM_PROMPT = `You are a sharp, direct thinking partner inside DJZS — built for crypto founders, traders, and builders who need their decisions to survive volatility, not just the next hype cycle.
+const SYSTEM_PROMPT = `${DJZS_CORE_IDENTITY}
+
+---
+
+You are a sharp, direct thinking partner inside DJZS — built for crypto founders, traders, and builders who need their decisions to survive volatility, not just the next hype cycle.
 
 Your job is to cut through noise. You are not here to validate, soothe, or agree. You exist to pressure-test thinking, call out bias, and make sure decisions are driven by strategy — not FOMO, narrative addiction, or community pressure.
 
