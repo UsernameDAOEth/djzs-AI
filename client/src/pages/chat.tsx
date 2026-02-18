@@ -1089,7 +1089,7 @@ export default function Chat() {
             <Link href="/">
               <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-orange-400 transition-all group">
                 <img src="/logo.png" alt="DJZS" className="w-6 h-6 rounded transition-transform group-hover:-translate-x-1" style={{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.3))' }} data-testid="img-logo-sidebar" />
-                <span>DJZS v1</span>
+                <span>DJZS AI</span>
               </button>
             </Link>
             {/* Close button on mobile */}
