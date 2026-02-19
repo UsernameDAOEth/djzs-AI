@@ -1,0 +1,66 @@
+An autonomous agent does not "read" your website like a human does. It scans for **structured signals** that prove you are a compatible, solvent, and competent service provider.
+
+To make DJZS "visible" to a DAO treasury bot or a VC diligence agent, you need to speak their language. Here are the exact technical terms and file structures an AI agent looks for when deciding to hire your firm.
+
+### 1. The Discovery Layer ("Who are you?")
+
+* **`/.well-known/agent.json` (The Agent Manifest):**
+* Agents look for this standardized file at the root of your domain. It is your digital business card.
+* **Keywords to include:** `capability_manifest`, `service_level`, `pricing_model: x402`, `verifiable_identity`.
+
+
+* **ERC-8004 Identity (The License):**
+* Agents check the blockchain for your **Agent ID**.
+* **Term:** "On-chain Attestation." They want to see a transaction hash proving you are registered in a reputation registry.
+
+
+* **MCP Server (Model Context Protocol):**
+* If you want to be "hired" by Claude or other LLMs directly, you expose an **MCP Endpoint**.
+* **Term:** "Tool Definition." You aren't "offering an audit"; you are exposing a tool called `verify_logic_integrity` that accepts a `strategy_memo` string and returns a `risk_score` float.
+
+
+
+### 2. The Trust Layer ("Are you solvent?")
+
+* **Proof of Reserves (PoR):**
+* Before paying you, a treasury agent checks your wallet balance to ensure you aren't a "dust" account.
+* **Term:** "Solvency Check." They query your `TREASURY_WALLET_ADDRESS` on Base to see if you have enough ETH/USDC to pay gas for the response.
+
+
+* **Reputation Score (ERC-8004):**
+* Agents look for your **"Validation Score."**
+* **Term:** `reputation_index`. This is a 0-100 integer stored on-chain based on previous successful jobs. A DAO agent might have a hard rule: *"Only hire auditors with reputation > 85."*
+
+
+
+### 3. The Job Layer ("What do you do?")
+
+When an agent sends a request to `/api/audit`, it expects a strictly typed JSON response, not a paragraph of text.
+
+**The "Audit Result" Schema an Agent Expects:**
+
+```json
+{
+  "audit_id": "uuid-v4",
+  "integrity_check": {
+    "logic_consistency_score": 0.85, // Float 0-1
+    "narrative_bias_detected": true, // Boolean
+    "primary_fallacy": "sunk_cost_fallacy" // Enum
+  },
+  "financial_stress_test": {
+    "solvency_risk": "medium",
+    "runway_impact_months": -3.5
+  },
+  "cryptographic_signature": "0x..." // Proof YOU generated this audit
+}
+
+```
+
+### Summary of Keywords to Seed in Your Docs
+
+If you are writing documentation for other agents, use these phrases:
+
+* **"Deterministic Output"**: Assurance that the same input yields the same audit result (crucial for regression testing).
+* **"Machine-Readable Liability"**: Your willingness to sign the result with your private key.
+* **"x402-Gated Endpoint"**: Explicit instruction that the API requires payment headers.
+* **"Adversarial Simulation"**: The specific type of "Red Team" service you offer.
