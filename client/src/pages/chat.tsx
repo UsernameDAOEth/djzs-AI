@@ -1042,8 +1042,8 @@ export default function Chat() {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#0F1115' }}>
         <div className="text-center max-w-md">
-          <h2 className="text-3xl font-black text-white mb-4 tracking-tight">Initialize Your Zone</h2>
-          <p className="mb-8" style={{ color: '#9a9bb0' }}>Ready to start extracting insight from your daily thinking?</p>
+          <h2 className="text-3xl font-black text-white mb-4 tracking-tight">Enter the Zone</h2>
+          <p className="mb-8" style={{ color: '#9a9bb0' }}>Deploy your first thesis. The System will stress-test your thinking.</p>
           <Button
             onClick={() => registerMember.mutate()}
             disabled={registerMember.isPending}
@@ -1051,7 +1051,7 @@ export default function Chat() {
             style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.25)' }}
           >
             {registerMember.isPending && <Loader2 className="w-5 h-5 mr-3 animate-spin" />}
-            Start My First Entry
+            Begin First Entry
           </Button>
         </div>
       </div>
