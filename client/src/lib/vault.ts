@@ -137,6 +137,24 @@ export interface DecisionLog {
   updatedAt: Date;
 }
 
+export type AuditZoneTier = 'micro' | 'founder' | 'treasury';
+export type BiasTy = 'FOMO' | 'Sunk_Cost' | 'Narrative_Reaction' | 'Authority_Bias' | 'Confirmation_Bias' | 'Recency_Bias' | 'None';
+
+export interface AuditRecord {
+  id?: number;
+  audit_id: string;
+  zone_tier: AuditZoneTier;
+  timestamp: Date;
+  original_payload: string;
+  audit_type: string;
+  risk_score: number;
+  primary_bias_detected: BiasTy;
+  logic_flaws: Array<{ flaw_type: string; severity: string; explanation: string }>;
+  structural_recommendations: string[];
+  cryptographic_hash: string;
+  transaction_hash?: string;
+}
+
 export type ContentFormat = 'article' | 'thread' | 'video' | 'newsletter' | 'podcast' | 'post';
 export type ContentStatus = 'idea' | 'drafting' | 'refining' | 'ready' | 'published';
 
@@ -170,6 +188,7 @@ class VaultDatabase extends Dexie {
   marketAlerts!: EntityTable<MarketAlert, 'id'>;
   decisionLogs!: EntityTable<DecisionLog, 'id'>;
   contentPipeline!: EntityTable<ContentPipelineItem, 'id'>;
+  auditRecords!: EntityTable<AuditRecord, 'id'>;
 
   constructor() {
     super('djzs-vault');
@@ -256,6 +275,22 @@ class VaultDatabase extends Dexie {
       marketAlerts: '++id, asset, condition, isActive, createdAt',
       decisionLogs: '++id, status, stakes, outcome, createdAt, updatedAt',
       contentPipeline: '++id, status, format, createdAt, updatedAt',
+    });
+
+    this.version(9).stores({
+      entries: '++id, type, createdAt, updatedAt, videoAssetId',
+      insights: '++id, entryId, type, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
+      tradeRecords: '++id, action, status, createdAt',
+      researchDossiers: '++id, name, isArchived, createdAt, updatedAt',
+      researchQueries: '++id, dossierId, createdAt',
+      researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
+      musicTracks: '++id, name, zone, uploadedAt',
+      tradeArtifacts: '++id, &hash, createdAt, thesisAsset, thesisSide, thesisTimeframe, *linkedJournalEntryIds, *linkedResearchDossierIds',
+      marketAlerts: '++id, asset, condition, isActive, createdAt',
+      decisionLogs: '++id, status, stakes, outcome, createdAt, updatedAt',
+      contentPipeline: '++id, status, format, createdAt, updatedAt',
+      auditRecords: '++id, &audit_id, zone_tier, risk_score, timestamp, cryptographic_hash',
     });
   }
 }
@@ -805,4 +840,34 @@ export async function getAllContentItems(): Promise<ContentPipelineItem[]> {
 
 export async function deleteContentItem(id: number): Promise<void> {
   await vault.contentPipeline.delete(id);
+}
+
+export async function saveAuditRecord(record: Omit<AuditRecord, 'id'>): Promise<number> {
+  const id = await vault.auditRecords.add(record);
+  return id as number;
+}
+
+export async function getAuditRecords(limit: number = 50): Promise<AuditRecord[]> {
+  return vault.auditRecords
+    .orderBy('timestamp')
+    .reverse()
+    .limit(limit)
+    .toArray();
+}
+
+export async function getAuditRecordsByTier(tier: AuditZoneTier, limit: number = 50): Promise<AuditRecord[]> {
+  return vault.auditRecords
+    .where('zone_tier')
+    .equals(tier)
+    .reverse()
+    .sortBy('timestamp')
+    .then(records => records.slice(0, limit));
+}
+
+export async function getAuditRecord(id: number): Promise<AuditRecord | undefined> {
+  return vault.auditRecords.get(id);
+}
+
+export async function deleteAuditRecord(id: number): Promise<void> {
+  await vault.auditRecords.delete(id);
 }

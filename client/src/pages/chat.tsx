@@ -58,7 +58,13 @@ import {
   MicOff,
   Headphones,
   Brain,
-  Palette
+  Palette,
+  Terminal,
+  ScrollText,
+  Hash,
+  Activity,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
@@ -76,6 +82,8 @@ import { MessageCard } from "@/components/chat/message-cards";
 import { apiRequest, queryClient, getVeniceApiKey, setVeniceApiKey } from "@/lib/queryClient";
 import { isVaultEncryptionSetUp, isVaultLocked, lockVault, setupVaultPassphrase, unlockVault, removeVaultEncryption } from "@/lib/vault-crypto";
 import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
+import { TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
+import type { DJZSLogicAudit } from "@shared/audit-schema";
 import { format } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
 import { VideoUpload, VideoPlayer } from "@/components/video-diary";
@@ -116,6 +124,8 @@ import {
   getClaimsForDossier,
   searchJournalEntriesForTopic,
   exportVault,
+  saveAuditRecord,
+  getAuditRecords,
   type MemoryPin,
   type MusicTrack,
   type EntryType,
@@ -124,7 +134,9 @@ import {
   type ResearchQuery,
   type ResearchClaim,
   type ClaimStatus,
-  type TrustLevel
+  type TrustLevel,
+  type AuditRecord,
+  type AuditZoneTier
 } from "@/lib/vault";
 
 interface JournalAnalysisResult {
@@ -148,6 +160,48 @@ const V1_ZONES = [
   { id: "decisions", name: "Decisions", icon: Brain, description: "Decision log", purpose: "Track high-stakes decisions, stress test reasoning with AI." },
   { id: "content", name: "Content", icon: Palette, description: "Content pipeline", purpose: "Compose, refine, and track content ideas with AI." },
 ];
+
+const ZONE_CONFIGS = [
+  { 
+    id: "micro" as AuditTier, 
+    name: "Micro-Zone", 
+    icon: Zap, 
+    price: "$2.50", 
+    color: "#2dd4bf",
+    borderColor: "rgba(45,212,191,0.25)",
+    bgColor: "rgba(45,212,191,0.06)",
+    description: "Fast constrained operational audit. Binary risk scoring.",
+    placeholder: "Paste your operational memo, trade thesis, or quick decision here...",
+    purpose: "High-frequency sanity check for operational decisions.",
+    maxChars: 1000,
+  },
+  { 
+    id: "founder" as AuditTier, 
+    name: "Founder Zone", 
+    icon: Activity, 
+    price: "$5.00", 
+    color: "#F37E20",
+    borderColor: "rgba(243,126,32,0.25)",
+    bgColor: "rgba(243,126,32,0.06)",
+    description: "Deep roadmap diligence. Detects narrative drift and confirmation bias.",
+    placeholder: "Describe your strategic roadmap, fundraising thesis, or business model...",
+    purpose: "Strategic pressure-test for founder-level decisions.",
+    maxChars: 5000,
+  },
+  { 
+    id: "treasury" as AuditTier, 
+    name: "Treasury Zone", 
+    icon: Shield, 
+    price: "$50.00", 
+    color: "#a855f7",
+    borderColor: "rgba(168,85,247,0.25)",
+    bgColor: "rgba(168,85,247,0.06)",
+    description: "Exhaustive adversarial stress-test for capital deployment proposals.",
+    placeholder: "Full capital deployment proposal, governance vote rationale, or treasury allocation strategy...",
+    purpose: "Exhaustive governance audit for high-stakes capital decisions.",
+    maxChars: Infinity,
+  },
+] as const;
 
 const JOURNAL_PROMPTS = [
   "What feels unresolved right now?",
@@ -241,6 +295,15 @@ export default function Chat() {
     }
     return "journal";
   });
+  const [activeZoneTier, setActiveZoneTier] = useState<AuditTier>("micro");
+  const [auditPayload, setAuditPayload] = useState("");
+  const [auditResult, setAuditResult] = useState<DJZSLogicAudit | null>(null);
+  const [showLedger, setShowLedger] = useState(false);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [expandedAuditId, setExpandedAuditId] = useState<number | null>(null);
+
+  const auditRecords = useLiveQuery(() => getAuditRecords(50), []);
+  const currentZoneConfig = ZONE_CONFIGS.find(z => z.id === activeZoneTier) || ZONE_CONFIGS[0];
   const [messageInput, setMessageInput] = useState("");
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [memoryDrawerOpen, setMemoryDrawerOpen] = useState(false);
@@ -801,6 +864,77 @@ export default function Chat() {
     setAgentResponse(prev => prev ? { ...prev, memorySuggestion: { ...prev.memorySuggestion, shouldSuggest: false } } : null);
   };
 
+  const deployToZone = useMutation({
+    mutationFn: async ({ tier, memo }: { tier: AuditTier; memo: string }) => {
+      const endpoint = TIER_CONFIG[tier].endpoint;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ strategy_memo: memo, audit_type: 'general' }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Audit failed' }));
+        throw new Error(err.error || `Audit failed: ${res.status}`);
+      }
+      return res.json() as Promise<DJZSLogicAudit>;
+    },
+    onSuccess: async (data) => {
+      setAuditResult(data);
+      setIsDeploying(false);
+      await saveAuditRecord({
+        audit_id: data.audit_id,
+        zone_tier: data.tier as AuditZoneTier,
+        timestamp: new Date(data.timestamp),
+        original_payload: auditPayload,
+        audit_type: 'general',
+        risk_score: data.risk_score,
+        primary_bias_detected: data.primary_bias_detected as any,
+        logic_flaws: data.logic_flaws,
+        structural_recommendations: data.structural_recommendations,
+        cryptographic_hash: data.cryptographic_hash,
+      });
+      toast({ title: "Audit deployed", description: `${TIER_CONFIG[data.tier].name} audit complete. Risk score: ${data.risk_score}/100` });
+    },
+    onError: (error) => {
+      setIsDeploying(false);
+      toast({
+        title: "Deployment failed",
+        description: error instanceof Error ? error.message : "Could not complete audit",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeploy = () => {
+    if (!auditPayload.trim() || auditPayload.trim().length < 20) {
+      toast({ title: "Payload too short", description: "Strategy memo must be at least 20 characters.", variant: "destructive" });
+      return;
+    }
+    if (isDeploying) return;
+    setIsDeploying(true);
+    setAuditResult(null);
+    deployToZone.mutate({ tier: activeZoneTier, memo: auditPayload });
+  };
+
+  const clearAuditResult = () => {
+    setAuditResult(null);
+    setAuditPayload("");
+  };
+
+  const getRiskColor = (score: number) => {
+    if (score >= 75) return '#ef4444';
+    if (score >= 50) return '#f59e0b';
+    if (score >= 25) return '#2dd4bf';
+    return '#34d399';
+  };
+
+  const getRiskLabel = (score: number) => {
+    if (score >= 75) return 'CRITICAL';
+    if (score >= 50) return 'ELEVATED';
+    if (score >= 25) return 'MODERATE';
+    return 'LOW';
+  };
+
   const handleForgetMemory = async (id: number) => {
     try {
       await forgetMemory(id);
@@ -1103,14 +1237,16 @@ export default function Chat() {
           </div>
 
           <nav className="flex-1 px-4 space-y-1">
-            {V1_ZONES.map((zone) => {
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600 px-4 mb-2 mt-2">Execution Zones</p>
+            {ZONE_CONFIGS.map((zone) => {
               const Icon = zone.icon;
-              const isActive = selectedZone === zone.id;
+              const isActive = !showLedger && activeZoneTier === zone.id;
               return (
                 <button
                   key={zone.id}
                   onClick={() => {
-                    setSelectedZone(zone.id);
+                    setActiveZoneTier(zone.id);
+                    setShowLedger(false);
                     setMobileSidebarOpen(false);
                   }}
                   className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all group ${
@@ -1118,22 +1254,37 @@ export default function Chat() {
                       ? "bg-white/[0.03] text-white" 
                       : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
                   }`}
+                  data-testid={`button-zone-${zone.id}`}
                 >
-                  <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-orange-400" : "text-gray-600 group-hover:text-gray-400"}`} />
-                  <span className="text-sm font-bold tracking-tight">{zone.name}</span>
-                  {isActive && <div className="ml-auto w-1 h-1 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(243,126,32,0.5)]"></div>}
+                  <Icon className="w-5 h-5 transition-colors" style={{ color: isActive ? zone.color : undefined }} />
+                  <div className="flex-1 text-left">
+                    <span className="text-sm font-bold tracking-tight block">{zone.name}</span>
+                    <span className="text-[10px] font-mono" style={{ color: isActive ? zone.color : 'rgba(156,163,175,0.5)' }}>{zone.price} USDC</span>
+                  </div>
+                  {isActive && <div className="w-1 h-1 rounded-full shadow-[0_0_8px]" style={{ background: zone.color, boxShadow: `0 0 8px ${zone.color}` }}></div>}
                 </button>
               );
             })}
 
+            <div className="my-3 border-t border-white/[0.04]" />
+            
             <button
-              onClick={() => setQuickSearchModalOpen(true)}
-              className="w-full flex items-center gap-4 px-4 py-3 mt-3 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-white/[0.03] transition-all group"
-              data-testid="button-sidebar-quick-search"
+              onClick={() => {
+                setShowLedger(true);
+                setMobileSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all group ${
+                showLedger 
+                  ? "bg-white/[0.03] text-white" 
+                  : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
+              }`}
+              data-testid="button-ledger"
             >
-              <Search className="w-5 h-5 text-gray-600 group-hover:text-gray-400 transition-colors" />
-              <span className="text-sm font-bold tracking-tight">Search</span>
-              <kbd className="ml-auto px-1.5 py-0.5 rounded text-[10px] font-mono text-gray-600 border border-white/[0.08] bg-white/[0.03] group-hover:border-white/[0.12]">⌘K</kbd>
+              <ScrollText className={`w-5 h-5 transition-colors ${showLedger ? "text-amber-400" : "text-gray-600 group-hover:text-gray-400"}`} />
+              <span className="text-sm font-bold tracking-tight">Cryptographic Ledger</span>
+              {auditRecords && auditRecords.length > 0 && (
+                <span className="ml-auto text-[10px] font-mono text-gray-600">{auditRecords.length}</span>
+              )}
             </button>
           </nav>
 
@@ -1395,8 +1546,12 @@ export default function Chat() {
                 <Menu className="w-5 h-5" />
               </button>
               <div className="flex flex-col">
-                <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">{currentZone.name}</h2>
-                <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">{currentZone.purpose}</p>
+                <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">
+                  {showLedger ? "Cryptographic Ledger" : currentZoneConfig.name}
+                </h2>
+                <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">
+                  {showLedger ? "Immutable audit trail — all zone deployments recorded locally." : currentZoneConfig.purpose}
+                </p>
               </div>
             </div>
 
@@ -1486,1449 +1641,231 @@ export default function Chat() {
           </header>
 
           {/* Main Content Area - scrollable */}
-          <div className={`flex-1 overflow-y-auto scroll-smooth ${selectedZone === 'journal' ? 'zone-journal' : selectedZone === 'trade' ? 'zone-trade' : selectedZone === 'decisions' ? 'zone-decisions' : selectedZone === 'content' ? 'zone-content' : 'zone-research'}`}>
-            {selectedZone === 'trade' && (
-              <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-4 sm:py-8">
-                <TradeArtifactZone walletAddress={address} />
-              </div>
-            )}
-            {selectedZone === 'decisions' && (
-              <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-4 sm:py-8">
-                <DecisionLogZone />
-              </div>
-            )}
-            {selectedZone === 'content' && (
-              <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-4 sm:py-8">
-                <ContentPipelineZone />
-              </div>
-            )}
-            {selectedZone !== 'trade' && selectedZone !== 'decisions' && selectedZone !== 'content' && (
-            <div className="flex flex-col max-w-2xl w-full mx-auto px-4 sm:px-8">
-              {/* Writing Area - vertically centered */}
-              <div className={`flex-1 flex flex-col justify-center py-4 sm:py-12 min-h-[60vh] sm:min-h-[70vh]`}>
-                {/* Stats bar - streak, last entry, total (Journal only) */}
-                {selectedZone === 'journal' && entryStats && entryStats.totalEntries > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-8 p-3 sm:p-4 rounded-lg animate-in fade-in duration-500" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
-                    {entryStats.streak > 0 && (
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(243,126,32,0.08)' }} data-testid="streak-badge">
-                        <span className="text-sm">🔥</span>
-                        <span className="text-xs font-bold tabular-nums" style={{ color: '#F37E20' }}>
-                          {entryStats.streak} day{entryStats.streak !== 1 ? 's' : ''}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                      <Clock className="w-3.5 h-3.5 text-gray-500" />
-                      <span className="text-xs font-medium text-gray-400">
-                        {entryStats.daysSinceLastEntry === 0 
-                          ? "Today" 
-                          : entryStats.daysSinceLastEntry === 1 
-                            ? "Yesterday" 
-                            : `${entryStats.daysSinceLastEntry} days ago`}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                      <BookOpen className="w-3.5 h-3.5 text-gray-500" />
-                      <span className="text-xs font-medium text-gray-400">
-                        {entryStats.totalEntries} {entryStats.totalEntries === 1 ? 'entry' : 'entries'}
-                      </span>
-                    </div>
+          <div className="flex-1 overflow-y-auto scroll-smooth">
+            {showLedger ? (
+            <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-10">
+              <div className="space-y-4">
+                {(!auditRecords || auditRecords.length === 0) ? (
+                  <div className="text-center py-20">
+                    <ScrollText className="w-12 h-12 mx-auto mb-4 text-gray-600" />
+                    <p className="text-lg font-bold text-gray-400 mb-2">No audit records yet</p>
+                    <p className="text-sm text-gray-600">Deploy your first strategy memo to a Zone to create an immutable record.</p>
+                    <button
+                      onClick={() => { setShowLedger(false); setActiveZoneTier('micro'); }}
+                      className="mt-6 px-6 py-3 rounded-lg text-sm font-bold transition-all"
+                      style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
+                      data-testid="button-first-deployment"
+                    >
+                      Deploy to Micro-Zone ($2.50)
+                    </button>
                   </div>
-                )}
-                
-                {/* First time welcome (Journal only) */}
-                {selectedZone === 'journal' && entryStats && entryStats.totalEntries === 0 && (
-                  <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-lg bg-orange-500/[0.03] border border-orange-500/10 animate-in fade-in duration-700 flex flex-col items-center text-center" data-testid="first-time-welcome">
-                    <img src="/logo.png" alt="DJZS" className="w-12 h-12 rounded-md mb-4 logo-pulse" style={{ filter: 'drop-shadow(0 0 6px rgba(243,126,32,0.2))' }} data-testid="img-logo-first-entry" />
-                    <p className="text-[10px] sm:text-[11px] font-black text-orange-400/70 uppercase tracking-widest mb-2">First entry</p>
-                    <p className="text-xs sm:text-sm text-gray-400 leading-relaxed break-words">
-                      Write whatever's on your mind. The more you return, the more this becomes yours.
-                    </p>
-                  </div>
-                )}
-                
-                {/* Zone-specific input areas */}
-                {selectedZone === 'journal' ? (
-                  <>
-                    {/* Journal: Prompt hint */}
-                    <p className={`text-sm sm:text-base font-medium mb-4 transition-all duration-500 break-words ${isFocused ? 'opacity-100 text-orange-300/70' : 'opacity-60 text-gray-400'}`}>
-                      {currentPrompts[currentPromptIndex]}
-                    </p>
-                    
-                    {/* Journal: Tall writing pad */}
-                    <div className={`relative transition-all duration-500 rounded-lg ${isFocused ? 'zone-glow writing-area-focused' : ''}`}>
-                      <textarea
-                        ref={textareaRef}
-                        autoFocus
-                        value={messageInput}
-                        onChange={(e) => {
-                          setMessageInput(e.target.value);
-                          if (frozenHeight) setFrozenHeight(null);
-                        }}
-                        onKeyDown={handleKeyDown}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
-                        placeholder="Write what you're thinking. No formatting. No pressure."
-                        className={`w-full bg-transparent border-none outline-none focus:ring-0 text-lg sm:text-xl font-normal text-white/95 placeholder:text-gray-600 resize-none leading-[1.9] tracking-normal p-4 sm:p-6 overflow-hidden ${isFocused ? 'placeholder:text-gray-500' : ''}`}
-                        style={{ 
-                          minHeight: frozenHeight ? undefined : 'max(180px, calc(50vh - 100px))',
-                          height: frozenHeight ? `${frozenHeight}px` : 'auto'
-                        }}
-                        data-testid="textarea-journal"
-                      />
-                    </div>
-
-                    {showVideoUpload && (
-                      <div className="mt-4">
-                        <VideoUpload
-                          onVideoReady={(assetId, playbackId) => {
-                            setPendingVideoAssetId(assetId);
-                            setPendingVideoPlaybackId(playbackId);
-                            setShowVideoUpload(false);
-                          }}
-                          onCancel={() => setShowVideoUpload(false)}
-                        />
-                      </div>
-                    )}
-
-                    {pendingVideoAssetId && !showVideoUpload && (
-                      <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                        <Video className="w-4 h-4 text-orange-400" />
-                        <span className="text-xs text-orange-300 font-medium">Video attached</span>
-                        <button
-                          onClick={() => { setPendingVideoAssetId(null); setPendingVideoPlaybackId(null); }}
-                          className="ml-auto p-1 rounded-lg text-gray-500 hover:text-red-400 transition-colors"
-                          data-testid="button-remove-video"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    )}
-                  </>
                 ) : (
-                  <>
-                    {/* Research: Label */}
-                    <p className="rz-heading text-[10px] sm:text-xs font-bold tracking-[0.25em] mb-2" style={{ color: 'var(--rz-text-muted)' }}>
-                      DJZS Research Engine
-                    </p>
-
-                    {/* Research: Prompt hint (left-aligned, matching Journal) */}
-                    <p className={`text-sm sm:text-base font-medium mb-4 transition-all duration-500 break-words ${isFocused ? 'opacity-100' : 'opacity-60 text-gray-400'}`} style={{ color: isFocused ? 'var(--rz-teal)' : undefined }}>
-                      {currentPrompts[currentPromptIndex]}
-                    </p>
-
-                    {/* Research: Tall writing pad (matching Journal textarea) */}
-                    <div className={`relative transition-all duration-500 rounded-lg ${isFocused ? 'rz-input-glow' : ''}`}>
-                      <textarea
-                        ref={textareaRef}
-                        autoFocus
-                        value={messageInput}
-                        onChange={(e) => setMessageInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            handleAnalyze();
-                          }
-                        }}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
-                        placeholder="State the claim you want to test."
-                        className={`w-full bg-transparent border-none outline-none focus:ring-0 text-lg sm:text-xl font-normal text-white/95 placeholder:text-gray-600 resize-none leading-[1.9] tracking-normal p-4 sm:p-6 overflow-hidden ${isFocused ? 'placeholder:text-gray-500' : ''}`}
-                        style={{ 
-                          minHeight: 'max(180px, calc(50vh - 100px))',
-                          height: 'auto',
-                          color: 'var(--rz-text-primary)',
-                          fontFamily: 'var(--font-body)'
-                        }}
-                        data-testid="input-research"
-                      />
-                    </div>
-                  </>
-                )}
-
-                {/* Action bar - Research zone */}
-                {selectedZone === 'research' && (
-                <div className="mt-4 sm:mt-6 py-3 sm:py-4 px-1 space-y-3">
-                  {/* Top row: dossier + toggles + character count */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <div className="relative">
+                  auditRecords.map((record) => {
+                    const tierConfig = ZONE_CONFIGS.find(z => z.id === record.zone_tier);
+                    const isExpanded = expandedAuditId === record.id;
+                    return (
+                      <div
+                        key={record.id}
+                        className="rounded-lg overflow-hidden transition-all"
+                        style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}
+                        data-testid={`audit-record-${record.id}`}
+                      >
                         <button
-                          onClick={() => setDossierDropdownOpen(!dossierDropdownOpen)}
-                          className={`group relative h-9 sm:h-10 sm:px-4 px-3 rounded-lg flex items-center gap-2 transition-all ${
-                            activeDossierId 
-                              ? 'text-teal-400 border' 
-                              : 'text-gray-400 hover:text-gray-300 border'
-                          }`}
-                          style={{ borderColor: activeDossierId ? 'rgba(45,212,191,0.25)' : 'rgba(255,255,255,0.08)', background: activeDossierId ? 'rgba(45,212,191,0.06)' : 'rgba(255,255,255,0.04)' }}
-                          data-testid="button-dossier-selector"
+                          onClick={() => setExpandedAuditId(isExpanded ? null : record.id!)}
+                          className="w-full text-left p-4 sm:p-5 flex items-center gap-4 hover:bg-white/[0.02] transition-colors"
                         >
-                          <FolderOpen className="w-4 h-4" />
-                          <span className="hidden sm:inline text-xs font-medium max-w-[120px] truncate">
-                            {activeDossierId && dossiers?.find(d => d.id === activeDossierId)?.name || "Research tracker"}
-                          </span>
-                          <ChevronDown className={`w-3 h-3 transition-transform ${dossierDropdownOpen ? 'rotate-180' : ''}`} />
-                        </button>
-                        
-                        {dossierDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-64 rounded-lg shadow-2xl z-50 overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="dossier-dropdown">
-                            <div className="p-2" style={{ borderBottom: '1px solid var(--rz-border)' }}>
-                              <button
-                                onClick={() => handleSelectDossier(null)}
-                                className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all ${
-                                  !activeDossierId ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'
-                                }`}
-                                style={{ background: !activeDossierId ? 'rgba(45,212,191,0.08)' : 'transparent' }}
-                                data-testid="button-no-dossier"
-                              >
-                                <Search className="w-3.5 h-3.5" />
-                                Quick search
-                              </button>
+                          <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ background: tierConfig?.bgColor, border: `1px solid ${tierConfig?.borderColor}` }}>
+                            <span className="text-lg font-black font-mono" style={{ color: tierConfig?.color }}>{record.risk_score}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded" style={{ background: tierConfig?.bgColor, color: tierConfig?.color }}>
+                                {record.zone_tier}
+                              </span>
+                              <span className="text-[10px] font-mono text-gray-600">
+                                {format(new Date(record.timestamp), "MMM d, yyyy HH:mm")}
+                              </span>
                             </div>
-                            
-                            {dossiers && dossiers.length > 0 && (
-                              <div className="p-2 max-h-48 overflow-y-auto">
-                                {dossiers.map(dossier => (
-                                  <div key={dossier.id} className="flex items-center gap-1 group">
-                                    <button
-                                      onClick={() => handleSelectDossier(dossier.id!)}
-                                      className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all ${
-                                        activeDossierId === dossier.id ? 'text-teal-400' : 'text-gray-500 hover:text-gray-300'
-                                      }`}
-                                      style={{ background: activeDossierId === dossier.id ? 'rgba(45,212,191,0.08)' : 'transparent' }}
-                                      data-testid={`button-dossier-${dossier.id}`}
-                                    >
-                                      <FolderOpen className="w-3.5 h-3.5" />
-                                      <span className="truncate">{dossier.name}</span>
-                                    </button>
-                                    <button
-                                      onClick={(e) => { e.stopPropagation(); handleDeleteDossier(dossier.id!); }}
-                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-gray-600 hover:text-red-400 transition-all"
-                                      data-testid={`button-delete-dossier-${dossier.id}`}
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                            
-                            <div className="p-2" style={{ borderTop: '1px solid var(--rz-border)' }}>
-                              {showNewDossierInput ? (
-                                <div className="flex items-center gap-2">
-                                  <input
-                                    type="text"
-                                    value={dossierName}
-                                    onChange={(e) => setDossierName(e.target.value)}
-                                    onKeyDown={(e) => {
-                                      if (e.key === 'Enter') handleCreateDossier();
-                                      if (e.key === 'Escape') { setShowNewDossierInput(false); setDossierName(''); }
-                                    }}
-                                    placeholder="Tracker name..."
-                                    className="flex-1 px-3 py-2 rounded-md text-xs text-white placeholder:text-gray-600 outline-none"
-                                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--rz-border)' }}
-                                    autoFocus
-                                    data-testid="input-new-dossier"
-                                  />
-                                  <button
-                                    onClick={handleCreateDossier}
-                                    disabled={!dossierName.trim()}
-                                    className="p-2 rounded-md text-white hover:opacity-90 disabled:opacity-40 transition-all"
-                                    style={{ background: 'var(--rz-teal)' }}
-                                    data-testid="button-create-dossier"
-                                  >
-                                    <Check className="w-3.5 h-3.5" />
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => setShowNewDossierInput(true)}
-                                  className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium text-gray-500 hover:text-gray-300 transition-all"
-                                  data-testid="button-new-dossier"
-                                >
-                                  <FolderPlus className="w-3.5 h-3.5" />
-                                  New tracker
-                                </button>
-                              )}
-                            </div>
+                            <p className="text-sm text-gray-400 truncate">{record.original_payload.slice(0, 80)}...</p>
                           </div>
-                        )}
-                      </div>
-
-                      {activeDossierId && dossierClaims && dossierClaims.length > 0 && (
-                        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px]" style={{ color: 'var(--rz-text-muted)', border: '1px solid var(--rz-border)' }}>
-                          <span>{dossierClaims.length} claim{dossierClaims.length !== 1 ? 's' : ''}</span>
-                        </div>
-                      )}
-
-                      <button
-                        onClick={() => setWebModeEnabled(!webModeEnabled)}
-                        className="group relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg flex items-center justify-center gap-2 transition-all border"
-                        style={{ 
-                          borderColor: webModeEnabled ? 'rgba(45,212,191,0.25)' : 'rgba(255,255,255,0.08)', 
-                          color: webModeEnabled ? 'var(--rz-teal)' : 'rgba(156,163,175,1)',
-                          background: webModeEnabled ? 'rgba(45,212,191,0.06)' : 'rgba(255,255,255,0.04)'
-                        }}
-                        title={webModeEnabled ? "Web search enabled (uses live data)" : "Explain mode (AI knowledge only)"}
-                        data-testid="button-web-toggle"
-                      >
-                        <Globe className="w-4 h-4" />
-                        <span className="hidden sm:inline text-xs font-medium">{webModeEnabled ? 'Web' : 'Explain'}</span>
-                      </button>
-                      
-                      {webModeEnabled && braveSearchAvailable && (
-                        <button
-                          onClick={() => setBraveSearchEnabled(!braveSearchEnabled)}
-                          className="group relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg flex items-center justify-center gap-2 transition-all border"
-                          style={{ 
-                            borderColor: braveSearchEnabled ? 'rgba(45,212,191,0.25)' : 'rgba(255,255,255,0.08)', 
-                            color: braveSearchEnabled ? 'var(--rz-teal)' : 'rgba(156,163,175,1)',
-                            background: braveSearchEnabled ? 'rgba(45,212,191,0.06)' : 'rgba(255,255,255,0.04)'
-                          }}
-                          title={braveSearchEnabled ? "Brave Search (privacy-first, no tracking)" : "Use default web search"}
-                          data-testid="button-brave-toggle"
-                        >
-                          <Shield className="w-4 h-4" />
-                          <span className="hidden sm:inline text-xs font-medium">{braveSearchEnabled ? 'Brave' : 'Default'}</span>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <span className="text-[10px] font-black uppercase px-2 py-1 rounded" style={{ background: `${getRiskColor(record.risk_score)}15`, color: getRiskColor(record.risk_score) }}>
+                              {getRiskLabel(record.risk_score)}
+                            </span>
+                            <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                          </div>
                         </button>
-                      )}
-                    </div>
-                    <span className="text-[11px] tabular-nums text-gray-600 font-medium">
-                      {messageInput.length > 0 ? messageInput.length.toLocaleString() : ''}
-                    </span>
-                  </div>
-
-                  {/* Bottom row: primary action */}
-                  <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                    <div />
-                    <div className="flex items-center gap-3">
-                      <Button
-                        onClick={handleAnalyze}
-                        disabled={!messageInput.trim() || searchResearch.isPending}
-                        className="h-10 sm:h-11 px-6 sm:px-8 rounded-lg font-medium text-sm tracking-wide transition-all active:scale-[0.98] touch-target disabled:opacity-30"
-                        style={{ background: messageInput.trim() ? 'var(--rz-teal)' : 'rgba(45,212,191,0.15)', color: messageInput.trim() ? '#0F1115' : 'var(--rz-text-muted)', boxShadow: messageInput.trim() ? '0 4px 24px rgba(45,212,191,0.2)' : 'none' }}
-                        data-testid="button-search"
-                      >
-                        {searchResearch.isPending ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <ArrowUpRight className="w-4 h-4 mr-2" />
-                            Start Analysis
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Keyboard hint */}
-                  <p className="hidden sm:block text-[10px] tracking-wider text-right" style={{ color: 'var(--rz-text-muted)' }}>
-                    Enter to analyze
-                  </p>
-                </div>
-                )}
-
-                {/* Action bar - Journal zone only */}
-                {selectedZone === 'journal' && (
-                <div className="mt-4 sm:mt-6 py-3 sm:py-4 px-1 space-y-3">
-                  {/* Top row: tools + character count */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
-                        <DialogTrigger asChild>
-                          <button
-                            disabled={!messageInput.trim()}
-                            className="group relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-lg flex items-center justify-center gap-2 bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
-                            title="Pin to vault"
-                            data-testid="button-pin"
-                          >
-                            <Pin className="w-4 h-4" />
-                            <span className="hidden sm:inline text-xs font-medium">Pin</span>
-                          </button>
-                        </DialogTrigger>
-                        <DialogContent className="border-white/10 max-w-md p-8 rounded-lg shadow-2xl" style={{ background: '#1a1d26' }}>
-                          <DialogHeader>
-                            <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">Pin Memory</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-8 py-4">
-                            <p className="text-sm text-gray-500 leading-relaxed font-medium">This thought will be stored in your local vault and used as context for future thinking partners.</p>
-                            
-                            <div className="relative group">
-                              <div className="absolute -inset-2 bg-gradient-to-r from-orange-500/20 to-blue-500/20 rounded-lg blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                              <div className="relative p-5 rounded-lg bg-[#14171D] border border-white/[0.06] shadow-inner">
-                                <p className="text-sm text-gray-300 leading-relaxed line-clamp-4 font-medium italic">"{messageInput}"</p>
-                              </div>
-                            </div>
-
-                            <div className="space-y-4">
-                              <label className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] ml-1">Context Category</label>
-                              <div className="flex flex-wrap gap-2">
-                                {["pattern", "goal", "preference", "principle", "project", "question", "person"].map((kind) => (
-                                  <button
-                                    key={kind}
-                                    onClick={() => setSelectedPinKind(kind)}
-                                    className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${
-                                      selectedPinKind === kind 
-                                        ? "text-white shadow-lg shadow-orange-900/40 border-transparent [background:#F37E20]" 
-                                        : "bg-[#14171D] text-gray-500 hover:text-white hover:bg-white/5 border border-white/[0.06]"
-                                    }`}
-                                    data-testid={`button-kind-${kind}`}
-                                  >
-                                    {kind}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                            <Button
-                              onClick={handleManualPin}
-                              className="w-full hover:opacity-90 h-14 rounded-lg font-black text-xs uppercase tracking-widest shadow-xl shadow-orange-900/20 transition-all active:scale-[0.98]"
-                              style={{ background: '#F37E20' }}
-                              data-testid="button-confirm-pin"
-                            >
-                              <Pin className="w-4 h-4 mr-2" />
-                              Secure to Vault
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-
-                      {speechSupported && (
-                        <button
-                          onClick={toggleVoiceInput}
-                          className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-lg flex items-center justify-center gap-2 border transition-all active:scale-95 ${
-                            isListening
-                              ? 'text-red-400 bg-red-500/15 border-red-500/30 animate-pulse'
-                              : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
-                          }`}
-                          title={isListening ? 'Stop listening' : 'Voice input'}
-                          data-testid="button-voice-input"
-                        >
-                          {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                          <span className="hidden sm:inline text-xs font-medium">{isListening ? 'Stop' : 'Voice'}</span>
-                          {isListening && (
-                            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-[#1a1d26] shadow-[0_0_6px_rgba(239,68,68,0.6)]" />
-                          )}
-                        </button>
-                      )}
-
-                      <button
-                        onClick={() => setShowVideoUpload(!showVideoUpload)}
-                        className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-lg flex items-center justify-center gap-2 border transition-all active:scale-95 ${
-                          showVideoUpload
-                            ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
-                            : pendingVideoAssetId
-                              ? 'text-orange-400 bg-orange-500/10 border-orange-500/20 hover:bg-orange-500/15'
-                              : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
-                        }`}
-                        title={pendingVideoAssetId ? 'Video attached' : 'Add video'}
-                        data-testid="button-video-journal"
-                      >
-                        <Video className="w-4 h-4" />
-                        <span className="hidden sm:inline text-xs font-medium">Video</span>
-                        {pendingVideoAssetId && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-orange-500 border-2 border-[#1a1d26] shadow-[0_0_6px_rgba(243,126,32,0.6)]" />
-                        )}
-                      </button>
-
-                      <button
-                        onClick={() => setShowMusicPanel(!showMusicPanel)}
-                        className={`relative h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-lg sm:rounded-lg flex items-center justify-center gap-2 border transition-all active:scale-95 ${
-                          showMusicPanel
-                            ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
-                            : 'text-gray-400 bg-white/[0.04] border-white/[0.08] hover:text-gray-200 hover:bg-white/[0.07] hover:border-white/[0.15]'
-                        }`}
-                        title="Music library"
-                        data-testid="button-music-panel"
-                      >
-                        <Headphones className="w-4 h-4" />
-                        <span className="hidden sm:inline text-xs font-medium">Music</span>
-                      </button>
-                    </div>
-
-                    {messageInput.length > 0 && (
-                      <span className={`text-[11px] font-medium tabular-nums transition-colors ${
-                        messageInput.length > 5000 ? 'text-red-400' : messageInput.length > 3000 ? 'text-amber-400' : 'text-gray-600'
-                      }`} data-testid="text-char-count">
-                        {messageInput.length.toLocaleString()} chars
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Bottom row: primary actions */}
-                  <div className="flex items-center gap-2.5">
-                    <Button
-                      onClick={handleSendText}
-                      disabled={!messageInput.trim() || sendMessage.isPending}
-                      variant="ghost"
-                      className="flex-1 sm:flex-none h-11 sm:h-12 px-4 sm:px-6 rounded-lg font-semibold text-sm text-gray-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/[0.15] disabled:opacity-30 disabled:border-transparent transition-all active:scale-95"
-                      data-testid="button-save"
-                    >
-                      {sendMessage.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <>
-                          <FileText className="w-4 h-4 mr-2" />
-                          Save
-                        </>
-                      )}
-                    </Button>
-
-                    <Button
-                      onClick={handleAnalyze}
-                      disabled={!messageInput.trim() || thinkWithMe.isPending || isAnalyzing}
-                      className="flex-[2] sm:flex-none h-11 sm:h-12 px-5 sm:px-8 rounded-lg font-bold text-sm shadow-lg shadow-orange-900/40 transition-all active:scale-95 hover:opacity-90 disabled:opacity-30 disabled:shadow-none"
-                      style={{ background: '#F37E20' }}
-                      data-testid="button-analyze"
-                    >
-                      {isAnalyzing ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                          <span className="hidden sm:inline">Thinking...</span>
-                          <span className="sm:hidden">...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Bot className="w-4 h-4 mr-2" />
-                          <span className="hidden sm:inline">Think with me</span>
-                          <span className="sm:hidden">Think</span>
-                        </>
-                      )}
-                    </Button>
-                  </div>
-
-                  {/* Keyboard shortcut hint */}
-                  <p className="hidden sm:block text-[10px] text-gray-600 text-center">
-                    Enter to save · Cmd+Enter to think
-                  </p>
-                </div>
-                )}
-              </div>
-              
-              {/* Insight appears below text when analyzing is complete */}
-              {(isAnalyzing || agentResponse || researchResult || latestAnalysis) && (
-                <div className="pb-12 sm:pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  {isAnalyzing && !agentResponse && !researchResult && !latestAnalysis && (
-                    selectedZone === 'research' ? (
-                      <>
-                        <div className="rz-analyzing-overlay" />
-                        <div className="relative z-30 flex flex-col items-center gap-6 py-12 sm:py-20" data-testid="analyzing-loader">
-                          <p className="rz-heading text-[10px] sm:text-xs font-bold tracking-[0.3em]" style={{ color: 'var(--rz-text-muted)' }}>
-                            Analyzing Evidence
-                          </p>
-                          <div className="w-48 sm:w-64 overflow-hidden rounded-full">
-                            <div className="rz-progress-line" />
-                          </div>
-                          <p className="text-xs font-medium" style={{ color: 'var(--rz-text-secondary)' }}>
-                            Synthesizing information from sources
-                          </p>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="p-6 sm:p-8 rounded-lg thinking-card" data-testid="analyzing-loader">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-md flex items-center justify-center bg-orange-600/20">
-                            <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-orange-400" />
-                          </div>
-                          <div>
-                            <p className="text-xs font-semibold mb-1 text-orange-400">Thinking...</p>
-                            <p className="text-sm text-gray-500">Processing your entry</p>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  )}
-
-                  {/* Research Result Card */}
-                  {researchResult && (
-                    <div className="rounded-lg rz-result-card" data-testid="research-result-card">
-                      <div className="flex items-center justify-between p-5 sm:p-7" style={{ borderBottom: '1px solid var(--rz-border)' }}>
-                        <div className="flex items-center gap-4">
-                          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(45,212,191,0.1)' }}>
-                            <Search className="w-4 h-4" style={{ color: 'var(--rz-teal)' }} />
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold" style={{ color: 'var(--rz-text-primary)' }}>Analysis Complete</p>
-                            <p className="text-[11px] mt-0.5" style={{ color: 'var(--rz-text-muted)' }}>
-                              {researchResult.mode === 'explain' ? 'Explain mode' : researchResult.mode === 'brave' ? 'Brave Search' : 'Web search'} 
-                              {researchResult.cached && ' · cached'}
-                            </p>
-                          </div>
-                        </div>
-                        <button onClick={clearAndReset} className="p-2 rounded-lg transition-colors touch-target" style={{ color: 'var(--rz-text-muted)' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = 'var(--rz-text-primary)'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--rz-text-muted)'; }}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-
-                      <div className="p-5 sm:p-7 space-y-8">
-                        {researchResult.aiObserving && (
-                          <div className="rz-fade-up rz-fade-up-delay-1 flex items-start gap-3 p-4 rounded-lg" style={{ background: 'rgba(45,212,191,0.04)', border: '1px solid rgba(45,212,191,0.12)' }} data-testid="ai-observing-panel">
-                            <Brain className="w-4 h-4 mt-0.5 shrink-0" style={{ color: 'var(--rz-teal)' }} />
+                        {isExpanded && (
+                          <div className="px-5 pb-5 space-y-4 border-t border-white/[0.04] pt-4">
                             <div>
-                              <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-1.5" style={{ color: 'var(--rz-teal)' }}>AI Observing</p>
-                              <p className="text-sm leading-relaxed" style={{ color: 'var(--rz-text-primary)' }}>{researchResult.aiObserving}</p>
+                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Primary Bias Detected</p>
+                              <span className="px-3 py-1.5 rounded-lg text-xs font-bold" style={{ background: record.primary_bias_detected !== 'None' ? 'rgba(239,68,68,0.1)' : 'rgba(52,211,153,0.1)', color: record.primary_bias_detected !== 'None' ? '#ef4444' : '#34d399' }}>
+                                {record.primary_bias_detected.replace(/_/g, ' ')}
+                              </span>
                             </div>
-                          </div>
-                        )}
-
-                        {researchResult.evidenceStrength && (
-                          <div className="rz-fade-up rz-fade-up-delay-2 space-y-4" data-testid="evidence-strength-panel">
-                            <div className="flex items-center justify-between">
-                              <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Evidence Strength</p>
-                              <div className="flex items-center gap-2">
-                                <span className="text-2xl font-bold tabular-nums" style={{ color: researchResult.evidenceStrength.score >= 75 ? '#34d399' : researchResult.evidenceStrength.score >= 50 ? 'var(--rz-teal)' : researchResult.evidenceStrength.score >= 25 ? 'var(--rz-amber)' : '#ef4444' }}>
-                                  {researchResult.evidenceStrength.score}
-                                </span>
-                                <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ 
-                                  background: researchResult.evidenceStrength.score >= 75 ? 'rgba(52,211,153,0.1)' : researchResult.evidenceStrength.score >= 50 ? 'rgba(45,212,191,0.1)' : researchResult.evidenceStrength.score >= 25 ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)',
-                                  color: researchResult.evidenceStrength.score >= 75 ? '#34d399' : researchResult.evidenceStrength.score >= 50 ? 'var(--rz-teal)' : researchResult.evidenceStrength.score >= 25 ? 'var(--rz-amber)' : '#ef4444'
-                                }}>
-                                  {researchResult.evidenceStrength.label}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-4 gap-2">
-                              {[
-                                { label: 'Sources', value: researchResult.evidenceStrength.breakdown.sourceQuality, max: 25 },
-                                { label: 'Consensus', value: researchResult.evidenceStrength.breakdown.consensus, max: 25 },
-                                { label: 'Recency', value: researchResult.evidenceStrength.breakdown.recency, max: 25 },
-                                { label: 'Method', value: researchResult.evidenceStrength.breakdown.methodology, max: 25 },
-                              ].map((item) => (
-                                <div key={item.label} className="space-y-1.5">
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-medium" style={{ color: 'var(--rz-text-muted)' }}>{item.label}</span>
-                                    <span className="text-[10px] font-bold tabular-nums" style={{ color: 'var(--rz-text-secondary)' }}>{item.value}/{item.max}</span>
-                                  </div>
-                                  <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-                                    <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${(item.value / item.max) * 100}%`, background: item.value >= 20 ? '#34d399' : item.value >= 13 ? 'var(--rz-teal)' : item.value >= 7 ? 'var(--rz-amber)' : '#ef4444' }} />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                            <p className="text-xs" style={{ color: 'var(--rz-text-secondary)' }}>{researchResult.evidenceStrength.summary}</p>
-                          </div>
-                        )}
-
-                        {researchResult.consensusPoints && researchResult.consensusPoints.length > 0 && (
-                          <div className="rz-fade-up rz-fade-up-delay-2 space-y-3" data-testid="consensus-panel">
-                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'rgba(52,211,153,0.7)' }}>Consensus</p>
-                            <ul className="space-y-2.5">
-                              {researchResult.consensusPoints.map((point, idx) => (
-                                <li key={idx} className="flex items-start gap-3">
-                                  <CheckCircle className="w-3.5 h-3.5 mt-1 shrink-0" style={{ color: 'rgba(52,211,153,0.6)' }} />
-                                  <p className="text-[15px] leading-relaxed" style={{ color: 'var(--rz-text-primary)' }}>{point}</p>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {researchResult.contradictions && researchResult.contradictions.length > 0 && (
-                          <div className="rz-fade-up rz-fade-up-delay-3 space-y-3" data-testid="contradictions-panel">
-                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-amber)' }}>Contradictions</p>
-                            <ul className="space-y-2.5">
-                              {researchResult.contradictions.map((item, idx) => (
-                                <li key={idx} className="flex items-start gap-3 p-3 rounded-lg" style={{ background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.1)' }}>
-                                  <AlertCircle className="w-3.5 h-3.5 mt-1 shrink-0" style={{ color: 'var(--rz-amber)' }} />
-                                  <p className="text-sm leading-relaxed" style={{ color: 'var(--rz-text-primary)' }}>{item}</p>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {researchResult.weakAssumptions && researchResult.weakAssumptions.length > 0 && (
-                          <div className="rz-fade-up rz-fade-up-delay-3 space-y-3" data-testid="weak-assumptions-panel">
-                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Weak Assumptions</p>
-                            <ul className="space-y-2.5">
-                              {researchResult.weakAssumptions.map((item, idx) => (
-                                <li key={idx} className="flex items-start gap-3">
-                                  <HelpCircle className="w-3.5 h-3.5 mt-1 shrink-0" style={{ color: 'rgba(156,163,175,0.5)' }} />
-                                  <p className="text-sm leading-relaxed" style={{ color: 'var(--rz-text-secondary)' }}>{item}</p>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {researchResult.keyTakeaways && researchResult.keyTakeaways.length > 0 && (
-                          <div className="rz-fade-up rz-fade-up-delay-4 space-y-4">
-                            <div className="flex items-center justify-between">
-                              <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Key Takeaways</p>
-                              {activeDossierId && (
-                                <p className="text-[10px]" style={{ color: 'rgba(45,212,191,0.5)' }}>Click + to save as claim</p>
-                              )}
-                            </div>
-                            <ul className="space-y-3">
-                              {researchResult.keyTakeaways.map((takeaway, idx) => (
-                                <li key={idx} className="flex items-start gap-3 group">
-                                  <span className="w-1 h-1 rounded-full mt-2.5 shrink-0" style={{ background: 'var(--rz-teal)' }} />
-                                  <p className="leading-relaxed flex-1 text-[15px]" style={{ color: 'var(--rz-text-primary)' }}>{takeaway}</p>
-                                  {activeDossierId && (
-                                    <button
-                                      onClick={() => handleSaveClaimToDossier(takeaway, undefined, true)}
-                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md transition-all shrink-0"
-                                      style={{ color: 'var(--rz-text-muted)' }}
-                                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--rz-teal)'; e.currentTarget.style.background = 'rgba(45,212,191,0.08)'; }}
-                                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--rz-text-muted)'; e.currentTarget.style.background = 'transparent'; }}
-                                      title="Save as claim"
-                                      data-testid={`button-save-claim-${idx}`}
-                                    >
-                                      <Plus className="w-4 h-4" />
-                                    </button>
-                                  )}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {researchResult.synthesisMarkdown && (
-                          <div className="rz-fade-up rz-fade-up-delay-5 rz-section">
-                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-4" style={{ color: 'var(--rz-teal)' }}>Synthesis</p>
-                            <p className="leading-[1.8] whitespace-pre-wrap text-[15px]" style={{ color: 'var(--rz-text-primary)' }}>{researchResult.synthesisMarkdown}</p>
-                          </div>
-                        )}
-
-                        {researchResult.whatToCheckNext && researchResult.whatToCheckNext.length > 0 && (
-                          <div className="rz-fade-up rz-fade-up-delay-6 space-y-4">
-                            <p className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--rz-text-muted)' }}>Evidence Gaps</p>
-                            <div className="overflow-x-auto -mx-5 sm:mx-0 px-5 sm:px-0 scrollbar-hide">
-                              <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
-                                {researchResult.whatToCheckNext.map((item, idx) => (
-                                  <button
-                                    key={idx}
-                                    onClick={() => {
-                                      setResearchResult(null);
-                                      setAgentResponse(null);
-                                      setMessageInput(item);
-                                    }}
-                                    className="px-3.5 py-2.5 sm:py-2 rounded-lg text-sm text-left transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
-                                    style={{ background: 'rgba(91,141,239,0.06)', border: '1px solid rgba(91,141,239,0.15)', color: 'rgba(91,141,239,0.8)' }}
-                                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(91,141,239,0.1)'; e.currentTarget.style.borderColor = 'rgba(91,141,239,0.3)'; }}
-                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(91,141,239,0.06)'; e.currentTarget.style.borderColor = 'rgba(91,141,239,0.15)'; }}
-                                    data-testid={`button-next-check-${idx}`}
-                                  >
-                                    {item}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {researchResult.confidence && (
-                          <div className="rz-fade-up rz-fade-up-delay-7 p-4 rounded-lg" style={{ background: 'var(--rz-amber-glow)', border: '1px solid rgba(245,158,11,0.12)' }}>
-                            <p className="text-xs flex items-center gap-2.5" style={{ color: 'var(--rz-amber)' }}>
-                              <Info className="w-3.5 h-3.5 shrink-0" />
-                              {researchResult.confidence}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="rz-fade-up rz-fade-up-delay-7 px-5 sm:px-7 py-5" style={{ borderTop: '1px solid var(--rz-border)' }}>
-                        <button
-                          onClick={() => {
-                            const topic = researchResult.query || messageInput;
-                            const synthesis = researchResult.synthesisMarkdown ? `\n\nResearch notes:\n${researchResult.synthesisMarkdown.slice(0, 300)}` : '';
-                            clearAndReset();
-                            setSelectedZone('journal');
-                            setTimeout(() => setMessageInput(`Thinking about: ${topic}${synthesis}`), 100);
-                          }}
-                          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-lg transition-all group touch-target"
-                          style={{ background: 'rgba(91,141,239,0.04)', border: '1px solid rgba(91,141,239,0.1)' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(91,141,239,0.08)'; e.currentTarget.style.borderColor = 'rgba(91,141,239,0.2)'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(91,141,239,0.04)'; e.currentTarget.style.borderColor = 'rgba(91,141,239,0.1)'; }}
-                          data-testid="button-journal-about-this"
-                        >
-                          <span className="text-sm font-medium" style={{ color: 'var(--rz-accent)' }}>Continue reasoning with your Thinking Partner</span>
-                          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" style={{ color: 'var(--rz-accent)' }} />
-                        </button>
-                        <div className="flex items-center justify-center gap-4 mt-3">
-                          <button
-                            onClick={() => {
-                              setResearchDepth('nuanced');
-                              setDepthConfirmation('Position complexity increased. Future research will prioritize edge-case evidence.');
-                              setTimeout(() => setDepthConfirmation(null), 4000);
-                            }}
-                            className={`text-[11px] font-medium transition-colors ${researchDepth === 'nuanced' ? 'text-teal-400' : ''}`}
-                            style={{ color: researchDepth === 'nuanced' ? 'var(--rz-teal)' : 'var(--rz-text-muted)' }}
-                            onMouseEnter={(e) => { if (researchDepth !== 'nuanced') e.currentTarget.style.color = 'var(--rz-text-primary)'; }}
-                            onMouseLeave={(e) => { if (researchDepth !== 'nuanced') e.currentTarget.style.color = 'var(--rz-text-muted)'; }}
-                            data-testid="button-more-nuanced"
-                          >
-                            {researchDepth === 'nuanced' ? 'Nuanced mode active' : 'More nuanced'}
-                          </button>
-                          <span className="text-gray-700">·</span>
-                          <button
-                            onClick={clearAndReset}
-                            className="text-[11px] font-medium transition-colors"
-                            style={{ color: 'var(--rz-text-muted)' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--rz-text-primary)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--rz-text-muted)'; }}
-                          >
-                            New Search
-                          </button>
-                        </div>
-                        {depthConfirmation && (
-                          <div className="mt-3 p-3 rounded-lg animate-in fade-in duration-300 text-center" style={{ background: 'rgba(45,212,191,0.04)', border: '1px solid rgba(45,212,191,0.12)' }}>
-                            <p className="text-xs font-medium" style={{ color: 'var(--rz-teal)' }}>{depthConfirmation}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Claims Panel - Show when dossier is active */}
-                  {activeDossierId && (
-                    <div className="mt-5 rounded-lg overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="claims-panel">
-                      <div className="p-5" style={{ borderBottom: '1px solid var(--rz-border)' }}>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2.5">
-                            <FolderOpen className="w-4 h-4" style={{ color: 'var(--rz-teal)' }} />
-                            <p className="text-sm font-semibold" style={{ color: 'var(--rz-text-primary)' }}>
-                              {dossiers?.find(d => d.id === activeDossierId)?.name} Claims
-                            </p>
-                            {dossierClaims && dossierClaims.length > 0 && (
-                              <span className="text-[11px]" style={{ color: 'var(--rz-text-muted)' }}>({dossierClaims.length})</span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="mt-3 flex gap-2">
-                          <input
-                            type="text"
-                            placeholder="Add a claim manually..."
-                            className="flex-1 px-3 py-2 rounded-md text-sm text-white placeholder:text-gray-600 outline-none"
-                            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--rz-border)' }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                                handleSaveClaimToDossier(e.currentTarget.value.trim(), undefined, true);
-                                e.currentTarget.value = '';
-                              }
-                            }}
-                            data-testid="input-manual-claim"
-                          />
-                          <button
-                            onClick={(e) => {
-                              const input = (e.currentTarget.previousElementSibling as HTMLInputElement);
-                              if (input?.value.trim()) {
-                                handleSaveClaimToDossier(input.value.trim(), undefined, true);
-                                input.value = '';
-                              }
-                            }}
-                            className="px-3 py-2 rounded-md transition-colors"
-                            style={{ background: 'rgba(45,212,191,0.12)', color: 'var(--rz-teal)' }}
-                            title="Add claim"
-                            data-testid="button-add-manual-claim"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                      {dossierClaims && dossierClaims.length > 0 && (
-                      <div className="p-4 space-y-3 max-h-[400px] overflow-y-auto">
-                        {dossierClaims.map((claim) => (
-                          <div 
-                            key={claim.id} 
-                            className={`group p-3 rounded-lg border transition-all ${
-                              editingClaimId === claim.id 
-                                ? 'bg-teal-500/[0.05] border-teal-500/30' 
-                                : 'bg-[#14171D] border-white/[0.06] hover:border-white/[0.1]'
-                            }`}
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="flex-1">
-                                <div className="flex items-start gap-2">
-                                  {claim.trustLevel && claim.trustLevel !== 'unknown' && (
-                                    <span className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase ${
-                                      claim.trustLevel === 'high' ? 'bg-green-500/20 text-green-400' :
-                                      claim.trustLevel === 'medium' ? 'bg-amber-500/20 text-amber-400' :
-                                      'bg-red-500/20 text-red-400'
-                                    }`}>
-                                      {claim.trustLevel}
-                                    </span>
-                                  )}
-                                  <p className="text-sm text-white/90 leading-relaxed">{claim.claim}</p>
-                                </div>
-                                {claim.sourceNote && !editingClaimId && (
-                                  <p className="text-xs text-gray-500 mt-1.5 pl-0">📎 {claim.sourceNote}</p>
-                                )}
-                                {claim.linkedJournalEntryId && (
-                                  <p className="text-xs text-teal-400/70 mt-1.5 flex items-center gap-1">
-                                    <PenLine className="w-3 h-3" />
-                                    Linked to journal entry
-                                  </p>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1 shrink-0">
-                                <button
-                                  onClick={() => handleUpdateClaimStatus(claim.id!, 'verified')}
-                                  className={`p-1.5 rounded-lg transition-all ${
-                                    claim.status === 'verified' 
-                                      ? 'bg-green-500/20 text-green-400' 
-                                      : 'text-gray-500 hover:text-green-400 hover:bg-green-500/10'
-                                  }`}
-                                  title="Mark as verified"
-                                  data-testid={`button-verify-claim-${claim.id}`}
-                                >
-                                  <Check className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={() => handleUpdateClaimStatus(claim.id!, 'uncertain')}
-                                  className={`p-1.5 rounded-lg transition-all ${
-                                    claim.status === 'uncertain' 
-                                      ? 'bg-amber-500/20 text-amber-400' 
-                                      : 'text-gray-500 hover:text-amber-400 hover:bg-amber-500/10'
-                                  }`}
-                                  title="Mark as uncertain"
-                                  data-testid={`button-uncertain-claim-${claim.id}`}
-                                >
-                                  <AlertCircle className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={() => handleUpdateClaimStatus(claim.id!, 'to_check')}
-                                  className={`p-1.5 rounded-lg transition-all ${
-                                    claim.status === 'to_check' 
-                                      ? 'bg-teal-500/20 text-teal-400' 
-                                      : 'text-gray-500 hover:text-teal-400 hover:bg-teal-500/10'
-                                  }`}
-                                  title="Mark as to check"
-                                  data-testid={`button-tocheck-claim-${claim.id}`}
-                                >
-                                  <HelpCircle className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={() => editingClaimId === claim.id ? setEditingClaimId(null) : handleStartEditClaim(claim)}
-                                  className={`p-1.5 rounded-lg transition-all ${
-                                    editingClaimId === claim.id 
-                                      ? 'bg-teal-500/20 text-teal-400' 
-                                      : 'text-gray-500 hover:text-teal-400 hover:bg-teal-500/10 opacity-0 group-hover:opacity-100'
-                                  }`}
-                                  title="Add source note"
-                                  data-testid={`button-edit-claim-${claim.id}`}
-                                >
-                                  <FileText className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteClaim(claim.id!)}
-                                  className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
-                                  title="Delete claim"
-                                  data-testid={`button-delete-claim-${claim.id}`}
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            </div>
-                            
-                            {/* Inline edit panel for source notes and trust */}
-                            {editingClaimId === claim.id && (
-                              <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                                <div className="space-y-1.5">
-                                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">Source Note</label>
-                                  <input
-                                    type="text"
-                                    value={claimSourceNote}
-                                    onChange={(e) => setClaimSourceNote(e.target.value)}
-                                    placeholder="Where did you find this? How reliable is it?"
-                                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-500 outline-none focus:border-teal-500/50"
-                                    data-testid="input-source-note"
-                                  />
-                                </div>
-                                <div className="space-y-1.5">
-                                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">Trust Level</label>
-                                  <div className="flex gap-2">
-                                    {(['high', 'medium', 'low', 'unknown'] as TrustLevel[]).map((level) => (
-                                      <button
-                                        key={level}
-                                        onClick={() => setClaimTrustLevel(level)}
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                                          claimTrustLevel === level
-                                            ? level === 'high' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                                              level === 'medium' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
-                                              level === 'low' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                                              'bg-gray-500/20 text-gray-400 border border-gray-500/30'
-                                            : 'bg-white/5 text-gray-500 border border-white/10 hover:border-white/20'
-                                        }`}
-                                        data-testid={`button-trust-${level}`}
-                                      >
-                                        {level.charAt(0).toUpperCase() + level.slice(1)}
-                                      </button>
-                                    ))}
-                                  </div>
-                                </div>
-                                <div className="flex justify-end">
-                                  <Button
-                                    onClick={handleSaveClaimEdit}
-                                    className="hover:opacity-90 h-8 px-4 text-xs"
-                                    style={{ background: '#F37E20' }}
-                                    data-testid="button-save-claim-edit"
-                                  >
-                                    Save
-                                  </Button>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* Related Journal Entries - Show when research finds related thinking */}
-                  {relatedJournalEntries && relatedJournalEntries.length > 0 && (
-                    <div className="mt-5 rounded-lg overflow-hidden" style={{ background: 'var(--rz-surface)', border: '1px solid var(--rz-border)' }} data-testid="related-entries-panel">
-                      <div className="p-5" style={{ borderBottom: '1px solid var(--rz-border)' }}>
-                        <div className="flex items-center gap-2.5">
-                          <PenLine className="w-4 h-4" style={{ color: 'var(--rz-accent)' }} />
-                          <p className="text-sm font-semibold" style={{ color: 'var(--rz-text-primary)' }}>Related from your Journal</p>
-                          <span className="text-[11px]" style={{ color: 'var(--rz-text-muted)' }}>({relatedJournalEntries.length})</span>
-                        </div>
-                        {editingClaimId && (
-                          <p className="text-[10px] mt-1.5" style={{ color: 'rgba(91,141,239,0.6)' }}>Click an entry to link it to the claim you're editing</p>
-                        )}
-                      </div>
-                      <div className="p-5 space-y-3 max-h-[200px] overflow-y-auto">
-                        {relatedJournalEntries.map((entry, idx) => (
-                          <div 
-                            key={entry.id || idx} 
-                            className="p-3.5 rounded-lg transition-all"
-                            style={{ 
-                              background: 'rgba(255,255,255,0.015)', 
-                              border: editingClaimId ? '1px solid rgba(91,141,239,0.15)' : '1px solid var(--rz-border)',
-                              cursor: editingClaimId ? 'pointer' : 'default'
-                            }}
-                            onClick={() => {
-                              if (editingClaimId && entry.id) {
-                                handleLinkClaimToJournalEntry(editingClaimId, entry.id);
-                              }
-                            }}
-                          >
-                            <p className="text-sm leading-relaxed line-clamp-3" style={{ color: 'var(--rz-text-primary)' }}>{entry.text}</p>
-                            <p className="text-[10px] mt-2" style={{ color: 'var(--rz-text-muted)' }}>
-                              {new Date(entry.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Agent Response Card - Improved Design */}
-                  {agentResponse && (
-                    <div className="rounded-lg thinking-card overflow-hidden" data-testid="agent-response-card">
-                      {/* Header */}
-                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.06]">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-md flex items-center justify-center bg-orange-600/20">
-                            <Bot className="w-5 h-5 text-orange-400" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-orange-400">Thinking Partner</p>
-                            <p className="text-xs text-gray-600">Just now</p>
-                          </div>
-                        </div>
-                        <button 
-                          onClick={clearAndReset}
-                          className="p-2 rounded-full hover:bg-white/5 transition-colors touch-target"
-                        >
-                          <X className="w-5 h-5 text-gray-500" />
-                        </button>
-                      </div>
-                      
-                      {/* Content */}
-                      <div className="p-4 sm:p-6 space-y-4">
-                        {/* What you said */}
-                        <div className="thinking-card-section">
-                          <p className="text-xs font-medium text-gray-500 mb-2">What you said</p>
-                          <p className="text-white/90 leading-relaxed">{agentResponse.said}</p>
-                        </div>
-                        
-                        {/* Why it matters */}
-                        <div className="thinking-card-section">
-                          <p className="text-xs font-medium text-gray-500 mb-2">Why it matters</p>
-                          <p className="text-gray-300 leading-relaxed">{agentResponse.matters}</p>
-                        </div>
-                        
-                        {/* Connection to prior thinking */}
-                        {agentResponse.connectionToPrior && (
-                          <div className="p-4 rounded-lg bg-orange-500/[0.08] border border-orange-500/20">
-                            <p className="text-xs font-medium text-orange-400/80 mb-2">Connected to your earlier thinking</p>
-                            <p className="text-orange-200/80 leading-relaxed text-sm">{agentResponse.connectionToPrior}</p>
-                          </div>
-                        )}
-                        
-                        {/* Next move */}
-                        {agentResponse.nextMove && (
-                          <div className="thinking-card-section">
-                            <p className="text-xs font-medium text-gray-500 mb-2">Possible next step</p>
-                            <p className="text-gray-400 leading-relaxed">{agentResponse.nextMove}</p>
-                          </div>
-                        )}
-                        
-                        {/* Question to sit with - highlighted */}
-                        <div className="p-4 rounded-lg border bg-orange-500/[0.06] border-orange-500/20">
-                          <p className="text-xs font-medium mb-2 text-orange-400/80">Question to sit with</p>
-                          <p className="font-medium italic leading-relaxed text-orange-200">{agentResponse.question}</p>
-                        </div>
-
-                        {/* Reflective questions for Journal mode - horizontal scroll on mobile */}
-                        {selectedZone === 'journal' && agentResponse.reflectiveQuestions && agentResponse.reflectiveQuestions.length > 0 && (
-                          <div className="space-y-3">
-                            <p className="text-xs font-medium text-gray-500">Go deeper</p>
-                            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-hide">
-                              <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
-                                {agentResponse.reflectiveQuestions.slice(0, 5).map((q, idx) => (
-                                  <button
-                                    key={idx}
-                                    onClick={() => {
-                                      setAgentResponse(null);
-                                      setResearchResult(null);
-                                      setLatestAnalysis(null);
-                                      setFrozenHeight(null);
-                                      setMessageInput(q);
-                                      setTimeout(() => textareaRef.current?.focus(), 100);
-                                    }}
-                                    className="px-3 py-2.5 sm:py-2 rounded-lg text-sm text-left bg-teal-500/[0.08] border border-teal-500/20 text-teal-200/80 hover:bg-teal-500/15 hover:border-teal-500/30 hover:text-teal-100 transition-all active:scale-[0.98] whitespace-nowrap sm:whitespace-normal touch-target"
-                                    data-testid={`button-reflective-${idx}`}
-                                  >
-                                    {q}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Memory suggestion */}
-                        {agentResponse.memorySuggestion.shouldSuggest && (
-                          <div className="p-4 rounded-lg bg-amber-500/[0.08] border border-amber-500/20">
-                            <p className="text-xs font-medium text-amber-400/80 mb-2">Worth remembering?</p>
-                            <p className="text-sm text-gray-300 mb-4">{agentResponse.memorySuggestion.content}</p>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                onClick={handlePinSuggestion}
-                                className="hover:opacity-90 h-9 px-4 text-sm touch-target"
-                                style={{ background: '#F37E20' }}
-                                data-testid="button-pin-suggestion"
-                              >
-                                <Pin className="w-4 h-4 mr-2" />
-                                Pin this
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={handleSkipSuggestion}
-                                className="text-gray-500 hover:text-white h-9 touch-target"
-                                data-testid="button-skip-suggestion"
-                              >
-                                Skip
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Footer */}
-                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.06] flex items-center justify-between">
-                        <Button
-                          onClick={() => {
-                            const topic = agentResponse.said || messageInput;
-                            clearAndReset();
-                            setSelectedZone('research');
-                            setTimeout(() => setMessageInput(topic), 100);
-                          }}
-                          variant="ghost"
-                          className="text-teal-400/70 hover:text-teal-300 hover:bg-teal-500/10 h-9 touch-target"
-                          data-testid="button-research-this"
-                        >
-                          <Search className="w-4 h-4 mr-2" />
-                          Research this
-                        </Button>
-                        <Button
-                          onClick={clearAndReset}
-                          variant="ghost"
-                          className="text-gray-500 hover:text-white hover:bg-white/5 h-9 touch-target"
-                        >
-                          New Entry
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {latestAnalysis && (
-                    <div className="rounded-lg thinking-card overflow-hidden" data-testid="insight-card">
-                      {/* Header */}
-                      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/[0.06]">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-md flex items-center justify-center bg-orange-600/20">
-                            <Sparkles className="w-5 h-5 text-orange-400" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-orange-400">
-                              {latestAnalysis.zone === "research" ? "Research Analysis" : "Insight"}
-                            </p>
-                            <p className="text-xs text-gray-600">Just now</p>
-                          </div>
-                        </div>
-                        <button 
-                          onClick={clearAndReset}
-                          className="p-2 rounded-full hover:bg-white/5 transition-colors touch-target"
-                        >
-                          <X className="w-5 h-5 text-gray-500" />
-                        </button>
-                      </div>
-                      
-                      {/* Content */}
-                      <div className="p-4 sm:p-6 space-y-4">
-                        {latestAnalysis.zone === "journal" ? (
-                          <>
-                            <div className="thinking-card-section">
-                              <p className="text-xs font-medium text-gray-500 mb-2">Summary</p>
-                              <p className="text-white/90 leading-relaxed">{latestAnalysis.analysis.summary}</p>
-                            </div>
-                            
-                            <div className="thinking-card-section">
-                              <p className="text-xs font-medium text-gray-500 mb-2">Insight</p>
-                              <p className="text-gray-300 italic leading-relaxed">"{latestAnalysis.analysis.insight}"</p>
-                            </div>
-                            
-                            <div className="p-4 rounded-lg bg-orange-500/[0.06] border border-orange-500/20">
-                              <p className="text-xs font-medium text-orange-400/80 mb-2">Reflection Question</p>
-                              <p className="text-orange-200 font-medium leading-relaxed">{latestAnalysis.analysis.question}</p>
-                            </div>
-                            
-                            {latestAnalysis.analysis.memoryCandidates.length > 0 && (
-                              <div className="p-4 rounded-lg bg-amber-500/[0.06] border border-amber-500/20">
-                                <p className="text-xs font-medium text-amber-400/80 mb-3">Worth Remembering</p>
+                            {record.logic_flaws.length > 0 && (
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Logic Flaws ({record.logic_flaws.length})</p>
                                 <div className="space-y-2">
-                                  {latestAnalysis.analysis.memoryCandidates.map((memory, idx) => (
-                                    <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
-                                      <p className="flex-1 text-sm text-gray-300">{memory}</p>
-                                      <Button
-                                        size="sm"
-                                        onClick={() => pinMemory.mutate(memory)}
-                                        disabled={pinMemory.isPending}
-                                        className="shrink-0 hover:opacity-90 h-8 px-3 text-xs touch-target"
-                                        style={{ background: 'rgba(243,126,32,0.8)' }}
-                                        data-testid={`button-pin-memory-${idx}`}
-                                      >
-                                        <Pin className="w-3.5 h-3.5 mr-1" />
-                                        Pin
-                                      </Button>
+                                  {record.logic_flaws.map((flaw, idx) => (
+                                    <div key={idx} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="text-[10px] font-bold uppercase" style={{ color: flaw.severity === 'critical' ? '#ef4444' : flaw.severity === 'medium' ? '#f59e0b' : '#6b7280' }}>{flaw.severity}</span>
+                                        <span className="text-xs font-bold text-white">{flaw.flaw_type}</span>
+                                      </div>
+                                      <p className="text-xs text-gray-400 leading-relaxed">{flaw.explanation}</p>
                                     </div>
                                   ))}
                                 </div>
                               </div>
                             )}
-                          </>
-                        ) : (
-                          <>
-                            <div className="thinking-card-section">
-                              <p className="text-xs font-medium text-gray-500 mb-3">Key Claims</p>
-                              <ul className="space-y-2">
-                                {latestAnalysis.analysis.keyClaims.map((claim, idx) => (
-                                  <li key={idx} className="flex items-start gap-3">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                                    <p className="text-white/90 leading-relaxed">{claim}</p>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                              
-                            {latestAnalysis.analysis.evidence.length > 0 && (
-                              <div className="thinking-card-section">
-                                <p className="text-xs font-medium text-gray-500 mb-3">Evidence</p>
-                                <ul className="space-y-2">
-                                  {latestAnalysis.analysis.evidence.map((item, idx) => (
-                                    <li key={idx} className="flex items-start gap-3">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                                      <p className="text-gray-300 leading-relaxed">{item}</p>
+                            {record.structural_recommendations.length > 0 && (
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Recommendations</p>
+                                <ul className="space-y-1.5">
+                                  {record.structural_recommendations.map((rec, idx) => (
+                                    <li key={idx} className="flex items-start gap-2">
+                                      <span className="w-1 h-1 rounded-full mt-2 shrink-0" style={{ background: tierConfig?.color }}></span>
+                                      <p className="text-sm text-gray-300 leading-relaxed">{rec}</p>
                                     </li>
                                   ))}
                                 </ul>
                               </div>
                             )}
-                              
-                            {latestAnalysis.analysis.unknowns.length > 0 && (
-                              <div className="thinking-card-section">
-                                <p className="text-xs font-medium text-gray-500 mb-3">Unknowns</p>
-                                <ul className="space-y-2">
-                                  {latestAnalysis.analysis.unknowns.map((item, idx) => (
-                                    <li key={idx} className="flex items-start gap-3">
-                                      <span className="text-amber-400 mt-1.5 shrink-0">?</span>
-                                      <p className="text-gray-400 italic leading-relaxed">{item}</p>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                              
-                            <div className="p-4 rounded-lg bg-orange-500/[0.06] border border-orange-500/20">
-                              <p className="text-xs font-medium text-orange-400/80 mb-2">Next Question</p>
-                              <p className="text-orange-200 font-medium leading-relaxed">{latestAnalysis.analysis.nextQuestion}</p>
+                            <div className="pt-3 border-t border-white/[0.04]">
+                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-1">Cryptographic Hash</p>
+                              <p className="text-[11px] font-mono text-gray-500 break-all">{record.cryptographic_hash}</p>
                             </div>
-                          </>
+                            <button
+                              onClick={() => { setShowLedger(false); setActiveZoneTier(record.zone_tier as AuditTier); setAuditPayload(record.original_payload); }}
+                              className="text-xs font-bold transition-colors px-4 py-2 rounded-lg"
+                              style={{ color: tierConfig?.color, background: tierConfig?.bgColor, border: `1px solid ${tierConfig?.borderColor}` }}
+                              data-testid={`button-redeploy-${record.id}`}
+                            >
+                              Re-deploy to {tierConfig?.name}
+                            </button>
+                          </div>
                         )}
                       </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+            ) : (
+            <div className="flex flex-col max-w-3xl w-full mx-auto px-4 sm:px-8">
+              <div className="flex-1 flex flex-col justify-center py-6 sm:py-12 min-h-[60vh] sm:min-h-[70vh]">
+                <div className="mb-6 p-4 sm:p-6 rounded-lg" style={{ background: currentZoneConfig.bgColor, border: `1px solid ${currentZoneConfig.borderColor}` }}>
+                  <div className="flex items-center gap-3 mb-2">
+                    {(() => { const Icon = currentZoneConfig.icon; return <Icon className="w-5 h-5" style={{ color: currentZoneConfig.color }} />; })()}
+                    <div>
+                      <h3 className="text-base font-black text-white">{currentZoneConfig.name}</h3>
+                      <p className="text-[10px] font-mono" style={{ color: currentZoneConfig.color }}>{currentZoneConfig.price} USDC per deployment</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 leading-relaxed">{currentZoneConfig.description}</p>
+                </div>
 
-                      {/* Footer */}
-                      <div className="px-4 sm:px-6 py-4 border-t border-white/[0.06] flex items-center justify-between">
-                        <p className="text-xs text-gray-600 italic">You don't need to resolve this now.</p>
-                        <Button
-                          onClick={clearAnalysis}
-                          variant="ghost"
-                          className="text-gray-500 hover:text-white hover:bg-white/5 h-9 touch-target"
-                        >
-                          New Entry
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
+                {auditResult ? (
+                  <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-14 h-14 rounded-lg flex items-center justify-center" style={{ background: `${getRiskColor(auditResult.risk_score)}15` }}>
+                          <span className="text-2xl font-black font-mono" style={{ color: getRiskColor(auditResult.risk_score) }}>{auditResult.risk_score}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded" style={{ background: `${getRiskColor(auditResult.risk_score)}15`, color: getRiskColor(auditResult.risk_score) }}>
+                            {getRiskLabel(auditResult.risk_score)} RISK
+                          </span>
+                          <p className="text-xs text-gray-500 mt-1 font-mono">{auditResult.audit_id}</p>
+                        </div>
+                      </div>
+                      <button onClick={clearAuditResult} className="text-xs text-gray-500 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/[0.03]" data-testid="button-new-audit">
+                        New Audit
+                      </button>
+                    </div>
+
+                    <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Primary Bias</p>
+                      <span className="px-3 py-1.5 rounded-lg text-sm font-bold" style={{ background: auditResult.primary_bias_detected !== 'None' ? 'rgba(239,68,68,0.1)' : 'rgba(52,211,153,0.1)', color: auditResult.primary_bias_detected !== 'None' ? '#ef4444' : '#34d399' }}>
+                        {auditResult.primary_bias_detected.replace(/_/g, ' ')}
+                      </span>
+                    </div>
+
+                    {auditResult.logic_flaws.length > 0 && (
+                      <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">Logic Flaws ({auditResult.logic_flaws.length})</p>
+                        <div className="space-y-3">
+                          {auditResult.logic_flaws.map((flaw, idx) => (
+                            <div key={idx} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-[10px] font-black uppercase" style={{ color: flaw.severity === 'critical' ? '#ef4444' : flaw.severity === 'medium' ? '#f59e0b' : '#6b7280' }}>{flaw.severity}</span>
+                                <span className="text-xs font-bold text-white">{flaw.flaw_type}</span>
+                              </div>
+                              <p className="text-xs text-gray-400 leading-relaxed">{flaw.explanation}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {auditResult.structural_recommendations.length > 0 && (
+                      <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">Recommendations</p>
+                        <ul className="space-y-2">
+                          {auditResult.structural_recommendations.map((rec, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: currentZoneConfig.color }}></span>
+                              <p className="text-sm text-gray-300 leading-relaxed">{rec}</p>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-1">Cryptographic Hash</p>
+                      <p className="text-[11px] font-mono text-gray-500 break-all">{auditResult.cryptographic_hash}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <textarea
+                        value={auditPayload}
+                        onChange={(e) => setAuditPayload(e.target.value.slice(0, currentZoneConfig.maxChars))}
+                        placeholder={currentZoneConfig.placeholder}
+                        className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-gray-200 font-mono leading-relaxed resize-none focus:outline-none transition-all placeholder:text-gray-700"
+                        style={{ background: '#14171D', border: `1px solid ${auditPayload.length > 0 ? currentZoneConfig.borderColor : 'rgba(255,255,255,0.06)'}` }}
+                        disabled={isDeploying}
+                        data-testid="textarea-audit-payload"
+                      />
+                      <div className="absolute bottom-3 right-4 flex items-center gap-3">
+                        <span className="text-[10px] font-mono text-gray-600">{auditPayload.length}/{currentZoneConfig.maxChars}</span>
                       </div>
                     </div>
-                  )}
-                </div>
-              )}
-
-              {/* Quick Search + Past Entries */}
-              {localEntries && localEntries.length > 0 && (
-                <div className="pb-12 mt-8 pt-8 border-t border-white/[0.03]">
-                  <div className="flex items-center gap-3 mb-4">
-                    <button
-                      onClick={() => setShowHistory(!showHistory)}
-                      className="flex items-center gap-2 text-xs font-medium text-gray-500 hover:text-gray-300 transition-colors touch-target"
-                      data-testid="button-toggle-history"
-                    >
-                      <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
-                      {selectedZone === 'research' ? 'Past Research' : 'Past Entries'} ({localEntries.length})
-                    </button>
-                    <button
-                      onClick={() => setQuickSearchModalOpen(true)}
-                      className="flex items-center gap-1.5 text-xs font-medium transition-colors touch-target px-2.5 py-1 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-white/5"
-                      data-testid="button-toggle-quick-search"
-                    >
-                      <Search className="w-3.5 h-3.5" />
-                      <span>Search</span>
-                      <kbd className="hidden sm:inline-flex ml-1 px-1 py-0.5 rounded text-[9px] font-mono text-gray-600 border border-white/[0.08] bg-white/[0.03]">⌘K</kbd>
-                    </button>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] text-gray-600">{auditPayload.length >= 20 ? 'Ready to deploy' : 'Min 20 characters'}</p>
+                      <button
+                        onClick={handleDeploy}
+                        disabled={isDeploying || auditPayload.trim().length < 20}
+                        className="px-6 py-3 rounded-lg text-sm font-black tracking-tight transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                        style={{ background: currentZoneConfig.bgColor, color: currentZoneConfig.color, border: `1px solid ${currentZoneConfig.borderColor}` }}
+                        data-testid="button-deploy"
+                      >
+                        {isDeploying ? (
+                          <span className="flex items-center gap-2">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Deploying...
+                          </span>
+                        ) : (
+                          `Deploy to ${currentZoneConfig.name} (${currentZoneConfig.price} USDC)`
+                        )}
+                      </button>
+                    </div>
                   </div>
-
-                  {showHistory && (
-                        <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
-                          {(() => {
-                            const grouped: Record<string, typeof localEntries> = {};
-                            (localEntries ?? []).forEach((entry) => {
-                              const d = new Date(entry.createdAt);
-                              const now = new Date();
-                              const isToday = d.toDateString() === now.toDateString();
-                              const isYesterday = d.toDateString() === new Date(now.getTime() - 86400000).toDateString();
-                              const label = isToday ? 'Today' : isYesterday ? 'Yesterday' : format(d, "EEEE, MMM d");
-                              if (!grouped[label]) grouped[label] = [];
-                              grouped[label]!.push(entry);
-                            });
-                            return Object.entries(grouped).map(([dateLabel, entries]) => (
-                              <div key={dateLabel} className="mb-3">
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2 ml-1">{dateLabel}</p>
-                                <div className="space-y-2">
-                                  {entries!.map((entry) => {
-                                    const isExpanded = expandedEntryId === entry.id;
-                                    return (
-                                      <button
-                                        key={entry.id}
-                                        onClick={() => setExpandedEntryId(isExpanded ? null : entry.id!)}
-                                        className={`w-full text-left p-3 sm:p-4 rounded-lg border transition-all ${
-                                          isExpanded
-                                            ? selectedZone === 'research' ? 'bg-white/[0.04] border-teal-500/20' : 'bg-white/[0.04] border-orange-500/20'
-                                            : 'bg-[#14171D] border-white/[0.04] hover:border-white/[0.08]'
-                                        }`}
-                                        data-testid={`entry-card-${entry.id}`}
-                                      >
-                                        <div className="flex items-start justify-between gap-3">
-                                          <div className="flex-1 min-w-0">
-                                            <p className={`text-sm text-gray-400 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
-                                              {entry.text}
-                                            </p>
-                                            {isExpanded && entry.videoPlaybackId && entry.videoAssetId && (
-                                              <div className="mt-3">
-                                                <VideoPlayer playbackId={entry.videoPlaybackId} assetId={entry.videoAssetId} compact />
-                                              </div>
-                                            )}
-                                            {isExpanded && (
-                                              <div className="flex items-center gap-2 mt-3">
-                                                <button
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setMessageInput(entry.text);
-                                                    setExpandedEntryId(null);
-                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                  }}
-                                                  className={`text-[10px] font-semibold px-2.5 py-1.5 rounded-lg transition-colors ${
-                                                    selectedZone === 'research' 
-                                                      ? 'bg-teal-500/10 text-teal-400 hover:bg-teal-500/20'
-                                                      : 'bg-orange-500/10 text-orange-400 hover:bg-orange-500/20'
-                                                  }`}
-                                                  data-testid={`button-reuse-entry-${entry.id}`}
-                                                >
-                                                  {selectedZone === 'research' ? 'Research again' : 'Continue this thought'}
-                                                </button>
-                                                {selectedZone !== 'research' && (
-                                                <button
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    const topic = entry.text.slice(0, 100);
-                                                    setExpandedEntryId(null);
-                                                    setSelectedZone('research');
-                                                    setTimeout(() => setMessageInput(topic), 100);
-                                                  }}
-                                                  className="text-[10px] font-semibold px-2.5 py-1.5 rounded-lg bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 transition-colors"
-                                                  data-testid={`button-research-entry-${entry.id}`}
-                                                >
-                                                  Research this
-                                                </button>
-                                                )}
-                                                {selectedZone === 'research' && (
-                                                <button
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    const topic = entry.text.slice(0, 100);
-                                                    setExpandedEntryId(null);
-                                                    setSelectedZone('journal');
-                                                    setTimeout(() => setMessageInput(`Thinking about: ${topic}`), 100);
-                                                  }}
-                                                  className="text-[10px] font-semibold px-2.5 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors"
-                                                  data-testid={`button-journal-entry-${entry.id}`}
-                                                >
-                                                  Journal about this
-                                                </button>
-                                                )}
-                                              </div>
-                                            )}
-                                          </div>
-                                          <div className="flex items-center gap-2 shrink-0">
-                                            {entry.videoAssetId && (
-                                              <Video className="w-3.5 h-3.5 text-orange-400" />
-                                            )}
-                                            <span className="text-[10px] font-medium text-gray-600">
-                                              {format(new Date(entry.createdAt), "h:mm a")}
-                                            </span>
-                                            <ChevronDown className={`w-3.5 h-3.5 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                                          </div>
-                                        </div>
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            ));
-                          })()}
-                        </div>
-                      )}
-                </div>
-              )}
+                )}
+              </div>
             </div>
             )}
           </div>
