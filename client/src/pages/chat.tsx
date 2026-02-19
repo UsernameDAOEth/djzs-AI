@@ -64,7 +64,8 @@ import {
   Hash,
   Activity,
   Eye,
-  EyeOff
+  EyeOff,
+  MessageSquare
 } from "lucide-react";
 import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
@@ -155,11 +156,12 @@ interface ResearchAnalysisResult {
 type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
 
 const V1_ZONES = [
-  { id: "journal", name: "Journal", icon: PenLine, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight." },
-  { id: "research", name: "Research", icon: Search, description: "Quick research", purpose: "Search and synthesize information related to your thinking." },
-  { id: "trade", name: "Trade", icon: Receipt, description: "Trade artifacts", purpose: "Build thesis, stress test, sign & track trade artifacts." },
-  { id: "decisions", name: "Decisions", icon: Brain, description: "Decision log", purpose: "Track high-stakes decisions, stress test reasoning with AI." },
-  { id: "content", name: "Content", icon: Palette, description: "Content pipeline", purpose: "Compose, refine, and track content ideas with AI." },
+  { id: "journal", name: "Journal", icon: PenLine, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight.", color: "#F37E20" },
+  { id: "research", name: "Research", icon: Search, description: "Quick research", purpose: "Search and synthesize information related to your thinking.", color: "#2dd4bf" },
+  { id: "trade", name: "Trade", icon: Receipt, description: "Trade artifacts", purpose: "Build thesis, stress test, sign & track trade artifacts.", color: "#60a5fa" },
+  { id: "decisions", name: "Decisions", icon: Brain, description: "Decision log", purpose: "Track high-stakes decisions, stress test reasoning with AI.", color: "#fbbf24" },
+  { id: "content", name: "Content", icon: Palette, description: "Content pipeline", purpose: "Compose, refine, and track content ideas with AI.", color: "#c084fc" },
+  { id: "thinking", name: "Thinking Partner", icon: MessageSquare, description: "Adversarial AI", purpose: "Adversarial reasoning — expose contradictions, attack assumptions.", color: "#f43f5e" },
 ];
 
 const ZONE_CONFIGS = [
@@ -296,6 +298,7 @@ export default function Chat() {
     }
     return "journal";
   });
+  const [activeView, setActiveView] = useState<"workspace" | "execution">("workspace");
   const [activeZoneTier, setActiveZoneTier] = useState<AuditTier>("micro");
   const [auditPayload, setAuditPayload] = useState("");
   const [auditResult, setAuditResult] = useState<DJZSLogicAudit | null>(null);
@@ -1238,27 +1241,57 @@ export default function Chat() {
             </button>
           </div>
 
-          <nav className="flex-1 px-4 space-y-1">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600 px-4 mb-2 mt-2">Execution Zones</p>
+          <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600 px-4 mb-2 mt-2">Workspace</p>
+            {V1_ZONES.map((zone) => {
+              const Icon = zone.icon;
+              const isActive = activeView === "workspace" && !showLedger && selectedZone === zone.id;
+              return (
+                <button
+                  key={zone.id}
+                  onClick={() => {
+                    setSelectedZone(zone.id);
+                    setActiveView("workspace");
+                    setShowLedger(false);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group ${
+                    isActive 
+                      ? "bg-white/[0.03] text-white" 
+                      : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
+                  }`}
+                  data-testid={`button-workspace-${zone.id}`}
+                >
+                  <Icon className="w-4 h-4 transition-colors" style={{ color: isActive ? zone.color : undefined }} />
+                  <span className="text-sm font-bold tracking-tight">{zone.name}</span>
+                  {isActive && <div className="w-1 h-1 rounded-full ml-auto" style={{ background: zone.color, boxShadow: `0 0 8px ${zone.color}` }}></div>}
+                </button>
+              );
+            })}
+
+            <div className="my-3 border-t border-white/[0.04]" />
+
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600 px-4 mb-2" data-testid="sidebar-zones">Execution Zones</p>
             {ZONE_CONFIGS.map((zone) => {
               const Icon = zone.icon;
-              const isActive = !showLedger && activeZoneTier === zone.id;
+              const isActive = activeView === "execution" && !showLedger && activeZoneTier === zone.id;
               return (
                 <button
                   key={zone.id}
                   onClick={() => {
                     setActiveZoneTier(zone.id);
+                    setActiveView("execution");
                     setShowLedger(false);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all group ${
+                  className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group ${
                     isActive 
                       ? "bg-white/[0.03] text-white" 
                       : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
                   }`}
                   data-testid={`button-zone-${zone.id}`}
                 >
-                  <Icon className="w-5 h-5 transition-colors" style={{ color: isActive ? zone.color : undefined }} />
+                  <Icon className="w-4 h-4 transition-colors" style={{ color: isActive ? zone.color : undefined }} />
                   <div className="flex-1 text-left">
                     <span className="text-sm font-bold tracking-tight block">{zone.name}</span>
                     <span className="text-[10px] font-mono" style={{ color: isActive ? zone.color : 'rgba(156,163,175,0.5)' }}>{zone.price} USDC</span>
@@ -1558,10 +1591,10 @@ export default function Chat() {
               </button>
               <div className="flex flex-col">
                 <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">
-                  {showLedger ? "Cryptographic Ledger" : currentZoneConfig.name}
+                  {showLedger ? "Cryptographic Ledger" : activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.name || "Journal") : currentZoneConfig.name}
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">
-                  {showLedger ? "Immutable audit trail — all zone deployments recorded locally." : currentZoneConfig.purpose}
+                  {showLedger ? "Immutable audit trail — all zone deployments recorded locally." : activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.purpose || "") : currentZoneConfig.purpose}
                 </p>
               </div>
             </div>
@@ -1662,7 +1695,7 @@ export default function Chat() {
                     <p className="text-lg font-bold text-gray-400 mb-2">No audit records yet</p>
                     <p className="text-sm text-gray-600">Deploy your first strategy memo to a Zone to create an immutable record.</p>
                     <button
-                      onClick={() => { setShowLedger(false); setActiveZoneTier('micro'); }}
+                      onClick={() => { setShowLedger(false); setActiveView("execution"); setActiveZoneTier('micro'); }}
                       className="mt-6 px-6 py-3 rounded-lg text-sm font-bold transition-all"
                       style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
                       data-testid="button-first-deployment"
@@ -1748,7 +1781,7 @@ export default function Chat() {
                               <p className="text-[11px] font-mono text-gray-500 break-all">{record.cryptographic_hash}</p>
                             </div>
                             <button
-                              onClick={() => { setShowLedger(false); setActiveZoneTier(record.zone_tier as AuditTier); setAuditPayload(record.original_payload); }}
+                              onClick={() => { setShowLedger(false); setActiveView("execution"); setActiveZoneTier(record.zone_tier as AuditTier); setAuditPayload(record.original_payload); }}
                               className="text-xs font-bold transition-colors px-4 py-2 rounded-lg"
                               style={{ color: tierConfig?.color, background: tierConfig?.bgColor, border: `1px solid ${tierConfig?.borderColor}` }}
                               data-testid={`button-redeploy-${record.id}`}
@@ -1762,6 +1795,260 @@ export default function Chat() {
                   })
                 )}
               </div>
+            </div>
+            ) : activeView === "workspace" ? (
+            <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 sm:px-8">
+              {selectedZone === "journal" || selectedZone === "research" ? (
+                <div className="flex-1 flex flex-col py-6 sm:py-10">
+                  <div className="mb-6 p-4 sm:p-5 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div className="flex items-center gap-3 mb-2">
+                      {(() => { const zoneInfo = V1_ZONES.find(z => z.id === selectedZone); const Icon = zoneInfo?.icon || PenLine; return <Icon className="w-5 h-5" style={{ color: zoneInfo?.color }} />; })()}
+                      <h3 className="text-base font-black text-white">{V1_ZONES.find(z => z.id === selectedZone)?.name}</h3>
+                    </div>
+                    <p className="text-xs text-gray-400 leading-relaxed">{V1_ZONES.find(z => z.id === selectedZone)?.purpose}</p>
+                  </div>
+
+                  {agentResponse ? (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                      <div className="p-5 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">
+                          {selectedZone === "research" ? "Research Analysis" : "AI Thinking Partner"}
+                        </p>
+                        <div className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{agentResponse.said}{agentResponse.matters ? `\n\n${agentResponse.matters}` : ""}{agentResponse.nextMove ? `\n\n${agentResponse.nextMove}` : ""}</div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button onClick={clearAndReset} className="text-xs text-gray-500 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/[0.03]" data-testid="button-clear-analysis">
+                          New Entry
+                        </button>
+                        <button
+                          onClick={() => {
+                            setAuditPayload(messageInput);
+                            setActiveView("execution");
+                            setActiveZoneTier("micro");
+                          }}
+                          className="text-xs font-bold px-4 py-2 rounded-lg transition-all"
+                          style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
+                          data-testid="button-deploy-from-workspace"
+                        >
+                          Deploy to Execution Zone
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="relative">
+                        <textarea
+                          ref={textareaRef}
+                          value={messageInput}
+                          onChange={(e) => setMessageInput(e.target.value)}
+                          onFocus={() => setIsFocused(true)}
+                          onBlur={() => setIsFocused(false)}
+                          placeholder={selectedZone === "research" ? currentPrompts[currentPromptIndex] : currentPrompts[currentPromptIndex]}
+                          className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-gray-200 leading-relaxed resize-none focus:outline-none transition-all placeholder:text-gray-700"
+                          style={{ background: '#14171D', border: `1px solid ${messageInput.length > 0 ? 'rgba(243,126,32,0.25)' : 'rgba(255,255,255,0.06)'}` }}
+                          data-testid="textarea-workspace-input"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={handleSendText}
+                            disabled={!messageInput.trim() || sendMessage.isPending}
+                            className="px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30"
+                            style={{ background: 'rgba(243,126,32,0.1)', color: '#F37E20', border: '1px solid rgba(243,126,32,0.2)' }}
+                            data-testid="button-save-entry"
+                          >
+                            {sendMessage.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Save Entry"}
+                          </button>
+                          <button
+                            onClick={handleAnalyze}
+                            disabled={!messageInput.trim() || isAnalyzing}
+                            className="px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30"
+                            style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
+                            data-testid="button-think-with-me"
+                          >
+                            {isAnalyzing ? <Loader2 className="w-3 h-3 animate-spin" /> : selectedZone === "research" ? "Research" : "Think with me"}
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (messageInput.trim()) {
+                              setAuditPayload(messageInput);
+                              setActiveView("execution");
+                              setActiveZoneTier("micro");
+                            }
+                          }}
+                          disabled={!messageInput.trim()}
+                          className="px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30"
+                          style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
+                          data-testid="button-send-to-audit"
+                        >
+                          Deploy to Zone
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {localEntries && localEntries.length > 0 && (
+                    <div className="mt-8">
+                      <button
+                        onClick={() => setShowHistory(!showHistory)}
+                        className="flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-white transition-colors mb-4"
+                        data-testid="button-toggle-history"
+                      >
+                        <Clock className="w-3 h-3" />
+                        <span>{showHistory ? "Hide" : "Show"} History ({localEntries.length})</span>
+                        <ChevronDown className={`w-3 h-3 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
+                      </button>
+                      {showHistory && (
+                        <div className="space-y-3">
+                          {localEntries.slice(0, 20).map((entry) => (
+                            <div key={entry.id} className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
+                              <p className="text-sm text-gray-300 leading-relaxed line-clamp-3">{entry.text}</p>
+                              <p className="text-[10px] text-gray-600 mt-2 font-mono">{format(new Date(entry.createdAt), "MMM d, yyyy HH:mm")}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : selectedZone === "trade" ? (
+                <div className="py-6 sm:py-10">
+                  <TradeArtifactZone />
+                  <div className="mt-6 p-4 rounded-lg flex items-center justify-between" style={{ background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)' }}>
+                    <div>
+                      <p className="text-xs font-bold text-purple-300">Stress-test your thesis</p>
+                      <p className="text-[10px] text-gray-500">Send your trade thesis to an Execution Zone for adversarial audit.</p>
+                    </div>
+                    <button
+                      onClick={() => { setActiveView("execution"); setActiveZoneTier("micro"); }}
+                      className="px-4 py-2 rounded-lg text-xs font-bold transition-all"
+                      style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
+                      data-testid="button-trade-to-audit"
+                    >
+                      Deploy to Zone
+                    </button>
+                  </div>
+                </div>
+              ) : selectedZone === "decisions" ? (
+                <div className="py-6 sm:py-10">
+                  <DecisionLogZone />
+                  <div className="mt-6 p-4 rounded-lg flex items-center justify-between" style={{ background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)' }}>
+                    <div>
+                      <p className="text-xs font-bold text-purple-300">Pressure-test your decision</p>
+                      <p className="text-[10px] text-gray-500">Submit your reasoning to an Execution Zone for adversarial review.</p>
+                    </div>
+                    <button
+                      onClick={() => { setActiveView("execution"); setActiveZoneTier("founder"); }}
+                      className="px-4 py-2 rounded-lg text-xs font-bold transition-all"
+                      style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
+                      data-testid="button-decisions-to-audit"
+                    >
+                      Deploy to Zone
+                    </button>
+                  </div>
+                </div>
+              ) : selectedZone === "content" ? (
+                <div className="py-6 sm:py-10">
+                  <ContentPipelineZone />
+                  <div className="mt-6 p-4 rounded-lg flex items-center justify-between" style={{ background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)' }}>
+                    <div>
+                      <p className="text-xs font-bold text-purple-300">Challenge your content angle</p>
+                      <p className="text-[10px] text-gray-500">Run your content strategy through an Execution Zone audit.</p>
+                    </div>
+                    <button
+                      onClick={() => { setActiveView("execution"); setActiveZoneTier("micro"); }}
+                      className="px-4 py-2 rounded-lg text-xs font-bold transition-all"
+                      style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
+                      data-testid="button-content-to-audit"
+                    >
+                      Deploy to Zone
+                    </button>
+                  </div>
+                </div>
+              ) : selectedZone === "thinking" ? (
+                <div className="py-6 sm:py-10">
+                  <div className="mb-6 p-4 sm:p-5 rounded-lg" style={{ background: 'rgba(244,63,94,0.06)', border: '1px solid rgba(244,63,94,0.15)' }}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <MessageSquare className="w-5 h-5" style={{ color: '#f43f5e' }} />
+                      <h3 className="text-base font-black text-white">Thinking Partner</h3>
+                    </div>
+                    <p className="text-xs text-gray-400 leading-relaxed">Adversarial AI for reasoning attack. Paste your thesis, argument, or decision — it will expose contradictions, challenge assumptions, and pressure-test your logic.</p>
+                  </div>
+
+                  {agentResponse ? (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                      <div className="p-5 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(244,63,94,0.15)' }}>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">Adversarial Analysis</p>
+                        <div className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{agentResponse.said}{agentResponse.matters ? `\n\n${agentResponse.matters}` : ""}{agentResponse.nextMove ? `\n\n${agentResponse.nextMove}` : ""}</div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button onClick={clearAndReset} className="text-xs text-gray-500 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/[0.03]" data-testid="button-clear-thinking">
+                          New Session
+                        </button>
+                        <button
+                          onClick={() => {
+                            setAuditPayload(messageInput);
+                            setActiveView("execution");
+                            setActiveZoneTier("micro");
+                          }}
+                          className="text-xs font-bold px-4 py-2 rounded-lg transition-all"
+                          style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
+                          data-testid="button-thinking-to-audit"
+                        >
+                          Deploy to Execution Zone
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <textarea
+                        ref={textareaRef}
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        placeholder="Paste your thesis, argument, or assumption here..."
+                        className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-gray-200 leading-relaxed resize-none focus:outline-none transition-all placeholder:text-gray-700"
+                        style={{ background: '#14171D', border: `1px solid ${messageInput.length > 0 ? 'rgba(244,63,94,0.25)' : 'rgba(255,255,255,0.06)'}` }}
+                        data-testid="textarea-thinking-input"
+                      />
+                      <div className="flex items-center justify-between">
+                        <button
+                          onClick={() => {
+                            if (!messageInput.trim() || thinkWithMe.isPending) return;
+                            setIsAnalyzing(true);
+                            setAgentResponse(null);
+                            thinkWithMe.mutate({ content: messageInput, mode: "journal" as EntryType });
+                          }}
+                          disabled={!messageInput.trim() || isAnalyzing}
+                          className="px-5 py-3 rounded-lg text-sm font-bold transition-all disabled:opacity-30"
+                          style={{ background: 'rgba(244,63,94,0.1)', color: '#f43f5e', border: '1px solid rgba(244,63,94,0.2)' }}
+                          data-testid="button-attack-reasoning"
+                        >
+                          {isAnalyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Attack My Reasoning"}
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (messageInput.trim()) {
+                              setAuditPayload(messageInput);
+                              setActiveView("execution");
+                              setActiveZoneTier("micro");
+                            }
+                          }}
+                          disabled={!messageInput.trim()}
+                          className="px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30"
+                          style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
+                          data-testid="button-thinking-deploy"
+                        >
+                          Deploy to Zone
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </div>
             ) : (
             <div className="flex flex-col max-w-3xl w-full mx-auto px-4 sm:px-8">

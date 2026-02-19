@@ -1,24 +1,41 @@
 import { useState, useEffect, useCallback } from "react";
-import { Zap, Activity, Shield, ScrollText, ArrowRight, ArrowLeft, X, Target, FileText, BarChart3 } from "lucide-react";
+import { Zap, Activity, Shield, ScrollText, ArrowRight, ArrowLeft, X, Target, FileText, BarChart3, PenLine, Brain } from "lucide-react";
 
 const TUTORIAL_STEPS = [
   {
     id: "welcome",
-    title: "Welcome to the Audit Zone",
-    description: "DJZS is an adversarial auditing system. You submit strategy memos, and the System pressure-tests them for bias, logic flaws, and blind spots.",
+    title: "Welcome to DJZS",
+    description: "DJZS is your cognitive infrastructure — a workspace for thinking, researching, and trading, backed by adversarial AI that pressure-tests everything you build.",
     icon: Target,
     color: "#F37E20",
     highlight: null,
     tip: "This is not a validation tool. It exists to find what's wrong with your thinking.",
   },
   {
-    id: "zones",
-    title: "Three Execution Zones",
-    description: "Each zone offers a different depth of adversarial audit. Choose based on the stakes of your decision.",
+    id: "workspace",
+    title: "Your Workspace Zones",
+    description: "Start by writing and building in your Workspace. Each zone is a dedicated space for a different type of work — all stored locally on your device.",
+    icon: PenLine,
+    color: "#60a5fa",
+    highlight: "button-workspace-journal",
+    tip: "Write in Journal, research in Research, build theses in Trade, track decisions in Decisions, refine ideas in Content, or spar with the Thinking Partner.",
+    zones: [
+      { name: "Journal", price: "Free", color: "#F37E20", desc: "Private reflection and daily thinking" },
+      { name: "Research", price: "Free", color: "#2dd4bf", desc: "Search, synthesize, and track claims" },
+      { name: "Trade", price: "Free", color: "#60a5fa", desc: "Build and stress-test trade theses" },
+      { name: "Decisions", price: "Free", color: "#fbbf24", desc: "Track high-stakes decisions" },
+      { name: "Content", price: "Free", color: "#c084fc", desc: "Compose and refine content ideas" },
+      { name: "Thinking Partner", price: "Free", color: "#f43f5e", desc: "Adversarial AI reasoning attacks" },
+    ],
+  },
+  {
+    id: "execution",
+    title: "Execution Zones (x402)",
+    description: "When you're ready to pressure-test your work, deploy it to an Execution Zone. Each zone offers a different depth of adversarial audit, paid via x402 USDC on Base.",
     icon: BarChart3,
     color: "#2dd4bf",
     highlight: "sidebar-zones",
-    tip: "Start with Micro-Zone for quick sanity checks. Upgrade to Founder or Treasury when the stakes are higher.",
+    tip: "Use 'Deploy to Zone' buttons in your workspace to send work directly to an Execution Zone.",
     zones: [
       { name: "Micro-Zone", price: "$2.50", color: "#2dd4bf", desc: "Fast binary risk scoring for operational decisions" },
       { name: "Founder Zone", price: "$5.00", color: "#F37E20", desc: "Deep bias detection for strategic roadmap decisions" },

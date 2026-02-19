@@ -63,6 +63,8 @@ Preferred communication style: Simple, everyday language.
 - XMTP messaging is End-to-End Encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## Recent Changes
+- **2026-02-19**: Restored six Workspace Zones (Journal, Research, Trade, Decisions, Content, Thinking Partner) to sidebar alongside Execution Zones with "Deploy to Zone" shortcuts.
+- **2026-02-19**: Updated tutorial to 7 steps covering both Workspace and Execution Zone workflows.
 - **2026-02-19**: Added interactive onboarding tutorial with spotlight highlights, keyboard navigation, and localStorage persistence. Re-accessible via "How It Works" sidebar button.
 - **2026-02-19**: Cleaned up landing page CTA buttons (removed redundant pricing labels).
 - **2026-02-19**: Built Cryptographic Ledger view with expandable audit records, risk scoring visualization, and re-deploy functionality.
