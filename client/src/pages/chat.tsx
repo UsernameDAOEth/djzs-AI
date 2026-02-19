@@ -92,6 +92,7 @@ import { QuickSearch } from "@/components/quick-search";
 import { TradeArtifactZone } from "@/components/trade-artifact-composer";
 import { DecisionLogZone } from "@/components/decision-log-zone";
 import { ContentPipelineZone } from "@/components/content-pipeline-zone";
+import { AuditTutorial, useTutorial } from "@/components/audit-tutorial";
 import {
   exportVaultAsZip,
   importVaultFromZip,
@@ -304,6 +305,7 @@ export default function Chat() {
 
   const auditRecords = useLiveQuery(() => getAuditRecords(50), []);
   const currentZoneConfig = ZONE_CONFIGS.find(z => z.id === activeZoneTier) || ZONE_CONFIGS[0];
+  const { showTutorial, openTutorial, closeTutorial } = useTutorial();
   const [messageInput, setMessageInput] = useState("");
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [memoryDrawerOpen, setMemoryDrawerOpen] = useState(false);
@@ -1286,6 +1288,15 @@ export default function Chat() {
                 <span className="ml-auto text-[10px] font-mono text-gray-600">{auditRecords.length}</span>
               )}
             </button>
+
+            <button
+              onClick={openTutorial}
+              className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-white/[0.01] transition-all group"
+              data-testid="button-tutorial"
+            >
+              <HelpCircle className="w-5 h-5 text-gray-600 group-hover:text-gray-400 transition-colors" />
+              <span className="text-sm font-bold tracking-tight">How It Works</span>
+            </button>
           </nav>
 
           <div className="p-4 mt-auto">
@@ -2092,6 +2103,7 @@ export default function Chat() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }}
     />
+    <AuditTutorial isOpen={showTutorial} onComplete={closeTutorial} />
     </>
   );
 }
