@@ -41,6 +41,11 @@ Preferred communication style: Simple, everyday language.
 - **ENS Resolution**: Custom hook for resolving ENS names.
 - **Wallet Identity**: Optional wallet-based authentication.
 
+### Audit Deployment Terminal
+- **Terminal-Style UI**: Monospace payload input with zone-specific pricing cards and adversarial copy for deploying audits across the three tiers (Micro, Founder, Treasury).
+- **Cryptographic Ledger**: Expandable audit record cards with risk scoring visualization, tier badges, and re-deploy functionality for reviewing past audit results.
+- **Interactive Onboarding Tutorial**: 6-step guided spotlight walkthrough (welcome, zone tiers, payload writing, deployment, results, ledger) with keyboard navigation (Arrow keys, Enter, Escape). Auto-shown to first-time users via localStorage persistence. Re-accessible via "How It Works" sidebar button. Visual spotlight highlights target UI elements with glowing halos.
+
 ### Key Features
 - **Six Zones**:
     - **Journal**: Daily thinking, video entries (Livepeer), AI interrogation.
@@ -56,6 +61,12 @@ Preferred communication style: Simple, everyday language.
 ### Privacy Design
 - Local-first storage, user control over AI execution, offline capability for journaling.
 - XMTP messaging is End-to-End Encrypted via MLS protocol with quantum-resistant key encapsulation.
+
+## Recent Changes
+- **2026-02-19**: Added interactive onboarding tutorial with spotlight highlights, keyboard navigation, and localStorage persistence. Re-accessible via "How It Works" sidebar button.
+- **2026-02-19**: Cleaned up landing page CTA buttons (removed redundant pricing labels).
+- **2026-02-19**: Built Cryptographic Ledger view with expandable audit records, risk scoring visualization, and re-deploy functionality.
+- **2026-02-19**: Implemented three-tier Audit Deployment Terminal with zone-specific pricing cards and terminal-style monospace payload input.
 
 ## External Dependencies
 - **Livepeer**: Decentralized video storage and playback.
