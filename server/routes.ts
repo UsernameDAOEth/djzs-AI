@@ -713,39 +713,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const X402_NETWORK = (process.env.X402_NETWORK || "eip155:8453") as `${string}:${string}`;
   let x402Initialized = false;
-  try {
-    const { paymentMiddleware, x402ResourceServer } = await import("@x402/express");
-    const { ExactEvmScheme } = await import("@x402/evm/exact/server");
-    const { HTTPFacilitatorClient } = await import("@x402/core/server");
-    const { facilitator } = await import("@coinbase/x402");
 
-    const facilitatorClient = new HTTPFacilitatorClient(facilitator);
+  const hasCdpKeys = !!(process.env.CDP_API_KEY_ID && process.env.CDP_API_KEY_SECRET);
 
-    const resourceServer = new x402ResourceServer(facilitatorClient)
-      .register(X402_NETWORK, new ExactEvmScheme());
+  if (hasCdpKeys) {
+    try {
+      const { paymentMiddleware, x402ResourceServer } = await import("@x402/express");
+      const { ExactEvmScheme } = await import("@x402/evm/exact/server");
+      const { HTTPFacilitatorClient } = await import("@x402/core/server");
+      const { facilitator } = await import("@coinbase/x402");
 
-    app.use(
-      paymentMiddleware(
-        {
-          "POST /api/audit": {
-            accepts: {
-              scheme: "exact",
-              price: "$2.50",
-              network: X402_NETWORK,
-              payTo: TREASURY_WALLET,
+      const facilitatorClient = new HTTPFacilitatorClient(facilitator);
+
+      const resourceServer = new x402ResourceServer(facilitatorClient)
+        .register(X402_NETWORK, new ExactEvmScheme());
+
+      app.use(
+        paymentMiddleware(
+          {
+            "POST /api/audit": {
+              accepts: {
+                scheme: "exact",
+                price: "$2.50",
+                network: X402_NETWORK,
+                payTo: TREASURY_WALLET,
+              },
+              description: "DJZS AI Logic Audit - Adversarial stress-test of strategy, bias detection, and risk scoring",
             },
-            description: "DJZS AI Logic Audit - Adversarial stress-test of strategy, bias detection, and risk scoring",
           },
-        },
-        resourceServer,
-      ),
-    );
+          resourceServer,
+        ),
+      );
 
-    x402Initialized = true;
-    console.log(`x402 payment middleware initialized for /api/audit ($2.50 USDC on ${X402_NETWORK})`);
-  } catch (error) {
-    console.warn("x402 middleware not initialized (non-blocking):", error instanceof Error ? error.message : error);
-    console.warn("Audit endpoint will operate without payment gate in development mode");
+      x402Initialized = true;
+      console.log(`x402 payment middleware initialized for /api/audit ($2.50 USDC on Base Mainnet via Coinbase CDP)`);
+    } catch (error) {
+      console.warn("x402 middleware not initialized (non-blocking):", error instanceof Error ? error.message : error);
+      console.warn("Audit endpoint will operate without payment gate");
+    }
+  } else {
+    if (process.env.NODE_ENV === "production") {
+      console.error("CRITICAL: CDP_API_KEY_ID and CDP_API_KEY_SECRET required in production — audit endpoint is unprotected!");
+    }
+    console.warn("CDP_API_KEY_ID and CDP_API_KEY_SECRET not set — x402 payment gate disabled");
+    console.warn("Get your keys at https://portal.cdp.coinbase.com/projects");
   }
 
   app.post("/api/audit", async (req, res) => {
@@ -786,8 +797,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       endpoint: "POST /api/audit",
       payment: {
         protocol: "x402",
+        facilitator: "Coinbase CDP (@coinbase/x402)",
         price: "$2.50 USDC",
         network: X402_NETWORK,
+        chain: "Base Mainnet",
         payTo: TREASURY_WALLET,
         x402_enabled: x402Initialized,
       },
