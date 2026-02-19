@@ -708,19 +708,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ==================== AGENT-TO-AGENT (A2A) AUDIT API ====================
   // x402 payment middleware for the audit endpoint
-  // Uses @x402/express to gate access behind USDC micropayments on Base
+  // Uses @coinbase/x402 (official CDP facilitator) for USDC micropayments on Base Mainnet
   const TREASURY_WALLET = process.env.TREASURY_WALLET_ADDRESS || "0xEc551A9e5598a030B46278fEbaDF798Ea8bA05FF";
 
-  const X402_NETWORK = (process.env.X402_NETWORK || "eip155:84532") as `${string}:${string}`;
+  const X402_NETWORK = (process.env.X402_NETWORK || "eip155:8453") as `${string}:${string}`;
   let x402Initialized = false;
   try {
     const { paymentMiddleware, x402ResourceServer } = await import("@x402/express");
     const { ExactEvmScheme } = await import("@x402/evm/exact/server");
     const { HTTPFacilitatorClient } = await import("@x402/core/server");
+    const { facilitator } = await import("@coinbase/x402");
 
-    const facilitatorClient = new HTTPFacilitatorClient({
-      url: "https://www.x402.org/facilitator",
-    });
+    const facilitatorClient = new HTTPFacilitatorClient(facilitator);
 
     const resourceServer = new x402ResourceServer(facilitatorClient)
       .register(X402_NETWORK, new ExactEvmScheme());

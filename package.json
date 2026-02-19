@@ -54,7 +54,6 @@
     "@types/react-helmet": "^6.1.11",
     "@vitejs/plugin-react": "^4.7.0",
     "@wagmi/core": "^2.21.2",
-    "@x402/axios": "^2.2.0",
     "@x402/core": "^2.3.1",
     "@x402/evm": "^2.3.1",
     "@x402/express": "^2.3.0",
