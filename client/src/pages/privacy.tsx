@@ -125,7 +125,22 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Third-Party Services
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> A2A Audit API Data Handling
+              </h2>
+              <p className="mb-4">
+                DJZS operates an Agent-to-Agent (A2A) audit API at <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit</code>. When autonomous agents submit strategy memos for logic audits:
+              </p>
+              <ul className="space-y-3 list-none">
+                <li><span className="text-white">• No storage:</span> Submitted strategy memos are processed in real-time and not stored on any server after the response is returned.</li>
+                <li><span className="text-white">• AI processing:</span> The memo text is sent to Venice AI for adversarial analysis. Venice claims no data retention.</li>
+                <li><span className="text-white">• Cryptographic hash:</span> A SHA-256 hash of the input memo is included in the audit response for verification purposes. The hash is computed server-side and returned to the caller — the original memo is not retained.</li>
+                <li><span className="text-white">• Payment data:</span> x402 payment verification is handled by the x402 protocol facilitator. DJZS receives USDC to the treasury wallet but does not store payment metadata beyond what is recorded on-chain.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Third-Party Services
               </h2>
               <p>
                 DJZS may integrate with third-party services for market data, AI processing, 
@@ -137,7 +152,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Your Rights
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Your Rights
               </h2>
               <ul className="space-y-3 list-none">
                 <li><span className="text-white">• Data Portability:</span> Export your local vault data at any time through the interface.</li>
@@ -148,7 +163,7 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Contact
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> Contact
               </h2>
               <p>
                 For privacy-related inquiries, reach out through our official channels. 

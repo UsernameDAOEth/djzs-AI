@@ -27,8 +27,8 @@ export default function About() {
       <main className="max-w-3xl mx-auto px-6 pt-32 pb-20">
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase" data-testid="text-about-title">About DJ-Z-S</h1>
-          <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">Most AI tools validate your thinking. DJZS destroys the weak parts.</p>
-          <p className="text-sm text-gray-400 mb-12 leading-relaxed">DJ-Z-S is a decentralized adversarial AI system for <strong className="text-white">Founders, Traders, Researchers, and Creators.</strong> It pressure-tests your reasoning, flags FOMO and narrative dependency, and makes sure your decisions survive volatility.</p>
+          <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">The autonomous auditing firm for the A2A economy. DJZS destroys the weak parts.</p>
+          <p className="text-sm text-gray-400 mb-12 leading-relaxed">DJ-Z-S is an autonomous AI auditing firm operating in the Agent-to-Agent (A2A) economy, serving <strong className="text-white">human founders via web UI and autonomous AI agents via programmatic API</strong>. It pressure-tests reasoning, flags FOMO and narrative dependency, and makes sure decisions survive volatility — for humans and machines alike.</p>
 
           <div className="space-y-14 text-sm leading-relaxed border-l border-white/[0.06] pl-8">
 
@@ -281,7 +281,42 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Additional Tools
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> The A2A Economy — Agents Hiring Agents
+              </h2>
+              <p className="mb-6">DJZS serves two clients: human founders who use the web UI, and autonomous AI agents who pay for logic audits via API. In the Agent-to-Agent economy, trust is the bottleneck. DJZS is the default Logic Oracle — the "Senior Partner" that other agents hire to stress-test their logic before execution.</p>
+              <div className="space-y-4">
+                <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }} data-testid="card-a2a-api-about">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Bot className="w-5 h-5 text-orange-400" />
+                    <h3 className="text-white font-bold">Machine-Readable API</h3>
+                  </div>
+                  <p className="text-gray-400 mb-3">Other agents call <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit</code> with a strategy memo and receive structured JSON: risk score (0-100), primary bias detected, logic flaws, and recommendations. Every audit is cryptographically hashed (SHA-256) for on-chain verification.</p>
+                  <p className="text-xs text-gray-500">Schema discovery at <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">GET /api/audit/schema</code></p>
+                </div>
+                <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }} data-testid="card-a2a-payment-about">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Zap className="w-5 h-5 text-teal-400" />
+                    <h3 className="text-white font-bold">x402 Micropayments on Base</h3>
+                  </div>
+                  <p className="text-gray-400">Revenue model: pay-per-audit via the x402 protocol. Agents pay $2.50 USDC on Base per audit — no subscriptions, no NFT gates. HTTP-native payments mean any agent can call the API, pay, and receive results in a single request cycle.</p>
+                </div>
+                <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }} data-testid="card-a2a-usecases-about">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Brain className="w-5 h-5 text-purple-400" />
+                    <h3 className="text-white font-bold">Use Cases</h3>
+                  </div>
+                  <ul className="space-y-2 text-sm text-gray-400">
+                    <li>• <strong className="text-white">DAO Treasury Stress-Test ($50)</strong> — A DAO agent pings DJZS before signing a multi-sig, flagging FOMO-driven allocation</li>
+                    <li>• <strong className="text-white">Founder Drift Audit ($5)</strong> — A VC screening bot checks if a founder is building what they promised</li>
+                    <li>• <strong className="text-white">Micro-Audit ($2.50)</strong> — A trading agent stress-tests an arbitrage strategy before execution</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Additional Tools
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
@@ -309,7 +344,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Built by Dj-z-s
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Built by Dj-z-s
               </h2>
               <div className="p-6 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.03)' }}>
                 <div className="flex items-center gap-3 mb-4">
@@ -330,7 +365,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Open Development
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> Open Development
               </h2>
               <p className="mb-5">We believe in transparency. You can see exactly what we're building, in real-time. Our development is open for anyone to inspect.</p>
               <div className="flex flex-wrap gap-4">
@@ -367,7 +402,7 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> FAQ
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>11</span> FAQ
               </h2>
               <div className="space-y-3">
                 <PracticalItem
@@ -392,8 +427,8 @@ export default function About() {
 
           <div className="mt-16 pt-12 border-t border-white/[0.06]">
             <div className="text-center">
-              <p className="text-white font-bold text-lg mb-3">Ready to protect your best ideas and sharpen your edge?</p>
-              <p className="text-gray-500 text-sm mb-6">Start using DJ-Z-S today.</p>
+              <p className="text-white font-bold text-lg mb-3">Ready to pressure-test your thinking?</p>
+              <p className="text-gray-500 text-sm mb-6">Human founders start here. AI agents hit the API.</p>
               <div className="flex flex-wrap gap-3 justify-center">
                 <Link
                   href="/chat"
@@ -416,7 +451,7 @@ export default function About() {
 
           <div className="mt-16 pt-8 border-t border-white/[0.06] text-center">
             <p className="text-xs text-gray-600">
-              &copy; 2026 DJZS SYSTEM / DECENTRALIZED AI FOR SOVEREIGN THINKING
+              &copy; 2026 DJZS SYSTEM / AUTONOMOUS AUDITING FIRM FOR THE A2A ECONOMY
             </p>
           </div>
         </motion.div>

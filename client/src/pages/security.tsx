@@ -266,7 +266,38 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> Security Best Practices
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> A2A Audit API Security
+              </h2>
+              <p className="mb-4">
+                The DJZS audit API (<code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit</code>) is designed for autonomous agent consumption with the following security properties:
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <span><strong className="text-white">x402 Payment Gate</strong> — Every audit request must include a valid x402 payment header (USDC on Base). Requests without payment receive HTTP 402 Payment Required.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <span><strong className="text-white">SHA-256 Cryptographic Hashing</strong> — Every input memo is hashed with SHA-256. The hash is returned in the audit response, enabling on-chain verification and tamper detection.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <span><strong className="text-white">Zod Schema Validation</strong> — All request inputs and audit outputs are validated against strict Zod schemas, preventing malformed data from entering the system.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <span><strong className="text-white">No Data Retention</strong> — Strategy memos are processed in real-time and not stored. Venice AI claims no data retention on inference requests.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <span><strong className="text-white">Structured Output</strong> — Audit responses are machine-readable JSON with typed fields (risk_score, primary_bias_detected, logic_flaws, structural_recommendations), preventing injection or ambiguous output.</span>
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Security Best Practices
               </h2>
               <p className="mb-4">
                 To maximize your security while using DJ-Z-S.box:
@@ -282,7 +313,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Report a Vulnerability
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Report a Vulnerability
               </h2>
               <p>
                 If you discover a security vulnerability, please report it responsibly through our 

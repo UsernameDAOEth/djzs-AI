@@ -29,7 +29,11 @@ import {
   BarChart3,
   Eye,
   Layers,
-  ArrowRightLeft
+  ArrowRightLeft,
+  DollarSign,
+  FileCode,
+  CheckCircle,
+  Code2
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -140,7 +144,7 @@ export default function Docs() {
             DJZS Documentation
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Adversarial AI for sovereign thinkers. Pressure-tests your reasoning, flags FOMO and narrative dependency, calls out weak logic. Not here to be liked.
+            The autonomous auditing firm for the A2A economy. Serves human founders via web UI and AI agents via programmatic API. Pressure-tests reasoning, flags bias, and stress-tests logic — for humans and machines alike.
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
@@ -156,7 +160,7 @@ export default function Docs() {
             <h2 className="text-2xl font-bold text-white mb-4">What is DJZS?</h2>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p className="text-lg">
-                DJ-Z-S is the <strong className="text-white">adversarial AI system for sovereign thinkers: Founders, Traders, Researchers, and Creators</strong>. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. No centralized model training on your thoughts. No cloud surveillance layer.
+                DJ-Z-S is the <strong className="text-white">autonomous AI auditing firm for the Agent-to-Agent (A2A) economy</strong>. It serves two clients: human founders via the web UI, and autonomous AI agents via a machine-readable API. The system combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), decentralized AI inference via Venice, and x402 micropayments on Base. No centralized model training on your thoughts. No cloud surveillance layer.
               </p>
               <p>
                 Six zones — Journal, Research, Trade, Decisions, Content, and Thinking Partner — form one loop: capture your thinking locally, pressure-test it with an adversarial AI, and compound the results into a living knowledge base. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
@@ -164,6 +168,83 @@ export default function Docs() {
               <p>
                 The AI is your adversarial thinking partner — not a chatbot, not a validator. It actively pushes back on weak reasoning, FOMO-driven logic, and narrative dependency. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your intelligence compounds without becoming platform exhaust. DJZS is designed to be honest, not helpful. It tells you what's wrong with your thinking, not what's right.
               </p>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20" data-testid="section-a2a-audit-api">
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20">
+            <h2 className="text-2xl font-bold text-white mb-2">A2A Audit API</h2>
+            <p className="text-gray-400 mb-8">Machine-readable logic audits for autonomous agents</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-teal-500/20 transition-all" data-testid="card-api-endpoint">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center mb-3">
+                  <Code2 className="w-5 h-5 text-teal-400" />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-2">API Endpoint</h4>
+                <code className="block text-xs text-teal-300 bg-teal-500/10 px-3 py-2 rounded mb-2 font-mono">POST /api/audit</code>
+                <p className="text-xs text-gray-500 leading-relaxed">Request schema: <code className="text-gray-400">strategy_memo</code> (string) + <code className="text-gray-400">audit_type</code> (founder_drift | dao_treasury | micro_audit)</p>
+              </div>
+
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-teal-500/20 transition-all" data-testid="card-schema-discovery">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center mb-3">
+                  <FileCode className="w-5 h-5 text-teal-400" />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-2">Schema Discovery</h4>
+                <code className="block text-xs text-teal-300 bg-teal-500/10 px-3 py-2 rounded mb-2 font-mono">GET /api/audit/schema</code>
+                <p className="text-xs text-gray-500 leading-relaxed">Returns pricing, schema, and integration details for autonomous agent discovery</p>
+              </div>
+
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-purple-500/20 transition-all" data-testid="card-response-schema">
+                <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center mb-3">
+                  <CheckCircle className="w-5 h-5 text-purple-400" />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-2">Response Schema</h4>
+                <div className="space-y-1 text-xs text-gray-500">
+                  <p><code className="text-purple-300">risk_score</code> — 0-100 severity rating</p>
+                  <p><code className="text-purple-300">primary_bias_detected</code> — top bias identified</p>
+                  <p><code className="text-purple-300">logic_flaws[]</code> — array of reasoning errors</p>
+                  <p><code className="text-purple-300">structural_recommendations[]</code> — actionable fixes</p>
+                  <p><code className="text-purple-300">cryptographic_hash</code> — SHA-256 audit proof</p>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-orange-500/20 transition-all" data-testid="card-payment">
+                <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center mb-3">
+                  <DollarSign className="w-5 h-5 text-orange-400" />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-2">Payment</h4>
+                <p className="text-xs text-gray-500 leading-relaxed mb-2">x402 protocol — <strong className="text-orange-300">$2.50 USDC on Base</strong> per audit</p>
+                <p className="text-xs text-gray-500">Pay-per-use, no subscriptions. Agents pay at the HTTP layer via x402 micropayments.</p>
+              </div>
+            </div>
+
+            <h3 className="text-lg font-bold text-white mb-4">Use Cases</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-5 rounded-lg bg-[#14171D] border border-orange-500/10 hover:border-orange-500/30 transition-all" data-testid="card-usecase-dao">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-bold text-white">DAO Treasury</h4>
+                  <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2 py-1 rounded">$50</span>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Stress-test treasury allocation strategies before multi-sig execution</p>
+              </div>
+
+              <div className="p-5 rounded-lg bg-[#14171D] border border-teal-500/10 hover:border-teal-500/30 transition-all" data-testid="card-usecase-founder">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-bold text-white">Founder Drift</h4>
+                  <span className="text-xs font-bold text-teal-400 bg-teal-500/10 px-2 py-1 rounded">$5</span>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Strategic integrity check — detect mission drift and narrative dependency</p>
+              </div>
+
+              <div className="p-5 rounded-lg bg-[#14171D] border border-purple-500/10 hover:border-purple-500/30 transition-all" data-testid="card-usecase-micro">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-bold text-white">Micro-Audit</h4>
+                  <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-2 py-1 rounded">$2.50</span>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Quick "check my work" — fast logic audit for any reasoning memo</p>
+              </div>
             </div>
           </div>
         </motion.section>
@@ -1278,6 +1359,10 @@ export default function Docs() {
               category="Messaging & Trade"
               items={["XMTP Agent SDK", "OpenClaw Dispatch", "Paragraph SDK", "Trade Artifacts (EIP-191)", "XMTP Send + Exec Reports", "Paper/Live Execution", "Market Alerts", "BYOK (Venice)"]}
             />
+            <TechStackItem 
+              category="A2A Payments"
+              items={["x402 Protocol", "@x402/express", "USDC on Base", "SHA-256 Hashing", "Zod Validation"]}
+            />
           </div>
         </motion.section>
 
@@ -1314,6 +1399,13 @@ export default function Docs() {
               description="View source code on GitHub"
               external
               testId="link-github-repo"
+            />
+            <QuickLink 
+              href="/api/audit/schema"
+              title="Audit API Schema"
+              description="Machine-readable API docs for agent integration"
+              external
+              testId="link-audit-api"
             />
           </div>
         </motion.section>
