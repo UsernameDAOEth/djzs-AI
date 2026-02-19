@@ -1,8 +1,35 @@
-import { djzsLogicAuditSchema, type DJZSLogicAudit, type AuditRequest } from "@shared/audit-schema";
+import { djzsLogicAuditSchema, type DJZSLogicAudit, type AuditRequest, type AuditTier } from "@shared/audit-schema";
 import { DJZS_CORE_IDENTITY } from "./ai-identity";
 import { createHash, randomUUID } from "crypto";
 
 const VENICE_API_BASE = "https://api.venice.ai/api/v1";
+
+const TIER_PROMPTS: Record<AuditTier, { preamble: string; temperature: number; maxTokens: number }> = {
+  micro: {
+    preamble: `ZONE: Micro-Zone (Operational Ledger)
+EXECUTION MODE: Fast, constrained sanity check. Binary risk scoring.
+DEPTH: Surface-level logic scan. Identify the single most dangerous assumption and the primary emotional driver. Do not over-analyze — speed is the value proposition.
+MAX FLAWS TO REPORT: 3`,
+    temperature: 0.3,
+    maxTokens: 1200,
+  },
+  founder: {
+    preamble: `ZONE: Founder Zone (Strategic Roadmap Ledger)
+EXECUTION MODE: Deep narrative-focused audit. Cross-reference against historical startup failure modes.
+DEPTH: Full roadmap analysis. Isolate the thesis from ego. Detect pivot-chasing, narrative drift, and confirmation bias in strategic decisions. Compare stated goals against actual moves.
+MAX FLAWS TO REPORT: 6`,
+    temperature: 0.4,
+    maxTokens: 2000,
+  },
+  treasury: {
+    preamble: `ZONE: Treasury Zone (Governance Ledger)
+EXECUTION MODE: Exhaustive adversarial breakdown. This is the most rigorous audit tier — capital deployment depends on this verdict.
+DEPTH: Full multi-vector stress test. Attack every assumption. Model failure scenarios. Identify systemic risks, liquidity traps, governance capture vectors, and emotional reasoning masquerading as strategy. Leave nothing unexamined.
+MAX FLAWS TO REPORT: unlimited`,
+    temperature: 0.5,
+    maxTokens: 4000,
+  },
+};
 
 const AUDIT_JSON_SCHEMA = {
   type: "object" as const,
@@ -34,7 +61,7 @@ const AUDIT_JSON_SCHEMA = {
   },
 };
 
-function buildAuditSystemPrompt(auditType: string): string {
+function buildAuditSystemPrompt(auditType: string, tier: AuditTier): string {
   const typeInstructions: Record<string, string> = {
     treasury: `AUDIT TYPE: DAO Treasury Stress-Test.
 Focus on: capital allocation logic, yield assumptions, liquidity risk, governance proposal quality, emotional vs. structural reasoning behind treasury moves.`,
@@ -46,11 +73,15 @@ Focus on: assumption validity, competitive moat analysis, market timing dependen
 Focus on: reasoning quality, assumption identification, bias detection, logical consistency, evidence strength.`,
   };
 
+  const tierConfig = TIER_PROMPTS[tier];
+
   return `${DJZS_CORE_IDENTITY}
 
 ---
 
-You are operating as DJZS AI — an autonomous auditing agent in the Agent-to-Agent (A2A) economy. You are the "Senior Partner" that other AI agents and human founders hire to pressure-test their logic before execution.
+You are operating as DJZS AI — an autonomous auditing agent in the Agent-to-Agent (A2A) economy. You are deployed inside the ${tier === "micro" ? "Micro-Zone" : tier === "founder" ? "Founder Zone" : "Treasury Zone"}.
+
+${tierConfig.preamble}
 
 ${typeInstructions[auditType] || typeInstructions.general}
 
@@ -75,6 +106,7 @@ IMPORTANT: Respond with valid JSON only. No markdown, no explanation outside the
 
 export async function runLogicAuditAgent(
   request: AuditRequest,
+  tier: AuditTier = "micro",
   apiKeyOverride?: string
 ): Promise<DJZSLogicAudit> {
   const apiKey = apiKeyOverride || process.env.VENICE_API_KEY;
@@ -83,6 +115,7 @@ export async function runLogicAuditAgent(
     throw new Error("VENICE_API_KEY not configured");
   }
 
+  const tierConfig = TIER_PROMPTS[tier];
   const auditId = randomUUID();
   const timestamp = new Date().toISOString();
   const inputHash = createHash("sha256").update(request.strategy_memo).digest("hex");
@@ -96,14 +129,14 @@ export async function runLogicAuditAgent(
     body: JSON.stringify({
       model: "llama-3.3-70b",
       messages: [
-        { role: "system", content: buildAuditSystemPrompt(request.audit_type) },
+        { role: "system", content: buildAuditSystemPrompt(request.audit_type, tier) },
         {
           role: "user",
           content: `STRATEGY MEMO FOR AUDIT:\n\n${request.strategy_memo}\n\n---\nPerform a full logic audit. Score the risk. Identify bias. Find the flaws. Be adversarial.`,
         },
       ],
-      temperature: 0.4,
-      max_tokens: 2000,
+      temperature: tierConfig.temperature,
+      max_tokens: tierConfig.maxTokens,
       venice_parameters: {
         include_venice_system_prompt: false,
       },
@@ -137,6 +170,7 @@ export async function runLogicAuditAgent(
   const fullAudit: DJZSLogicAudit = {
     audit_id: auditId,
     timestamp,
+    tier,
     risk_score: parsed.risk_score,
     primary_bias_detected: parsed.primary_bias_detected,
     logic_flaws: parsed.logic_flaws || [],

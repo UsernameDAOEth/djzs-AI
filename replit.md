@@ -1,7 +1,7 @@
-# DJZS AI - Autonomous Auditing Firm for the A2A Economy
+# DJZS - Decentralized Journaling Zone System
 
 ## Overview
-DJZS AI is an autonomous AI auditing firm operating in the Agent-to-Agent (A2A) economy, designed to be a "Logic Oracle for the decentralized web." It offers machine-readable audits for other AI agents via a programmatic API and provides a human-facing web UI with six distinct "zones" (Journal, Research, Trade, Decisions, Content, Thinking Partner) for structured thinking and decision-making. The project emphasizes local-first data ownership, end-to-end encrypted messaging, decentralized AI inference, and x402 micropayments on Base. Its core purpose is to provide adversarial AI pressure-testing to challenge assumptions and ensure robust decision-making in a decentralized, post-surveillance environment, positioning itself as cognitive infrastructure rather than a validation tool.
+DJZS is a Decentralized Journaling Zone System operating in the Agent-to-Agent (A2A) economy, designed to be a "Logic Oracle for the decentralized web." It offers machine-readable adversarial audits for other AI agents via a tiered programmatic API and provides a human-facing web UI with six distinct zones (Journal, Research, Trade, Decisions, Content, Thinking Partner) for structured thinking and decision-making. The project emphasizes local-first data ownership, end-to-end encrypted messaging, decentralized AI inference, and x402 micropayments on Base. Its core purpose is to provide adversarial AI pressure-testing to challenge assumptions and ensure robust decision-making in a decentralized, post-surveillance environment, positioning itself as cognitive infrastructure rather than a validation tool.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -19,13 +19,18 @@ Preferred communication style: Simple, everyday language.
 - **API**: RESTful endpoints for various functionalities, including A2A audit, journal, research, and agent interactions.
 - **OpenClaw Agent Runner**: A unified dispatcher (`runAgent(agentName, payload)`) for various AI agents (JournalInsight, ResearchSynth, ThinkingPartner), ensuring intelligence resides within agent classes.
 
-### A2A Audit API
-- **Endpoint**: `POST /api/audit` for machine-readable logic audits.
+### A2A Audit API (Tiered Zone Architecture)
+- **Agent Discovery**: `/.well-known/agent.json` manifest for machine-readable service discovery.
+- **Tiered Endpoints**:
+  - `POST /api/audit/micro` — Micro-Zone ($2.50 USDC) — fast constrained operational audits (1000 char limit)
+  - `POST /api/audit/founder` — Founder Zone ($5.00 USDC) — deep roadmap diligence (5000 char limit)
+  - `POST /api/audit/treasury` — Treasury Zone ($50.00 USDC) — exhaustive adversarial governance audits (unlimited)
+  - `POST /api/audit` — backward-compatible alias for Micro-Zone
 - **Schema Discovery**: `GET /api/audit/schema` for API details, pricing, and integration.
-- **Payment**: x402 protocol for USDC micropayments on Base.
+- **Payment**: x402 protocol for USDC micropayments on Base. Treasury wallet: `0xEc551A9e5598a030B46278fEbaDF798Ea8bA05FF`.
 - **Audit Types**: Includes `treasury`, `founder_drift`, `strategy`, and `general` logic audits.
-- **Output Schema**: Structured JSON output validated by Zod, including risk score, bias detection, logic flaws, and recommendations.
-- **Agent**: An adversarial AI agent using Venice AI, enforcing structured output and schema validation.
+- **Output Schema**: Structured JSON output validated by Zod, including tier, risk score, bias detection, logic flaws, and recommendations.
+- **Agent**: An adversarial AI agent using Venice AI, with tier-specific prompt engineering for depth/rigor scaling.
 
 ### Local-First Vault
 - **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI-generated insights, memory pins, research dossiers, claims, decision logs, and content pipeline items.

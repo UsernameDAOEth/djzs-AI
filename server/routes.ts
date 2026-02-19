@@ -9,7 +9,7 @@ import { searchBrave, type BraveSearchResult } from "./brave";
 import { runAgent, journalInsightPayloadSchema, researchSynthPayloadSchema, thinkingPartnerPayloadSchema, type AgentName } from "./openclaw";
 import { getUncachableGitHubClient } from "./github";
 import { createUploadUrl, getAssetStatus, getPlaybackInfo, deleteAsset } from "./livepeer";
-import { auditRequestSchema } from "@shared/audit-schema";
+import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
 import { runLogicAuditAgent } from "./audit-agent";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
@@ -34,7 +34,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ 
       ok: true, 
       timestamp: Date.now(), 
-      service: "DJZS AI - Autonomous Auditing Firm",
+      service: "DJZS - Decentralized Journaling Zone System",
       capabilities: {
         braveSearch: !!process.env.BRAVE_API_KEY,
         redpillAI: !!process.env.REDPILL_API_KEY,
@@ -731,6 +731,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       app.use(
         paymentMiddleware(
           {
+            "POST /api/audit/micro": {
+              accepts: {
+                scheme: "exact",
+                price: "$2.50",
+                network: X402_NETWORK,
+                payTo: TREASURY_WALLET,
+              },
+              description: "DJZS Micro-Zone: High-frequency operational ledger and sanity check",
+            },
+            "POST /api/audit/founder": {
+              accepts: {
+                scheme: "exact",
+                price: "$5.00",
+                network: X402_NETWORK,
+                payTo: TREASURY_WALLET,
+              },
+              description: "DJZS Founder Zone: Strategic roadmap diligence and narrative drift detection",
+            },
+            "POST /api/audit/treasury": {
+              accepts: {
+                scheme: "exact",
+                price: "$50.00",
+                network: X402_NETWORK,
+                payTo: TREASURY_WALLET,
+              },
+              description: "DJZS Treasury Zone: Exhaustive adversarial stress-test for capital deployment",
+            },
             "POST /api/audit": {
               accepts: {
                 scheme: "exact",
@@ -738,7 +765,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 network: X402_NETWORK,
                 payTo: TREASURY_WALLET,
               },
-              description: "DJZS AI Logic Audit - Adversarial stress-test of strategy, bias detection, and risk scoring",
+              description: "DJZS Logic Audit (backward-compatible alias for Micro-Zone)",
             },
           },
           resourceServer,
@@ -746,7 +773,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       x402Initialized = true;
-      console.log(`x402 payment middleware initialized for /api/audit ($2.50 USDC on Base Mainnet via Coinbase CDP)`);
+      console.log(`x402 payment middleware initialized for 3 Zone tiers on Base Mainnet via Coinbase CDP`);
+      console.log(`  Micro-Zone:    POST /api/audit/micro    ($2.50 USDC)`);
+      console.log(`  Founder Zone:  POST /api/audit/founder  ($5.00 USDC)`);
+      console.log(`  Treasury Zone: POST /api/audit/treasury ($50.00 USDC)`);
     } catch (error) {
       console.warn("x402 middleware not initialized (non-blocking):", error instanceof Error ? error.message : error);
       console.warn("Audit endpoint will operate without payment gate");
@@ -759,50 +789,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.warn("Get your keys at https://portal.cdp.coinbase.com/projects");
   }
 
-  app.post("/api/audit", async (req, res) => {
+  const createTierHandler = (tier: AuditTier) => async (req: any, res: any) => {
     try {
       const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
-      const parsed = auditRequestSchema.safeParse(req.body);
+      const schema = createTieredRequestSchema(tier);
+      const parsed = schema.safeParse(req.body);
 
       if (!parsed.success) {
+        const config = TIER_CONFIG[tier];
         return res.status(400).json({
           error: "Invalid audit request",
+          zone: config.name,
           details: parsed.error.errors,
           expected: {
-            strategy_memo: "string (min 20 chars) - The strategy, proposal, or thesis to audit",
+            strategy_memo: `string (min 20 chars${config.maxMemoLength !== Infinity ? `, max ${config.maxMemoLength} chars` : ""})`,
             audit_type: "treasury | founder_drift | strategy | general (default: general)",
           },
         });
       }
 
-      const audit = await runLogicAuditAgent(parsed.data, userVeniceKey);
-
+      const audit = await runLogicAuditAgent(parsed.data, tier, userVeniceKey);
       res.json(audit);
     } catch (error) {
-      console.error("A2A Audit failed:", error);
+      console.error(`${TIER_CONFIG[tier].name} Audit failed:`, error);
       if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
         return res.status(503).json({ error: "AI service not configured" });
       }
       res.status(500).json({
         error: "Audit execution failed",
+        zone: TIER_CONFIG[tier].name,
         message: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  });
+  };
+
+  app.post("/api/audit/micro", createTierHandler("micro"));
+  app.post("/api/audit/founder", createTierHandler("founder"));
+  app.post("/api/audit/treasury", createTierHandler("treasury"));
+  app.post("/api/audit", createTierHandler("micro"));
 
   app.get("/api/audit/schema", (_req, res) => {
     res.json({
-      service: "DJZS AI - Autonomous Auditing Firm",
-      version: "1.0",
-      endpoint: "POST /api/audit",
+      service: "DJZS - Decentralized Journaling Zone System",
+      version: "2.0",
+      discovery: "/.well-known/agent.json",
       payment: {
         protocol: "x402",
         facilitator: "Coinbase CDP (@coinbase/x402)",
-        price: "$2.50 USDC",
         network: X402_NETWORK,
         chain: "Base Mainnet",
         payTo: TREASURY_WALLET,
         x402_enabled: x402Initialized,
+      },
+      zones: {
+        micro: {
+          endpoint: "POST /api/audit/micro",
+          price: "$2.50 USDC",
+          description: TIER_CONFIG.micro.description,
+          memo_limit: "1000 chars",
+        },
+        founder: {
+          endpoint: "POST /api/audit/founder",
+          price: "$5.00 USDC",
+          description: TIER_CONFIG.founder.description,
+          memo_limit: "5000 chars",
+        },
+        treasury: {
+          endpoint: "POST /api/audit/treasury",
+          price: "$50.00 USDC",
+          description: TIER_CONFIG.treasury.description,
+          memo_limit: "unlimited",
+        },
+      },
+      backward_compatible: {
+        endpoint: "POST /api/audit",
+        price: "$2.50 USDC",
+        note: "Alias for Micro-Zone. Use tiered endpoints for full control.",
       },
       request: {
         strategy_memo: "string (required, min 20 chars) - The strategy, proposal, or thesis to audit",
@@ -811,6 +873,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       response: {
         audit_id: "UUID - unique identifier for this audit",
         timestamp: "ISO 8601 datetime",
+        tier: "micro | founder | treasury",
         risk_score: "number 0-100 (0 = flawless logic, 100 = critically compromised)",
         primary_bias_detected: "FOMO | Sunk_Cost | Narrative_Reaction | Authority_Bias | Confirmation_Bias | Recency_Bias | None",
         logic_flaws: "[{flaw_type, severity (low|medium|critical), explanation}]",

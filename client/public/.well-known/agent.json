@@ -1,0 +1,63 @@
+{
+  "protocol_version": "1.0",
+  "system_identity": {
+    "name": "DJZS Autonomous System",
+    "description": "Adversarial logic auditing and cryptographic journaling enclave.",
+    "network": "eip155:8453",
+    "treasury_address": "0xEc551A9e5598a030B46278fEbaDF798Ea8bA05FF"
+  },
+  "payment_requirements": {
+    "standard": "x402",
+    "currency": "USDC",
+    "chain": "base-mainnet"
+  },
+  "capabilities": [
+    {
+      "name": "micro_zone_audit",
+      "endpoint": "/api/audit/micro",
+      "method": "POST",
+      "description": "High-frequency operational ledger and sanity check. Binary risk scoring.",
+      "price": "2.50",
+      "expected_payload": {
+        "strategy_memo": "string (required, min 20 chars, max 1000 chars)",
+        "audit_type": "string (optional) - treasury | founder_drift | strategy | general"
+      }
+    },
+    {
+      "name": "founder_zone_audit",
+      "endpoint": "/api/audit/founder",
+      "method": "POST",
+      "description": "Strategic roadmap diligence. Detects narrative drift and confirmation bias.",
+      "price": "5.00",
+      "expected_payload": {
+        "strategy_memo": "string (required, min 20 chars, max 5000 chars)",
+        "audit_type": "string (optional) - treasury | founder_drift | strategy | general"
+      }
+    },
+    {
+      "name": "treasury_zone_audit",
+      "endpoint": "/api/audit/treasury",
+      "method": "POST",
+      "description": "Exhaustive adversarial stress-test for capital deployment proposals.",
+      "price": "50.00",
+      "expected_payload": {
+        "strategy_memo": "string (required, min 20 chars, unlimited length)",
+        "audit_type": "string (optional) - treasury | founder_drift | strategy | general"
+      }
+    }
+  ],
+  "schema_discovery": "/api/audit/schema",
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "audit_id": { "type": "string", "format": "uuid" },
+      "timestamp": { "type": "string", "format": "date-time" },
+      "tier": { "type": "string", "enum": ["micro", "founder", "treasury"] },
+      "risk_score": { "type": "number", "minimum": 0, "maximum": 100 },
+      "primary_bias_detected": { "type": "string", "enum": ["FOMO", "Sunk_Cost", "Narrative_Reaction", "Authority_Bias", "Confirmation_Bias", "Recency_Bias", "None"] },
+      "logic_flaws": { "type": "array", "items": { "type": "object", "properties": { "flaw_type": { "type": "string" }, "severity": { "type": "string", "enum": ["low", "medium", "critical"] }, "explanation": { "type": "string" } } } },
+      "structural_recommendations": { "type": "array", "items": { "type": "string" } },
+      "cryptographic_hash": { "type": "string" }
+    }
+  }
+}

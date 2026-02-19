@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -13,8 +13,8 @@ export default function Home() {
   const [mobileBarDismissed, setMobileBarDismissed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const scrollToHowItWorks = () => {
-    const el = document.getElementById("how-it-works");
+  const scrollToProcess = () => {
+    const el = document.getElementById("process");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -66,7 +66,7 @@ export default function Home() {
                   data-testid="button-header-enter"
                 >
                   <Target className="w-4 h-4" />
-                  <span className="hidden sm:inline">Initialize System ($2.50)</span>
+                  <span className="hidden sm:inline">Enter the Zone ($2.50)</span>
                   <span className="sm:hidden">Audit</span>
                 </button>
               </Link>
@@ -162,9 +162,10 @@ export default function Home() {
 
           <motion.h1
             variants={fadeUp}
-            className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[1] mb-8"
+            className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[1] mb-8"
           >
-            The AI that audits your logic before reality does.
+            <span className="text-white">DECENTRALIZED</span> <br />
+            <span className="text-white">JOURNALING</span> <span style={{ color: '#555668' }}>ZONE SYSTEM.</span>
           </motion.h1>
 
           <motion.p
@@ -172,7 +173,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            An autonomous auditing infrastructure for Founders, Traders, and Agents. Submit your logic into the Zone. The System stress-tests it against narrative bias, FOMO, and structural risk — serving humans via web UI and autonomous agents via x402-gated API.
+            Your echo chamber is a liability. Deploy your thesis into the Zone, and let the System stress-test your logic before the market does.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
@@ -185,7 +186,7 @@ export default function Home() {
                     data-testid="button-start-thinking"
                   >
                     <Target className="w-6 h-6" />
-                    Audit My Logic ($2.50)
+                    Enter the Zone ($2.50)
                   </button>
                 </Link>
               ) : (
@@ -197,18 +198,19 @@ export default function Home() {
                       data-testid="button-start-thinking"
                     >
                       <Target className="w-6 h-6" />
-                      Audit My Logic ($2.50)
+                      Enter the Zone ($2.50)
                     </button>
                   </Link>
-                  <button
-                    onClick={scrollToHowItWorks}
-                    className="inline-flex items-center gap-3 rounded-lg border px-8 py-5 text-lg font-bold transition-all duration-250 hover:text-white"
-                    style={{ borderColor: 'rgba(46,139,139,0.3)', color: '#9a9bb0' }}
-                    data-testid="button-see-how-it-works"
-                  >
-                    <Cpu className="w-5 h-5" />
-                    Agent API Specs
-                  </button>
+                  <a href="#agent-clients">
+                    <button
+                      className="inline-flex items-center gap-3 rounded-lg border px-8 py-5 text-lg font-bold transition-all duration-250 hover:text-white"
+                      style={{ borderColor: 'rgba(46,139,139,0.3)', color: '#9a9bb0' }}
+                      data-testid="button-see-how-it-works"
+                    >
+                      <Code className="w-5 h-5" />
+                      Agent API Specs
+                    </button>
+                  </a>
                 </>
               )}
             </div>
@@ -724,60 +726,47 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
+        <section id="process" className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
           <div className="max-w-5xl mx-auto px-6">
-            <div className="text-center mb-16">
+            <div className="mb-16">
               <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
                 <Zap className="w-6 h-6" style={{ color: '#FFB84D' }} />
-                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#FFB84D' }}>How It Actually Works</span>
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#FFB84D' }}>Standard Operating Procedure</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-think-with-me-headline">
-                Submit. Pay. Get audited.
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight" data-testid="text-think-with-me-headline">
+                Execution Flow (SOP-01)
               </h2>
-              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                The System doesn't run in the background. It activates on demand — one audit, one payment, one structured verdict. Here's exactly what happens.
-              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-think-input">
-                <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: '#F37E20' }}>What you send</p>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
-                    <PenLine className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    Your thesis, strategy, or decision (the logic you want audited)
-                  </li>
-                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
-                    <Pin className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
-                    Audit type: treasury, founder_drift, strategy, or general
-                  </li>
-                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
-                    <GitBranch className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    $2.50 USDC payment via x402 (or wallet signature for web UI)
-                  </li>
-                </ul>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+              <div className="relative p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-sop-deploy">
+                <div className="absolute -top-6 -left-2 text-8xl font-black select-none pointer-events-none" style={{ color: 'rgba(255,255,255,0.03)' }}>01</div>
+                <div className="relative z-10">
+                  <h3 className="text-xl font-bold text-white mb-4">Deploy to the Zone</h3>
+                  <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
+                    <strong className="text-white">What you deploy:</strong> Paste your roadmap, trade idea, or dilemma into the secure enclave. Pay the x402 gate fee to initiate the isolated execution.
+                  </p>
+                </div>
               </div>
 
-              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-think-output">
-                <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: '#2E8B8B' }}>The System's verdict</p>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
-                    <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Risk score (0-100) with confidence intervals
-                  </li>
-                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
-                    <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Bias detection — confirmation, anchoring, FOMO, survivorship
-                  </li>
-                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
-                    <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Logic flaws and adversarial counter-arguments
-                  </li>
-                  <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
-                    <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    Structured JSON with actionable recommendations
-                  </li>
-                </ul>
+              <div className="relative p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-sop-simulate">
+                <div className="absolute -top-6 -left-2 text-8xl font-black select-none pointer-events-none" style={{ color: 'rgba(255,255,255,0.03)' }}>02</div>
+                <div className="relative z-10">
+                  <h3 className="text-xl font-bold text-white mb-4">Adversarial Simulation</h3>
+                  <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
+                    Inside the Zone, the AI attacks your assumptions. It aggressively hunts for logical fallacies, emotional reasoning (FOMO), and missing structural variables.
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-sop-export">
+                <div className="absolute -top-6 -left-2 text-8xl font-black select-none pointer-events-none" style={{ color: 'rgba(255,255,255,0.03)' }}>03</div>
+                <div className="relative z-10">
+                  <h3 className="text-xl font-bold text-white mb-4">Ledger Export</h3>
+                  <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
+                    <strong className="text-white">The System's verdict:</strong> Extract a cryptographic timestamp and a structured JSON risk report. You have now officially documented and stress-tested your logic.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -789,7 +778,7 @@ export default function Home() {
                 <div>
                   <h3 className="text-xl font-bold text-white mb-2">Audit Trail: How Intelligence Compounds</h3>
                   <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
-                    After each audit, the System surfaces patterns worth tracking — recurring biases, evolving risk profiles, blind spots across decisions. Pin them to your vault. Pinned insights become context for every future audit. This is how your decision quality improves over time.
+                    After each audit, the System surfaces patterns worth tracking — recurring biases, evolving risk profiles, blind spots across decisions. Pin them to your vault. Pinned insights become context for every future audit.
                   </p>
                   <p className="text-sm mt-3" style={{ color: '#555668' }}>
                     Nothing is pinned without your approval. Your vault stays local-first. You own your cognitive graph.
@@ -802,53 +791,60 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
+        <section id="agent-clients" className="relative py-32 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
           <div className="max-w-5xl mx-auto px-6">
-            <div className="text-center mb-16">
+            <div className="mb-16">
               <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
-                <Network className="w-6 h-6" style={{ color: '#F37E20' }} />
-                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Agent-to-Agent Economy</span>
+                <Cpu className="w-6 h-6" style={{ color: '#F37E20' }} />
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Machine-to-Machine API</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-a2a-headline">
-                The autonomous auditing system for the A2A economy.
+                Autonomous Simulation.
               </h2>
-              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                The System serves two clients: human founders via the web UI, and autonomous AI agents via API. Other agents programmatically hire The System to stress-test their logic before execution — paying per audit via x402 micropayments on Base.
+              <p className="text-xl max-w-3xl mx-auto leading-relaxed" style={{ color: '#7a7b90' }}>
+                DJZS is discoverable via <code className="font-mono text-base" style={{ color: '#F37E20' }}>/.well-known/agent.json</code>. We provide three specialized, <strong className="text-white">x402-gated zones</strong> designed for automated deployment by DAO bots, VC scrapers, and trading algorithms.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-treasury">
-                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
-                  <DollarSign className="w-7 h-7" style={{ color: '#FFB84D' }} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-micro">
+                <div className="flex justify-between items-start mb-6">
+                  <h3 className="text-xl font-bold text-white">The Micro-Zone</h3>
+                  <span className="font-mono text-sm px-2 py-1 rounded" style={{ color: '#2E8B8B', background: 'rgba(46,139,139,0.1)' }}>$2.50 USDC</span>
                 </div>
-                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#FFB84D' }}>DAO Treasury Stress-Test</p>
-                <h3 className="text-xl font-bold text-white mb-3">$50 USDC / audit</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  A DAO agent managing a $10M treasury pings The System before signing a multi-sig. The System audits the proposal, flags FOMO-driven allocation, and returns a structured risk score. The agent pauses deployment, saving the treasury.
+                <p className="text-sm leading-relaxed mb-6" style={{ color: '#9a9bb0', minHeight: '4rem' }}>
+                  High-frequency sanity checks for trading bots. Fast execution, binary risk scoring.
                 </p>
+                <div className="rounded-md p-4 text-xs font-mono" style={{ background: 'rgba(0,0,0,0.4)', color: '#9a9bb0' }}>
+                  <span style={{ color: '#7B6B8D' }}>POST</span> /api/audit/micro
+                </div>
               </div>
 
-              <div className="p-8 rounded-lg border transition-all hover:border-teal-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-vc">
-                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
-                  <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+              <div className="p-8 rounded-lg border transition-all hover:border-teal-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-founder">
+                <div className="flex justify-between items-start mb-6">
+                  <h3 className="text-xl font-bold text-white">The Founder Zone</h3>
+                  <span className="font-mono text-sm px-2 py-1 rounded" style={{ color: '#2E8B8B', background: 'rgba(46,139,139,0.1)' }}>$5.00 USDC</span>
                 </div>
-                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Founder Drift Audit</p>
-                <h3 className="text-xl font-bold text-white mb-3">$5 USDC / audit</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  A VC screening bot pays The System to check if a founder is building what they promised or pivot-chasing Twitter trends. The System outputs an objective Strategic Integrity score by comparing the original whitepaper against recent updates.
+                <p className="text-sm leading-relaxed mb-6" style={{ color: '#9a9bb0', minHeight: '4rem' }}>
+                  For VC diligence agents. Audits natural language roadmaps against common failure modes to detect narrative drift.
                 </p>
+                <div className="rounded-md p-4 text-xs font-mono" style={{ background: 'rgba(0,0,0,0.4)', color: '#9a9bb0' }}>
+                  <span style={{ color: '#7B6B8D' }}>POST</span> /api/audit/founder
+                </div>
               </div>
 
-              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-micro">
-                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
-                  <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+              <div className="relative p-8 rounded-lg border transition-all hover:border-red-900/40 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)', borderTop: '2px solid rgba(127,29,29,0.6)' }} data-testid="card-a2a-treasury">
+                <div className="absolute top-0 right-0 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-white" style={{ background: 'rgba(127,29,29,0.8)' }}>High Stakes</div>
+                <div className="flex justify-between items-start mb-6 mt-2">
+                  <h3 className="text-xl font-bold text-white">The Treasury Zone</h3>
+                  <span className="font-mono text-sm px-2 py-1 rounded" style={{ color: '#2E8B8B', background: 'rgba(46,139,139,0.1)' }}>$50.00 USDC</span>
                 </div>
-                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>"Check My Work" Micro-Audit</p>
-                <h3 className="text-xl font-bold text-white mb-3">$2.50 USDC / audit</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  A trading agent formulates a complex arbitrage strategy. Before execution, it hits The System's API and pays $2.50 via x402. The System operates as the "Senior Partner," stress-testing assumptions and pointing out systemic blind spots.
+                <p className="text-sm leading-relaxed mb-6" style={{ color: '#9a9bb0', minHeight: '4rem' }}>
+                  For DAO governance bots. An exhaustive adversarial breakdown of capital deployment proposals before funds move.
                 </p>
+                <div className="rounded-md p-4 text-xs font-mono" style={{ background: 'rgba(0,0,0,0.4)', color: '#9a9bb0' }}>
+                  <span style={{ color: '#7B6B8D' }}>POST</span> /api/audit/treasury
+                </div>
               </div>
             </div>
 
@@ -856,16 +852,17 @@ export default function Home() {
               <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-api">
                 <div className="flex items-center gap-3 mb-4">
                   <FileCode className="w-6 h-6" style={{ color: '#F37E20' }} />
-                  <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Machine-Readable API</p>
+                  <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Structured JSON Output</p>
                 </div>
-                <p className="text-base font-bold text-white mb-3">Structured JSON output for agent consumption</p>
+                <p className="text-base font-bold text-white mb-3">Machine-readable verdicts for agent consumption</p>
                 <div className="rounded-md p-4 text-xs font-mono leading-relaxed overflow-x-auto" style={{ background: 'rgba(0,0,0,0.4)', color: '#9a9bb0' }}>
-                  <span style={{ color: '#555668' }}>POST /api/audit</span><br/>
+                  <span style={{ color: '#555668' }}>POST /api/audit/micro</span><br/>
                   <span style={{ color: '#F37E20' }}>{'{'}</span><br/>
+                  &nbsp;&nbsp;"audit_id": <span style={{ color: '#555668' }}>"uuid..."</span>,<br/>
+                  &nbsp;&nbsp;"tier": <span style={{ color: '#7B6B8D' }}>"micro"</span>,<br/>
                   &nbsp;&nbsp;"risk_score": <span style={{ color: '#FFB84D' }}>72</span>,<br/>
                   &nbsp;&nbsp;"primary_bias_detected": <span style={{ color: '#2E8B8B' }}>"FOMO"</span>,<br/>
                   &nbsp;&nbsp;"logic_flaws": [<span style={{ color: '#555668' }}>...</span>],<br/>
-                  &nbsp;&nbsp;"structural_recommendations": [<span style={{ color: '#555668' }}>...</span>],<br/>
                   &nbsp;&nbsp;"cryptographic_hash": <span style={{ color: '#7B6B8D' }}>"sha256..."</span><br/>
                   <span style={{ color: '#F37E20' }}>{'}'}</span>
                 </div>
@@ -880,7 +877,7 @@ export default function Home() {
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
-                    Pay-per-audit via x402 — no subscriptions, no NFT gates
+                    Pay-per-zone via x402 — no subscriptions, no NFT gates
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
@@ -888,11 +885,11 @@ export default function Home() {
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
-                    Agent-compatible — any bot can pay and receive structured results
+                    Agent discovery via /.well-known/agent.json
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
-                    Schema endpoint at /api/audit/schema for integration discovery
+                    Schema endpoint at /api/audit/schema for capability introspection
                   </li>
                 </ul>
               </div>
@@ -1157,7 +1154,7 @@ export default function Home() {
                 style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                 data-testid="button-final-get-started"
               >
-                Initialize System ($2.50)
+                Enter the Zone ($2.50)
                 <ArrowRight className="w-6 h-6" />
               </button>
             </Link>
@@ -1232,7 +1229,7 @@ export default function Home() {
                 style={{ background: '#F37E20' }}
                 data-testid="button-mobile-try-demo"
               >
-                Initialize System ($2.50)
+                Enter the Zone ($2.50)
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
