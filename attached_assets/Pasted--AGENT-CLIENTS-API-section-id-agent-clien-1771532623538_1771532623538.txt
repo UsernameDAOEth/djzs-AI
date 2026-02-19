@@ -1,0 +1,60 @@
+{/* ==================== AGENT CLIENTS (API) ==================== */}
+      <section id="agent-clients" className="py-24 border-y border-zinc-900 bg-zinc-950">
+        <div className="container mx-auto px-6">
+          <div className="mb-16">
+            <div className="inline-flex items-center space-x-2 text-zinc-400 mb-6">
+              <Cpu className="w-5 h-5" />
+              <span className="font-bold tracking-widest uppercase">Machine-to-Machine API</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Autonomous Simulation.</h2>
+            <p className="text-zinc-400 text-xl leading-relaxed max-w-3xl">
+              DJZS is discoverable via <code>/.well-known/agent.json</code>. We provide three specialized, <strong>x402-gated zones</strong> designed for automated deployment by DAO bots, VC scrapers, and trading algorithms.
+            </p>
+          </div>
+          
+          <div className="grid lg:grid-cols-3 gap-8 mb-16">
+            {/* TIER 1: The Micro-Zone */}
+            <div className="bg-black border border-zinc-800 p-8 hover:border-zinc-600 transition-colors">
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="text-xl font-bold">The Micro-Zone</h3>
+                <span className="text-green-500 font-mono bg-green-500/10 px-2 py-1 rounded text-sm">$2.50 USDC</span>
+              </div>
+              <p className="text-zinc-400 text-sm mb-6 h-16">
+                High-frequency sanity checks for trading bots. Fast execution, binary risk scoring.
+              </p>
+              <div className="bg-zinc-900 p-4 rounded font-mono text-xs text-zinc-300">
+                <span className="text-purple-400">POST</span> /api/audit/micro
+              </div>
+            </div>
+
+            {/* TIER 2: The Founder Zone */}
+            <div className="bg-black border border-zinc-800 p-8 hover:border-zinc-600 transition-colors">
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="text-xl font-bold">The Founder Zone</h3>
+                <span className="text-green-500 font-mono bg-green-500/10 px-2 py-1 rounded text-sm">$5.00 USDC</span>
+              </div>
+              <p className="text-zinc-400 text-sm mb-6 h-16">
+                For VC diligence agents. Audits natural language roadmaps against common failure modes to detect narrative drift.
+              </p>
+              <div className="bg-zinc-900 p-4 rounded font-mono text-xs text-zinc-300">
+                <span className="text-purple-400">POST</span> /api/audit/founder
+              </div>
+            </div>
+
+            {/* TIER 3: The Treasury Zone */}
+            <div className="bg-black border border-zinc-800 p-8 border-t-2 border-t-red-900 hover:border-red-900 transition-colors relative">
+              <div className="absolute top-0 right-0 bg-red-900 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-widest">High Stakes</div>
+              <div className="flex justify-between items-start mb-6 mt-2">
+                <h3 className="text-xl font-bold">The Treasury Zone</h3>
+                <span className="text-green-500 font-mono bg-green-500/10 px-2 py-1 rounded text-sm">$50.00 USDC</span>
+              </div>
+              <p className="text-zinc-400 text-sm mb-6 h-16">
+                For DAO governance bots. An exhaustive adversarial breakdown of capital deployment proposals before funds move.
+              </p>
+              <div className="bg-zinc-900 p-4 rounded font-mono text-xs text-zinc-300">
+                <span className="text-purple-400">POST</span> /api/audit/treasury
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>

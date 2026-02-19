@@ -1,0 +1,38 @@
+{/* ==================== HERO SECTION ==================== */}
+      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden border-b border-zinc-900">
+        <div className="container mx-auto px-6 relative z-10 text-center">
+          
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-zinc-900/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="inline-flex items-center space-x-2 border border-zinc-800 bg-zinc-950/50 rounded-full px-3 py-1 mb-8">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-zinc-400 text-xs font-mono tracking-widest uppercase">
+              System Online • Base Mainnet
+            </span>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 leading-none relative z-10">
+            DECENTRALIZED <br />
+            JOURNALING <span className="text-zinc-600">ZONE SYSTEM.</span>
+          </h1>
+
+          <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed relative z-10">
+            Your echo chamber is a liability. Deploy your thesis into the Zone, and let the System stress-test your logic before the market does.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">
+            <Link href="/audit">
+              <button className="bg-white text-black px-8 py-4 font-bold text-lg hover:bg-zinc-200 transition-colors flex items-center gap-2 w-full sm:w-auto justify-center">
+                <Target className="w-5 h-5" />
+                Enter the Zone ($2.50)
+              </button>
+            </Link>
+            <a href="#agent-clients">
+              <button className="px-8 py-4 text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-500 transition-all w-full sm:w-auto flex items-center gap-2 justify-center">
+                <Code className="w-5 h-5" />
+                Agent API Specs
+              </button>
+            </a>
+          </div>
+        </div>
+      </section>

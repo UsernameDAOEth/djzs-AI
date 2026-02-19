@@ -1,0 +1,94 @@
+import { Express } from "express";
+import { CoinbasePaymentMiddleware } from "@coinbase/x402";
+import { initializeFirm, getTreasuryAddress } from "./firm-infrastructure";
+import { runLogicAuditAgent } from "./agent"; // We will update this next
+
+// Load configuration
+const NETWORK_ID = process.env.X402_NETWORK_ID || "eip155:8453"; // Base Mainnet
+const API_KEY_NAME = process.env.CDP_API_KEY_NAME;
+const API_KEY_PRIVATE = process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n");
+
+export async function registerRoutes(app: Express) {
+  
+  // 1. Wake up the Banker (Get your Treasury Address)
+  await initializeFirm();
+  const treasuryAddress = await getTreasuryAddress();
+
+  // 2. Wake up the Gatekeeper (Coinbase x402 Middleware)
+  const gatekeeper = new CoinbasePaymentMiddleware({
+    apiKeyName: API_KEY_NAME,
+    apiKeyPrivateKey: API_KEY_PRIVATE,
+    network: NETWORK_ID,
+  });
+
+  // ==================== TIER 1: MICRO-AUDIT ($2.50) ====================
+  // Client: High-Frequency Trading Bots & Human UI
+  app.post(
+    "/api/audit/micro",
+    gatekeeper.protect({
+      price: { amount: "2.50", currency: "USDC" },
+      recipient: treasuryAddress,
+      description: "DJZS Micro-Audit: Fast Logic Sanity Check",
+    }),
+    async (req, res) => {
+      try {
+        const { strategy_memo } = req.body;
+        if (!strategy_memo) return res.status(400).json({ error: "Missing memo" });
+
+        // Execute a fast, constrained audit
+        const auditResult = await runLogicAuditAgent(strategy_memo, "micro");
+        res.json(auditResult);
+      } catch (error) {
+        res.status(500).json({ error: "Firm Internal Error" });
+      }
+    }
+  );
+
+  // ==================== TIER 2: FOUNDER DRIFT ($5.00) ====================
+  // Client: VC Diligence Bots & Human Founders
+  app.post(
+    "/api/audit/founder",
+    gatekeeper.protect({
+      price: { amount: "5.00", currency: "USDC" },
+      recipient: treasuryAddress,
+      description: "DJZS Founder Drift: Deep Confirmation Bias Audit",
+    }),
+    async (req, res) => {
+      try {
+        const { strategy_memo } = req.body;
+        if (!strategy_memo) return res.status(400).json({ error: "Missing memo" });
+
+        // Execute a deeper roadmap analysis
+        const auditResult = await runLogicAuditAgent(strategy_memo, "founder");
+        res.json(auditResult);
+      } catch (error) {
+        res.status(500).json({ error: "Firm Internal Error" });
+      }
+    }
+  );
+
+  // ==================== TIER 3: TREASURY STRESS-TEST ($50.00) ====================
+  // Client: DAO Governance Agents
+  app.post(
+    "/api/audit/treasury",
+    gatekeeper.protect({
+      price: { amount: "50.00", currency: "USDC" },
+      recipient: treasuryAddress,
+      description: "DJZS Treasury Stress-Test: High Stakes Capital Audit",
+    }),
+    async (req, res) => {
+      try {
+        const { strategy_memo } = req.body;
+        if (!strategy_memo) return res.status(400).json({ error: "Missing memo" });
+
+        // Execute rigorous adversarial breakdown for capital deployment
+        const auditResult = await runLogicAuditAgent(strategy_memo, "treasury");
+        res.json(auditResult);
+      } catch (error) {
+        res.status(500).json({ error: "Firm Internal Error" });
+      }
+    }
+  );
+
+  // ... rest of your existing routes
+}
