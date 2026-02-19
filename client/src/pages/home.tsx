@@ -66,7 +66,7 @@ export default function Home() {
                   data-testid="button-header-enter"
                 >
                   <Target className="w-4 h-4" />
-                  <span className="hidden sm:inline">Enter the Zone ($2.50)</span>
+                  <span className="hidden sm:inline">Enter the Zone</span>
                   <span className="sm:hidden">Audit</span>
                 </button>
               </Link>
@@ -186,7 +186,7 @@ export default function Home() {
                     data-testid="button-start-thinking"
                   >
                     <Target className="w-6 h-6" />
-                    Enter the Zone ($2.50)
+                    Enter the Zone
                   </button>
                 </Link>
               ) : (
@@ -198,7 +198,7 @@ export default function Home() {
                       data-testid="button-start-thinking"
                     >
                       <Target className="w-6 h-6" />
-                      Enter the Zone ($2.50)
+                      Enter the Zone
                     </button>
                   </Link>
                   <a href="#agent-clients">
@@ -1154,7 +1154,7 @@ export default function Home() {
                 style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                 data-testid="button-final-get-started"
               >
-                Enter the Zone ($2.50)
+                Enter the Zone
                 <ArrowRight className="w-6 h-6" />
               </button>
             </Link>
@@ -1229,7 +1229,7 @@ export default function Home() {
                 style={{ background: '#F37E20' }}
                 data-testid="button-mobile-try-demo"
               >
-                Enter the Zone ($2.50)
+                Enter the Zone
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
