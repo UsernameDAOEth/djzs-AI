@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
+    "@coinbase/x402": "^2.1.0",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@livepeer/react": "^4.3.6",
@@ -54,9 +55,9 @@
     "@vitejs/plugin-react": "^4.7.0",
     "@wagmi/core": "^2.21.2",
     "@x402/axios": "^2.2.0",
-    "@x402/core": "^2.2.0",
-    "@x402/evm": "^2.2.0",
-    "@x402/express": "^2.2.0",
+    "@x402/core": "^2.3.1",
+    "@x402/evm": "^2.3.1",
+    "@x402/express": "^2.3.0",
     "@xmtp/agent-sdk": "^1.1.15",
     "@xmtp/browser-sdk": "^5.1.0",
     "@xmtp/content-type-text": "^2.0.2",
