@@ -1,0 +1,318 @@
+import { 
+  Shield, 
+  Target, 
+  Zap, 
+  Lock, 
+  Activity, 
+  ArrowRight, 
+  Terminal, 
+  Globe, 
+  Cpu,
+  Wallet,
+  Eye,
+  Menu,
+  X,
+  Code
+} from "lucide-react";
+import { Link } from "wouter";
+import { useState } from "react";
+
+export function Home() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-zinc-800 selection:text-white">
+      
+      {/* ==================== HEADER ==================== */}
+      <nav className="fixed top-0 w-full border-b border-zinc-900 bg-black/80 backdrop-blur-xl z-50">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-white rounded-sm" />
+            <span className="font-bold tracking-tighter text-xl">DJZS</span>
+          </div>
+          
+          <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-zinc-400">
+            <a href="#system-architecture" className="hover:text-white transition-colors">Architecture</a>
+            <a href="#human-clients" className="hover:text-white transition-colors">Human UI</a>
+            <a href="#agent-clients" className="hover:text-white transition-colors">Agent API</a>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Link href="/audit">
+              <button className="hidden md:flex bg-white text-black px-4 py-2 text-sm font-bold hover:bg-zinc-200 transition-colors items-center gap-2">
+                <Target className="w-4 h-4" />
+                Initialize System ($2.50)
+              </button>
+            </Link>
+            <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X /> : <Menu />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 bg-black z-40 pt-20 px-6 space-y-6 md:hidden">
+          <a href="#system-architecture" className="block text-2xl font-bold" onClick={() => setIsMenuOpen(false)}>Architecture</a>
+          <a href="#human-clients" className="block text-2xl font-bold" onClick={() => setIsMenuOpen(false)}>Human UI</a>
+          <a href="#agent-clients" className="block text-2xl font-bold" onClick={() => setIsMenuOpen(false)}>Agent API</a>
+          <Link href="/audit" onClick={() => setIsMenuOpen(false)}>
+            <button className="w-full bg-white text-black py-4 font-bold text-lg mt-8">
+              Initialize System ($2.50)
+            </button>
+          </Link>
+        </div>
+      )}
+
+      {/* ==================== HERO SECTION ==================== */}
+      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden border-b border-zinc-900">
+        <div className="container mx-auto px-6 relative z-10 text-center">
+          
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-zinc-900/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="inline-flex items-center space-x-2 border border-zinc-800 bg-zinc-950/50 rounded-full px-3 py-1 mb-8">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-zinc-400 text-xs font-mono tracking-widest uppercase">
+              System Online • Base Mainnet
+            </span>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 leading-none relative z-10">
+            DECENTRALIZED <br />
+            JOURNALING <span className="text-zinc-600">ZONE SYSTEM.</span>
+          </h1>
+
+          <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed relative z-10">
+            An autonomous auditing infrastructure for Founders, Traders, and Agents. 
+            Submit your logic into the Zone. The System stress-tests it against narrative bias, FOMO, and structural risk.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">
+            <Link href="/audit">
+              <button className="bg-white text-black px-8 py-4 font-bold text-lg hover:bg-zinc-200 transition-colors flex items-center gap-2 w-full sm:w-auto justify-center">
+                <Target className="w-5 h-5" />
+                Human Web UI ($2.50)
+              </button>
+            </Link>
+            <a href="#agent-clients">
+              <button className="px-8 py-4 text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-500 transition-all w-full sm:w-auto flex items-center gap-2 justify-center">
+                <Code className="w-5 h-5" />
+                Agent API Specs
+              </button>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== SYSTEM ARCHITECTURE ==================== */}
+      <section id="system-architecture" className="border-b border-zinc-800 bg-zinc-950">
+        <div className="max-w-6xl mx-auto px-6 py-24">
+          <div className="flex items-center justify-between mb-16">
+            <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest">
+              System Architecture
+            </h2>
+            <span className="text-xs font-mono text-zinc-600">v2.0.4 [Sovereign]</span>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-px bg-zinc-800 border border-zinc-800">
+            <div className="bg-black p-10 hover:bg-zinc-900/50 transition-colors group relative">
+              <div className="absolute top-4 right-4 text-zinc-800 font-mono text-sm group-hover:text-zinc-600">01</div>
+              <div className="w-12 h-12 bg-zinc-900 group-hover:bg-zinc-800 flex items-center justify-center mb-6">
+                <Lock className="w-6 h-6 text-zinc-400 group-hover:text-white transition-colors" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">The Gate</h3>
+              <p className="text-zinc-500 text-sm leading-relaxed mb-4 font-mono">Protocol: x402</p>
+              <p className="text-zinc-400 leading-relaxed">
+                High signal only. The System demands cryptographic proof of payment ($2.50 USDC) to filter out noise and guarantee execution priority.
+              </p>
+            </div>
+
+            <div className="bg-black p-10 hover:bg-zinc-900/50 transition-colors group relative">
+              <div className="absolute top-4 right-4 text-zinc-800 font-mono text-sm group-hover:text-zinc-600">02</div>
+              <div className="w-12 h-12 bg-zinc-900 group-hover:bg-zinc-800 flex items-center justify-center mb-6">
+                <Shield className="w-6 h-6 text-zinc-400 group-hover:text-white transition-colors" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">The Vault</h3>
+              <p className="text-zinc-500 text-sm leading-relaxed mb-4 font-mono">Protocol: CDP AgentKit</p>
+              <p className="text-zinc-400 leading-relaxed">
+                Sovereign Treasury. The System holds its own capital on-chain, proving solvency and uncensorable operation across the network.
+              </p>
+            </div>
+
+            <div className="bg-black p-10 hover:bg-zinc-900/50 transition-colors group relative">
+              <div className="absolute top-4 right-4 text-zinc-800 font-mono text-sm group-hover:text-zinc-600">03</div>
+              <div className="w-12 h-12 bg-zinc-900 group-hover:bg-zinc-800 flex items-center justify-center mb-6">
+                <Zap className="w-6 h-6 text-zinc-400 group-hover:text-white transition-colors" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">The Audit Zone</h3>
+              <p className="text-zinc-500 text-sm leading-relaxed mb-4 font-mono">Protocol: Venice AI</p>
+              <p className="text-zinc-400 leading-relaxed">
+                Adversarial processing. The AI actively hunts for confirmation bias in the submitted thesis, providing a structured stress-test.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== HUMAN CLIENTS ==================== */}
+      <section id="human-clients" className="py-24 bg-black">
+        <div className="container mx-auto px-6">
+          <div className="mb-20 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Human Interfacing</h2>
+            <p className="text-xl text-zinc-500">For high-agency operators who require objective logic verification.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-center mb-24 border-b border-zinc-900 pb-24">
+            <div className="order-2 md:order-1">
+              <div className="inline-block px-3 py-1 bg-zinc-900 text-zinc-400 text-xs font-bold uppercase tracking-widest mb-4">
+                System Profile: Founders
+              </div>
+              <h3 className="text-3xl font-bold mb-4">Kill Your Echo Chamber.</h3>
+              <p className="text-zinc-400 text-lg leading-relaxed mb-6">
+                You submit your roadmap via the UI into the Zone. The System audits it for confirmation bias, verifying if you have true product-market fit or just a hallucination. You receive a structured verdict.
+              </p>
+              <Link href="/audit">
+                <button className="flex items-center text-white font-bold hover:text-zinc-300 transition-colors group">
+                  Audit My Roadmap <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </Link>
+            </div>
+            <div className="order-1 md:order-2 bg-zinc-900 h-80 w-full flex items-center justify-center border border-zinc-800 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-zinc-800/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <Terminal className="w-16 h-16 text-zinc-700 group-hover:text-white transition-colors" />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-center mb-24 border-b border-zinc-900 pb-24">
+             <div className="bg-zinc-900 h-80 w-full flex items-center justify-center border border-zinc-800 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-zinc-800/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <Activity className="w-16 h-16 text-zinc-700 group-hover:text-white transition-colors" />
+            </div>
+            <div>
+              <div className="inline-block px-3 py-1 bg-zinc-900 text-zinc-400 text-xs font-bold uppercase tracking-widest mb-4">
+                System Profile: Traders
+              </div>
+              <h3 className="text-3xl font-bold mb-4">Audit Your Conviction.</h3>
+              <p className="text-zinc-400 text-lg leading-relaxed mb-6">
+                You submit your trade thesis. The System cross-references it against historical volatility models to separate signal from FOMO. You receive an objective risk score.
+              </p>
+              <Link href="/audit">
+                <button className="flex items-center text-white font-bold hover:text-zinc-300 transition-colors group">
+                  Stress-Test My Trade <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== AGENT CLIENTS (API) ==================== */}
+      <section id="agent-clients" className="py-24 border-y border-zinc-900 bg-zinc-950">
+        <div className="container mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-16 items-start">
+            <div>
+              <div className="inline-flex items-center space-x-2 text-zinc-400 mb-6">
+                <Cpu className="w-5 h-5" />
+                <span className="font-bold tracking-widest uppercase">Machine-to-Machine</span>
+              </div>
+              <h2 className="text-4xl font-bold mb-6">Autonomous Simulation.</h2>
+              <p className="text-zinc-400 text-lg leading-relaxed mb-6">
+                DJZS is discoverable via <code>/.well-known/agent.json</code>. We provide an <strong>x402-gated endpoint</strong> for other DAO treasury bots, VC scrapers, and trading agents to programmatically access the System.
+              </p>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-start gap-3">
+                  <Zap className="w-5 h-5 text-zinc-400 shrink-0 mt-1" />
+                  <div>
+                    <strong className="text-white">Deterministic Output</strong>
+                    <p className="text-zinc-500 text-sm">Strictly typed JSON responses for automated logic gates.</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-zinc-400 shrink-0 mt-1" />
+                  <div>
+                    <strong className="text-white">Adversarial Service</strong>
+                    <p className="text-zinc-500 text-sm">Designed to find faults before your agent executes a transaction.</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-black p-6 border border-zinc-800 rounded font-mono text-xs md:text-sm text-zinc-300 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-zinc-800 pb-4 mb-4">
+                <span className="text-zinc-500">// Expected API Response Schema</span>
+                <span className="text-green-500">200 OK</span>
+              </div>
+              <pre className="overflow-x-auto">
+{`{
+  "audit_id": "uuid-v4",
+  "integrity_check": {
+    "logic_consistency_score": 0.85,
+    "narrative_bias_detected": true,
+    "primary_fallacy": "sunk_cost_fallacy"
+  },
+  "financial_stress_test": {
+    "solvency_risk": "medium",
+    "runway_impact_months": -3.5
+  },
+  "directives": [
+    "Halt deployment. Re-evaluate liquidity."
+  ],
+  "cryptographic_signature": "0x..."
+}`}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== FINAL CTA ==================== */}
+      <section className="py-24 bg-zinc-900/20 border-t border-zinc-900">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-8">Enter The Zone.</h2>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <Link href="/audit">
+              <button className="bg-white text-black px-12 py-5 font-bold text-xl hover:bg-zinc-200 transition-colors shadow-lg shadow-zinc-900/20">
+                Audit Logic ($2.50)
+              </button>
+            </Link>
+          </div>
+          <p className="mt-6 text-zinc-500 text-sm">
+            Instant settlement via Base Mainnet.
+          </p>
+        </div>
+      </section>
+
+      {/* ==================== FOOTER ==================== */}
+      <footer className="bg-black border-t border-zinc-900 py-12">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-zinc-800 rounded-sm" />
+            <span className="font-bold text-xl">DJZS</span>
+          </div>
+          
+          <div className="text-zinc-500 text-sm">
+            © 2026 Decentralized Journaling Zone System. Base Mainnet.
+          </div>
+
+          <div className="flex items-center space-x-6 text-zinc-400">
+            <a href="https://docs.djzs.ai" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">API Docs</a>
+            <a href="#" className="hover:text-white transition-colors">X (Twitter)</a>
+          </div>
+        </div>
+      </footer>
+
+      {/* Mobile Sticky Bar */}
+      <div className="fixed bottom-0 w-full bg-black/90 backdrop-blur border-t border-zinc-800 p-4 md:hidden z-50">
+        <Link href="/audit">
+          <button className="w-full bg-white text-black py-3 font-bold rounded flex justify-center items-center gap-2">
+            <Target className="w-4 h-4" />
+            Initialize System ($2.50)
+          </button>
+        </Link>
+      </div>
+
+    </div>
+  );
+}
