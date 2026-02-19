@@ -1,0 +1,83 @@
+This is the exact implementation to upgrade your infrastructure from a standard Web2 backend into an **Autonomous Auditing Firm**.
+
+By wiring the x402 protocol into `server/routes.ts`, your `/api/journal/analyze` endpoint will instantly reject unauthorized requests with an **HTTP 402 Payment Required** status. It will demand a micro-transaction (e.g., $2.50 USDC) on Base before the LangChain/Venice AI logic ever fires.
+
+### The Code Implementation (`server/routes.ts`)
+
+You already have the packages installed. We just need to inject the middleware at the top of your routes file and apply it to the specific endpoints you want to monetize.
+
+**1. Add the x402 Imports**
+At the top of `server/routes.ts`, import the Coinbase-developed protocol libraries:
+
+```typescript
+import { paymentMiddleware, x402ResourceServer } from "@x402/express";
+import { ExactEvmScheme } from "@x402/evm/exact/server";
+import { HTTPFacilitatorClient } from "@x402/core/server";
+
+```
+
+**2. Initialize the Protocol Server**
+Inside your `registerRoutes` function, before defining your endpoints, initialize the connection to the Coinbase x402 Facilitator and register the Base network (CAIP-2 format: `eip155:8453`):
+
+```typescript
+export async function registerRoutes(app: Express): Promise<Server> {
+  // 1. Initialize the x402 Facilitator (Coinbase CDP)
+  const facilitatorClient = new HTTPFacilitatorClient({
+    url: "https://www.x402.org/facilitator", 
+  });
+  
+  const resourceServer = new x402ResourceServer(facilitatorClient);
+  
+  // Register Base Mainnet for EVM stablecoin payments
+  resourceServer.register("eip155:8453", new ExactEvmScheme());
+
+  // 2. Configure the x402 Middleware
+  // This intercepts requests to the Journal API and demands $2.50 USDC
+  const requireLogicAuditPayment = paymentMiddleware(
+    {
+      "POST /api/journal/analyze": {
+        accepts: [
+          {
+            scheme: "exact",
+            price: "$2.50", // USDC amount per audit
+            network: "eip155:8453", // Base Mainnet
+            payTo: process.env.TREASURY_WALLET_ADDRESS as string, // Your DJZS Wallet
+          },
+        ],
+        description: "DJZS Logic Audit Execution",
+        mimeType: "application/json",
+      },
+    },
+    resourceServer
+  );
+
+  // Apply the middleware globally (it only triggers on the configured routes)
+  app.use(requireLogicAuditPayment);
+  
+  // ... existing health check and GitHub routes ...
+
+```
+
+**3. The Existing Endpoint Remains Unchanged**
+Because x402 operates entirely at the HTTP transport layer, you do not need to change a single line of your actual `/api/journal/analyze` logic.
+
+```typescript
+  // ==================== JOURNAL API ====================
+  // The x402 middleware guarantees you have been paid $2.50 USDC
+  // before this code block is ever executed.
+  app.post("/api/journal/analyze", async (req, res) => {
+    try {
+      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
+      // ... your existing LangChain / Venice AI logic ...
+
+```
+
+### The Leverage
+
+You have now completely decoupled your revenue from UI friction.
+
+If a founder clicks "Audit My Logic" on your frontend, their browser (using the `@x402/fetch` package) will automatically see the 402 response, sign the $2.50 USDC transaction from their Coinbase Smart Wallet, and retry the request.
+
+More importantly, if *another* AI agent (like an automated DAO treasury manager) pings your `/api/journal/analyze` endpoint via code, it can autonomously pay you $2.50 USDC to get your agent's opinion without ever opening a web browser.
+
+**Shall I provide the client-side code (`@x402/fetch` wrapper) to drop into your Vite React frontend so the UI automatically handles these new 402 payment prompts?**
