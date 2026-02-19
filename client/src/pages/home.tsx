@@ -66,7 +66,7 @@ export default function Home() {
                   data-testid="button-header-enter"
                 >
                   <Target className="w-4 h-4" />
-                  <span className="hidden sm:inline">Contract Firm ($2.50)</span>
+                  <span className="hidden sm:inline">Initialize System ($2.50)</span>
                   <span className="sm:hidden">Audit</span>
                 </button>
               </Link>
@@ -122,15 +122,15 @@ export default function Home() {
       </header>
 
       <Helmet>
-        <title>DJZS - Autonomous Auditing Firm for the A2A Economy</title>
-        <meta name="description" content="Autonomous AI auditing firm serving human founders and AI agents. Adversarial logic audits via x402-gated endpoint on Base Mainnet. Deterministic output, structured JSON, machine-readable liability. $2.50 USDC per audit." />
-        <meta property="og:title" content="DJZS - Autonomous Auditing Firm for the A2A Economy" />
+        <title>DJZS - Decentralized Journaling Zone System</title>
+        <meta name="description" content="Autonomous auditing infrastructure serving human founders and AI agents. Adversarial logic audits via x402-gated endpoint on Base Mainnet. Deterministic output, structured JSON, machine-readable liability. $2.50 USDC per audit." />
+        <meta property="og:title" content="DJZS - Decentralized Journaling Zone System" />
         <meta property="og:description" content="The AI that audits your logic before reality does. Adversarial simulation for Founders, Traders, and autonomous AI agents. x402 micropayments on Base. Deterministic output. Machine-readable verdicts." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="DJZS - Autonomous Auditing Firm for the A2A Economy" />
-        <meta name="twitter:description" content="Adversarial AI auditing firm. Stress-tests logic for humans via web UI and AI agents via API. x402-gated, deterministic output, structured JSON on Base Mainnet." />
+        <meta name="twitter:title" content="DJZS - Decentralized Journaling Zone System" />
+        <meta name="twitter:description" content="Autonomous auditing infrastructure. Stress-tests logic for humans via web UI and AI agents via API. x402-gated, deterministic output, structured JSON on Base Mainnet." />
       </Helmet>
 
       <motion.section
@@ -156,7 +156,7 @@ export default function Home() {
           <motion.div variants={fadeUp} className="mb-6">
             <span className="inline-flex items-center gap-3 px-6 py-3 rounded-md text-base font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
               <Target className="w-6 h-6" />
-              Autonomous Auditing Firm
+              Decentralized Journaling Zone System
             </span>
           </motion.div>
 
@@ -172,7 +172,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            The Firm is an autonomous Red Team for Founders, Traders, and other AI Agents. We stress-test logic against narrative bias, FOMO, and systemic risk — serving humans via web UI and autonomous agents via x402-gated API.
+            An autonomous auditing infrastructure for Founders, Traders, and Agents. Submit your logic into the Zone. The System stress-tests it against narrative bias, FOMO, and structural risk — serving humans via web UI and autonomous agents via x402-gated API.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
@@ -251,10 +251,10 @@ export default function Home() {
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>For Founders</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-founders-headline">
-                Kill your echo chamber. The Firm will tell you what your team won't.
+                Kill your echo chamber. The System will tell you what your team won't.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                You submit your roadmap via the UI. The Firm audits it for confirmation bias, verifying if you have true product-market fit or just a hallucination. If you're pivoting because Twitter is pumping a narrative, we flag it. No soothing. No validation. Just a verdict.
+                You submit your roadmap via the UI. The System audits it for confirmation bias, verifying if you have true product-market fit or just a hallucination. If you're pivoting because Twitter is pumping a narrative, we flag it. No soothing. No validation. Just a verdict.
               </p>
             </div>
 
@@ -268,7 +268,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    The Firm pressure-tests competitor claims and market narratives
+                    The System pressure-tests competitor claims and market narratives
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
@@ -290,7 +290,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    The Firm audits pivots and strategy shifts — flags when emotion drove the call
+                    The System audits pivots and strategy shifts — flags when emotion drove the call
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
@@ -308,11 +308,11 @@ export default function Home() {
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Adversarial Pressure-Test</p>
-                <h3 className="text-xl font-bold text-white mb-3">Red Team Review</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Adversarial Zone Review</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    The Firm calls out when you're reacting to hype instead of building strategy
+                    The System calls out when you're reacting to hype instead of building strategy
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
@@ -328,14 +328,14 @@ export default function Home() {
 
             <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.04), rgba(255,184,77,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-founder-cta">
               <p className="text-lg font-bold text-white mb-2">Your decisions need to survive volatility, not just the next board meeting.</p>
-              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>The Firm doesn't exist to soothe egos. It exists to deliver verdicts.</p>
+              <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>The System doesn't exist to soothe egos. It exists to deliver verdicts.</p>
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
                   style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }}
                   data-testid="button-start-founder-thinking"
                 >
-                  Red Team My Roadmap
+                  Audit My Roadmap
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </Link>
@@ -353,10 +353,10 @@ export default function Home() {
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Traders</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-traders-headline">
-                Is it conviction or FOMO? The Firm will tell you.
+                Is it conviction or FOMO? The System will tell you.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                You submit your trade thesis. The Firm cross-references it against historical volatility models to separate signal from FOMO. If your thesis is driven by fear or community pressure instead of data, we call that out. The market doesn't care about your feelings. Neither does The Firm.
+                You submit your trade thesis. The System cross-references it against historical volatility models to separate signal from FOMO. If your thesis is driven by fear or community pressure instead of data, we call that out. The market doesn't care about your feelings. Neither does The System.
               </p>
             </div>
 
@@ -370,7 +370,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    The Firm audits protocols, tokens, and market narratives for you
+                    The System audits protocols, tokens, and market narratives for you
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
@@ -392,7 +392,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    The Firm audits your thesis — so you can't rewrite history after
+                    The System audits your thesis — so you can't rewrite history after
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
@@ -414,7 +414,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    The Firm tries to destroy your thesis before you risk capital
+                    The System tries to destroy your thesis before you risk capital
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
@@ -455,10 +455,10 @@ export default function Home() {
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#7B6B8D' }}>For Content Creators</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-creators-headline">
-                The Firm stress-tests your takes before the audience does.
+                The System stress-tests your takes before the audience does.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                Publishing hot takes that fall apart under scrutiny is embarrassing. The Firm audits your angles before you publish — finds the holes, flags the lazy logic, and tells you if your take is genuinely original or just trendjacking.
+                Publishing hot takes that fall apart under scrutiny is embarrassing. The System audits your angles before you publish — finds the holes, flags the lazy logic, and tells you if your take is genuinely original or just trendjacking.
               </p>
             </div>
 
@@ -472,7 +472,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    The Firm audits trends before you build content around them
+                    The System audits trends before you build content around them
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
@@ -494,7 +494,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    The Firm audits your angles — shows you when you're repeating yourself
+                    The System audits your angles — shows you when you're repeating yourself
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
@@ -512,11 +512,11 @@ export default function Home() {
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Adversarial Review</p>
-                <h3 className="text-xl font-bold text-white mb-3">Pre-Publish Red Team</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Pre-Publish Audit Zone</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    The Firm stress-tests your takes before you publish them
+                    The System stress-tests your takes before you publish them
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
@@ -531,7 +531,7 @@ export default function Home() {
             </div>
 
             <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(123,107,141,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(123,107,141,0.15)' }} data-testid="card-creator-cta">
-              <p className="text-lg font-bold text-white mb-2">Audiences can smell lazy thinking. The Firm makes sure yours isn't.</p>
+              <p className="text-lg font-bold text-white mb-2">Audiences can smell lazy thinking. The System makes sure yours isn't.</p>
               <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every take stress-tested. Every angle challenged. Every piece backed by thinking that survives scrutiny.</p>
               <Link href="/chat">
                 <button
@@ -557,10 +557,10 @@ export default function Home() {
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>For Researchers</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-researchers-headline">
-                The Firm attacks your thesis harder than peer review will.
+                The System attacks your thesis harder than peer review will.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                Confirmation bias is the default mode of research. The Firm actively looks for what contradicts your thesis, flags methodological weaknesses, and asks whether your conclusion would survive if your two strongest sources disappeared.
+                Confirmation bias is the default mode of research. The System actively looks for what contradicts your thesis, flags methodological weaknesses, and asks whether your conclusion would survive if your two strongest sources disappeared.
               </p>
             </div>
 
@@ -574,7 +574,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
-                    The Firm flags when your sources all say the same thing
+                    The System flags when your sources all say the same thing
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
@@ -596,7 +596,7 @@ export default function Home() {
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
-                    The Firm audits hypotheses — flags when they're drifting from evidence
+                    The System audits hypotheses — flags when they're drifting from evidence
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F37E20' }} />
@@ -614,11 +614,11 @@ export default function Home() {
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>Adversarial Review</p>
-                <h3 className="text-xl font-bold text-white mb-3">Pre-Publication Red Team</h3>
+                <h3 className="text-xl font-bold text-white mb-3">Pre-Publication Audit Zone</h3>
                 <ul className="space-y-2.5">
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
-                    The Firm attacks your thesis harder than peer review will
+                    The System attacks your thesis harder than peer review will
                   </li>
                   <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7B6B8D' }} />
@@ -656,13 +656,13 @@ export default function Home() {
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
                 <Zap className="w-6 h-6" style={{ color: '#2E8B8B' }} />
-                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>Firm Architecture</span>
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>System Architecture</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-different-headline">
-                Three protocols. One autonomous auditing firm.
+                Three protocols. One autonomous auditing system.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                The Firm runs on sovereign infrastructure — x402-gated access, on-chain treasury, and decentralized adversarial AI. No single company controls the model. No centralized logs of your strategy.
+                The System runs on sovereign infrastructure — x402-gated access, on-chain treasury, and decentralized adversarial AI. No single company controls the model. No centralized logs of your strategy.
               </p>
             </div>
 
@@ -673,7 +673,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">The Gate — x402 Protocol</h3>
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
-                  High signal only. The Firm demands cryptographic proof of payment ($2.50 USDC) to filter out noise and guarantee execution priority. No subscriptions. No free tier. Skin in the game.
+                  High signal only. The System demands cryptographic proof of payment ($2.50 USDC) to filter out noise and guarantee execution priority. No subscriptions. No free tier. Skin in the game.
                 </p>
                 <p className="text-sm" style={{ color: '#555668' }}>
                   x402-gated endpoint on Base Mainnet. Instant settlement via Coinbase CDP.
@@ -686,7 +686,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">The Vault — CDP AgentKit</h3>
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
-                  Sovereign treasury. The Firm holds its own capital on-chain, proving solvency and uncensorable operation. Revenue flows directly to the agent's wallet — no intermediary.
+                  Sovereign treasury. The System holds its own capital on-chain, proving solvency and uncensorable operation. Revenue flows directly to the agent's wallet — no intermediary.
                 </p>
                 <p className="text-sm" style={{ color: '#555668' }}>
                   Treasury: 0xEc551A...05FF on Base Mainnet. Verifiable solvency at any time.
@@ -697,7 +697,7 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">The Red Team — Venice AI</h3>
+                <h3 className="text-xl font-bold text-white mb-3">The Audit Zone — Venice AI</h3>
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
                   Adversarial logic. We don't validate; we attack. The AI aggressively hunts for confirmation bias, narrative dependency, and FOMO in the submitted thesis. Deterministic output, machine-readable liability.
                 </p>
@@ -735,7 +735,7 @@ export default function Home() {
                 Submit. Pay. Get audited.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                The Firm doesn't run in the background. It activates on demand — one audit, one payment, one structured verdict. Here's exactly what happens.
+                The System doesn't run in the background. It activates on demand — one audit, one payment, one structured verdict. Here's exactly what happens.
               </p>
             </div>
 
@@ -759,7 +759,7 @@ export default function Home() {
               </div>
 
               <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-think-output">
-                <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: '#2E8B8B' }}>The Firm's verdict</p>
+                <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: '#2E8B8B' }}>The System's verdict</p>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3 text-base" style={{ color: '#9a9bb0' }}>
                     <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#2E8B8B' }} />
@@ -789,7 +789,7 @@ export default function Home() {
                 <div>
                   <h3 className="text-xl font-bold text-white mb-2">Audit Trail: How Intelligence Compounds</h3>
                   <p className="text-base leading-relaxed" style={{ color: '#9a9bb0' }}>
-                    After each audit, the Firm surfaces patterns worth tracking — recurring biases, evolving risk profiles, blind spots across decisions. Pin them to your vault. Pinned insights become context for every future audit. This is how your decision quality improves over time.
+                    After each audit, the System surfaces patterns worth tracking — recurring biases, evolving risk profiles, blind spots across decisions. Pin them to your vault. Pinned insights become context for every future audit. This is how your decision quality improves over time.
                   </p>
                   <p className="text-sm mt-3" style={{ color: '#555668' }}>
                     Nothing is pinned without your approval. Your vault stays local-first. You own your cognitive graph.
@@ -810,10 +810,10 @@ export default function Home() {
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Agent-to-Agent Economy</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-a2a-headline">
-                The autonomous auditing firm for the A2A economy.
+                The autonomous auditing system for the A2A economy.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
-                The Firm serves two clients: human founders via the web UI, and autonomous AI agents via API. Other agents programmatically hire The Firm to stress-test their logic before execution — paying per audit via x402 micropayments on Base.
+                The System serves two clients: human founders via the web UI, and autonomous AI agents via API. Other agents programmatically hire The System to stress-test their logic before execution — paying per audit via x402 micropayments on Base.
               </p>
             </div>
 
@@ -825,7 +825,7 @@ export default function Home() {
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#FFB84D' }}>DAO Treasury Stress-Test</p>
                 <h3 className="text-xl font-bold text-white mb-3">$50 USDC / audit</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  A DAO agent managing a $10M treasury pings The Firm before signing a multi-sig. The Firm audits the proposal, flags FOMO-driven allocation, and returns a structured risk score. The agent pauses deployment, saving the treasury.
+                  A DAO agent managing a $10M treasury pings The System before signing a multi-sig. The System audits the proposal, flags FOMO-driven allocation, and returns a structured risk score. The agent pauses deployment, saving the treasury.
                 </p>
               </div>
 
@@ -836,7 +836,7 @@ export default function Home() {
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Founder Drift Audit</p>
                 <h3 className="text-xl font-bold text-white mb-3">$5 USDC / audit</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  A VC screening bot pays The Firm to check if a founder is building what they promised or pivot-chasing Twitter trends. The Firm outputs an objective Strategic Integrity score by comparing the original whitepaper against recent updates.
+                  A VC screening bot pays The System to check if a founder is building what they promised or pivot-chasing Twitter trends. The System outputs an objective Strategic Integrity score by comparing the original whitepaper against recent updates.
                 </p>
               </div>
 
@@ -847,7 +847,7 @@ export default function Home() {
                 <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>"Check My Work" Micro-Audit</p>
                 <h3 className="text-xl font-bold text-white mb-3">$2.50 USDC / audit</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#9a9bb0' }}>
-                  A trading agent formulates a complex arbitrage strategy. Before execution, it hits The Firm's API and pays $2.50 via x402. The Firm operates as the "Senior Partner," stress-testing assumptions and pointing out systemic blind spots.
+                  A trading agent formulates a complex arbitrage strategy. Before execution, it hits The System's API and pays $2.50 via x402. The System operates as the "Senior Partner," stress-testing assumptions and pointing out systemic blind spots.
                 </p>
               </div>
             </div>
@@ -900,7 +900,7 @@ export default function Home() {
 
             <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.04), rgba(255,184,77,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-a2a-cta">
               <p className="text-lg font-bold text-white mb-2">In a world of a million AI agents, trust is the bottleneck.</p>
-              <p className="text-sm mb-2" style={{ color: '#7a7b90' }}>The Firm is the default Logic Oracle for the decentralized web. Machine-readable first, human-readable second.</p>
+              <p className="text-sm mb-2" style={{ color: '#7a7b90' }}>The System is the default Logic Oracle for the decentralized web. Machine-readable first, human-readable second.</p>
               <p className="text-xs" style={{ color: '#555668' }}>Coming soon: ERC-8004 on-chain reputation registry — immutable track record of successful logic audits.</p>
             </div>
           </div>
@@ -939,7 +939,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">On-Demand Execution</h3>
                 <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  The Firm only sees your data when you submit an audit. Nothing is sent automatically. No background scanning. No silent learning.
+                  The System only sees your data when you submit an audit. Nothing is sent automatically. No background scanning. No silent learning.
                 </p>
               </div>
               <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }}>
@@ -993,25 +993,25 @@ export default function Home() {
         <section className="relative py-24 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-              <FAQItem question="How is The Firm different from ChatGPT or Notion AI?">
-                <p>ChatGPT and Notion AI are designed to be helpful. The Firm is designed to be adversarial.</p>
+              <FAQItem question="How is The System different from ChatGPT or Notion AI?">
+                <p>ChatGPT and Notion AI are designed to be helpful. The System is designed to be adversarial.</p>
                 <p className="mt-2" style={{ color: '#7a7b90' }}>Centralized AI tools:</p>
                 <ul className="list-disc list-inside ml-2" style={{ color: '#7a7b90' }}>
                   <li>Validate whatever you say — "Great thinking!" even when it's not</li>
                   <li>Store your data on their servers and train on your inputs</li>
                   <li>Have zero memory of your past reasoning</li>
                 </ul>
-                <p className="mt-3" style={{ color: '#9a9bb0' }}>The Firm is an adversarial auditing system:</p>
+                <p className="mt-3" style={{ color: '#9a9bb0' }}>The System is an adversarial auditing system:</p>
                 <ul className="list-disc list-inside ml-2" style={{ color: '#9a9bb0' }}>
                   <li>Attacks your claims, flags FOMO, and calls out weak reasoning</li>
                   <li>Returns structured verdicts with risk scores and bias detection</li>
                   <li>Data stays on your device. AI doesn't train on your inputs</li>
                 </ul>
-                <p className="text-white mt-3 font-semibold">The Firm doesn't think for you. It audits whether you're actually thinking.</p>
+                <p className="text-white mt-3 font-semibold">The System doesn't think for you. It audits whether you're actually thinking.</p>
               </FAQItem>
 
-              <FAQItem question="How do AI agents use the Firm's API?">
-                <p>Any autonomous AI agent can programmatically hire The Firm via the A2A audit API.</p>
+              <FAQItem question="How do AI agents use the System's API?">
+                <p>Any autonomous AI agent can programmatically hire The System via the A2A audit API.</p>
                 <p className="mt-2">The integration is simple:</p>
                 <ul className="list-disc list-inside ml-2">
                   <li>Discover capabilities at GET /api/audit/schema</li>
@@ -1027,15 +1027,15 @@ export default function Home() {
                 <ul className="list-disc list-inside ml-2 mt-2">
                   <li>Your entries and research live on your device</li>
                   <li>AI only sees text you explicitly submit for audit</li>
-                  <li>The Firm does not scan, profile, or monetize your thinking</li>
+                  <li>The System does not scan, profile, or monetize your thinking</li>
                   <li>Nothing syncs unless you choose to export it</li>
                 </ul>
-                <p className="mt-3">The Firm works fully offline for local vault operations. If your device is offline, your data stays offline.</p>
+                <p className="mt-3">The System works fully offline for local vault operations. If your device is offline, your data stays offline.</p>
               </FAQItem>
 
               <FAQItem question="Where is my data stored?">
                 <p className="text-white font-semibold">In your browser's local database (IndexedDB) on this device.</p>
-                <p className="mt-2">The Firm does not use cloud servers for storage. Your journal entries, research trackers, memory pins, and audit history all live in your browser's IndexedDB. This data persists across sessions but never leaves your device unless you explicitly submit an audit or export it.</p>
+                <p className="mt-2">The System does not use cloud servers for storage. Your journal entries, research trackers, memory pins, and audit history all live in your browser's IndexedDB. This data persists across sessions but never leaves your device unless you explicitly submit an audit or export it.</p>
                 <p className="mt-2">Clearing your browser data will permanently delete this information. We recommend regular backups.</p>
               </FAQItem>
 
@@ -1052,7 +1052,7 @@ export default function Home() {
                 <p className="text-white mt-2 font-semibold">Your data is yours. You can leave anytime with a complete, readable copy.</p>
               </FAQItem>
 
-              <FAQItem question="Can I use The Firm on multiple devices?">
+              <FAQItem question="Can I use The System on multiple devices?">
                 <p className="text-white font-semibold">Yes, via export and import.</p>
                 <p className="mt-2">Export on device A, import on device B. The import will merge data without duplicating entries. This is manual but works today with zero extra complexity.</p>
                 <p className="mt-2" style={{ color: '#7a7b90' }}>Future: optional XMTP-based E2E encrypted sync across devices (serverless, opt-in).</p>
@@ -1064,7 +1064,7 @@ export default function Home() {
                 <p className="text-white mt-2 font-semibold">We tell you the truth now so you can trust us later.</p>
               </FAQItem>
 
-              <FAQItem question="What does the Firm's AI see?">
+              <FAQItem question="What does the System's AI see?">
                 <p className="text-white font-semibold">Only the thesis you submit for audit.</p>
                 <ul className="list-disc list-inside ml-2 mt-2">
                   <li>When you submit an audit — your thesis + audit type are sent to Venice AI over HTTPS/TLS</li>
@@ -1076,8 +1076,8 @@ export default function Home() {
               </FAQItem>
 
               <FAQItem question="How does the adversarial audit work?">
-                <p>The Firm is not a chatbot — it's an adversarial auditing system. It actively tries to break your reasoning.</p>
-                <p className="mt-2">When you submit an audit, the Firm:</p>
+                <p>The System is not a chatbot — it's an adversarial auditing system. It actively tries to break your reasoning.</p>
+                <p className="mt-2">When you submit an audit, the System:</p>
                 <ul className="list-disc list-inside ml-2">
                   <li>Interrogates your thesis — not summarizes, interrogates</li>
                   <li>Hunts for confirmation bias, FOMO, narrative dependency</li>
@@ -1087,7 +1087,7 @@ export default function Home() {
                 <p className="text-white mt-2 font-semibold">No soothing. No "great insight." Just a structured audit verdict.</p>
               </FAQItem>
 
-              <FAQItem question="What services does the Firm provide?">
+              <FAQItem question="What services does the System provide?">
                 <p>Six audit services, one compounding loop. Each designed to pressure-test a different part of your thinking:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
                   <div>
@@ -1128,7 +1128,7 @@ export default function Home() {
                 <p className="mt-3">This is how intelligence compounds — the AI references your past thinking without creating a centralized memory graph.</p>
               </FAQItem>
 
-              <FAQItem question="Who hires the Firm?">
+              <FAQItem question="Who uses the System?">
                 <p className="text-white font-semibold">Two types of clients: humans who want to be challenged, and AI agents that need logic verification.</p>
                 <ul className="list-disc list-inside ml-2 mt-2">
                   <li>Crypto-native founders tired of echo chamber consensus</li>
@@ -1137,7 +1137,7 @@ export default function Home() {
                   <li>DAO treasury agents needing pre-execution audits</li>
                   <li>Any autonomous AI agent that needs adversarial logic verification</li>
                 </ul>
-                <p className="mt-3" style={{ color: '#7a7b90' }}>The Firm is not for casual diary-keeping, photo memories, or people who want an AI that tells them they're brilliant.</p>
+                <p className="mt-3" style={{ color: '#7a7b90' }}>The System is not for casual diary-keeping, photo memories, or people who want an AI that tells them they're brilliant.</p>
                 <p className="mt-2 text-white font-semibold">Cognitive infrastructure for a decentralized, post-surveillance A2A economy.</p>
               </FAQItem>
             </div>
@@ -1149,7 +1149,7 @@ export default function Home() {
         <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-black text-white mb-12 tracking-tight" data-testid="text-final-cta-headline">
-              The Firm that audits your logic. Not the one that agrees with it.
+              The System that audits your logic. Not the one that agrees with it.
             </h2>
             <Link href="/chat">
               <button
@@ -1157,7 +1157,7 @@ export default function Home() {
                 style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
                 data-testid="button-final-get-started"
               >
-                Contract The Firm ($2.50)
+                Initialize System ($2.50)
                 <ArrowRight className="w-6 h-6" />
               </button>
             </Link>
@@ -1173,7 +1173,7 @@ export default function Home() {
               DJZS
             </h2>
             <p className="text-xs font-medium uppercase tracking-[0.3em]" style={{ color: '#7a7b90' }}>
-              Autonomous Auditing Firm for the A2A Economy
+              Decentralized Journaling Zone System
             </p>
           </div>
 
@@ -1218,7 +1218,7 @@ export default function Home() {
           </div>
 
           <p className="text-[10px] uppercase tracking-widest" style={{ color: '#444556' }}>
-            © 2026 DJZS AI — Autonomous Auditing Firm
+            © 2026 DJZS — Decentralized Journaling Zone System
           </p>
         </div>
       </footer>
@@ -1232,7 +1232,7 @@ export default function Home() {
                 style={{ background: '#F37E20' }}
                 data-testid="button-mobile-try-demo"
               >
-                Audit My Logic ($2.50)
+                Initialize System ($2.50)
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
