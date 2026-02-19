@@ -1,0 +1,264 @@
+import { useState } from "react";
+import { 
+  Zap, 
+  Shield, 
+  Database, 
+  Terminal, 
+  Activity, 
+  Lock, 
+  History,
+  AlertTriangle,
+  Send
+} from "lucide-react";
+
+// The unified Zone configuration mapping directly to your API routes
+const ZONE_CONFIGS = {
+  micro: {
+    id: "micro",
+    name: "The Micro-Zone",
+    icon: <Activity className="w-5 h-5 text-zinc-400" />,
+    tagline: "High-Frequency Sanity Check",
+    description: "Deploy trading thesis or fast logic parameters. The System executes a constrained, binary risk assessment.",
+    placeholder: "Enter trading parameters, technical assumptions, or execution logic...",
+    price: "2.50",
+    endpoint: "/api/audit/micro"
+  },
+  founder: {
+    id: "founder",
+    name: "The Founder Zone",
+    icon: <Terminal className="w-5 h-5 text-zinc-400" />,
+    tagline: "Strategic Diligence Audit",
+    description: "Deploy strategic roadmaps or pivot logic. The System hunts for narrative drift, confirmation bias, and hallucinated product-market fit.",
+    placeholder: "Enter roadmap strategy, market assumptions, or pivot justification...",
+    price: "5.00",
+    endpoint: "/api/audit/founder"
+  },
+  treasury: {
+    id: "treasury",
+    name: "The Treasury Zone",
+    icon: <Shield className="w-5 h-5 text-zinc-400" />,
+    tagline: "Governance Stress-Test",
+    description: "Deploy capital allocation proposals. The System executes an exhaustive adversarial breakdown of liquidity and systemic risk.",
+    placeholder: "Enter governance proposal, capital deployment logic, or yield assumptions...",
+    price: "50.00",
+    endpoint: "/api/audit/treasury"
+  }
+};
+
+export function Dashboard() {
+  const [activeTab, setActiveTab] = useState<"micro" | "founder" | "treasury" | "ledger">("founder");
+  const [payload, setPayload] = useState("");
+  const [isDeploying, setIsDeploying] = useState(false);
+
+  // Mock ledger data to show the structured JSON output
+  const mockLedger = [
+    {
+      id: "uuid-v4-8f72",
+      date: "2026-02-19T13:24:00Z",
+      zone: "The Founder Zone",
+      score: 85,
+      bias: "Narrative_Reaction",
+      hash: "0x7f8b92c4a1e3...d5a1",
+      status: "Verified"
+    }
+  ];
+
+  const handleDeploy = async () => {
+    if (!payload) return;
+    setIsDeploying(true);
+    // TODO: Wire up x402 payment hook and API fetch here
+    setTimeout(() => {
+      setIsDeploying(false);
+      setPayload("");
+      setActiveTab("ledger");
+    }, 1500);
+  };
+
+  return (
+    <div className="flex h-screen bg-black text-white font-sans selection:bg-zinc-800">
+      
+      {/* ==================== SIDEBAR ==================== */}
+      <aside className="w-64 border-r border-zinc-900 bg-black flex flex-col">
+        <div className="h-16 flex items-center px-6 border-b border-zinc-900">
+          <div className="w-3 h-3 bg-white rounded-sm mr-3" />
+          <span className="font-bold tracking-widest text-lg">DJZS</span>
+        </div>
+
+        <div className="p-4 flex-1">
+          <div className="text-xs font-mono text-zinc-600 uppercase tracking-widest mb-4 mt-4 px-2">
+            Execution Zones
+          </div>
+          <nav className="space-y-1">
+            {Object.values(ZONE_CONFIGS).map((zone) => (
+              <button
+                key={zone.id}
+                onClick={() => setActiveTab(zone.id as any)}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded text-sm font-medium transition-colors ${
+                  activeTab === zone.id 
+                    ? "bg-zinc-900 text-white border border-zinc-800" 
+                    : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+                }`}
+              >
+                {zone.icon}
+                {zone.name}
+              </button>
+            ))}
+          </nav>
+
+          <div className="text-xs font-mono text-zinc-600 uppercase tracking-widest mb-4 mt-8 px-2">
+            Immutable Records
+          </div>
+          <nav className="space-y-1">
+            <button
+              onClick={() => setActiveTab("ledger")}
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded text-sm font-medium transition-colors ${
+                activeTab === "ledger" 
+                  ? "bg-zinc-900 text-white border border-zinc-800" 
+                  : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+              }`}
+            >
+              <Database className="w-5 h-5 text-zinc-400" />
+              Cryptographic Ledger
+            </button>
+          </nav>
+        </div>
+
+        <div className="p-4 border-t border-zinc-900">
+          <div className="flex items-center gap-2 text-xs font-mono text-zinc-500">
+            <Lock className="w-3 h-3" />
+            <span>x402 Protocol Active</span>
+          </div>
+        </div>
+      </aside>
+
+      {/* ==================== MAIN CONTENT ==================== */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-zinc-950">
+        
+        {/* Topbar */}
+        <header className="h-16 border-b border-zinc-900 flex items-center justify-between px-8 bg-black">
+          <div className="flex items-center gap-3 text-sm font-mono text-zinc-400">
+            <span className="text-green-500">●</span> System Connected
+            <span className="text-zinc-700">|</span> eip155:8453
+          </div>
+          <div className="text-sm font-mono text-zinc-500">
+            User: 0x48f...9a21
+          </div>
+        </header>
+
+        {/* Dynamic Workspace */}
+        <div className="flex-1 overflow-y-auto p-8 lg:p-12">
+          <div className="max-w-4xl mx-auto">
+
+            {activeTab !== "ledger" ? (
+              // --- ZONE DEPLOYMENT UI ---
+              <div className="animate-in fade-in duration-300">
+                <div className="mb-10">
+                  <h1 className="text-4xl font-bold tracking-tighter mb-3">
+                    {ZONE_CONFIGS[activeTab].name}
+                  </h1>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-zinc-900 text-zinc-300 px-2 py-1 text-xs font-mono uppercase tracking-widest border border-zinc-800">
+                      {ZONE_CONFIGS[activeTab].tagline}
+                    </span>
+                    <span className="text-zinc-500 font-mono text-sm">
+                      {ZONE_CONFIGS[activeTab].endpoint}
+                    </span>
+                  </div>
+                  <p className="text-zinc-400 text-lg leading-relaxed">
+                    {ZONE_CONFIGS[activeTab].description}
+                  </p>
+                </div>
+
+                <div className="bg-black border border-zinc-800 p-1 mb-6">
+                  <div className="flex items-center justify-between px-4 py-2 bg-zinc-900/50 border-b border-zinc-800">
+                    <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest">
+                      [STRATEGY_PAYLOAD]
+                    </span>
+                    <span className="text-xs font-mono text-zinc-600">
+                      Markdown Supported
+                    </span>
+                  </div>
+                  <textarea
+                    value={payload}
+                    onChange={(e) => setPayload(e.target.value)}
+                    placeholder={ZONE_CONFIGS[activeTab].placeholder}
+                    className="w-full h-64 bg-transparent border-none text-zinc-300 placeholder-zinc-700 font-mono text-sm p-4 focus:ring-0 resize-none"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-zinc-500 text-sm font-mono">
+                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                    Deploying logic is immutable.
+                  </div>
+                  <button 
+                    onClick={handleDeploy}
+                    disabled={!payload || isDeploying}
+                    className="flex items-center gap-2 bg-white text-black px-8 py-4 font-bold text-sm hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isDeploying ? "Awaiting Signature..." : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        Deploy to Zone (${ZONE_CONFIGS[activeTab].price} USDC)
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+            ) : (
+              // --- LEDGER EXPORT UI ---
+              <div className="animate-in fade-in duration-300">
+                <div className="mb-10">
+                  <h1 className="text-4xl font-bold tracking-tighter mb-3">
+                    Cryptographic Ledger
+                  </h1>
+                  <p className="text-zinc-400 text-lg">
+                    Immutable records of all System stress-tests and corresponding cryptographic hashes.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  {mockLedger.map((entry) => (
+                    <div key={entry.id} className="bg-black border border-zinc-800 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-zinc-700 transition-colors">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-mono bg-zinc-900 text-zinc-400 px-2 py-1 border border-zinc-800">
+                            {entry.zone}
+                          </span>
+                          <span className="text-xs font-mono text-zinc-500">
+                            {new Date(entry.date).toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="text-sm font-mono text-zinc-600">
+                          Hash: <span className="text-zinc-400">{entry.hash}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-8">
+                        <div>
+                          <div className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-1">Risk Score</div>
+                          <div className={`text-xl font-bold ${entry.score > 80 ? 'text-red-500' : 'text-green-500'}`}>
+                            {entry.score}/100
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-1">Primary Bias</div>
+                          <div className="text-sm font-mono text-zinc-300">{entry.bias}</div>
+                        </div>
+                        <button className="px-4 py-2 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600 text-sm font-bold transition-colors">
+                          View Payload
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}

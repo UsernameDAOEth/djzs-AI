@@ -1,0 +1,254 @@
+import { useState, useEffect } from "react";
+import { useAccount, useSendTransaction } from "wagmi";
+import { parseUnits } from "viem";
+// import { db } from "../lib/db"; // Your Dexie vault
+import { 
+  Zap, Shield, Database, Terminal, Activity, Lock, 
+  AlertTriangle, Send, Settings, Wallet as WalletIcon 
+} from "lucide-react";
+
+// --- ZONE CONFIGURATION ---
+const ZONE_CONFIGS = {
+  micro: {
+    id: "micro",
+    name: "The Micro-Zone",
+    icon: <Activity className="w-5 h-5" />,
+    tagline: "High-Frequency Sanity Check",
+    placeholder: "Enter trading parameters, technical assumptions, or execution logic...",
+    price: "2.50",
+    endpoint: "/api/audit/micro"
+  },
+  founder: {
+    id: "founder",
+    name: "The Founder Zone",
+    icon: <Terminal className="w-5 h-5" />,
+    tagline: "Strategic Diligence Audit",
+    placeholder: "Enter roadmap strategy, market assumptions, or pivot justification...",
+    price: "5.00",
+    endpoint: "/api/audit/founder"
+  },
+  treasury: {
+    id: "treasury",
+    name: "The Treasury Zone",
+    icon: <Shield className="w-5 h-5" />,
+    tagline: "Governance Stress-Test",
+    placeholder: "Enter governance proposal, capital deployment logic, or yield assumptions...",
+    price: "50.00",
+    endpoint: "/api/audit/treasury"
+  }
+};
+
+export default function ChatDashboard() {
+  const { address, isConnected } = useAccount();
+  const { sendTransactionAsync } = useSendTransaction();
+  
+  const [activeTab, setActiveTab] = useState<"micro" | "founder" | "treasury" | "ledger">("founder");
+  const [payload, setPayload] = useState("");
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [ledgerEntries, setLedgerEntries] = useState<any[]>([]);
+
+  // Load encrypted ledger from local Dexie vault on mount
+  useEffect(() => {
+    async function loadVault() {
+      // const entries = await db.audits.orderBy('timestamp').reverse().toArray();
+      // setLedgerEntries(entries);
+    }
+    loadVault();
+  }, [activeTab]);
+
+  // --- THE DEPLOYMENT ENGINE (x402 + API + Dexie) ---
+  const handleDeploy = async () => {
+    if (!payload || !isConnected) return;
+    setIsDeploying(true);
+    const activeZone = ZONE_CONFIGS[activeTab as keyof typeof ZONE_CONFIGS];
+
+    try {
+      // 1. Execute x402 Payment (USDC on Base)
+      // Note: In production, use the specific USDC contract address and ABI
+      const txHash = await sendTransactionAsync({
+        to: import.meta.env.VITE_TREASURY_ADDRESS as `0x${string}`,
+        value: parseUnits(activeZone.price, 6), // 6 decimals for USDC
+      });
+
+      // 2. Transmit Payload to the DJZS System
+      const response = await fetch(activeZone.endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-payment-proof": txHash, // Coinbase middleware verifies this
+        },
+        body: JSON.stringify({ strategy_memo: payload }),
+      });
+
+      if (!response.ok) throw new Error("System execution failed.");
+      const auditResult = await response.json();
+
+      // 3. Encrypt & Save to Local Vault (Dexie)
+      const ledgerRecord = {
+        ...auditResult,
+        zone_id: activeZone.id,
+        timestamp: new Date().toISOString(),
+        original_payload: payload // Optional: save what they submitted
+      };
+      // await db.audits.add(ledgerRecord);
+      
+      // 4. Update UI State
+      setPayload("");
+      setActiveTab("ledger");
+
+    } catch (error) {
+      console.error("Deployment Error:", error);
+      // Handle error UI
+    } finally {
+      setIsDeploying(false);
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-black text-white font-sans selection:bg-zinc-800">
+      
+      {/* ==================== SIDEBAR ==================== */}
+      <aside className="w-64 border-r border-zinc-900 bg-black flex flex-col justify-between">
+        <div>
+          <div className="h-16 flex items-center px-6 border-b border-zinc-900">
+            <div className="w-3 h-3 bg-white rounded-sm mr-3" />
+            <span className="font-bold tracking-widest text-lg">DJZS</span>
+          </div>
+
+          <div className="p-4">
+            <div className="text-xs font-mono text-zinc-600 uppercase tracking-widest mb-4 mt-2 px-2">
+              Execution Zones
+            </div>
+            <nav className="space-y-1">
+              {Object.values(ZONE_CONFIGS).map((zone) => (
+                <button
+                  key={zone.id}
+                  onClick={() => setActiveTab(zone.id as any)}
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded text-sm font-medium transition-colors ${
+                    activeTab === zone.id 
+                      ? "bg-zinc-900 text-white border border-zinc-800" 
+                      : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+                  }`}
+                >
+                  <span className={activeTab === zone.id ? "text-white" : "text-zinc-500"}>{zone.icon}</span>
+                  {zone.name}
+                </button>
+              ))}
+            </nav>
+
+            <div className="text-xs font-mono text-zinc-600 uppercase tracking-widest mb-4 mt-8 px-2">
+              Immutable Records
+            </div>
+            <nav className="space-y-1">
+              <button
+                onClick={() => setActiveTab("ledger")}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded text-sm font-medium transition-colors ${
+                  activeTab === "ledger" ? "bg-zinc-900 text-white border border-zinc-800" : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+                }`}
+              >
+                <Database className="w-5 h-5" /> Cryptographic Ledger
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        {/* --- EXISTING WALLET & VAULT CONTROLS --- */}
+        <div className="p-4 border-t border-zinc-900 space-y-2">
+          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
+            <Settings className="w-4 h-4" /> System Settings
+          </button>
+          <div className="flex items-center justify-between px-3 py-2 bg-zinc-900/50 border border-zinc-800 rounded">
+            <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
+              <WalletIcon className="w-4 h-4" />
+              {isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : "Not Connected"}
+            </div>
+            <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`} />
+          </div>
+          <div className="flex items-center gap-2 text-xs font-mono text-zinc-600 px-3 pt-2">
+            <Lock className="w-3 h-3" /> Local Vault Encrypted
+          </div>
+        </div>
+      </aside>
+
+      {/* ==================== MAIN CONTENT ==================== */}
+      <main className="flex-1 flex flex-col min-w-0 bg-zinc-950">
+        
+        <header className="h-16 border-b border-zinc-900 flex items-center justify-between px-8 bg-black">
+          <div className="flex items-center gap-3 text-sm font-mono text-zinc-400">
+            <span className="text-green-500 animate-pulse">●</span> 
+            {isConnected ? "System Connected" : "Awaiting Wallet Connection"}
+            <span className="text-zinc-700">|</span> eip155:8453
+          </div>
+        </header>
+
+        <div className="flex-1 overflow-y-auto p-8 lg:p-12">
+          <div className="max-w-4xl mx-auto">
+            {activeTab !== "ledger" ? (
+              
+              // --- ZONE INPUT TERMINAL ---
+              <div className="animate-in fade-in duration-300">
+                <div className="mb-10">
+                  <h1 className="text-4xl font-bold tracking-tighter mb-3">
+                    {ZONE_CONFIGS[activeTab].name}
+                  </h1>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-zinc-900 text-zinc-300 px-2 py-1 text-xs font-mono uppercase tracking-widest border border-zinc-800">
+                      {ZONE_CONFIGS[activeTab].tagline}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-black border border-zinc-800 p-1 mb-6 focus-within:border-zinc-600 transition-colors">
+                  <div className="flex items-center justify-between px-4 py-2 bg-zinc-900/50 border-b border-zinc-800">
+                    <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest">[STRATEGY_PAYLOAD]</span>
+                  </div>
+                  <textarea
+                    value={payload}
+                    onChange={(e) => setPayload(e.target.value)}
+                    placeholder={ZONE_CONFIGS[activeTab].placeholder}
+                    className="w-full h-64 bg-transparent border-none text-zinc-300 placeholder-zinc-700 font-mono text-sm p-4 focus:ring-0 resize-none outline-none"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-zinc-500 text-sm font-mono">
+                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                    Execution is immutable.
+                  </div>
+                  <button 
+                    onClick={handleDeploy}
+                    disabled={!payload || isDeploying || !isConnected}
+                    className="flex items-center gap-2 bg-white text-black px-8 py-4 font-bold text-sm hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isDeploying ? "Awaiting x402 Signature..." : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        Deploy to Zone (${ZONE_CONFIGS[activeTab].price} USDC)
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+            ) : (
+              // --- THE LEDGER ---
+              <div className="animate-in fade-in duration-300">
+                <div className="mb-10">
+                  <h1 className="text-4xl font-bold tracking-tighter mb-3">Cryptographic Ledger</h1>
+                  <p className="text-zinc-400">Decrypted and fetched from your local Dexie vault.</p>
+                </div>
+                
+                {/* Map your actual ledgerEntries here */}
+                {ledgerEntries.length === 0 && (
+                  <div className="text-center py-12 border border-zinc-800 border-dashed text-zinc-500 font-mono text-sm">
+                    No records found. Deploy to a Zone to initiate the ledger.
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
