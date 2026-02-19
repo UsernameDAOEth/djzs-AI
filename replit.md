@@ -1,17 +1,7 @@
-# DJZS - Decentralized AI for Sovereign Thinking
+# DJZS AI - Autonomous Auditing Firm for the A2A Economy
 
 ## Overview
-DJZS is a decentralized, adversarial AI thinking system designed for sovereign users. It combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), and decentralized AI inference via Venice. Six zones (Journal, Research, Trade, Decisions, Content, Thinking Partner) form one loop: capture locally → pressure-test with adversarial AI → compound what survives. The AI actively calls out FOMO-driven logic, narrative dependency, echo chamber consensus, and weak reasoning. No centralized model training on your thoughts. No cloud surveillance layer. No silent data extraction.
-
-## Strategic Positioning
-- **Category**: Adversarial cognitive infrastructure for sovereign users (NOT journaling, NOT note-taking, NOT a supportive AI)
-- **Value prop**: "Decentralized AI that cuts through the noise" — not "Remember your life beautifully"
-- **AI Identity**: Direct, blunt, anti-hype. Calls out bias, FOMO, ego, Twitter narrative dependency, and weak assumptions. No first-person ("I think/notice/see"), no "great insight," no softening. Precision over politeness.
-- **Target users**: Crypto-native builders, privacy maximalists, founders, traders (crypto analysts, DeFi researchers), content creators, researchers, strategists, long-term thinkers
-- **NOT for**: Casual diary-keeping, photo memories, lifestyle journaling, emotional reflection, people who want an AI that tells them they're brilliant
-- **Competition**: Centralized AI tools (ChatGPT, Notion AI) that validate instead of challenge, scattered notes, browser bookmarks (NOT other journal apps)
-- **Moat**: Adversarial AI + decentralized inference + E2E encryption + local-first = no centralized platform can replicate the sovereignty + adversarial pressure-testing guarantee
-- **Positioning statement**: Cognitive infrastructure for a decentralized, post-surveillance world. Not here to be liked — here to make sure decisions survive volatility.
+DJZS AI is an autonomous AI auditing firm operating in the Agent-to-Agent (A2A) economy, designed to be a "Logic Oracle for the decentralized web." It offers machine-readable audits for other AI agents via a programmatic API and provides a human-facing web UI with six distinct "zones" (Journal, Research, Trade, Decisions, Content, Thinking Partner) for structured thinking and decision-making. The project emphasizes local-first data ownership, end-to-end encrypted messaging, decentralized AI inference, and x402 micropayments on Base. Its core purpose is to provide adversarial AI pressure-testing to challenge assumptions and ensure robust decision-making in a decentralized, post-surveillance environment, positioning itself as cognitive infrastructure rather than a validation tool.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -20,145 +10,61 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend
 - **Technology Stack**: React 18 with TypeScript, Vite.
-- **UI**: Radix UI components with Tailwind CSS (futuristic "calm intelligence" dark theme).
-- **Design System**: Futuristic dark palette — charcoal #0F1115 (base background), #14171D (surface/cards), orange #F37E20 (primary accent), teal #2E8B8B (research/secondary), purple #7B6B8D (thinking partner), gold #FFB84D (decision zone). Sharp corners (rounded-lg), subtle borders (rgba 0.06 opacity), no rounded-2xl. Fonts: Merriweather (headings), Nunito (body).
-- **Routing**: Wouter for client-side navigation (`/`, `/chat`, `/docs`, `/privacy`, `/security`, `/about`, `/terms`, `/roadmap`, `*`).
+- **UI/UX**: Radix UI components with Tailwind CSS, utilizing a "calm intelligence" dark theme. The design system features a futuristic dark palette (charcoal, orange, teal, purple, gold), sharp corners, and subtle borders. Fonts include Merriweather (headings) and Nunito (body).
+- **Routing**: Wouter for client-side navigation.
 - **State Management**: React hooks for local state, TanStack Query for server state, Dexie (IndexedDB) for local-first vault.
-- **Component Structure**: Organized by pages (Home, Chat, Docs, Privacy, Security, About, Terms, Roadmap, NotFound) and specific UI components.
 
 ### Backend
 - **Framework**: Express.js with TypeScript.
-- **API**: RESTful endpoints (`/api/members`, `/api/rooms`, `/api/messages`, `/api/journal/*`, `/api/memories/*`, `/api/research/*`, `/api/agent/analyze`, `/api/github/*`, `/api/paragraph/*`).
-- **Storage**: In-memory storage for members, rooms, and messages, pre-seeded with "Journal" and "Research" rooms.
+- **API**: RESTful endpoints for various functionalities, including A2A audit, journal, research, and agent interactions.
+- **OpenClaw Agent Runner**: A unified dispatcher (`runAgent(agentName, payload)`) for various AI agents (JournalInsight, ResearchSynth, ThinkingPartner), ensuring intelligence resides within agent classes.
 
-### Local-First Vault (IndexedDB/Dexie)
-- **entries**: Journal and research entries stored on-device.
-- **insights**: AI-generated insights linked to entries.
-- **memoryPins**: User-pinned memories (goals, patterns, preferences, etc.).
-- **researchDossiers**: Named research trackers (folders).
-- **researchQueries**: Search queries within trackers.
-- **researchClaims**: Claims with trust levels, status, and optional journal links.
-- **decisionLogs**: Decision log entries with title, context, options, reasoning, stakes, status, outcome, AI review.
-- **contentPipeline**: Content pipeline items with title, topic, angle, format, audience, hook, key points, status, AI refinement.
+### A2A Audit API
+- **Endpoint**: `POST /api/audit` for machine-readable logic audits.
+- **Schema Discovery**: `GET /api/audit/schema` for API details, pricing, and integration.
+- **Payment**: x402 protocol for USDC micropayments on Base.
+- **Audit Types**: Includes `treasury`, `founder_drift`, `strategy`, and `general` logic audits.
+- **Output Schema**: Structured JSON output validated by Zod, including risk score, bias detection, logic flaws, and recommendations.
+- **Agent**: An adversarial AI agent using Venice AI, enforcing structured output and schema validation.
+
+### Local-First Vault
+- **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI-generated insights, memory pins, research dossiers, claims, decision logs, and content pipeline items.
+- **Encryption**: WebCrypto PBKDF2 + AES-GCM-256 for transparent encryption/decryption of sensitive fields within the vault, with a user-managed passphrase.
 
 ### Web3 Integration
-- **Wallet Connection**: RainbowKit (Base mainnet and Base Sepolia).
-- **ENS Resolution**: Custom hook (`useDisplayName`) resolves ENS names via public RPC.
-- **Wallet Identity**: Optional wallet-based authentication (no email/password).
+- **Wallet Connection**: RainbowKit for Base mainnet and Base Sepolia.
+- **ENS Resolution**: Custom hook for resolving ENS names.
+- **Wallet Identity**: Optional wallet-based authentication.
 
-### OpenClaw Agent Runner
-- **File**: `server/openclaw.ts` — unified `runAgent(agentName, payload)` dispatcher.
-- **Agents**: JournalInsight (journal analysis), ResearchSynth (research synthesis), ThinkingPartner (thinking coach).
-- **API**: `POST /api/openclaw/run` with `{ agent: "JournalInsight", payload: {...} }`.
-- **Design**: Strictly non-thinking dispatcher; all intelligence lives in the agent classes. Each returns typed JSON.
-- **Integration**: Wraps existing Venice AI calls (`venice.ts`, `agent.api.ts`) into clean OpenClaw interface.
+### Key Features
+- **Six Zones**:
+    - **Journal**: Daily thinking, video entries (Livepeer), AI interrogation.
+    - **Research**: Article/link saving, AI interrogation of research, evidence scoring, research trackers, claim tracking (Brave, Web, Explain modes).
+    - **Trade**: Trade thesis building, AI stress-testing, risk computation, wallet-signed artifacts, paper/live trading, autonomous market alerts.
+    - **Decision**: Structured tracking of high-stakes decisions, AI pressure-testing.
+    - **Content**: Content pipeline management, AI challenging angles and hooks.
+    - **Thinking Partner**: Adversarial AI for reasoning attack and contradiction exposure.
+- **Compounding Intelligence**: Memory pins, cross-zone connections, and synthesis to grow knowledge over time.
+- **Music Library**: Local upload and playback of audio files, categorized by Focus, Reflection, and Creative zones.
+- **Offline Support**: Works offline for writing and browsing due to local-first storage and service worker caching.
 
-### XMTP Agent
-- **SDK**: `@xmtp/agent-sdk` for autonomous agents.
-- **Agent File**: `server/agent.ts` listens to XMTP messages, routes to OpenClaw agents.
-- **Commands**: `/help`, `/zones`, `Journal: <entry>`, `Research: <notes>`, `Thinking: <question>`.
-
-### Video Journal (Livepeer)
-- **Recording**: In-browser video recording via MediaRecorder API.
-- **Upload**: TUS resumable uploads to Livepeer for reliability with large files.
-- **Storage**: Video asset IDs and playback IDs stored locally in IndexedDB with journal entries.
-- **Playback**: Livepeer-hosted video playback within past entries.
-- **Backend**: `/api/video/upload` (request upload URL), `/api/video/status/:assetId`, `/api/video/playback/:playbackId`.
-- **Component**: `client/src/components/video-diary.tsx` (VideoUpload + VideoPlayer).
-
-### Music Library
-- **Upload**: Drag-and-drop or click-to-upload audio files (mp3, wav, etc.).
-- **Storage**: Audio blobs stored locally in IndexedDB (`musicTracks` table, vault version 5).
-- **Playback**: Full controls — play/pause, next/prev, progress seek, volume slider, mute toggle.
-- **Zones**: Organize tracks into Focus, Reflection, and Creative zones with filter tabs.
-- **Component**: `client/src/components/music-panel.tsx` (slide-in panel from right side).
-- **Integration**: "Music" button in journal action bar toggles the panel.
-
-### Trade Artifacts
-- **Types**: `client/src/lib/trade-artifacts.ts` — TradeThesis, ZoneRef, StressTestReport, RiskSummary, TradeArtifactV1, TradeArtifactRow.
-- **XMTP Bridge**: `client/src/lib/trade-artifacts-xmtp.ts` — send artifacts to trader agents, stream ExecutionReports.
-- **Storage**: `tradeArtifacts` table in Dexie vault (version 6), `++id` PK with `&hash` unique index, denormalized fields for indexing.
-- **Component**: `client/src/components/trade-artifact-composer.tsx` — TradeArtifactZone with 6 tabs (Compose, Stress Test, Risk & Sign, Execute, Monitor, History).
-- **Integration**: Accessible as "Trade" zone in chat sidebar. Uses viem WalletClient for EIP-191 signing, SHA-256 content hashing.
-- **Market Data**: Live price via CoinGecko API (no key), sentiment via Fear & Greed Index. Backend routes: `/api/market/price/:asset`, `/api/market/sentiment`, `/api/market/batch-price`. Auto-fills Market Conditions on asset blur + manual refresh button. Shows 24h price change.
-- **Cross-Zone Intelligence**: Auto-surfaces relevant journal entries, research trackers, and claims matching the asset being traded. Matched items shown first with highlight badges.
-- **Execution Layer**: Execute tab supports paper trading (simulated) and live trading (sends on-chain transaction via connected wallet). Shows execution details from signed artifact, tracks paper executions and live tx hashes with BaseScan links.
-- **Autonomous Monitoring**: Monitor tab with market alert system. Users create alerts (price above/below, 24h change above/below). "Start Watching" activates 60-second polling via batch price API. Alerts auto-deactivate when triggered and show toast notifications. Alerts stored in `marketAlerts` table (vault version 7).
-- **Flow**: Build thesis → AI stress test via Thinking Partner → Risk computation → Sign & store → Execute (paper/live) → Monitor alerts → Optional XMTP send to agent.
-
-### BYOK (Bring Your Own Key)
-- **Settings Panel**: In chat sidebar, users can enter their own Venice API key.
-- **Storage**: Key stored in localStorage (`djzs-venice-api-key`).
-- **Header**: Sent via `x-venice-api-key` header on all API calls (both `apiRequest` and `getQueryFn`).
-- **Backend**: All Venice/agent/openclaw functions accept optional `apiKeyOverride` parameter.
-
-### Vault Encryption
-- **Utility**: `client/src/lib/vault-crypto.ts` — WebCrypto PBKDF2 (600k iterations) + AES-GCM-256.
-- **Integration**: Transparent encryption/decryption integrated into vault save/read functions. Text fields encrypted on write, decrypted on read.
-- **Encrypted Fields**: Entry text, insight fields (said/matters/nextMove/question), memory pin content.
-- **UI**: Settings panel in chat sidebar — setup passphrase, lock/unlock vault, remove encryption.
-- **Session Key**: Derived key held in memory during session, cleared on lock.
-
-### Key Features (Six Zones, One Loop)
-- **Journal Zone**: Write daily thinking → AI interrogates entry, flags contradictions with past claims, calls out FOMO-driven logic, exposes blind spots. Memory pinning carries context forward. Video entries via Livepeer.
-- **Research Zone**: Save articles/links → AI interrogates research, flags echo chamber consensus, scores evidence strength (4-axis 0-100), kills weak assumptions. Brave Mode (privacy-first search), Web Mode (Venice AI web search), Explain Mode (AI knowledge synthesis). Research trackers, claim tracking with trust levels, cross-zone linking. AI Observing panel, structured analysis (Consensus, Contradictions, Weak Assumptions), adaptive "maximum skepticism" mode, seamless Thinking Partner transition.
-- **Trade Zone**: Build trade thesis → AI stress tests (tries to kill the thesis — is it conviction or FOMO?) → Risk computation → Wallet-sign artifact → Store locally with content hash → Send to trader agent via XMTP.
-- **Decision Zone**: Track high-stakes decisions with structured compose (title, context, options, reasoning, stakes). AI pressure-tests reasoning via adversarial ThinkingPartner. History tracks status/outcome. Amber/yellow accents.
-- **Content Zone**: Content pipeline for creators. Compose (title, topic, angle, format, audience, hook, key points). AI challenges hook and angle — flags trendjacking and consensus repackaging. Pipeline tracks status from idea → published. Teal/cyan accents.
-- **Thinking Partner**: Adversarial AI that attacks your reasoning, calls out FOMO and narrative dependency, finds contradictions between stated goals and actual behavior. Not a chatbot — not here to be liked.
-- **Compounding Intelligence**: Memory pins, past-entry connections, and cross-zone synthesis ensure knowledge grows smarter over time, not just larger.
-- **Music Library**: Upload and play your own music while thinking. Tracks stored locally. Organize by Focus/Reflection/Creative zones.
-- **Local-First Storage**: All data stored in browser IndexedDB. Works offline for writing/browsing.
-- **Offline Support**: Service worker caches static assets.
-
-## Privacy Claims (What's True)
-
-### Implemented
-- Local-first storage via IndexedDB (Dexie)
-- User control over AI (only sent when you click "Think with me")
-- Offline-capable journaling (AI/research requires internet)
-- Venice AI claims no data retention
-- Brave Search claims no tracking/profiling
-
-### Implemented (XMTP Layer Only)
-- XMTP messaging is E2E encrypted via MLS protocol with forward secrecy & post-compromise security
-- Quantum-resistant key encapsulation (XWING KEM) protects XMTP Welcome messages against "Harvest Now, Decrypt Later" attacks
-- Note: Quantum resistance applies to XMTP messaging only, NOT to Venice AI calls
-
-### NOT Implemented (Do Not Claim)
-- Encryption-at-rest for IndexedDB vault (planned)
-- End-to-end encryption for Venice AI requests (not E2EE — text sent over HTTPS but not E2E encrypted)
-- "Your data never leaves your device" (it does when you send text for AI via Venice)
-
-## Data Flow (The Thinking Loop)
-1. User writes daily thinking → saved locally in IndexedDB (instant)
-2. User clicks "Think with me" → current entry + memory pins + recent context sent to server → forwarded to Venice AI
-3. AI analyzes, connects to past entries, surfaces patterns → structured insight returned
-4. Insight saved locally → knowledge base compounds over time
-5. Nothing syncs by default unless user exports
-
-## Research Zone Modes
-1. **Brave Mode**: Privacy-first web search via Brave API, synthesized by Venice AI. Requires `BRAVE_API_KEY` secret.
-2. **Web Mode**: Venice AI's built-in web search with source citations.
-3. **Explain Mode**: AI knowledge synthesis without live web search.
+### Privacy Design
+- Local-first storage, user control over AI execution, offline capability for journaling.
+- XMTP messaging is End-to-End Encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## External Dependencies
-- **Livepeer**: Decentralized video storage and playback (requires `LIVEPEER_API_KEY`).
-- **Venice AI**: Privacy-first AI processing with no data retention.
-- **Brave Search API**: Privacy-first web search (requires `BRAVE_API_KEY`).
+- **Livepeer**: Decentralized video storage and playback.
+- **Venice AI**: Privacy-first AI processing.
+- **Brave Search API**: Privacy-first web search.
 - **RainbowKit**: Wallet connection UI.
 - **wagmi/viem**: Blockchain interactions.
-- **Dexie**: IndexedDB wrapper for local-first storage.
+- **Dexie**: IndexedDB wrapper.
 - **Zod**: Schema validation.
 - **Radix UI**: Frontend component library.
-- **Tailwind CSS**: Styling.
+- **Tailwind CSS**: Styling framework.
 - **Vite**: Frontend build tool.
 - **Express.js**: Backend web framework.
 - **TanStack Query**: Server state management.
 - **Wouter**: Client-side routing.
-- **@xmtp/agent-sdk**: XMTP agent.
+- **@xmtp/agent-sdk**: XMTP agent SDK.
 - **@paragraph-com/sdk**: Paragraph newsletter integration.
-- **Framer Motion**: Animations.
-
-## GitHub Repository
-`github.com/UsernameDAOEth/djzs-box`

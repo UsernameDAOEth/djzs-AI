@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical } from "lucide-react";
+import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -796,6 +796,112 @@ export default function Home() {
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
+                <Network className="w-6 h-6" style={{ color: '#F37E20' }} />
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Agent-to-Agent Economy</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-a2a-headline">
+                The autonomous auditing firm for the A2A economy.
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
+                DJZS AI serves two clients: human founders via the web UI, and autonomous AI agents via API. Other agents programmatically hire DJZS to stress-test their logic before execution — paying per audit via x402 micropayments on Base.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-treasury">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.1)', border: '1px solid rgba(255,184,77,0.25)' }}>
+                  <DollarSign className="w-7 h-7" style={{ color: '#FFB84D' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#FFB84D' }}>DAO Treasury Stress-Test</p>
+                <h3 className="text-xl font-bold text-white mb-3">$50 USDC / audit</h3>
+                <p className="text-sm leading-relaxed" style={{ color: '#9a9bb0' }}>
+                  A DAO agent managing a $10M treasury pings DJZS before signing a multi-sig. DJZS audits the proposal, flags FOMO-driven allocation, and returns a structured risk score. The agent pauses deployment, saving the treasury.
+                </p>
+              </div>
+
+              <div className="p-8 rounded-lg border transition-all hover:border-teal-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-vc">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                  <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#2E8B8B' }}>Founder Drift Audit</p>
+                <h3 className="text-xl font-bold text-white mb-3">$5 USDC / audit</h3>
+                <p className="text-sm leading-relaxed" style={{ color: '#9a9bb0' }}>
+                  A VC screening bot pays DJZS to check if a founder is building what they promised or pivot-chasing Twitter trends. DJZS outputs an objective Strategic Integrity score by comparing the original whitepaper against recent updates.
+                </p>
+              </div>
+
+              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-micro">
+                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+                  <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#7B6B8D' }}>"Check My Work" Micro-Audit</p>
+                <h3 className="text-xl font-bold text-white mb-3">$2.50 USDC / audit</h3>
+                <p className="text-sm leading-relaxed" style={{ color: '#9a9bb0' }}>
+                  A trading agent formulates a complex arbitrage strategy. Before execution, it hits the DJZS API and pays $2.50 via x402. DJZS operates as the "Senior Partner," stress-testing assumptions and pointing out systemic blind spots.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-api">
+                <div className="flex items-center gap-3 mb-4">
+                  <FileCode className="w-6 h-6" style={{ color: '#F37E20' }} />
+                  <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Machine-Readable API</p>
+                </div>
+                <p className="text-base font-bold text-white mb-3">Structured JSON output for agent consumption</p>
+                <div className="rounded-md p-4 text-xs font-mono leading-relaxed overflow-x-auto" style={{ background: 'rgba(0,0,0,0.4)', color: '#9a9bb0' }}>
+                  <span style={{ color: '#555668' }}>POST /api/audit</span><br/>
+                  <span style={{ color: '#F37E20' }}>{'{'}</span><br/>
+                  &nbsp;&nbsp;"risk_score": <span style={{ color: '#FFB84D' }}>72</span>,<br/>
+                  &nbsp;&nbsp;"primary_bias_detected": <span style={{ color: '#2E8B8B' }}>"FOMO"</span>,<br/>
+                  &nbsp;&nbsp;"logic_flaws": [<span style={{ color: '#555668' }}>...</span>],<br/>
+                  &nbsp;&nbsp;"structural_recommendations": [<span style={{ color: '#555668' }}>...</span>],<br/>
+                  &nbsp;&nbsp;"cryptographic_hash": <span style={{ color: '#7B6B8D' }}>"sha256..."</span><br/>
+                  <span style={{ color: '#F37E20' }}>{'}'}</span>
+                </div>
+              </div>
+
+              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-a2a-x402">
+                <div className="flex items-center gap-3 mb-4">
+                  <DollarSign className="w-6 h-6" style={{ color: '#FFB84D' }} />
+                  <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#FFB84D' }}>x402 Payment Protocol</p>
+                </div>
+                <p className="text-base font-bold text-white mb-3">HTTP-native USDC micropayments on Base</p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
+                    Pay-per-audit via x402 — no subscriptions, no NFT gates
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
+                    USDC on Base — instant settlement, low fees
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
+                    Agent-compatible — any bot can pay and receive structured results
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm" style={{ color: '#9a9bb0' }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#FFB84D' }} />
+                    Schema endpoint at /api/audit/schema for integration discovery
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(243,126,32,0.04), rgba(255,184,77,0.04))', borderColor: 'rgba(255,184,77,0.15)' }} data-testid="card-a2a-cta">
+              <p className="text-lg font-bold text-white mb-2">In a world of a million AI agents, trust is the bottleneck.</p>
+              <p className="text-sm mb-2" style={{ color: '#7a7b90' }}>DJZS is the default Logic Oracle for the decentralized web. Machine-readable first, human-readable second.</p>
+              <p className="text-xs" style={{ color: '#555668' }}>Coming soon: ERC-8004 on-chain reputation registry — immutable track record of successful logic audits.</p>
             </div>
           </div>
         </section>

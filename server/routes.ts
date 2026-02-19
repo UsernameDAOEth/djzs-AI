@@ -9,6 +9,8 @@ import { searchBrave, type BraveSearchResult } from "./brave";
 import { runAgent, journalInsightPayloadSchema, researchSynthPayloadSchema, thinkingPartnerPayloadSchema, type AgentName } from "./openclaw";
 import { getUncachableGitHubClient } from "./github";
 import { createUploadUrl, getAssetStatus, getPlaybackInfo, deleteAsset } from "./livepeer";
+import { auditRequestSchema } from "@shared/audit-schema";
+import { runLogicAuditAgent } from "./audit-agent";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -32,12 +34,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ 
       ok: true, 
       timestamp: Date.now(), 
-      service: "DJZS Box API",
+      service: "DJZS AI - Autonomous Auditing Firm",
       capabilities: {
         braveSearch: !!process.env.BRAVE_API_KEY,
         redpillAI: !!process.env.REDPILL_API_KEY,
         veniceAI: !!process.env.VENICE_API_KEY,
         livepeerVideo: !!process.env.LIVEPEER_API_KEY,
+        x402Payments: true,
+        a2aAuditApi: true,
       }
     });
   });
@@ -700,6 +704,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Batch price fetch error:", error);
       res.status(500).json({ error: "Failed to fetch batch prices" });
     }
+  });
+
+  // ==================== AGENT-TO-AGENT (A2A) AUDIT API ====================
+  // x402 payment middleware for the audit endpoint
+  // Uses @x402/express to gate access behind USDC micropayments on Base
+  const TREASURY_WALLET = process.env.TREASURY_WALLET_ADDRESS || "0xEc551A9e5598a030B46278fEbaDF798Ea8bA05FF";
+
+  const X402_NETWORK = (process.env.X402_NETWORK || "eip155:84532") as `${string}:${string}`;
+  let x402Initialized = false;
+  try {
+    const { paymentMiddleware, x402ResourceServer } = await import("@x402/express");
+    const { ExactEvmScheme } = await import("@x402/evm/exact/server");
+    const { HTTPFacilitatorClient } = await import("@x402/core/server");
+
+    const facilitatorClient = new HTTPFacilitatorClient({
+      url: "https://www.x402.org/facilitator",
+    });
+
+    const resourceServer = new x402ResourceServer(facilitatorClient)
+      .register(X402_NETWORK, new ExactEvmScheme());
+
+    app.use(
+      paymentMiddleware(
+        {
+          "POST /api/audit": {
+            accepts: {
+              scheme: "exact",
+              price: "$2.50",
+              network: X402_NETWORK,
+              payTo: TREASURY_WALLET,
+            },
+            description: "DJZS AI Logic Audit - Adversarial stress-test of strategy, bias detection, and risk scoring",
+          },
+        },
+        resourceServer,
+      ),
+    );
+
+    x402Initialized = true;
+    console.log(`x402 payment middleware initialized for /api/audit ($2.50 USDC on ${X402_NETWORK})`);
+  } catch (error) {
+    console.warn("x402 middleware not initialized (non-blocking):", error instanceof Error ? error.message : error);
+    console.warn("Audit endpoint will operate without payment gate in development mode");
+  }
+
+  app.post("/api/audit", async (req, res) => {
+    try {
+      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
+      const parsed = auditRequestSchema.safeParse(req.body);
+
+      if (!parsed.success) {
+        return res.status(400).json({
+          error: "Invalid audit request",
+          details: parsed.error.errors,
+          expected: {
+            strategy_memo: "string (min 20 chars) - The strategy, proposal, or thesis to audit",
+            audit_type: "treasury | founder_drift | strategy | general (default: general)",
+          },
+        });
+      }
+
+      const audit = await runLogicAuditAgent(parsed.data, userVeniceKey);
+
+      res.json(audit);
+    } catch (error) {
+      console.error("A2A Audit failed:", error);
+      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
+        return res.status(503).json({ error: "AI service not configured" });
+      }
+      res.status(500).json({
+        error: "Audit execution failed",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  });
+
+  app.get("/api/audit/schema", (_req, res) => {
+    res.json({
+      service: "DJZS AI - Autonomous Auditing Firm",
+      version: "1.0",
+      endpoint: "POST /api/audit",
+      payment: {
+        protocol: "x402",
+        price: "$2.50 USDC",
+        network: X402_NETWORK,
+        payTo: TREASURY_WALLET,
+        x402_enabled: x402Initialized,
+      },
+      request: {
+        strategy_memo: "string (required, min 20 chars) - The strategy, proposal, or thesis to audit",
+        audit_type: "string (optional) - treasury | founder_drift | strategy | general",
+      },
+      response: {
+        audit_id: "UUID - unique identifier for this audit",
+        timestamp: "ISO 8601 datetime",
+        risk_score: "number 0-100 (0 = flawless logic, 100 = critically compromised)",
+        primary_bias_detected: "FOMO | Sunk_Cost | Narrative_Reaction | Authority_Bias | Confirmation_Bias | Recency_Bias | None",
+        logic_flaws: "[{flaw_type, severity (low|medium|critical), explanation}]",
+        structural_recommendations: "string[] - concrete steps to fix the logic",
+        cryptographic_hash: "SHA-256 hash of the input memo (for ERC-8004 verification)",
+      },
+    });
   });
 
   const httpServer = createServer(app);
