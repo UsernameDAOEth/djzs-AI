@@ -63,6 +63,10 @@ Preferred communication style: Simple, everyday language.
 - XMTP messaging is End-to-End Encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## Recent Changes
+- **2026-02-20**: Created OpenAPI 3.1.0 specification (`client/public/openapi.json`) documenting all three audit tiers with x402 payment headers and full request/response schemas.
+- **2026-02-20**: Created AI-friendly `robots.txt` whitelisting GPTBot, Anthropic-ai, PerplexityBot, and others; pointing to agent.json and openapi.json.
+- **2026-02-20**: Added JSON-LD structured data (`application/ld+json`) to `index.html` describing DJZS as SoftwareApplication with three tiered Offers and feature list.
+- **2026-02-20**: Updated `index.html` meta tags (title, description, OG, Twitter) from "Private AI Journal" to "Autonomous Auditing System" aligned with A2A economy positioning.
 - **2026-02-19**: Restored six Workspace Zones (Journal, Research, Trade, Decisions, Content, Thinking Partner) to sidebar alongside Execution Zones with "Deploy to Zone" shortcuts.
 - **2026-02-19**: Updated tutorial to 7 steps covering both Workspace and Execution Zone workflows.
 - **2026-02-19**: Added interactive onboarding tutorial with spotlight highlights, keyboard navigation, and localStorage persistence. Re-accessible via "How It Works" sidebar button.
