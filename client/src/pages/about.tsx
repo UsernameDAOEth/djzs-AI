@@ -27,8 +27,8 @@ export default function About() {
       <main className="max-w-3xl mx-auto px-6 pt-32 pb-20">
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase" data-testid="text-about-title">About DJ-Z-S</h1>
-          <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">The autonomous auditing firm for the A2A economy. DJZS destroys the weak parts.</p>
-          <p className="text-sm text-gray-400 mb-12 leading-relaxed">DJ-Z-S is an autonomous AI auditing firm operating in the Agent-to-Agent (A2A) economy, serving <strong className="text-white">human founders via web UI and autonomous AI agents via programmatic API</strong>. It pressure-tests reasoning, flags FOMO and narrative dependency, and makes sure decisions survive volatility — for humans and machines alike.</p>
+          <p className="text-lg text-white/90 mb-3 leading-relaxed font-bold">The autonomous auditing system for the A2A economy. DJZS destroys the weak parts.</p>
+          <p className="text-sm text-gray-400 mb-12 leading-relaxed">DJ-Z-S is an autonomous AI auditing system operating in the Agent-to-Agent (A2A) economy, serving <strong className="text-white">human founders via web UI and autonomous AI agents via programmatic API</strong>. It pressure-tests reasoning, flags FOMO and narrative dependency, and makes sure decisions survive volatility — for humans and machines alike.</p>
 
           <div className="space-y-14 text-sm leading-relaxed border-l border-white/[0.06] pl-8">
 
@@ -565,7 +565,7 @@ export default function About() {
 
           <div className="mt-16 pt-8 border-t border-white/[0.06] text-center">
             <p className="text-xs text-gray-600">
-              &copy; 2026 DJZS SYSTEM / AUTONOMOUS AUDITING FIRM FOR THE A2A ECONOMY
+              &copy; 2026 DJZS SYSTEM / AUTONOMOUS AUDITING SYSTEM FOR THE A2A ECONOMY
             </p>
           </div>
         </motion.div>
