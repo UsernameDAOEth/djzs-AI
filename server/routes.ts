@@ -11,6 +11,7 @@ import { getUncachableGitHubClient } from "./github";
 import { createUploadUrl, getAssetStatus, getPlaybackInfo, deleteAsset } from "./livepeer";
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
 import { runLogicAuditAgent } from "./audit-agent";
+import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -828,6 +829,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/audit/treasury", createTierHandler("treasury"));
   app.post("/api/audit", createTierHandler("micro"));
 
+  app.post("/api/intelligence/brief", (req, res) => {
+    try {
+      const parsed = intelligenceRequestSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          error: "Invalid intelligence request",
+          details: parsed.error.flatten().fieldErrors,
+        });
+      }
+      const brief = generateServerIntelligenceBrief(parsed.data);
+      res.json(brief);
+    } catch (err) {
+      console.error("Intelligence brief generation error:", err);
+      res.status(500).json({ error: "Intelligence analysis failed" });
+    }
+  });
+
   app.get("/api/audit/schema", (_req, res) => {
     res.json({
       service: "DJZS - Decentralized Journaling Zone System",
@@ -860,6 +878,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           description: TIER_CONFIG.treasury.description,
           memo_limit: "unlimited",
         },
+      },
+      intelligence: {
+        endpoint: "POST /api/intelligence/brief",
+        price: "Free",
+        description: "Pre-flight intelligence analysis. Submit historical data to get a structured brief with 5 signals (bias patterns, narrative drift, assumptions, volatility stress tests, emotional spikes). Returns intelligence_context string for injection into audit requests.",
       },
       backward_compatible: {
         endpoint: "POST /api/audit",
