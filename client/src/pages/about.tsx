@@ -56,12 +56,6 @@ export default function About() {
                   accent="#2E8B8B"
                   text="Your literature reviews, raw data, and nascent hypotheses are the foundation of your work. Centralized AI platforms can co-opt your findings and flag your inquiries. Your research deserves a sovereign space."
                 />
-                <PersonaCallout
-                  icon={<Palette className="w-4 h-4" />}
-                  label="For Creators"
-                  accent="#7B6B8D"
-                  text="Your unique angle, your content strategy, and your unreleased ideas are your IP. Most platforms are designed to mine it. DJ-Z-S is your private studio to brainstorm, outline, and develop your voice without feeding the machine that wants to replace you."
-                />
               </div>
             </section>
 
@@ -204,16 +198,6 @@ export default function About() {
                     { step: "Capture", text: "Save articles and data into the Research zone with claims and evidence scoring." },
                     { step: "Analyze", text: "AI surfaces that all three papers share the same funding source — consensus may be artificial. Flags the assumption you forgot to question." },
                     { step: "Compound", text: "Pin the synthesized literature review to a memory, building the paper incrementally." },
-                  ]}
-                />
-                <PersonaWorkflow
-                  icon={<Palette className="w-4 h-4" />}
-                  label="Creator Workflow"
-                  accent="#7B6B8D"
-                  steps={[
-                    { step: "Capture", text: "Brainstorm video ideas in the Content zone for the next quarter." },
-                    { step: "Analyze", text: "AI shows you're repeating the same take. Flags that your 'unique angle' is consensus repackaged. Forces you to articulate what's genuinely new." },
-                    { step: "Compound", text: "Pin the refined content pillars to your 'Q2 Strategy' memory." },
                   ]}
                 />
               </div>
@@ -471,7 +455,7 @@ export default function About() {
                   </div>
                 </div>
                 <div className="space-y-4 text-gray-400">
-                  <p>After years of building in Web3 and watching founders, traders, researchers, and creators have their most valuable ideas scraped and profited from by centralized platforms, I decided to build the tool I desperately needed.</p>
+                  <p>After years of building in Web3 and watching founders, traders, and researchers have their most valuable ideas scraped and profited from by centralized platforms, I decided to build the tool I desperately needed.</p>
                   <p>DJ-Z-S isn't a faceless startup; it's a project with a singular mission: to give you a private space to do your best work. Your trust is the only thing that matters here.</p>
                 </div>
               </div>

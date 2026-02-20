@@ -454,9 +454,9 @@ export default function Home() {
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(123,107,141,0.08)', border: '1px solid rgba(123,107,141,0.2)' }}>
                 <Video className="w-6 h-6" style={{ color: '#7B6B8D' }} />
-                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#7B6B8D' }}>For Content Creators</span>
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#7B6B8D' }}>For Researchers</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-creators-headline">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-researchers-headline">
                 The System stress-tests your takes before the audience does.
               </h2>
               <p className="text-xl max-w-3xl mx-auto" style={{ color: '#7a7b90' }}>
@@ -465,7 +465,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-creator-research">
+              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-researcher-content">
                 <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
                   <Search className="w-7 h-7" style={{ color: '#2E8B8B' }} />
                 </div>
@@ -487,7 +487,7 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-creator-journal">
+              <div className="p-8 rounded-lg border transition-all hover:border-orange-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-researcher-journal">
                 <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
                   <PenLine className="w-7 h-7" style={{ color: '#F37E20' }} />
                 </div>
@@ -509,7 +509,7 @@ export default function Home() {
                 </ul>
               </div>
 
-              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-creator-partner">
+              <div className="p-8 rounded-lg border transition-all hover:border-purple-500/20 calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-researcher-partner">
                 <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
                   <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
                 </div>
@@ -532,14 +532,14 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(123,107,141,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(123,107,141,0.15)' }} data-testid="card-creator-cta">
+            <div className="p-8 rounded-lg border text-center calm-card" style={{ background: 'linear-gradient(135deg, rgba(123,107,141,0.04), rgba(243,126,32,0.04))', borderColor: 'rgba(123,107,141,0.15)' }} data-testid="card-researcher-cta">
               <p className="text-lg font-bold text-white mb-2">Audiences can smell lazy thinking. The System makes sure yours isn't.</p>
               <p className="text-sm mb-6" style={{ color: '#7a7b90' }}>Every take stress-tested. Every angle challenged. Every piece backed by thinking that survives scrutiny.</p>
               <Link href="/chat">
                 <button
                   className="inline-flex items-center gap-3 rounded-lg px-8 py-4 text-base font-bold text-white transition-all duration-250 hover:-translate-y-1"
                   style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }}
-                  data-testid="button-start-creator-thinking"
+                  data-testid="button-start-researcher-thinking"
                 >
                   Audit My Take
                   <ArrowRight className="w-5 h-5" />
