@@ -1,0 +1,76 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DJZS Adversarial Logic Layer API",
+    "version": "1.0.0",
+    "description": "Deterministic verification primitive for autonomous agents. Mandates an 'Audit-Before-Act' loop gated by x402 payment middleware (USDC on Base Mainnet)."
+  },
+  "components": {
+    "schemas": {
+      "LogicFailureCode": {
+        "type": "string",
+        "enum": [
+          "DJZS-S01",
+          "DJZS-S02",
+          "DJZS-E01",
+          "DJZS-E02",
+          "DJZS-I01",
+          "DJZS-I02",
+          "DJZS-X01"
+        ],
+        "description": "Deterministic taxonomy of reasoning ruptures. S=Structural, E=Epistemic, I=Incentive, X=Execution."
+      },
+      "AuditFlag": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/LogicFailureCode"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "description": "Severity level. CRITICAL or HIGH should trigger an immediate execution abort in the agent's logic loop."
+          },
+          "message": {
+            "type": "string",
+            "example": "CIRCULAR_LOGIC detected: Goal B is used as a premise to justify Action A."
+          }
+        },
+        "required": ["code", "severity"]
+      },
+      "ProofOfLogicCertificate": {
+        "type": "object",
+        "properties": {
+          "logic_hash": {
+            "type": "string",
+            "description": "Cryptographic commitment to the reasoning trace. Required for downstream smart contract execution.",
+            "example": "0x7f8b9c1a2d3e4f5061728394a5b6c7d8e9f0"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": ["PASS", "FAIL"],
+            "description": "Binary go/no-go signal for capital or infrastructure deployment."
+          },
+          "risk_score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Aggregate risk calculation. Scores above 80 indicate high probability of narrative drift or slippage blindness."
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFlag"
+            },
+            "description": "Array of specific logic ruptures detected during the adversarial audit."
+          }
+        },
+        "required": ["logic_hash", "timestamp", "verdict", "risk_score"]
+      }
+    }
+  }
+}
