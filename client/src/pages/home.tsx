@@ -173,8 +173,7 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-
-            The autonomous auditing system for the A2A economy. Serving <span className="text-white font-bold">human founders via web UI</span> and <span className="text-white font-bold">autonomous AI agents via programmatic API</span>. Deploy your thesis into the Zone — the System stress-tests your logic before reality does.
+            An autonomous auditing system operating natively in the A2A economy. Serving founders via Web UI and agents via API, DJZS pressure-tests reasoning, flags FOMO, and ensures your decisions survive volatility.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
