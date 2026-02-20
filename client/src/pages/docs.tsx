@@ -30,7 +30,10 @@ import {
   DollarSign,
   FileCode,
   CheckCircle,
-  Code2
+  Code2,
+  AlertTriangle,
+  Activity,
+  Scan
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -179,9 +182,13 @@ export default function Docs() {
                 <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center mb-3">
                   <Code2 className="w-5 h-5 text-teal-400" />
                 </div>
-                <h4 className="text-sm font-bold text-white mb-2">API Endpoint</h4>
-                <code className="block text-xs text-teal-300 bg-teal-500/10 px-3 py-2 rounded mb-2 font-mono">POST /api/audit</code>
-                <p className="text-xs text-gray-500 leading-relaxed">Request schema: <code className="text-gray-400">strategy_memo</code> (string) + <code className="text-gray-400">audit_type</code> (founder_drift | dao_treasury | micro_audit)</p>
+                <h4 className="text-sm font-bold text-white mb-2">Tiered API Endpoints</h4>
+                <div className="space-y-1.5 mb-2">
+                  <code className="block text-xs text-teal-300 bg-teal-500/10 px-3 py-2 rounded font-mono">POST /api/audit/micro</code>
+                  <code className="block text-xs text-orange-300 bg-orange-500/10 px-3 py-2 rounded font-mono">POST /api/audit/founder</code>
+                  <code className="block text-xs text-purple-300 bg-purple-500/10 px-3 py-2 rounded font-mono">POST /api/audit/treasury</code>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Request schema: <code className="text-gray-400">strategy_memo</code> (string) + <code className="text-gray-400">audit_type</code> (treasury | founder_drift | strategy | general)</p>
               </div>
 
               <div className="p-5 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-teal-500/20 transition-all" data-testid="card-schema-discovery">
@@ -197,8 +204,11 @@ export default function Docs() {
                 <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center mb-3">
                   <CheckCircle className="w-5 h-5 text-purple-400" />
                 </div>
-                <h4 className="text-sm font-bold text-white mb-2">Response Schema</h4>
+                <h4 className="text-sm font-bold text-white mb-2">Proof of Logic Certificate</h4>
                 <div className="space-y-1 text-xs text-gray-500">
+                  <p><code className="text-red-300">verdict</code> — binary PASS / FAIL determination</p>
+                  <p><code className="text-red-300">flags[]</code> — DJZS-LF failure codes with severity</p>
+                  <p><code className="text-purple-300">tier</code> — micro | founder | treasury</p>
                   <p><code className="text-purple-300">risk_score</code> — 0-100 severity rating</p>
                   <p><code className="text-purple-300">primary_bias_detected</code> — top bias identified</p>
                   <p><code className="text-purple-300">logic_flaws[]</code> — array of reasoning errors</p>
@@ -589,8 +599,165 @@ export default function Docs() {
           </div>
           <div className="mt-6 p-4 rounded-lg bg-orange-500/[0.06] border border-orange-500/15">
             <p className="text-sm text-gray-400 leading-relaxed">
-              All Execution Zone audits are saved locally in your <strong className="text-white">Cryptographic Ledger</strong> with SHA-256 hashes. Review past results, compare risk scores across zones, and re-deploy memos at any time.
+              All Execution Zone audits are saved locally in your <strong className="text-white">Cryptographic Ledger</strong> with SHA-256 hashes, verdict badges, and DJZS-LF failure codes. Review past results, compare risk scores across zones, and re-deploy memos at any time.
             </p>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20" data-testid="section-proof-of-logic">
+          <h2 className="text-2xl font-bold text-white mb-2">Proof of Logic Certificate</h2>
+          <p className="text-gray-400 mb-8">Deterministic verification primitive for autonomous agents</p>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-red-500/10 to-transparent border border-red-500/20 mb-8">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-lg bg-red-600/20 flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Why Deterministic Verdicts Matter</h3>
+                <p className="text-xs text-red-400/80">Probabilistic AI cannot be trusted with deterministic infrastructure</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              LLMs are probabilistic text generators designed to sound convincing, not to be logically strict. Left unchecked, an AI will identify a critical flaw in a treasury strategy and still output "PASS" to avoid confrontation. In a chat interface, that's a bad answer. In the A2A economy, <strong className="text-white">that is a catastrophic loss of capital.</strong>
+            </p>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              The Proof of Logic Certificate solves this by separating <strong className="text-white">detection</strong> (the AI) from <strong className="text-white">verdict</strong> (the server). The AI acts as a sensor that detects reasoning ruptures. The server acts as a ruthless compiler that enforces the binary verdict deterministically — no negotiation.
+            </p>
+
+            <h4 className="text-sm font-bold text-white mb-4">Binary Verdict Rules</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="p-4 rounded-lg bg-green-500/[0.06] border border-green-500/20">
+                <p className="text-sm font-bold text-green-400 mb-2">PASS</p>
+                <p className="text-xs text-gray-500 leading-relaxed">Issued when risk_score ≤ 60 AND no CRITICAL or HIGH severity flags are detected. The AI found no structural failures worth blocking execution.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-red-500/[0.06] border border-red-500/20">
+                <p className="text-sm font-bold text-red-400 mb-2">FAIL</p>
+                <p className="text-xs text-gray-500 leading-relaxed">Forced when risk_score {'>'} 60 OR any CRITICAL/HIGH flag is detected. The server overrides the LLM verdict — the AI cannot "smooth things over."</p>
+              </div>
+            </div>
+
+            <h4 className="text-sm font-bold text-white mb-4">DJZS-LF Taxonomy — 7 Logic Failure Codes</h4>
+            <p className="text-xs text-gray-500 mb-4">Each code maps to a specific class of reasoning failure. Four severity levels: CRITICAL, HIGH, MEDIUM, LOW.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+              <div className="p-3 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-orange-300 bg-orange-500/10 px-1.5 py-0.5 rounded">DJZS-S01</code>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase">Structural</span>
+                </div>
+                <p className="text-xs text-gray-500">CIRCULAR_LOGIC — conclusion assumes its own premise</p>
+              </div>
+              <div className="p-3 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-orange-300 bg-orange-500/10 px-1.5 py-0.5 rounded">DJZS-S02</code>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase">Structural</span>
+                </div>
+                <p className="text-xs text-gray-500">MISSING_FALSIFIABILITY — no scenario disproves the thesis</p>
+              </div>
+              <div className="p-3 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-teal-300 bg-teal-500/10 px-1.5 py-0.5 rounded">DJZS-E01</code>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase">Epistemic</span>
+                </div>
+                <p className="text-xs text-gray-500">CONFIRMATION_TUNNEL — only supporting evidence considered</p>
+              </div>
+              <div className="p-3 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-teal-300 bg-teal-500/10 px-1.5 py-0.5 rounded">DJZS-E02</code>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase">Epistemic</span>
+                </div>
+                <p className="text-xs text-gray-500">AUTHORITY_SUBSTITUTION — appeal to authority replaces evidence</p>
+              </div>
+              <div className="p-3 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded">DJZS-I01</code>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase">Incentive</span>
+                </div>
+                <p className="text-xs text-gray-500">MISALIGNED_INCENTIVE — proposer benefits regardless of outcome</p>
+              </div>
+              <div className="p-3 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded">DJZS-I02</code>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase">Incentive</span>
+                </div>
+                <p className="text-xs text-gray-500">NARRATIVE_DEPENDENCY — thesis relies on a single story being true</p>
+              </div>
+              <div className="p-3 rounded-lg bg-[#14171D] border border-white/[0.06] md:col-span-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-red-300 bg-red-500/10 px-1.5 py-0.5 rounded">DJZS-X01</code>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase">Execution</span>
+                </div>
+                <p className="text-xs text-gray-500">UNHEDGED_EXECUTION — no contingency plan if assumptions fail</p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-red-500/[0.04] border border-red-500/15">
+              <p className="text-xs text-gray-400 leading-relaxed">
+                <strong className="text-red-300">Server-side enforcement:</strong> The verdict is computed deterministically on the server after the LLM returns its analysis. If any CRITICAL or HIGH flag is present, the verdict is forced to FAIL regardless of what the AI suggested. The LLM detects — the server decides. This is the bridge between probabilistic AI and deterministic infrastructure.
+              </p>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20" data-testid="section-founder-intelligence">
+          <h2 className="text-2xl font-bold text-white mb-2">Founder Intelligence Engine</h2>
+          <p className="text-gray-400 mb-8">Pre-flight vault analysis before every audit deployment</p>
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 mb-8">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-lg bg-amber-600/20 flex items-center justify-center">
+                <Scan className="w-6 h-6 text-amber-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">5 Pattern Analyzers</h3>
+                <p className="text-xs text-amber-400/80">Your vault history becomes pre-flight intelligence for every audit</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              Before every audit deployment, the Founder Intelligence engine scans your local vault history — past audits, journal entries, and memory pins — to surface patterns that make your current submission stronger. This context is injected into the AI agent prompt as an <strong className="text-white">Intelligence Brief</strong>, giving the adversarial AI historical ammunition to challenge you more precisely.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-2">
+                  <Activity className="w-4 h-4 text-amber-400" />
+                  <h4 className="text-sm font-bold text-white">Bias Pattern Memory</h4>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Scans past audit results for recurring bias types. If you keep triggering FOMO or confirmation bias, the AI knows before you submit.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp className="w-4 h-4 text-amber-400" />
+                  <h4 className="text-sm font-bold text-white">Narrative Drift Detection</h4>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Compares your current submission against past entries to detect when your story has shifted without acknowledgment.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-400" />
+                  <h4 className="text-sm font-bold text-white">Assumption Kill Switch</h4>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Identifies assumptions in your submission that were previously flagged as weak or refuted in past audits.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                <div className="flex items-center gap-2 mb-2">
+                  <BarChart3 className="w-4 h-4 text-amber-400" />
+                  <h4 className="text-sm font-bold text-white">Volatility Simulation</h4>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Checks if your risk tolerance has changed between submissions — flags when you're suddenly more aggressive without justification.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] md:col-span-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <h4 className="text-sm font-bold text-white">Emotional Spike Flag</h4>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">Detects urgency language, FOMO markers, and emotional escalation patterns in your submission text that correlate with poor decision-making.</p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-amber-500/[0.04] border border-amber-500/15">
+              <p className="text-xs text-gray-400 leading-relaxed">
+                The Intelligence Brief is displayed as a collapsible panel alongside your audit results. All analysis runs locally against your vault — no data leaves your device for intelligence gathering. The brief is also injected into the AI prompt so the adversarial agent can reference your history when challenging your submission.
+              </p>
+            </div>
           </div>
         </motion.section>
 

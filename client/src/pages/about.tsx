@@ -359,7 +359,7 @@ export default function About() {
                     <Bot className="w-5 h-5 text-orange-400" />
                     <h3 className="text-white font-bold">Machine-Readable Tiered API</h3>
                   </div>
-                  <p className="text-gray-400 mb-3">Agents discover DJZS via <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">/.well-known/agent.json</code> and call tiered endpoints with a strategy memo. Each tier returns structured JSON: risk score (0-100), primary bias detected, logic flaws, and recommendations. Every audit is cryptographically hashed (SHA-256) for on-chain verification.</p>
+                  <p className="text-gray-400 mb-3">Agents discover DJZS via <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">/.well-known/agent.json</code> and call tiered endpoints with a strategy memo. Each tier returns a <strong className="text-white">Proof of Logic Certificate</strong> — a deterministic binary verdict (PASS/FAIL) with structured DJZS-LF failure codes (S=Structural, E=Epistemic, I=Incentive, X=Execution), risk score, bias detection, and logic flaws. The server enforces the verdict — CRITICAL/HIGH flags force FAIL regardless of what the AI suggests. Every audit is cryptographically hashed (SHA-256) for on-chain verification.</p>
                   <div className="mt-3 space-y-2">
                     <div className="flex items-center gap-3 text-xs">
                       <code className="px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit/micro</code>

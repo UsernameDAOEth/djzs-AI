@@ -212,7 +212,7 @@ export async function runLogicAuditAgent(
   const hasHighOrCritical = flags.some((f: any) => f.severity === "HIGH" || f.severity === "CRITICAL");
   const computedVerdict: Verdict = (parsed.risk_score > 60 || hasHighOrCritical) ? "FAIL" : "PASS";
   const verdict: Verdict = parsed.verdict === "PASS" || parsed.verdict === "FAIL" ? parsed.verdict : computedVerdict;
-  const finalVerdict: Verdict = hasHighOrCritical ? "FAIL" : verdict;
+  const finalVerdict: Verdict = (hasHighOrCritical || parsed.risk_score > 60) ? "FAIL" : verdict;
 
   const fullAudit: DJZSLogicAudit = {
     audit_id: auditId,
