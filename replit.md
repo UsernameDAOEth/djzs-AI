@@ -63,6 +63,8 @@ Preferred communication style: Simple, everyday language.
 - XMTP messaging is End-to-End Encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## Recent Changes
+- **2026-02-20**: Built Founder Intelligence engine — 5 pattern analyzers (Bias Pattern Memory, Narrative Drift Detection, Assumption Kill Switch, Volatility Simulation, Emotional Spike Flag) that run pre-flight vault scans before each audit deployment. Intelligence context is injected into the AI agent prompt and displayed as a collapsible Intelligence Brief panel alongside audit results.
+- **2026-02-20**: Removed Privacy Architecture section from landing page (content lives in docs).
 - **2026-02-20**: Created OpenAPI 3.1.0 specification (`client/public/openapi.json`) documenting all three audit tiers with x402 payment headers and full request/response schemas.
 - **2026-02-20**: Created AI-friendly `robots.txt` whitelisting GPTBot, Anthropic-ai, PerplexityBot, and others; pointing to agent.json and openapi.json.
 - **2026-02-20**: Added JSON-LD structured data (`application/ld+json`) to `index.html` describing DJZS as SoftwareApplication with three tiered Offers and feature list.

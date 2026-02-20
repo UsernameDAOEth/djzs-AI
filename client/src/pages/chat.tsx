@@ -102,6 +102,7 @@ import {
   checkPersistentStorage,
   getLastBackupDate,
 } from "@/lib/vault-backup";
+import { generateIntelligenceBrief, buildIntelligenceContext, type IntelligenceBrief } from "@/lib/founder-intelligence";
 import { 
   vault, 
   saveEntry, 
@@ -302,6 +303,8 @@ export default function Chat() {
   const [activeZoneTier, setActiveZoneTier] = useState<AuditTier>("micro");
   const [auditPayload, setAuditPayload] = useState("");
   const [auditResult, setAuditResult] = useState<DJZSLogicAudit | null>(null);
+  const [intelligenceBrief, setIntelligenceBrief] = useState<IntelligenceBrief | null>(null);
+  const [briefExpanded, setBriefExpanded] = useState(true);
   const [showLedger, setShowLedger] = useState(false);
   const [isDeploying, setIsDeploying] = useState(false);
   const [expandedAuditId, setExpandedAuditId] = useState<number | null>(null);
@@ -871,11 +874,20 @@ export default function Chat() {
 
   const deployToZone = useMutation({
     mutationFn: async ({ tier, memo }: { tier: AuditTier; memo: string }) => {
+      let brief: IntelligenceBrief | null = null;
+      let intelligenceContext: string | undefined;
+      try {
+        brief = await generateIntelligenceBrief(memo);
+        setIntelligenceBrief(brief);
+        intelligenceContext = brief.activeSignals > 0 ? buildIntelligenceContext(brief) : undefined;
+      } catch (err) {
+        console.warn("Intelligence brief generation failed (non-blocking):", err);
+      }
       const endpoint = TIER_CONFIG[tier].endpoint;
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ strategy_memo: memo, audit_type: 'general' }),
+        body: JSON.stringify({ strategy_memo: memo, audit_type: 'general', intelligence_context: intelligenceContext }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: 'Audit failed' }));
@@ -923,6 +935,7 @@ export default function Chat() {
 
   const clearAuditResult = () => {
     setAuditResult(null);
+    setIntelligenceBrief(null);
     setAuditPayload("");
   };
 
@@ -2086,6 +2099,108 @@ export default function Chat() {
                         New Audit
                       </button>
                     </div>
+
+                    {intelligenceBrief && (
+                      <div className="rounded-lg overflow-hidden" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }} data-testid="panel-intelligence-brief">
+                        <button
+                          onClick={() => setBriefExpanded(!briefExpanded)}
+                          className="w-full flex items-center justify-between p-4 text-left transition-colors hover:bg-white/[0.02]"
+                          data-testid="button-toggle-intelligence-brief"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: 'rgba(243,126,32,0.1)' }}>
+                              <Brain className="w-4 h-4" style={{ color: '#F37E20' }} />
+                            </div>
+                            <div>
+                              <p className="text-xs font-black text-white tracking-tight">Founder Intelligence Brief</p>
+                              <p className="text-[10px] text-gray-500">{intelligenceBrief.activeSignals} active signal{intelligenceBrief.activeSignals !== 1 ? 's' : ''} detected</p>
+                            </div>
+                          </div>
+                          <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${briefExpanded ? 'rotate-180' : ''}`} />
+                        </button>
+                        {briefExpanded && (
+                          <div className="px-4 pb-4 space-y-3">
+                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-bias-pattern">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <Activity className="w-3.5 h-3.5" style={{ color: intelligenceBrief.biasPattern.dominantBias ? '#ef4444' : '#34d399' }} />
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Bias Pattern Memory</span>
+                              </div>
+                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.biasPattern.summary}</p>
+                              {intelligenceBrief.biasPattern.dominantBias && (
+                                <div className="mt-2 flex items-center gap-2">
+                                  <span className="text-[10px] px-2 py-0.5 rounded font-bold" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>
+                                    {intelligenceBrief.biasPattern.dominantBias.replace(/_/g, ' ')}
+                                  </span>
+                                  <span className="text-[10px] text-gray-600">
+                                    Risk trend: {intelligenceBrief.biasPattern.riskTrend === 'increasing' ? '↑ increasing' : intelligenceBrief.biasPattern.riskTrend === 'decreasing' ? '↓ decreasing' : intelligenceBrief.biasPattern.riskTrend === 'stable' ? '→ stable' : '—'}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-narrative-drift">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <Compass className="w-3.5 h-3.5" style={{ color: intelligenceBrief.narrativeDrift.driftDetected ? '#f59e0b' : '#34d399' }} />
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Narrative Drift Detection</span>
+                              </div>
+                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.narrativeDrift.summary}</p>
+                              {intelligenceBrief.narrativeDrift.contradictions.length > 0 && (
+                                <div className="mt-2 space-y-1">
+                                  {intelligenceBrief.narrativeDrift.contradictions.map((c, i) => (
+                                    <p key={i} className="text-[11px] leading-relaxed pl-3" style={{ color: '#f59e0b', borderLeft: '2px solid rgba(245,158,11,0.3)' }}>{c}</p>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-assumption-kill">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <AlertCircle className="w-3.5 h-3.5" style={{ color: intelligenceBrief.assumptionKill.criticalAssumptions.length > 0 ? '#ef4444' : '#6b7280' }} />
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Assumption Kill Switch</span>
+                              </div>
+                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.assumptionKill.summary}</p>
+                              {intelligenceBrief.assumptionKill.criticalAssumptions.length > 0 && (
+                                <div className="mt-2 space-y-1.5">
+                                  {intelligenceBrief.assumptionKill.criticalAssumptions.map((a, i) => (
+                                    <p key={i} className="text-[11px] text-gray-400 leading-relaxed pl-3" style={{ borderLeft: '2px solid rgba(239,68,68,0.3)' }}>{a}</p>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-volatility-sim">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <Zap className="w-3.5 h-3.5" style={{ color: '#2dd4bf' }} />
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Volatility Simulation</span>
+                              </div>
+                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.volatilitySim.summary}</p>
+                              {intelligenceBrief.volatilitySim.stressQuestions.length > 0 && (
+                                <div className="mt-2 space-y-1.5">
+                                  {intelligenceBrief.volatilitySim.stressQuestions.map((q, i) => (
+                                    <p key={i} className="text-[11px] italic leading-relaxed pl-3" style={{ color: '#2dd4bf', borderLeft: '2px solid rgba(45,212,191,0.3)' }}>"{q}"</p>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-emotional-spike">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <Activity className="w-3.5 h-3.5" style={{ color: intelligenceBrief.emotionalSpike.spikeDetected ? '#f59e0b' : '#34d399' }} />
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Emotional Spike Flag</span>
+                              </div>
+                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.emotionalSpike.summary}</p>
+                              {intelligenceBrief.emotionalSpike.flaggedPhrases.length > 0 && (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                  {intelligenceBrief.emotionalSpike.flaggedPhrases.map((p, i) => (
+                                    <span key={i} className="text-[10px] px-2 py-0.5 rounded font-mono" style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}>"{p}"</span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Primary Bias</p>

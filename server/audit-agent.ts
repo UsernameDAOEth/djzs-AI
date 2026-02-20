@@ -132,7 +132,7 @@ export async function runLogicAuditAgent(
         { role: "system", content: buildAuditSystemPrompt(request.audit_type, tier) },
         {
           role: "user",
-          content: `STRATEGY MEMO FOR AUDIT:\n\n${request.strategy_memo}\n\n---\nPerform a full logic audit. Score the risk. Identify bias. Find the flaws. Be adversarial.`,
+          content: `${request.intelligence_context ? request.intelligence_context + '\n\n' : ''}STRATEGY MEMO FOR AUDIT:\n\n${request.strategy_memo}\n\n---\nPerform a full logic audit. Score the risk. Identify bias. Find the flaws. Be adversarial.${request.intelligence_context ? ' Factor the Founder Intelligence Brief into your analysis — use the historical bias patterns, narrative drift signals, and emotional spike data to inform your verdict.' : ''}`,
         },
       ],
       temperature: tierConfig.temperature,

@@ -55,6 +55,7 @@ export type DJZSLogicAudit = z.infer<typeof djzsLogicAuditSchema>;
 export const auditRequestSchema = z.object({
   strategy_memo: z.string().min(20, "Strategy memo must be at least 20 characters"),
   audit_type: z.enum(["treasury", "founder_drift", "strategy", "general"]).default("general"),
+  intelligence_context: z.string().optional(),
 });
 
 export type AuditRequest = z.infer<typeof auditRequestSchema>;
@@ -64,6 +65,7 @@ export function createTieredRequestSchema(tier: AuditTier) {
   const base = z.object({
     strategy_memo: z.string().min(20, "Strategy memo must be at least 20 characters"),
     audit_type: z.enum(["treasury", "founder_drift", "strategy", "general"]).default("general"),
+    intelligence_context: z.string().optional(),
   });
 
   if (config.maxMemoLength !== Infinity) {
