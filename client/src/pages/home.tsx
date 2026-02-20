@@ -122,15 +122,15 @@ export default function Home() {
       </header>
 
       <Helmet>
-        <title>DJZS - Decentralized Journaling Zone System</title>
-        <meta name="description" content="Autonomous auditing infrastructure serving human founders and AI agents. Adversarial logic audits via x402-gated endpoint on Base Mainnet. Deterministic output, structured JSON, machine-readable liability. $2.50 USDC per audit." />
-        <meta property="og:title" content="DJZS - Decentralized Journaling Zone System" />
-        <meta property="og:description" content="The AI that audits your logic before reality does. Adversarial simulation for Founders, Traders, and autonomous AI agents. x402 micropayments on Base. Deterministic output. Machine-readable verdicts." />
+        <title>DJZS - Autonomous Auditing System for the A2A Economy</title>
+        <meta name="description" content="Autonomous auditing system for the A2A economy. Serving human founders via web UI and AI agents via programmatic API. Three-tier adversarial logic audits ($2.50 / $5.00 / $50.00 USDC) via x402 on Base Mainnet." />
+        <meta property="og:title" content="DJZS - Autonomous Auditing System for the A2A Economy" />
+        <meta property="og:description" content="The autonomous auditing system that stress-tests your logic before reality does. Serving human founders and autonomous AI agents. Three-tier x402 micropayments on Base. Deterministic output. Machine-readable verdicts." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="DJZS - Decentralized Journaling Zone System" />
-        <meta name="twitter:description" content="Autonomous auditing infrastructure. Stress-tests logic for humans via web UI and AI agents via API. x402-gated, deterministic output, structured JSON on Base Mainnet." />
+        <meta name="twitter:title" content="DJZS - Autonomous Auditing System for the A2A Economy" />
+        <meta name="twitter:description" content="Autonomous auditing system serving human founders via web UI and AI agents via API. Three-tier x402-gated audits ($2.50 / $5.00 / $50.00 USDC). Deterministic output on Base Mainnet." />
       </Helmet>
 
       <motion.section
@@ -156,7 +156,7 @@ export default function Home() {
           <motion.div variants={fadeUp} className="mb-6">
             <span className="inline-flex items-center gap-3 px-6 py-3 rounded-md text-base font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
               <Target className="w-6 h-6" />
-              Decentralized Journaling Zone System
+              Autonomous Auditing System
             </span>
           </motion.div>
 
@@ -164,8 +164,8 @@ export default function Home() {
             variants={fadeUp}
             className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[1] mb-8"
           >
-            <span className="text-white">DECENTRALIZED</span> <br />
-            <span className="text-white">JOURNALING</span> <span style={{ color: '#555668' }}>ZONE SYSTEM.</span>
+            <span className="text-white">AUTONOMOUS</span> <br />
+            <span className="text-white">AUDITING</span> <span style={{ color: '#555668' }}>SYSTEM.</span>
           </motion.h1>
 
           <motion.p
@@ -173,7 +173,8 @@ export default function Home() {
             className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium"
             style={{ color: '#9a9bb0' }}
           >
-            Your echo chamber is a liability. Deploy your thesis into the Zone, and let the System stress-test your logic before the market does.
+
+            The autonomous auditing system for the A2A economy. Serving <span className="text-white font-bold">human founders via web UI</span> and <span className="text-white font-bold">autonomous AI agents via programmatic API</span>. Deploy your thesis into the Zone — the System stress-tests your logic before reality does.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
@@ -215,7 +216,7 @@ export default function Home() {
               )}
             </div>
             <p className="text-sm" style={{ color: '#7a7b90' }} data-testid="text-cta-microcopy">
-              $2.50 USDC per audit. Instant settlement on Base Mainnet. No subscriptions.
+              Three tiers: $2.50 / $5.00 / $50.00 USDC per audit. Instant settlement on Base Mainnet. No subscriptions.
             </p>
           </motion.div>
 
@@ -675,7 +676,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">The Gate — x402 Protocol</h3>
                 <p className="text-base leading-relaxed mb-4" style={{ color: '#9a9bb0' }}>
-                  High signal only. The System demands cryptographic proof of payment ($2.50 USDC) to filter out noise and guarantee execution priority. No subscriptions. No free tier. Skin in the game.
+                  High signal only. The System demands cryptographic proof of payment across three tiers — Micro ($2.50), Founder ($5.00), Treasury ($50.00) USDC — to filter out noise and guarantee execution priority. No subscriptions. No free tier. Skin in the game.
                 </p>
                 <p className="text-sm" style={{ color: '#555668' }}>
                   x402-gated endpoint on Base Mainnet. Instant settlement via Coinbase CDP.
@@ -1170,7 +1171,7 @@ export default function Home() {
               DJZS
             </h2>
             <p className="text-xs font-medium uppercase tracking-[0.3em]" style={{ color: '#7a7b90' }}>
-              Decentralized Journaling Zone System
+              Autonomous Auditing System
             </p>
           </div>
 
@@ -1215,7 +1216,7 @@ export default function Home() {
           </div>
 
           <p className="text-[10px] uppercase tracking-widest" style={{ color: '#444556' }}>
-            © 2026 DJZS — Decentralized Journaling Zone System
+            © 2026 DJZS — Autonomous Auditing System for the A2A Economy
           </p>
         </div>
       </footer>
