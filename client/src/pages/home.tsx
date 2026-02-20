@@ -156,7 +156,7 @@ export default function Home() {
           <motion.div variants={fadeUp} className="mb-6">
             <span className="inline-flex items-center gap-3 px-6 py-3 rounded-md text-base font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
               <Target className="w-6 h-6" />
-              Decentralized Journaling Zone System
+              The Autonomous Auditing System
             </span>
           </motion.div>
 
