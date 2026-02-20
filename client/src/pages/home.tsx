@@ -1060,26 +1060,6 @@ export default function Home() {
         </section>
       </RevealSection>
 
-      <RevealSection>
-        <section className="relative py-32 border-t border-white/[0.06]" style={{ background: '#14171D' }}>
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-12 tracking-tight" data-testid="text-final-cta-headline">
-              The System that audits your logic. Not the one that agrees with it.
-            </h2>
-            <Link href="/chat">
-              <button
-                className="inline-flex items-center gap-3 rounded-lg px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
-                style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
-                data-testid="button-final-get-started"
-              >
-                Enter the Zone
-                <ArrowRight className="w-6 h-6" />
-              </button>
-            </Link>
-          </div>
-        </section>
-      </RevealSection>
-
       <footer className="border-t border-white/[0.06] py-24" style={{ background: '#0D0F13' }}>
         <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-10">
           <div className="flex flex-col items-center gap-3">
