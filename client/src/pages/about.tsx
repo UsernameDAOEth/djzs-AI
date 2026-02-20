@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ArrowLeft, Shield, HardDrive, Bot, Lock, Globe, BookOpen, Search, Sparkles, Brain, Pin, Video, Headphones, MessageSquare, AlertTriangle, RefreshCw, Briefcase, BarChart3, Palette, Zap, Download, Wallet, ChevronRight, FlaskConical, User } from "lucide-react";
+import { ArrowLeft, Shield, HardDrive, Bot, Lock, Globe, BookOpen, Search, Sparkles, Brain, Pin, Video, Headphones, MessageSquare, AlertTriangle, RefreshCw, Briefcase, BarChart3, Palette, Zap, Download, Wallet, ChevronRight, FlaskConical, User, Receipt, PenLine, Activity, KeyRound, ShieldCheck, HelpCircle } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
@@ -67,40 +67,110 @@ export default function About() {
 
             <section>
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> The Solution — Three Zones, One Loop
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> The Solution — Two Layers, One System
               </h2>
               <p className="mb-6">
-                DJ-Z-S is built around a simple, powerful workflow: capture your thinking, pressure-test it with an adversarial AI, and compound what survives into a living knowledge base. We call it the <strong className="text-white">Thinking Loop</strong>.
+                DJ-Z-S operates on two layers: <strong className="text-white">Workspace Zones</strong> for your private thinking, and <strong className="text-white">Execution Zones</strong> for deploying adversarial audits via the A2A API. Capture, pressure-test, compound — and when you're ready, deploy to the economy.
               </p>
+
+              <h3 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Workspace Zones</h3>
               <div className="space-y-4 mb-8">
                 <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }} data-testid="card-zone-journal">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-9 h-9 rounded-lg bg-orange-500/15 flex items-center justify-center">
-                      <BookOpen className="w-4 h-4 text-orange-400" />
+                      <PenLine className="w-4 h-4 text-orange-400" />
                     </div>
-                    <h3 className="text-white font-bold">Journal Zone</h3>
+                    <h3 className="text-white font-bold">Journal</h3>
                   </div>
-                  <p className="text-gray-400 mb-3">Write your daily thinking — strategy sessions, trade analysis, content ideas, decision logs. When you're ready, click <strong className="text-white">"Think with me"</strong> and the AI interrogates your entry — flags contradictions, calls out FOMO-driven logic, exposes blind spots, and asks the questions you're avoiding.</p>
+                  <p className="text-gray-400 mb-3">Your private space to think, reflect, and extract insight. Write daily entries, click <strong className="text-white">"Think with me"</strong> and the AI interrogates your entry — flags contradictions, calls out FOMO-driven logic, exposes blind spots, and asks the questions you're avoiding.</p>
                   <p className="text-xs text-gray-500">Supports text entries, voice-to-text, and video journal recordings via Livepeer.</p>
                 </div>
-                <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }} data-testid="card-zone-research">
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(45,212,191,0.04)', borderColor: 'rgba(45,212,191,0.2)' }} data-testid="card-zone-research">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 rounded-lg bg-teal-600/15 flex items-center justify-center">
-                      <Search className="w-4 h-4 text-teal-400" />
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(45,212,191,0.15)' }}>
+                      <Search className="w-4 h-4" style={{ color: '#2dd4bf' }} />
                     </div>
-                    <h3 className="text-white font-bold">Research Zone</h3>
+                    <h3 className="text-white font-bold">Research</h3>
                   </div>
-                  <p className="text-gray-400 mb-3">Save articles, on-chain data, competitor analysis, and research notes. The AI interrogates your research — flags echo chamber consensus, scores evidence strength, and kills weak assumptions before you build on them. Organize everything into research trackers with tracked claims and trust levels.</p>
-                  <p className="text-xs text-gray-500">Three modes: <strong className="text-teal-400">Brave Mode</strong> (privacy-first web search), <strong className="text-teal-400">Web Mode</strong> (AI web search with citations), <strong className="text-teal-400">Explain Mode</strong> (AI knowledge synthesis).</p>
+                  <p className="text-gray-400 mb-3">Search and synthesize information. Save articles, on-chain data, and research notes. The AI flags echo chamber consensus, scores evidence strength, and kills weak assumptions. Organize into trackers with claims and trust levels.</p>
+                  <p className="text-xs text-gray-500">Three modes: <strong style={{ color: '#2dd4bf' }}>Brave Mode</strong> (privacy-first web search), <strong style={{ color: '#2dd4bf' }}>Web Mode</strong> (AI web search with citations), <strong style={{ color: '#2dd4bf' }}>Explain Mode</strong> (AI knowledge synthesis).</p>
                 </div>
-                <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }} data-testid="card-zone-thinking">
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(96,165,250,0.04)', borderColor: 'rgba(96,165,250,0.2)' }} data-testid="card-zone-trade">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(96,165,250,0.15)' }}>
+                      <Receipt className="w-4 h-4" style={{ color: '#60a5fa' }} />
+                    </div>
+                    <h3 className="text-white font-bold">Trade</h3>
+                  </div>
+                  <p className="text-gray-400">Build trade theses, stress-test them with adversarial AI, compute risk, and sign wallet-verified artifacts. Supports paper and live trading modes with autonomous market alerts.</p>
+                </div>
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(251,191,36,0.04)', borderColor: 'rgba(251,191,36,0.2)' }} data-testid="card-zone-decisions">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(251,191,36,0.15)' }}>
+                      <Brain className="w-4 h-4" style={{ color: '#fbbf24' }} />
+                    </div>
+                    <h3 className="text-white font-bold">Decisions</h3>
+                  </div>
+                  <p className="text-gray-400">Track high-stakes decisions with structured logs. AI pressure-tests your reasoning, flags when emotion is driving strategy instead of data, and ensures decisions survive scrutiny.</p>
+                </div>
+                <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(192,132,252,0.04)' }} data-testid="card-zone-content">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-9 h-9 rounded-lg bg-purple-600/15 flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-purple-400" />
+                      <Palette className="w-4 h-4 text-purple-400" />
+                    </div>
+                    <h3 className="text-white font-bold">Content</h3>
+                  </div>
+                  <p className="text-gray-400">Manage your content pipeline. AI challenges your angles, hooks, and positioning — forces you to articulate what's genuinely new before you publish.</p>
+                </div>
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(244,63,94,0.04)', borderColor: 'rgba(244,63,94,0.2)' }} data-testid="card-zone-thinking">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(244,63,94,0.15)' }}>
+                      <MessageSquare className="w-4 h-4" style={{ color: '#f43f5e' }} />
                     </div>
                     <h3 className="text-white font-bold">Thinking Partner</h3>
                   </div>
                   <p className="text-gray-400">An adversarial AI that attacks your reasoning, calls out when narrative is driving your strategy instead of data, flags FOMO and ego, and asks whether you'd still do this if nobody was watching.</p>
+                </div>
+              </div>
+
+              <h3 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Execution Zones</h3>
+              <p className="text-gray-400 text-sm mb-4">Deploy adversarial audits to the A2A economy. Each zone offers a different depth and price point — from quick operational sanity checks to exhaustive governance audits.</p>
+              <div className="space-y-4 mb-8">
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(45,212,191,0.04)', borderColor: 'rgba(45,212,191,0.2)' }} data-testid="card-exec-micro">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(45,212,191,0.15)' }}>
+                      <Zap className="w-4 h-4" style={{ color: '#2dd4bf' }} />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-bold">Micro-Zone</h3>
+                      <span className="text-[10px] font-mono" style={{ color: '#2dd4bf' }}>$2.50 USDC</span>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-sm">Fast constrained operational audit. Binary risk scoring for high-frequency sanity checks. 1,000 character limit.</p>
+                </div>
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(243,126,32,0.04)', borderColor: 'rgba(243,126,32,0.2)' }} data-testid="card-exec-founder">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(243,126,32,0.15)' }}>
+                      <Activity className="w-4 h-4" style={{ color: '#F37E20' }} />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-bold">Founder Zone</h3>
+                      <span className="text-[10px] font-mono" style={{ color: '#F37E20' }}>$5.00 USDC</span>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-sm">Deep roadmap diligence. Detects narrative drift, confirmation bias, and strategic misalignment. 5,000 character limit.</p>
+                </div>
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(168,85,247,0.04)', borderColor: 'rgba(168,85,247,0.2)' }} data-testid="card-exec-treasury">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(168,85,247,0.15)' }}>
+                      <Shield className="w-4 h-4" style={{ color: '#a855f7' }} />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-bold">Treasury Zone</h3>
+                      <span className="text-[10px] font-mono" style={{ color: '#a855f7' }}>$50.00 USDC</span>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-sm">Exhaustive adversarial governance audit. Multi-vector analysis for DAO treasuries, protocol upgrades, and high-stakes governance decisions. No character limit.</p>
                 </div>
               </div>
 
@@ -111,9 +181,9 @@ export default function About() {
                   label="Founder Workflow"
                   accent="#F37E20"
                   steps={[
-                    { step: "Capture", text: "Journaling about a new feature idea and potential go-to-market challenges." },
-                    { step: "Analyze", text: "Click 'Think with me' — AI flags that your pivot is a reaction to Twitter hype, not market data. Exposes the confirmation bias in your competitive analysis." },
-                    { step: "Compound", text: "Pin the synthesized risk analysis to your 'Product Roadmap' memory, making it instantly accessible for the next planning session." },
+                    { step: "Capture", text: "Journal about a new feature idea and go-to-market challenges in the Journal zone." },
+                    { step: "Analyze", text: "Click 'Think with me' — AI flags that your pivot is a reaction to Twitter hype, not market data. Exposes confirmation bias." },
+                    { step: "Deploy", text: "Send your roadmap to the Founder Zone ($5.00) for deep adversarial diligence. Get a structured risk score and actionable recommendations." },
                   ]}
                 />
                 <PersonaWorkflow
@@ -121,9 +191,9 @@ export default function About() {
                   label="Trader Workflow"
                   accent="#2E8B8B"
                   steps={[
-                    { step: "Capture", text: "Paste in on-chain data about a new token and your initial gut reaction." },
-                    { step: "Analyze", text: "AI flags that your 'gut reaction' is FOMO — same pattern as three failed trades ago. Scores the evidence as weak on methodology, strong on narrative." },
-                    { step: "Compound", text: "Pin the AI-generated summary to your 'DePIN Thesis' memory, building a living, analyzable database of your trade logic." },
+                    { step: "Capture", text: "Build a trade thesis in the Trade zone with on-chain data and your initial gut reaction." },
+                    { step: "Analyze", text: "AI flags that your 'gut reaction' is FOMO — same pattern as three failed trades ago. Scores evidence as weak on methodology." },
+                    { step: "Deploy", text: "Stress-test via Micro-Zone ($2.50) for a fast sanity check before execution." },
                   ]}
                 />
                 <PersonaWorkflow
@@ -131,9 +201,9 @@ export default function About() {
                   label="Researcher Workflow"
                   accent="#2E8B8B"
                   steps={[
-                    { step: "Capture", text: "Paste in notes from three different academic papers and a dataset." },
-                    { step: "Analyze", text: "AI surfaces that all three papers share the same funding source and methodology — consensus may be artificial. Flags the assumption you forgot to question." },
-                    { step: "Compound", text: "Pin the synthesized literature review and identified gaps to a 'Thesis Chapter 2' memory, building the paper incrementally." },
+                    { step: "Capture", text: "Save articles and data into the Research zone with claims and evidence scoring." },
+                    { step: "Analyze", text: "AI surfaces that all three papers share the same funding source — consensus may be artificial. Flags the assumption you forgot to question." },
+                    { step: "Compound", text: "Pin the synthesized literature review to a memory, building the paper incrementally." },
                   ]}
                 />
                 <PersonaWorkflow
@@ -141,9 +211,9 @@ export default function About() {
                   label="Creator Workflow"
                   accent="#7B6B8D"
                   steps={[
-                    { step: "Capture", text: "Brainstorm a chaotic list of video ideas for the next quarter." },
-                    { step: "Analyze", text: "AI shows you're repeating the same take you've published twice before. Flags that your 'unique angle' is consensus repackaged. Forces you to articulate what's genuinely new." },
-                    { step: "Compound", text: "Pin the refined content pillars to your 'Q2 Strategy' memory, creating a clear plan from a messy brainstorm." },
+                    { step: "Capture", text: "Brainstorm video ideas in the Content zone for the next quarter." },
+                    { step: "Analyze", text: "AI shows you're repeating the same take. Flags that your 'unique angle' is consensus repackaged. Forces you to articulate what's genuinely new." },
+                    { step: "Compound", text: "Pin the refined content pillars to your 'Q2 Strategy' memory." },
                   ]}
                 />
               </div>
@@ -166,7 +236,7 @@ export default function About() {
                     <Shield className="w-5 h-5 text-teal-400" />
                     <h3 className="text-white font-bold">Sovereign</h3>
                   </div>
-                  <p className="text-gray-400">We believe you should have a digital space that is truly yours. DJ-Z-S is designed to be your sovereign workspace, free from the prying eyes of ad-tech and AI companies. Your roadmap stays your roadmap. Your thesis stays your thesis.</p>
+                  <p className="text-gray-400">We believe you should have a digital space that is truly yours. DJ-Z-S is designed to be your sovereign workspace, free from the prying eyes of ad-tech and AI companies. Your roadmap stays your roadmap. Your thesis stays your thesis. Optional vault encryption (AES-256-GCM) and Bring Your Own Key (BYOK) for AI inference give you full control over your data and your tools.</p>
                 </div>
                 <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
                   <div className="flex items-center gap-3 mb-3">
@@ -174,6 +244,13 @@ export default function About() {
                     <h3 className="text-white font-bold">Adversarial by Design</h3>
                   </div>
                   <p className="text-gray-400">The AI actively pushes back. It doesn't validate — it interrogates. It looks for the weakest link in your reasoning and applies maximum pressure there.</p>
+                </div>
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(244,63,94,0.04)', borderColor: 'rgba(244,63,94,0.2)' }}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <Sparkles className="w-5 h-5" style={{ color: '#f43f5e' }} />
+                    <h3 className="text-white font-bold">Uncensored</h3>
+                  </div>
+                  <p className="text-gray-400">Our AI is designed to be your thinking partner, not your censor. It won't refuse to explore controversial ideas or sensitive strategies. Your thoughts are your own.</p>
                 </div>
               </div>
             </section>
@@ -229,7 +306,7 @@ export default function About() {
               <h2 className="text-white font-black uppercase tracking-widest mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> Your AI Team
               </h2>
-              <p className="mb-5">Three specialized AI agents power the system. Each one is triggered only when you take action — never automatically. They work for you, not on you.</p>
+              <p className="mb-5">Four specialized AI agents power the system. Each one is triggered only when you take action — never automatically. They work for you, not on you.</p>
               <div className="space-y-3">
                 <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-agent-insight">
                   <div className="flex items-center gap-3 mb-2">
@@ -254,6 +331,14 @@ export default function About() {
                     <span className="text-[10px] text-gray-600 ml-auto">Your sparring partner</span>
                   </div>
                   <p className="text-xs text-gray-500">Tries to break your reasoning. Names the real driver behind your decisions — is it strategy or ego? Data or narrative addiction? Finds the gap between what you claim and what you actually do.</p>
+                </div>
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]" data-testid="card-agent-audit">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Shield className="w-4 h-4" style={{ color: '#a855f7' }} />
+                    <h3 className="text-white font-bold text-xs">A2A Audit Agent</h3>
+                    <span className="text-[10px] text-gray-600 ml-auto">Powers the Execution Zones</span>
+                  </div>
+                  <p className="text-xs text-gray-500">The adversarial engine behind the three-tier audit API. Performs tier-specific prompt engineering — from fast binary risk scoring (Micro) to exhaustive multi-vector governance audits (Treasury). Serves both the web UI and autonomous AI agents via API.</p>
                 </div>
               </div>
             </section>
@@ -288,17 +373,31 @@ export default function About() {
                 <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }} data-testid="card-a2a-api-about">
                   <div className="flex items-center gap-3 mb-3">
                     <Bot className="w-5 h-5 text-orange-400" />
-                    <h3 className="text-white font-bold">Machine-Readable API</h3>
+                    <h3 className="text-white font-bold">Machine-Readable Tiered API</h3>
                   </div>
-                  <p className="text-gray-400 mb-3">Other agents call <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit</code> with a strategy memo and receive structured JSON: risk score (0-100), primary bias detected, logic flaws, and recommendations. Every audit is cryptographically hashed (SHA-256) for on-chain verification.</p>
-                  <p className="text-xs text-gray-500">Schema discovery at <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">GET /api/audit/schema</code></p>
+                  <p className="text-gray-400 mb-3">Agents discover DJZS via <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">/.well-known/agent.json</code> and call tiered endpoints with a strategy memo. Each tier returns structured JSON: risk score (0-100), primary bias detected, logic flaws, and recommendations. Every audit is cryptographically hashed (SHA-256) for on-chain verification.</p>
+                  <div className="mt-3 space-y-2">
+                    <div className="flex items-center gap-3 text-xs">
+                      <code className="px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit/micro</code>
+                      <span className="text-gray-500">— $2.50 USDC — fast operational audit (1K chars)</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs">
+                      <code className="px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit/founder</code>
+                      <span className="text-gray-500">— $5.00 USDC — deep roadmap diligence (5K chars)</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs">
+                      <code className="px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit/treasury</code>
+                      <span className="text-gray-500">— $50.00 USDC — exhaustive governance audit (unlimited)</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-3">Schema discovery at <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">GET /api/audit/schema</code></p>
                 </div>
                 <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }} data-testid="card-a2a-payment-about">
                   <div className="flex items-center gap-3 mb-3">
                     <Zap className="w-5 h-5 text-teal-400" />
                     <h3 className="text-white font-bold">x402 Micropayments on Base</h3>
                   </div>
-                  <p className="text-gray-400">Revenue model: pay-per-audit via the x402 protocol. Agents pay $2.50 USDC on Base per audit — no subscriptions, no NFT gates. HTTP-native payments mean any agent can call the API, pay, and receive results in a single request cycle.</p>
+                  <p className="text-gray-400">Revenue model: pay-per-audit via the x402 protocol across three tiers. No subscriptions, no NFT gates. HTTP-native payments mean any agent can call the API, pay, and receive results in a single request cycle.</p>
                 </div>
                 <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }} data-testid="card-a2a-usecases-about">
                   <div className="flex items-center gap-3 mb-3">
@@ -306,9 +405,9 @@ export default function About() {
                     <h3 className="text-white font-bold">Use Cases</h3>
                   </div>
                   <ul className="space-y-2 text-sm text-gray-400">
-                    <li>• <strong className="text-white">DAO Treasury Stress-Test ($50)</strong> — A DAO agent pings DJZS before signing a multi-sig, flagging FOMO-driven allocation</li>
-                    <li>• <strong className="text-white">Founder Drift Audit ($5)</strong> — A VC screening bot checks if a founder is building what they promised</li>
-                    <li>• <strong className="text-white">Micro-Audit ($2.50)</strong> — A trading agent stress-tests an arbitrage strategy before execution</li>
+                    <li>• <strong className="text-white">DAO Treasury Stress-Test ($50.00)</strong> — A DAO agent pings DJZS Treasury Zone before signing a multi-sig, flagging FOMO-driven allocation</li>
+                    <li>• <strong className="text-white">Founder Drift Audit ($5.00)</strong> — A VC screening bot calls the Founder Zone to check if a founder is building what they promised</li>
+                    <li>• <strong className="text-white">Micro-Audit ($2.50)</strong> — A trading agent stress-tests an arbitrage strategy in the Micro-Zone before execution</li>
                   </ul>
                 </div>
               </div>
@@ -319,6 +418,16 @@ export default function About() {
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Additional Tools
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                  <ShieldCheck className="w-5 h-5 text-green-400 mb-3" />
+                  <h3 className="text-white font-bold mb-2">Vault Encryption</h3>
+                  <p className="text-xs text-gray-500">Set a passphrase to encrypt your local vault with AES-256-GCM. PBKDF2 with 600,000 iterations for key derivation — all running in your browser via WebCrypto. Lock and unlock your vault at any time.</p>
+                </div>
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                  <KeyRound className="w-5 h-5 mb-3" style={{ color: '#FFB84D' }} />
+                  <h3 className="text-white font-bold mb-2">Bring Your Own Key</h3>
+                  <p className="text-xs text-gray-500">Use your own Venice API key for full control over AI inference, billing, and rate limits. Stored locally in your browser, never on our servers. Switch back to the shared key anytime.</p>
+                </div>
                 <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
                   <Video className="w-5 h-5 text-orange-400 mb-3" />
                   <h3 className="text-white font-bold mb-2">Video Journal</h3>
@@ -338,6 +447,11 @@ export default function About() {
                   <Search className="w-5 h-5 text-orange-400 mb-3" />
                   <h3 className="text-white font-bold mb-2">Quick Search</h3>
                   <p className="text-xs text-gray-500">Instantly search all your past entries with real-time filtering. Filter by journal or research, with highlighted match previews. Open with Cmd+K from anywhere.</p>
+                </div>
+                <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
+                  <HelpCircle className="w-5 h-5 text-orange-400 mb-3" />
+                  <h3 className="text-white font-bold mb-2">Interactive Tutorial</h3>
+                  <p className="text-xs text-gray-500">Guided 7-step onboarding walkthrough with spotlight highlights covering Workspace Zones and Execution Zones. Keyboard navigation, auto-shown for new users, re-accessible via sidebar.</p>
                 </div>
               </div>
             </section>
