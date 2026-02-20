@@ -12,14 +12,11 @@ import {
   Key,
   ExternalLink,
   Building2,
-  Network,
   Users,
   Database,
   Fingerprint,
   Globe,
-  Video,
   Brain,
-  Music,
   Sparkles,
   FileSearch,
   TrendingUp,
@@ -144,12 +141,12 @@ export default function Docs() {
             DJZS Documentation
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            The autonomous auditing firm for the A2A economy. Serves human founders via web UI and AI agents via programmatic API. Pressure-tests reasoning, flags bias, and stress-tests logic — for humans and machines alike.
+            Six free Workspace Zones for thinking and building. Three paid Execution Zones for adversarial audits. Write locally, deploy to the System when you're ready to pressure-test.
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
               <button className="px-6 py-3 rounded-lg text-white font-bold transition-colors" style={{ background: '#F37E20' }} data-testid="button-start-writing">
-                Start Thinking
+                Open Workspace
               </button>
             </Link>
           </div>
@@ -160,13 +157,13 @@ export default function Docs() {
             <h2 className="text-2xl font-bold text-white mb-4">What is DJZS?</h2>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               <p className="text-lg">
-                DJ-Z-S is the <strong className="text-white">autonomous AI auditing firm for the Agent-to-Agent (A2A) economy</strong>. It serves two clients: human founders via the web UI, and autonomous AI agents via a machine-readable API. The system combines local-first data ownership, end-to-end encrypted messaging (XMTP + MLS), decentralized AI inference via Venice, and x402 micropayments on Base. No centralized model training on your thoughts. No cloud surveillance layer.
+                DJZS is <strong className="text-white">cognitive infrastructure for the Agent-to-Agent (A2A) economy</strong>. It serves two clients: human founders via the web UI, and autonomous AI agents via a machine-readable programmatic API. Local-first data ownership, decentralized AI inference via Venice, and x402 micropayments on Base. No centralized model training on your thoughts. No cloud surveillance layer.
               </p>
               <p>
-                Six zones — Journal, Research, Trade, Decisions, Content, and Thinking Partner — form one loop: capture your thinking locally, pressure-test it with an adversarial AI, and compound the results into a living knowledge base. Your entries are stored on your device. When you choose to use AI, requests route to decentralized inference nodes — no centralized provider stores or trains on your data.
+                The system is split into two layers. <strong className="text-white">Workspace Zones</strong> are free — Journal, Research, Trade, Decisions, Content, and Thinking Partner — where you capture thinking, build theses, and track decisions locally on your device. <strong className="text-white">Execution Zones</strong> are paid — Micro ($2.50), Founder ($5.00), and Treasury ($50.00) — where you deploy your work for adversarial audits via x402 USDC on Base.
               </p>
               <p>
-                The AI is your adversarial thinking partner — not a chatbot, not a validator. It actively pushes back on weak reasoning, FOMO-driven logic, and narrative dependency. It only activates when you click "Think with me." Memory pins carry context forward. Each session builds on the last — so your intelligence compounds without becoming platform exhaust. DJZS is designed to be honest, not helpful. It tells you what's wrong with your thinking, not what's right.
+                The AI is adversarial — not a chatbot, not a validator. It pushes back on weak reasoning, FOMO-driven logic, and narrative dependency. Each Workspace Zone has a "Deploy to Zone" button to send your work directly into an Execution Zone for pressure-testing. Write first, audit when the stakes are high. DJZS is designed to be honest, not helpful.
               </p>
             </div>
           </div>
@@ -214,9 +211,13 @@ export default function Docs() {
                 <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center mb-3">
                   <DollarSign className="w-5 h-5 text-orange-400" />
                 </div>
-                <h4 className="text-sm font-bold text-white mb-2">Payment</h4>
-                <p className="text-xs text-gray-500 leading-relaxed mb-2">x402 protocol — <strong className="text-orange-300">$2.50 USDC on Base</strong> per audit</p>
-                <p className="text-xs text-gray-500">Pay-per-use, no subscriptions. Agents pay at the HTTP layer via x402 micropayments.</p>
+                <h4 className="text-sm font-bold text-white mb-2">Payment (x402)</h4>
+                <div className="space-y-1 text-xs text-gray-500 mb-2">
+                  <p><strong className="text-teal-300">Micro-Zone</strong> — $2.50 USDC</p>
+                  <p><strong className="text-orange-300">Founder Zone</strong> — $5.00 USDC</p>
+                  <p><strong className="text-purple-300">Treasury Zone</strong> — $50.00 USDC</p>
+                </div>
+                <p className="text-xs text-gray-500">Pay-per-use on Base Mainnet. Agents pay at the HTTP layer via x402 micropayments.</p>
               </div>
             </div>
 
@@ -246,149 +247,6 @@ export default function Docs() {
                 <p className="text-xs text-gray-500 leading-relaxed">Quick "check my work" — fast logic audit for any reasoning memo</p>
               </div>
             </div>
-          </div>
-        </motion.section>
-
-        <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-white mb-8">Web2 vs Web3: Why It Matters</h2>
-          <p className="text-gray-400 mb-8 max-w-3xl">
-            The internet has evolved through distinct eras. Understanding the difference between Web2 and Web3 helps explain why DJZS is built the way it is.
-          </p>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-            {/* Web2 Card */}
-            <div className="p-6 rounded-lg bg-gradient-to-br from-red-500/[0.05] to-transparent border border-red-500/20">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-12 h-12 rounded-lg bg-red-600/20 flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-red-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">Web2: Centralized</h3>
-                  <p className="text-xs text-red-400/80">The current internet model</p>
-                </div>
-              </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">
-                Web2 emerged in the 2000s with social media and mobile. Companies built platforms where users create content, but the platforms own and control everything.
-              </p>
-              <ul className="space-y-3 text-sm text-gray-500">
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">Company-owned data</strong> — Your notes, messages, and history belong to the platform</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">Separate accounts everywhere</strong> — Username/password for each website</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">Single point of failure</strong> — If the company shuts down, your data disappears</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">Targeted advertising</strong> — Your data is monetized to show you ads</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">Walled gardens</strong> — Hard to move your data between platforms</span>
-                </li>
-              </ul>
-            </div>
-            
-            {/* Web3 Card */}
-            <div className="p-6 rounded-lg bg-gradient-to-br from-green-500/[0.05] to-transparent border border-green-500/20">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-12 h-12 rounded-lg bg-green-600/20 flex items-center justify-center">
-                  <Network className="w-6 h-6 text-green-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">Web3: Decentralized</h3>
-                  <p className="text-xs text-green-400/80">The emerging model</p>
-                </div>
-              </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">
-                Web3 uses blockchain technology to give users control over their data and identity. No single company controls the system.
-              </p>
-              <ul className="space-y-3 text-sm text-gray-500">
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-green-300">User-owned data</strong> — Your information stays with you, not corporations</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-green-300">One wallet, everywhere</strong> — Sign in to any app with your wallet</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-green-300">No single point of failure</strong> — Distributed systems can't be shut down</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-green-300">No surveillance</strong> — No tracking, no targeted ads, no data harvesting</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-green-300">Interoperable</strong> — Take your identity and assets anywhere</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Comparison Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="py-4 px-4 text-left text-gray-400 font-bold"></th>
-                  <th className="py-4 px-4 text-left text-red-400 font-bold uppercase text-xs tracking-wide">Web2 (Centralized)</th>
-                  <th className="py-4 px-4 text-left text-green-400 font-bold uppercase text-xs tracking-wide">Web3 (Decentralized)</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-400">
-                <tr className="border-b border-white/5">
-                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Fingerprint className="w-4 h-4 text-orange-400" /> Identity
-                  </td>
-                  <td className="py-4 px-4">Username + password for each site</td>
-                  <td className="py-4 px-4 text-green-300">1 wallet = universal identity</td>
-                </tr>
-                <tr className="border-b border-white/5">
-                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Database className="w-4 h-4 text-orange-400" /> Data
-                  </td>
-                  <td className="py-4 px-4">Stored on company servers</td>
-                  <td className="py-4 px-4 text-green-300">Stored locally or on-chain (you own it)</td>
-                </tr>
-                <tr className="border-b border-white/5">
-                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Users className="w-4 h-4 text-orange-400" /> Control
-                  </td>
-                  <td className="py-4 px-4">Platform decides rules & access</td>
-                  <td className="py-4 px-4 text-green-300">You control your keys, you control access</td>
-                </tr>
-                <tr className="border-b border-white/5">
-                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-orange-400" /> Portability
-                  </td>
-                  <td className="py-4 px-4">Data trapped in walled gardens</td>
-                  <td className="py-4 px-4 text-green-300">Take your data anywhere</td>
-                </tr>
-                <tr>
-                  <td className="py-4 px-4 font-medium text-white flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-orange-400" /> Privacy
-                  </td>
-                  <td className="py-4 px-4">Tracked, analyzed, sold to advertisers</td>
-                  <td className="py-4 px-4 text-green-300">Private by default, pseudonymous</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Why DJZS uses Web3 */}
-          <div className="mt-10 p-6 rounded-lg bg-orange-500/[0.08] border border-orange-500/20">
-            <h3 className="text-lg font-bold text-white mb-3">Why DJZS Uses Web3 Principles</h3>
-            <p className="text-gray-400 leading-relaxed">
-              Your private thoughts deserve better than Web2. DJZS combines Web3's decentralized identity (wallet login) with local-first storage (your device). This means your journal entries, research, and memories are never stored on our servers. You authenticate with your wallet—no email, no password, no account to hack. Your thinking stays yours.
-            </p>
           </div>
         </motion.section>
 
@@ -495,7 +353,8 @@ export default function Docs() {
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-white mb-8">Zones</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Workspace Zones</h2>
+          <p className="text-gray-400 mb-8">Free. Local-first. Your space to think and build before deploying to the System.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-6 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
@@ -504,18 +363,14 @@ export default function Docs() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Journal</h3>
-                  <p className="text-xs text-orange-400/80">Adversarial thinking partner</p>
+                  <p className="text-xs text-orange-400/80">Private reflection and daily thinking</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Your private space to think — and have your thinking challenged. The adversarial AI exposes contradictions, flags weak logic, and asks the questions you're avoiding.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Your private space to think — and have your thinking challenged. AI interrogates your entries for contradictions, blind spots, and weak assumptions.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Deep Reasoning</strong> - AI interrogates your entry for contradictions, blind spots, and weak assumptions</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Hard Questions</strong> - Asks the questions you're avoiding to pressure-test your reasoning</span>
+                  <span><strong className="text-orange-300">Deep Reasoning</strong> - AI interrogates your entry for contradictions and weak assumptions</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
@@ -523,7 +378,7 @@ export default function Docs() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Context Awareness</strong> - AI uses your recent entries and pinned memories to call out inconsistencies</span>
+                  <span><strong className="text-orange-300">Deploy to Zone</strong> - Send entries directly to an Execution Zone for paid adversarial audit</span>
                 </li>
               </ul>
             </div>
@@ -534,89 +389,49 @@ export default function Docs() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Research</h3>
-                  <p className="text-xs text-teal-400/80">AI-powered research interrogation</p>
+                  <p className="text-xs text-teal-400/80">Search, synthesize, and track claims</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Search the web for real-time data or use AI knowledge to interrogate information, expose contradictions, and track claims.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Search the web, interrogate information, expose contradictions, and track claims with evidence scoring.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Brave Mode</strong> - Privacy-first web search with no tracking or profiling, synthesized by Venice AI</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-teal-300">Brave / Web / Explain Modes</strong> - Privacy-first web search, Venice AI search, or AI knowledge synthesis</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Web Mode</strong> - Real-time web search via Venice AI with source citations</span>
+                  <span><strong className="text-teal-300">Research Trackers & Claims</strong> - Organize findings into named folders with trust levels and status</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Explain Mode</strong> - AI knowledge synthesis without live data</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Research Trackers</strong> - Organize research into named folders</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Claim Tracking</strong> - Save key takeaways with trust levels and status</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Cross-Zone Linking</strong> - Connect research claims to journal entries</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Evidence Scoring</strong> - 4-axis strength scoring (Sources, Consensus, Recency, Method) with color-coded bars</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">AI Observing</strong> - Meta-observations panel reveals what the AI noticed during analysis</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">More Nuanced</strong> - Adaptive depth mode that prioritizes edge cases and counter-arguments</span>
+                  <span><strong className="text-teal-300">Evidence Scoring</strong> - 4-axis strength scoring (Sources, Consensus, Recency, Method)</span>
                 </li>
               </ul>
             </div>
 
-            <div className="p-6 rounded-lg bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20 hover:border-purple-500/30 transition-all">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-blue-500/[0.08] to-transparent border border-blue-500/20 hover:border-blue-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-lg bg-purple-600/20 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-purple-400" />
+                <div className="w-12 h-12 rounded-lg bg-blue-600/20 flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-blue-400" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Trade</h3>
-                  <p className="text-xs text-purple-400/80">Full trade workflow: compose, stress test, execute, monitor</p>
+                  <p className="text-xs text-blue-400/80">Build and stress-test trade theses</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Build trade theses, stress test with AI, compute risk, wallet-sign artifacts, execute trades (paper or live on-chain), and monitor markets with autonomous alerts. Six tabs, one complete flow.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Build trade theses, stress test with AI, compute risk, and wallet-sign artifacts. Deploy to Execution Zone for full adversarial audit.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Compose Thesis</strong> - Asset, side, timeframe, conviction, entry/exit strategy, live market conditions auto-filled</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-blue-300">Compose Thesis</strong> - Asset, side, timeframe, conviction, entry/exit strategy</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Cross-Zone Intelligence</strong> - Auto-surfaces relevant journal entries, research trackers, and claims matching your asset</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-blue-300">AI Stress Test</strong> - Adversarial AI pressure-tests your thesis, calls out FOMO and weak logic</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">AI Stress Test</strong> - Adversarial Thinking Partner pressure-tests your thesis, calls out FOMO and weak logic</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Risk & Sign</strong> - Compute risk summary, wallet-sign with EIP-191, SHA-256 content hash</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Execute</strong> - Paper trading (simulated) or live on-chain execution via connected wallet with BaseScan links</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Market Monitor</strong> - Set price and change alerts that auto-trigger with 60-second polling and toast notifications</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">XMTP Send</strong> - Send signed artifacts to trader agents via E2E encrypted messaging</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-blue-300">Deploy to Zone</strong> - Send thesis directly to an Execution Zone for paid adversarial audit</span>
                 </li>
               </ul>
             </div>
@@ -628,10 +443,10 @@ export default function Docs() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Decisions</h3>
-                  <p className="text-xs text-amber-400/80">Decision log for founders</p>
+                  <p className="text-xs text-amber-400/80">Track high-stakes decisions</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Track high-stakes decisions with structured context, options, and reasoning. AI pressure-tests your thinking and calls out blind spots before you commit.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Track high-stakes decisions with structured context, options, and reasoning. Deploy to Execution Zone for adversarial pressure-testing.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
@@ -639,84 +454,143 @@ export default function Docs() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-amber-300">AI Review</strong> - Adversarial Thinking Partner pressure-tests your reasoning and exposes blind spots</span>
+                  <span><strong className="text-amber-300">AI Review</strong> - AI pressure-tests reasoning and exposes blind spots</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-amber-300">Decision History</strong> - Track status (pending, decided, revisited) and outcomes over time</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-amber-300">Encrypted Storage</strong> - All decisions stored locally with optional vault encryption</span>
+                  <span><strong className="text-amber-300">Deploy to Zone</strong> - Send decisions directly to an Execution Zone for paid audit</span>
                 </li>
               </ul>
             </div>
 
-            <div className="p-6 rounded-lg bg-gradient-to-br from-cyan-500/[0.08] to-transparent border border-cyan-500/20 hover:border-cyan-500/30 transition-all">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20 hover:border-purple-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-lg bg-cyan-600/20 flex items-center justify-center">
-                  <Palette className="w-6 h-6 text-cyan-400" />
+                <div className="w-12 h-12 rounded-lg bg-purple-600/20 flex items-center justify-center">
+                  <Palette className="w-6 h-6 text-purple-400" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Content</h3>
-                  <p className="text-xs text-cyan-400/80">Content pipeline for creators</p>
+                  <p className="text-xs text-purple-400/80">Compose and refine content ideas</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Manage content ideas from spark to published. AI challenges your hook, interrogates your angle, and flags weak points before you ship.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Manage content ideas from spark to published. AI challenges your hook and angle before you ship.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-cyan-300">Structured Compose</strong> - Title, topic, angle, format, audience, hook, and key points</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Pipeline Tracking</strong> - Move ideas through stages: idea, drafting, review, ready, published</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-cyan-300">AI Refine</strong> - AI challenges your hook, pressure-tests your angle, and flags weaknesses</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">AI Refine</strong> - AI challenges your hook, pressure-tests your angle, and flags weaknesses</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-cyan-300">Pipeline Tracking</strong> - Move ideas through stages: idea, drafting, review, ready, published</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-cyan-300">Encrypted Storage</strong> - All content ideas stored locally with optional vault encryption</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span><strong className="text-purple-300">Deploy to Zone</strong> - Send content directly to an Execution Zone for paid audit</span>
                 </li>
               </ul>
             </div>
 
-            <div className="p-6 rounded-lg bg-gradient-to-br from-red-500/[0.08] to-transparent border border-red-500/20 hover:border-red-500/30 transition-all md:col-span-2">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-red-500/[0.08] to-transparent border border-red-500/20 hover:border-red-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-lg bg-red-600/20 flex items-center justify-center">
-                  <Video className="w-6 h-6 text-red-400" />
+                  <Zap className="w-6 h-6 text-red-400" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white">Video Journal</h3>
-                  <p className="text-xs text-red-400/80">Decentralized video entries via Livepeer</p>
+                  <h3 className="text-xl font-bold text-white">Thinking Partner</h3>
+                  <p className="text-xs text-red-400/80">Adversarial AI reasoning attacks</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-5 leading-relaxed">Record or upload video directly within your journal entries. Videos are stored on Livepeer's decentralized network and playback IDs are saved locally.</p>
+              <p className="text-gray-400 mb-5 leading-relaxed">Your adversarial AI sparring partner. It debates your ideas, exposes tensions, flags narrative dependency, and forces you to confront what you'd rather ignore.</p>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">In-Browser Recording</strong> - Record video journals using your device camera</span>
+                  <span><strong className="text-red-300">Reasoning Attacks</strong> - AI actively pushes back on weak logic and FOMO-driven reasoning</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">File Upload</strong> - Upload existing video files up to 500MB</span>
+                  <span><strong className="text-red-300">Contradiction Exposure</strong> - Surfaces tensions between what you say and what you do</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">Resumable Uploads</strong> - TUS protocol ensures reliable uploads even on slow connections</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">Decentralized Storage</strong> - Videos stored on Livepeer's network, not centralized servers</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-red-300">Playback & Download</strong> - Watch past entries inline and download anytime</span>
+                  <span><strong className="text-red-300">Deploy to Zone</strong> - Send reasoning directly to an Execution Zone for paid audit</span>
                 </li>
               </ul>
             </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={fadeUp} className="mb-20">
+          <h2 className="text-2xl font-bold text-white mb-2">Execution Zones</h2>
+          <p className="text-gray-400 mb-8">Paid adversarial audits via x402 USDC on Base. Deploy your work when the stakes are high.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20 hover:border-teal-500/30 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-white">Micro-Zone</h3>
+                <span className="text-sm font-bold text-teal-400 bg-teal-500/10 px-3 py-1 rounded">$2.50</span>
+              </div>
+              <p className="text-gray-400 mb-4 leading-relaxed">Fast binary risk scoring for operational decisions. Quick "check my work" — submit a strategy memo, get a risk score and bias detection back in seconds.</p>
+              <ul className="space-y-2 text-sm text-gray-500">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span>1,000 character limit</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span>Risk score (0-100) + primary bias detected</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                  <span>Logic flaws + structural recommendations</span>
+                </li>
+              </ul>
+            </div>
+            <div className="p-6 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-white">Founder Zone</h3>
+                <span className="text-sm font-bold text-orange-400 bg-orange-500/10 px-3 py-1 rounded">$5.00</span>
+              </div>
+              <p className="text-gray-400 mb-4 leading-relaxed">Deep roadmap diligence for strategic decisions. Detects mission drift, narrative dependency, and founder blind spots.</p>
+              <ul className="space-y-2 text-sm text-gray-500">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                  <span>5,000 character limit</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                  <span>Deep bias detection + strategic integrity check</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
+                  <span>Comprehensive logic flaw analysis</span>
+                </li>
+              </ul>
+            </div>
+            <div className="p-6 rounded-lg bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20 hover:border-purple-500/30 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-white">Treasury Zone</h3>
+                <span className="text-sm font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded">$50.00</span>
+              </div>
+              <p className="text-gray-400 mb-4 leading-relaxed">Exhaustive adversarial governance audit. Full breakdown for DAO treasury proposals, multi-sig decisions, and high-stakes governance votes.</p>
+              <ul className="space-y-2 text-sm text-gray-500">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span>Unlimited character input</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span>Exhaustive adversarial breakdown</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                  <span>Cryptographic hash + immutable ledger record</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-6 p-4 rounded-lg bg-orange-500/[0.06] border border-orange-500/15">
+            <p className="text-sm text-gray-400 leading-relaxed">
+              All Execution Zone audits are saved locally in your <strong className="text-white">Cryptographic Ledger</strong> with SHA-256 hashes. Review past results, compare risk scores across zones, and re-deploy memos at any time.
+            </p>
           </div>
         </motion.section>
 
@@ -1044,174 +918,6 @@ export default function Docs() {
             </div>
           </div>
 
-          <div className="mt-8 p-6 rounded-lg bg-[#14171D] border border-white/[0.06]">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
-                <Network className="w-5 h-5 text-purple-400" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">XMTP Agent Commands</h3>
-                <p className="text-xs text-gray-500">Access agents via messaging</p>
-              </div>
-            </div>
-            <p className="text-sm text-gray-400 mb-4 leading-relaxed">
-              You can also interact with OpenClaw agents through XMTP messaging. Send a message with one of these prefixes and the agent will process your request and respond directly:
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="px-4 py-3 rounded-lg bg-orange-500/[0.06] border border-orange-500/15">
-                <p className="text-xs font-bold text-orange-300 mb-1">Journal:</p>
-                <p className="text-xs text-gray-500">e.g. "Journal: Today I realized..."</p>
-              </div>
-              <div className="px-4 py-3 rounded-lg bg-teal-500/[0.06] border border-teal-500/15">
-                <p className="text-xs font-bold text-teal-300 mb-1">Research:</p>
-                <p className="text-xs text-gray-500">e.g. "Research: DeFi yield trends"</p>
-              </div>
-              <div className="px-4 py-3 rounded-lg bg-purple-500/[0.06] border border-purple-500/15">
-                <p className="text-xs font-bold text-purple-300 mb-1">Thinking:</p>
-                <p className="text-xs text-gray-500">e.g. "Thinking: Should I pivot?"</p>
-              </div>
-            </div>
-            <p className="text-xs text-gray-600 mt-3">
-              Additional commands: <span className="font-mono text-gray-500">/help</span> (list commands) · <span className="font-mono text-gray-500">/zones</span> (show available zones)
-            </p>
-          </div>
-
-          <div className="mt-8 p-6 rounded-lg bg-gradient-to-br from-green-500/[0.06] to-transparent border border-green-500/20" data-testid="card-xmtp-security">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-green-600/20 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-green-400" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">XMTP Messaging Security</h3>
-                <p className="text-xs text-green-400/80">End-to-end encrypted with quantum resistance</p>
-              </div>
-            </div>
-            <p className="text-sm text-gray-400 mb-5 leading-relaxed">
-              All XMTP conversations — including messages to DJZS agents — are secured with the <strong className="text-white">Messaging Layer Security (MLS) protocol</strong>, providing the same level of encryption as Signal and WhatsApp but using a newer, more efficient standard.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
-                <h4 className="text-xs font-bold text-green-300 uppercase tracking-wide mb-3">Security Properties</h4>
-                <ul className="space-y-2 text-xs text-gray-500">
-                  <li className="flex items-start gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-white">End-to-end encryption</strong> — Only you and the recipient can read messages. Not even XMTP nodes can see content.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-white">Forward secrecy</strong> — If current keys are compromised, past messages remain secure. MLS uses a ratcheting mechanism that deletes old keys after use.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-white">Post-compromise security</strong> — Regular key rotation through MLS commits means even if keys are compromised, future messages are protected.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-white">Message authentication</strong> — Every message is cryptographically signed, preventing impersonation.</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
-                <h4 className="text-xs font-bold text-green-300 uppercase tracking-wide mb-3">Quantum Resistance</h4>
-                <ul className="space-y-2 text-xs text-gray-500">
-                  <li className="flex items-start gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-white">XWING KEM</strong> — A hybrid post-quantum key encapsulation mechanism that combines conventional cryptography with ML-KEM (NIST-standardized post-quantum algorithm).</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-white">HNDL protection</strong> — Defends against "Harvest Now, Decrypt Later" attacks, where adversaries store encrypted messages until quantum computers can break current encryption.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-white">Welcome message protection</strong> — Quantum-resistant encryption secures Welcome messages (the entry point containing group secrets), protecting entire conversations.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-white">Efficient by design</strong> — Quantum protection is applied at the conversation entry point (Welcome messages), so regular messages are unaffected in size and speed.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15">
-              <p className="text-xs text-gray-400 leading-relaxed">
-                According to XMTP's documentation, the protocol uses the ciphersuite <span className="font-mono text-green-300">MLS_128_HPKEX25519_CHACHA20POLY1305_SHA256_Ed25519</span> for conventional security, with XWING KEM layered on top for quantum resistance. For full details, see the{' '}
-                <a href="https://docs.xmtp.org/protocol/security" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 underline underline-offset-2" data-testid="link-xmtp-security-docs">XMTP Security Documentation</a>.
-              </p>
-            </div>
-          </div>
-        </motion.section>
-
-        <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-white mb-8">Quick Search</h2>
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
-                <FileSearch className="w-6 h-6 text-orange-400" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">Instant Entry Search</h3>
-                <p className="text-xs text-orange-400/80">Find any past entry in milliseconds</p>
-              </div>
-            </div>
-            <p className="text-gray-400 mb-5 leading-relaxed">
-              Quick Search lets you find any past journal or research entry by typing a few characters. It searches across titles, content, and tags with smart scoring — exact matches rank highest, followed by word matches and tag hits.
-            </p>
-            <ul className="space-y-3 text-sm text-gray-500">
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                <span><strong className="text-orange-300">Real-time filtering</strong> — Results update as you type with 150ms debounce for smooth performance</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                <span><strong className="text-orange-300">Highlighted matches</strong> — Search terms are highlighted in results so you can scan quickly</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                <span><strong className="text-orange-300">Click to load</strong> — Click any result to load it directly into the editor</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                <span><strong className="text-orange-300">Zone-aware</strong> — Searches within your current zone (Journal or Research)</span>
-              </li>
-            </ul>
-          </div>
-        </motion.section>
-
-        <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-white mb-8">Music Library</h2>
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-gold-500/10 to-transparent border border-yellow-500/20" style={{ background: 'linear-gradient(135deg, rgba(255,184,77,0.08), transparent)' }}>
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ background: 'rgba(255,184,77,0.2)' }}>
-                <Music className="w-6 h-6" style={{ color: '#FFB84D' }} />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">Think with Music</h3>
-                <p className="text-xs" style={{ color: 'rgba(255,184,77,0.8)' }}>Your personal soundtrack, stored locally</p>
-              </div>
-            </div>
-            <p className="text-gray-400 mb-5 leading-relaxed">
-              Upload your own music and play it while you think. Tracks are stored locally in your browser using IndexedDB — nothing leaves your device. Organize tracks into Focus, Reflection, and Creative zones to match your thinking mode.
-            </p>
-            <ul className="space-y-3 text-sm text-gray-500">
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
-                <span><strong style={{ color: '#FFB84D' }}>Drag & drop upload</strong> — Add mp3, wav, or other audio files instantly</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
-                <span><strong style={{ color: '#FFB84D' }}>Full playback controls</strong> — Play, pause, skip, seek, volume, and mute</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
-                <span><strong style={{ color: '#FFB84D' }}>Zone organization</strong> — Tag tracks as Focus, Reflection, or Creative and filter by mood</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
-                <span><strong style={{ color: '#FFB84D' }}>100% local</strong> — Audio blobs stored in IndexedDB, never uploaded anywhere</span>
-              </li>
-            </ul>
-          </div>
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
@@ -1345,23 +1051,15 @@ export default function Docs() {
             />
             <TechStackItem 
               category="AI & Agents"
-              items={["Venice AI", "OpenClaw Runner", "Brave Search API", "Web Citations", "Reasoning Models", "Structured JSON"]}
-            />
-            <TechStackItem 
-              category="Video & Audio"
-              items={["Livepeer", "MediaRecorder API", "TUS Uploads", "Music Library (IndexedDB)"]}
+              items={["Venice AI", "OpenClaw Runner", "Brave Search API", "Reasoning Models", "Structured JSON"]}
             />
             <TechStackItem 
               category="Storage & Security"
-              items={["IndexedDB (local)", "PostgreSQL (optional)", "In-memory", "Quick Search", "AES-GCM-256", "PBKDF2 (600k)", "WebCrypto API"]}
-            />
-            <TechStackItem 
-              category="Messaging & Trade"
-              items={["XMTP Agent SDK", "OpenClaw Dispatch", "Paragraph SDK", "Trade Artifacts (EIP-191)", "XMTP Send + Exec Reports", "Paper/Live Execution", "Market Alerts", "BYOK (Venice)"]}
+              items={["IndexedDB (local)", "AES-GCM-256", "PBKDF2 (600k)", "WebCrypto API", "BYOK (Venice)"]}
             />
             <TechStackItem 
               category="A2A Payments"
-              items={["x402 Protocol", "@x402/express", "USDC on Base", "SHA-256 Hashing", "Zod Validation"]}
+              items={["x402 Protocol", "@x402/express", "USDC on Base", "SHA-256 Hashing", "Three-tier pricing"]}
             />
           </div>
         </motion.section>
@@ -1371,15 +1069,15 @@ export default function Docs() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <QuickLink 
               href="/chat"
-              title="Start Journaling"
-              description="Open the app and begin writing"
+              title="Open Workspace"
+              description="Start thinking in the Workspace Zones"
               testId="link-start-journaling"
             />
             <QuickLink 
-              href="/chat?zone=research"
-              title="Research Mode"
-              description="Gather claims and track evidence"
-              testId="link-research-mode"
+              href="/chat?zone=audit"
+              title="Deploy Audit"
+              description="Deploy a payload to the Execution Zones"
+              testId="link-deploy-audit"
             />
             <QuickLink 
               href="/privacy"
