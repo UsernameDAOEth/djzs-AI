@@ -1,0 +1,431 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DJZS Autonomous Auditing System API",
+    "description": "Adversarial logic auditing API for the Agent-to-Agent (A2A) economy. DJZS pressure-tests reasoning, flags FOMO, and ensures decisions survive volatility. Three x402-gated tiers: Micro ($2.50), Founder ($5.00), Treasury ($50.00) USDC on Base Mainnet.",
+    "version": "2.0.0",
+    "contact": {
+      "name": "DJZS",
+      "url": "https://dj-z-s.replit.app",
+      "email": "hello@dj-z-s.box"
+    },
+    "license": {
+      "name": "Proprietary"
+    },
+    "x-agent-discovery": "/.well-known/agent.json",
+    "x-payment-protocol": "x402",
+    "x-payment-currency": "USDC",
+    "x-payment-chain": "base-mainnet",
+    "x-treasury-address": "0xEc551A9e5598a030B46278fEbaDF798Ea8bA05FF"
+  },
+  "servers": [
+    {
+      "url": "https://dj-z-s.replit.app",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/api/audit/micro": {
+      "post": {
+        "operationId": "microZoneAudit",
+        "summary": "Micro-Zone Audit ($2.50 USDC)",
+        "description": "High-frequency sanity checks for trading bots. Fast execution, binary risk scoring. Character limit: 1000.",
+        "tags": ["Audit"],
+        "parameters": [
+          {
+            "name": "X-402-Payment",
+            "in": "header",
+            "required": true,
+            "description": "x402 payment proof for $2.50 USDC on Base Mainnet",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MicroAuditRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Audit verdict returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditResponse"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — x402 payment proof missing or invalid"
+          },
+          "400": {
+            "description": "Invalid request — strategy_memo missing or too short"
+          }
+        }
+      }
+    },
+    "/api/audit/founder": {
+      "post": {
+        "operationId": "founderZoneAudit",
+        "summary": "Founder Zone Audit ($5.00 USDC)",
+        "description": "Strategic roadmap diligence for VC agents. Detects narrative drift and confirmation bias. Character limit: 5000.",
+        "tags": ["Audit"],
+        "parameters": [
+          {
+            "name": "X-402-Payment",
+            "in": "header",
+            "required": true,
+            "description": "x402 payment proof for $5.00 USDC on Base Mainnet",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FounderAuditRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Audit verdict returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditResponse"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — x402 payment proof missing or invalid"
+          },
+          "400": {
+            "description": "Invalid request — strategy_memo missing or too short"
+          }
+        }
+      }
+    },
+    "/api/audit/treasury": {
+      "post": {
+        "operationId": "treasuryZoneAudit",
+        "summary": "Treasury Zone Audit ($50.00 USDC)",
+        "description": "Exhaustive adversarial stress-test for DAO governance bots. Capital deployment proposal breakdown. Unlimited character length.",
+        "tags": ["Audit"],
+        "parameters": [
+          {
+            "name": "X-402-Payment",
+            "in": "header",
+            "required": true,
+            "description": "x402 payment proof for $50.00 USDC on Base Mainnet",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreasuryAuditRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Audit verdict returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditResponse"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — x402 payment proof missing or invalid"
+          },
+          "400": {
+            "description": "Invalid request — strategy_memo missing or too short"
+          }
+        }
+      }
+    },
+    "/api/audit": {
+      "post": {
+        "operationId": "legacyAudit",
+        "summary": "Legacy Audit Endpoint (alias for Micro-Zone)",
+        "description": "Backward-compatible alias that routes to the Micro-Zone audit. Use /api/audit/micro for new integrations.",
+        "tags": ["Audit"],
+        "parameters": [
+          {
+            "name": "X-402-Payment",
+            "in": "header",
+            "required": true,
+            "description": "x402 payment proof for $2.50 USDC on Base Mainnet",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MicroAuditRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Audit verdict returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditResponse"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required"
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/api/audit/schema": {
+      "get": {
+        "operationId": "getAuditSchema",
+        "summary": "Schema Discovery",
+        "description": "Returns API capabilities, tier details, pricing, and integration instructions for autonomous agents.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": {
+            "description": "Schema and capability manifest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchemaResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/agent.json": {
+      "get": {
+        "operationId": "getAgentManifest",
+        "summary": "Agent Discovery Manifest",
+        "description": "Machine-readable manifest for A2A agent discovery. Contains system identity, payment requirements, capabilities, and response schema.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": {
+            "description": "Agent manifest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MicroAuditRequest": {
+        "type": "object",
+        "required": ["strategy_memo"],
+        "properties": {
+          "strategy_memo": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 1000,
+            "description": "The thesis, strategy, or decision to be audited"
+          },
+          "audit_type": {
+            "type": "string",
+            "enum": ["treasury", "founder_drift", "strategy", "general"],
+            "default": "general",
+            "description": "Type of adversarial audit to perform"
+          }
+        }
+      },
+      "FounderAuditRequest": {
+        "type": "object",
+        "required": ["strategy_memo"],
+        "properties": {
+          "strategy_memo": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 5000,
+            "description": "The roadmap, strategy document, or founder thesis to be audited"
+          },
+          "audit_type": {
+            "type": "string",
+            "enum": ["treasury", "founder_drift", "strategy", "general"],
+            "default": "general",
+            "description": "Type of adversarial audit to perform"
+          }
+        }
+      },
+      "TreasuryAuditRequest": {
+        "type": "object",
+        "required": ["strategy_memo"],
+        "properties": {
+          "strategy_memo": {
+            "type": "string",
+            "minLength": 20,
+            "description": "The capital deployment proposal or governance decision to be audited. No character limit."
+          },
+          "audit_type": {
+            "type": "string",
+            "enum": ["treasury", "founder_drift", "strategy", "general"],
+            "default": "general",
+            "description": "Type of adversarial audit to perform"
+          }
+        }
+      },
+      "AuditResponse": {
+        "type": "object",
+        "properties": {
+          "audit_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for this audit"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of audit execution"
+          },
+          "tier": {
+            "type": "string",
+            "enum": ["micro", "founder", "treasury"],
+            "description": "Audit tier that was executed"
+          },
+          "risk_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Overall risk score (0 = low risk, 100 = critical risk)"
+          },
+          "primary_bias_detected": {
+            "type": "string",
+            "enum": ["FOMO", "Sunk_Cost", "Narrative_Reaction", "Authority_Bias", "Confirmation_Bias", "Recency_Bias", "None"],
+            "description": "The dominant cognitive bias detected in the submitted thesis"
+          },
+          "logic_flaws": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LogicFlaw"
+            },
+            "description": "Array of identified logic flaws with severity ratings"
+          },
+          "structural_recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Actionable recommendations to strengthen the thesis"
+          },
+          "cryptographic_hash": {
+            "type": "string",
+            "description": "SHA-256 hash of the audit payload for immutable record-keeping"
+          }
+        }
+      },
+      "LogicFlaw": {
+        "type": "object",
+        "properties": {
+          "flaw_type": {
+            "type": "string",
+            "description": "Category of the logic flaw"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "critical"],
+            "description": "Severity rating of the flaw"
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Detailed explanation of why this is a flaw"
+          }
+        }
+      },
+      "SchemaResponse": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "endpoint": { "type": "string" },
+                "price": { "type": "string" },
+                "description": { "type": "string" },
+                "memo_limit": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "x402": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-402-Payment",
+        "description": "x402 payment proof header. USDC micropayment on Base Mainnet. Amount varies by tier: Micro ($2.50), Founder ($5.00), Treasury ($50.00)."
+      }
+    }
+  },
+  "security": [
+    {
+      "x402": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Audit",
+      "description": "Adversarial logic audit endpoints. Each tier requires x402 payment proof."
+    },
+    {
+      "name": "Discovery",
+      "description": "Agent and schema discovery endpoints for A2A integration."
+    }
+  ]
+}
