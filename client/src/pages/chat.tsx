@@ -1235,6 +1235,7 @@ export default function Chat() {
             <button 
               onClick={() => setMobileSidebarOpen(false)}
               className="md:hidden p-2 text-gray-500 hover:text-white"
+              aria-label="Close sidebar"
               data-testid="button-close-sidebar"
             >
               <X className="w-5 h-5" />
@@ -1260,6 +1261,7 @@ export default function Chat() {
                       ? "bg-white/[0.03] text-white" 
                       : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
                   }`}
+                  aria-current={isActive ? "page" : undefined}
                   data-testid={`button-workspace-${zone.id}`}
                 >
                   <Icon className="w-4 h-4 transition-colors" style={{ color: isActive ? zone.color : undefined }} />
@@ -1289,6 +1291,7 @@ export default function Chat() {
                       ? "bg-white/[0.03] text-white" 
                       : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
                   }`}
+                  aria-current={isActive ? "page" : undefined}
                   data-testid={`button-zone-${zone.id}`}
                 >
                   <Icon className="w-4 h-4 transition-colors" style={{ color: isActive ? zone.color : undefined }} />
@@ -1296,7 +1299,7 @@ export default function Chat() {
                     <span className="text-sm font-bold tracking-tight block">{zone.name}</span>
                     <span className="text-[10px] font-mono" style={{ color: isActive ? zone.color : 'rgba(156,163,175,0.5)' }}>{zone.price} USDC</span>
                   </div>
-                  {isActive && <div className="w-1 h-1 rounded-full shadow-[0_0_8px]" style={{ background: zone.color, boxShadow: `0 0 8px ${zone.color}` }}></div>}
+                  {isActive && <div className="w-1 h-1 rounded-full" style={{ background: zone.color, boxShadow: `0 0 8px ${zone.color}` }}></div>}
                 </button>
               );
             })}
@@ -1425,6 +1428,7 @@ export default function Chat() {
               <button
                 onClick={() => setSettingsOpen(!settingsOpen)}
                 className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors border border-white/[0.03]"
+                aria-expanded={settingsOpen}
                 data-testid="button-settings"
               >
                 <Settings className="w-3 h-3" />
@@ -1715,7 +1719,7 @@ export default function Chat() {
                         data-testid={`audit-record-${record.id}`}
                       >
                         <button
-                          onClick={() => setExpandedAuditId(isExpanded ? null : record.id!)}
+                          onClick={() => setExpandedAuditId(isExpanded ? null : (record.id ?? null))}
                           className="w-full text-left p-4 sm:p-5 flex items-center gap-4 hover:bg-white/[0.02] transition-colors"
                         >
                           <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ background: tierConfig?.bgColor, border: `1px solid ${tierConfig?.borderColor}` }}>
@@ -1730,7 +1734,7 @@ export default function Chat() {
                                 {format(new Date(record.timestamp), "MMM d, yyyy HH:mm")}
                               </span>
                             </div>
-                            <p className="text-sm text-gray-400 truncate">{record.original_payload.slice(0, 80)}...</p>
+                            <p className="text-sm text-gray-400 truncate">{record.original_payload.length > 80 ? `${record.original_payload.slice(0, 80)}...` : record.original_payload}</p>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
                             <span className="text-[10px] font-black uppercase px-2 py-1 rounded" style={{ background: `${getRiskColor(record.risk_score)}15`, color: getRiskColor(record.risk_score) }}>
