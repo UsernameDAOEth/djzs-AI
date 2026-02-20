@@ -793,7 +793,7 @@ export default function Home() {
       <RevealSection>
         <section id="agent-clients" className="relative py-32 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
           <div className="max-w-5xl mx-auto px-6">
-            <div className="mb-16">
+            <div className="text-center mb-16">
               <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
                 <Cpu className="w-6 h-6" style={{ color: '#F37E20' }} />
                 <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Machine-to-Machine API</span>
