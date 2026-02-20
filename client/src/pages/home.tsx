@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { HardDrive, Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code } from "lucide-react";
+import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -899,88 +899,6 @@ export default function Home() {
               <p className="text-lg font-bold text-white mb-2">In a world of a million AI agents, trust is the bottleneck.</p>
               <p className="text-sm mb-2" style={{ color: '#7a7b90' }}>The System is the default Logic Oracle for the decentralized web. Machine-readable first, human-readable second.</p>
               <p className="text-xs" style={{ color: '#555668' }}>Coming soon: ERC-8004 on-chain reputation registry — immutable track record of successful logic audits.</p>
-            </div>
-          </div>
-        </section>
-      </RevealSection>
-
-      <RevealSection>
-        <section className="relative py-24 border-t border-white/[0.06]" style={{ background: '#0F1115' }}>
-          <div className="relative z-10 max-w-4xl mx-auto px-6">
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
-                <Shield className="w-6 h-6" style={{ color: '#F37E20' }} />
-                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#F37E20' }}>Privacy Architecture</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" data-testid="text-privacy-headline">
-                Privacy & Sovereignty Promise
-              </h2>
-              <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#9a9bb0' }}>
-                Your thoughts are not training data. Your AI is not centralized. Your system is designed to last.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 mb-10">
-              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
-                  <HardDrive className="w-7 h-7" style={{ color: '#F37E20' }} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Local-First Storage</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  All entries, research, and insights stored in your browser's IndexedDB. Works offline. No cloud database. No server-side copies.
-                </p>
-              </div>
-              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
-                  <Bot className="w-7 h-7" style={{ color: '#2E8B8B' }} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">On-Demand Execution</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  The System only sees your data when you submit an audit. Nothing is sent automatically. No background scanning. No silent learning.
-                </p>
-              </div>
-              <div className="p-8 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(255,184,77,0.08)', border: '1px solid rgba(255,184,77,0.2)' }}>
-                  <Shield className="w-7 h-7" style={{ color: '#FFB84D' }} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Decentralized Inference</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  Venice AI runs decentralized inference — no data retention, no centralized training. Brave Search adds privacy-first web search with no tracking or profiling.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 mb-10">
-              <div className="p-6 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-xmtp-e2e">
-                <div className="flex items-center gap-3 mb-3">
-                  <Lock className="w-5 h-5" style={{ color: '#2E8B8B' }} />
-                  <h4 className="text-base font-bold text-white">XMTP: E2E Encrypted Messaging</h4>
-                </div>
-                <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  Agent communication via XMTP uses MLS protocol with forward secrecy and post-compromise security. Messages are end-to-end encrypted by default.
-                </p>
-              </div>
-              <div className="p-6 rounded-lg border calm-card" style={{ background: 'rgba(255,255,255,0.015)', borderColor: 'rgba(255,255,255,0.06)' }} data-testid="card-xmtp-quantum">
-                <div className="flex items-center gap-3 mb-3">
-                  <Shield className="w-5 h-5" style={{ color: '#7B6B8D' }} />
-                  <h4 className="text-base font-bold text-white">Quantum-Resistant Key Exchange</h4>
-                </div>
-                <p className="text-sm leading-relaxed" style={{ color: '#7a7b90' }}>
-                  XMTP Welcome messages use XWING KEM — protecting against "harvest now, decrypt later" attacks. Future-proof security for your communication layer.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-8 rounded-lg border calm-card" style={{ background: 'linear-gradient(to right, rgba(243,126,32,0.04), rgba(46,139,139,0.04))', borderColor: 'rgba(255,255,255,0.08)' }}>
-              <p className="text-center text-lg leading-relaxed" style={{ color: '#b0b1c0' }}>
-                When you request AI insights, only the text you select is sent to privacy-focused providers via HTTPS. The response is saved locally on your device. We do not permanently store your data on any server.
-              </p>
-              <p className="text-center text-sm mt-4" style={{ color: '#555668' }}>
-                Honest disclosure: Venice AI calls use HTTPS, not E2E encryption. XMTP messaging is E2E encrypted.
-              </p>
-              <p className="text-center text-[10px] mt-2 uppercase tracking-wider" style={{ color: '#444556' }}>
-                Planned: encryption-at-rest for local storage · E2E encrypted AI requests
-              </p>
             </div>
           </div>
         </section>
