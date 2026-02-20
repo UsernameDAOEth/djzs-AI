@@ -63,17 +63,41 @@
     }
   ],
   "schema_discovery": "/api/audit/schema",
+  "logic_failure_taxonomy": {
+    "DJZS-S01": "CIRCULAR_LOGIC — Conclusion used as premise. Self-referencing loop.",
+    "DJZS-S02": "MISSING_FALSIFIABILITY — No failure condition. Unfalsifiable thesis.",
+    "DJZS-E01": "CONFIRMATION_TUNNEL — Asymmetric evidence. Only confirming data cited.",
+    "DJZS-E02": "AUTHORITY_SUBSTITUTION — Depends on reputation, not structural evidence.",
+    "DJZS-I01": "MISALIGNED_INCENTIVE — Proposer benefits disproportionately.",
+    "DJZS-I02": "NARRATIVE_DEPENDENCY — Strategy survives only if narrative holds. No hedge.",
+    "DJZS-X01": "UNHEDGED_EXECUTION — No fallback. Single point of failure."
+  },
   "response_schema": {
     "type": "object",
+    "description": "Proof of Logic Certificate — standardized audit response. Binary PASS/FAIL verdict with deterministic failure codes for autonomous agent error handling.",
     "properties": {
       "audit_id": { "type": "string", "format": "uuid" },
       "timestamp": { "type": "string", "format": "date-time" },
       "tier": { "type": "string", "enum": ["micro", "founder", "treasury"] },
-      "risk_score": { "type": "number", "minimum": 0, "maximum": 100 },
+      "risk_score": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Scores above 60 trigger FAIL. Above 80 = narrative drift or slippage blindness." },
+      "verdict": { "type": "string", "enum": ["PASS", "FAIL"], "description": "Binary go/no-go. CRITICAL/HIGH flags = automatic FAIL." },
       "primary_bias_detected": { "type": "string", "enum": ["FOMO", "Sunk_Cost", "Narrative_Reaction", "Authority_Bias", "Confirmation_Bias", "Recency_Bias", "None"] },
+      "flags": {
+        "type": "array",
+        "description": "Machine-readable logic rupture codes. CRITICAL/HIGH = abort execution.",
+        "items": {
+          "type": "object",
+          "required": ["code", "severity", "message"],
+          "properties": {
+            "code": { "type": "string", "enum": ["DJZS-S01", "DJZS-S02", "DJZS-E01", "DJZS-E02", "DJZS-I01", "DJZS-I02", "DJZS-X01"] },
+            "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+            "message": { "type": "string" }
+          }
+        }
+      },
       "logic_flaws": { "type": "array", "items": { "type": "object", "properties": { "flaw_type": { "type": "string" }, "severity": { "type": "string", "enum": ["low", "medium", "critical"] }, "explanation": { "type": "string" } } } },
       "structural_recommendations": { "type": "array", "items": { "type": "string" } },
-      "cryptographic_hash": { "type": "string" }
+      "cryptographic_hash": { "type": "string", "description": "SHA-256 commitment to reasoning trace. Required for downstream smart contract execution." }
     }
   }
 }

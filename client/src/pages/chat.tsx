@@ -905,7 +905,9 @@ export default function Chat() {
         original_payload: auditPayload,
         audit_type: 'general',
         risk_score: data.risk_score,
+        verdict: (data as any).verdict || (data.risk_score > 60 ? 'FAIL' : 'PASS'),
         primary_bias_detected: data.primary_bias_detected as any,
+        flags: (data as any).flags || [],
         logic_flaws: data.logic_flaws,
         structural_recommendations: data.structural_recommendations,
         cryptographic_hash: data.cryptographic_hash,
@@ -1749,7 +1751,16 @@ export default function Chat() {
                             </div>
                             <p className="text-sm text-gray-400 truncate">{record.original_payload.length > 80 ? `${record.original_payload.slice(0, 80)}...` : record.original_payload}</p>
                           </div>
-                          <div className="flex items-center gap-3 shrink-0">
+                          <div className="flex items-center gap-2 shrink-0">
+                            {record.verdict && (
+                              <span className="text-[10px] font-black uppercase px-2 py-1 rounded" style={{
+                                background: record.verdict === 'PASS' ? 'rgba(52,211,153,0.15)' : 'rgba(239,68,68,0.15)',
+                                color: record.verdict === 'PASS' ? '#34d399' : '#ef4444',
+                                border: `1px solid ${record.verdict === 'PASS' ? 'rgba(52,211,153,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                              }}>
+                                {record.verdict}
+                              </span>
+                            )}
                             <span className="text-[10px] font-black uppercase px-2 py-1 rounded" style={{ background: `${getRiskColor(record.risk_score)}15`, color: getRiskColor(record.risk_score) }}>
                               {getRiskLabel(record.risk_score)}
                             </span>
@@ -1764,6 +1775,25 @@ export default function Chat() {
                                 {record.primary_bias_detected.replace(/_/g, ' ')}
                               </span>
                             </div>
+                            {record.flags && record.flags.length > 0 && (
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Logic Failure Codes ({record.flags.length})</p>
+                                <div className="space-y-2">
+                                  {record.flags.map((flag, idx) => {
+                                    const sevColor = flag.severity === 'CRITICAL' ? '#ef4444' : flag.severity === 'HIGH' ? '#f97316' : flag.severity === 'MEDIUM' ? '#f59e0b' : '#6b7280';
+                                    return (
+                                      <div key={idx} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${sevColor}20` }}>
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded" style={{ background: `${sevColor}15`, color: sevColor }}>{flag.code}</span>
+                                          <span className="text-[9px] font-black uppercase tracking-[0.15em]" style={{ color: sevColor }}>{flag.severity}</span>
+                                        </div>
+                                        <p className="text-xs text-gray-400 leading-relaxed">{flag.message}</p>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
                             {record.logic_flaws.length > 0 && (
                               <div>
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Logic Flaws ({record.logic_flaws.length})</p>
@@ -2089,9 +2119,24 @@ export default function Chat() {
                           <span className="text-2xl font-black font-mono" style={{ color: getRiskColor(auditResult.risk_score) }}>{auditResult.risk_score}</span>
                         </div>
                         <div>
-                          <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded" style={{ background: `${getRiskColor(auditResult.risk_score)}15`, color: getRiskColor(auditResult.risk_score) }}>
-                            {getRiskLabel(auditResult.risk_score)} RISK
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded" style={{ background: `${getRiskColor(auditResult.risk_score)}15`, color: getRiskColor(auditResult.risk_score) }}>
+                              {getRiskLabel(auditResult.risk_score)} RISK
+                            </span>
+                            {(auditResult as any).verdict && (
+                              <span
+                                className="text-[10px] font-black uppercase tracking-[0.2em] px-2.5 py-0.5 rounded"
+                                style={{
+                                  background: (auditResult as any).verdict === 'PASS' ? 'rgba(52,211,153,0.15)' : 'rgba(239,68,68,0.15)',
+                                  color: (auditResult as any).verdict === 'PASS' ? '#34d399' : '#ef4444',
+                                  border: `1px solid ${(auditResult as any).verdict === 'PASS' ? 'rgba(52,211,153,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                                }}
+                                data-testid="badge-verdict"
+                              >
+                                {(auditResult as any).verdict}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-gray-500 mt-1 font-mono">{auditResult.audit_id}</p>
                         </div>
                       </div>
@@ -2199,6 +2244,26 @@ export default function Chat() {
                             </div>
                           </div>
                         )}
+                      </div>
+                    )}
+
+                    {(auditResult as any).flags && (auditResult as any).flags.length > 0 && (
+                      <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }} data-testid="panel-logic-flags">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">Logic Failure Codes ({(auditResult as any).flags.length})</p>
+                        <div className="space-y-2">
+                          {(auditResult as any).flags.map((flag: any, idx: number) => {
+                            const severityColor = flag.severity === 'CRITICAL' ? '#ef4444' : flag.severity === 'HIGH' ? '#f97316' : flag.severity === 'MEDIUM' ? '#f59e0b' : '#6b7280';
+                            return (
+                              <div key={idx} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${severityColor}20` }} data-testid={`flag-${flag.code}`}>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded" style={{ background: `${severityColor}15`, color: severityColor }}>{flag.code}</span>
+                                  <span className="text-[9px] font-black uppercase tracking-[0.15em] px-1.5 py-0.5 rounded" style={{ background: `${severityColor}10`, color: severityColor }}>{flag.severity}</span>
+                                </div>
+                                <p className="text-xs text-gray-400 leading-relaxed mt-1">{flag.message}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
 

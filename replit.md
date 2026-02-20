@@ -63,6 +63,7 @@ Preferred communication style: Simple, everyday language.
 - XMTP messaging is End-to-End Encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## Recent Changes
+- **2026-02-20**: Implemented Proof of Logic Certificate with DJZS-LF taxonomy — deterministic Logic Failure Codes (S01/S02 Structural, E01/E02 Epistemic, I01/I02 Incentive, X01 Execution) and binary PASS/FAIL verdict. Updated Zod schemas, AI agent prompt, openapi.json, agent.json, frontend results display, Cryptographic Ledger, and Dexie vault schema (v10). CRITICAL/HIGH flags auto-trigger FAIL verdict.
 - **2026-02-20**: Built Founder Intelligence engine — 5 pattern analyzers (Bias Pattern Memory, Narrative Drift Detection, Assumption Kill Switch, Volatility Simulation, Emotional Spike Flag) that run pre-flight vault scans before each audit deployment. Intelligence context is injected into the AI agent prompt and displayed as a collapsible Intelligence Brief panel alongside audit results.
 - **2026-02-20**: Removed Privacy Architecture section from landing page (content lives in docs).
 - **2026-02-20**: Created OpenAPI 3.1.0 specification (`client/public/openapi.json`) documenting all three audit tiers with x402 payment headers and full request/response schemas.

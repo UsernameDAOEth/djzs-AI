@@ -1,4 +1,4 @@
-import { djzsLogicAuditSchema, type DJZSLogicAudit, type AuditRequest, type AuditTier } from "@shared/audit-schema";
+import { djzsLogicAuditSchema, type DJZSLogicAudit, type AuditRequest, type AuditTier, type Verdict, LOGIC_FAILURE_TAXONOMY } from "@shared/audit-schema";
 import { DJZS_CORE_IDENTITY } from "./ai-identity";
 import { createHash, randomUUID } from "crypto";
 
@@ -34,12 +34,29 @@ MAX FLAWS TO REPORT: unlimited`,
 const AUDIT_JSON_SCHEMA = {
   type: "object" as const,
   additionalProperties: false,
-  required: ["risk_score", "primary_bias_detected", "logic_flaws", "structural_recommendations"],
+  required: ["risk_score", "verdict", "primary_bias_detected", "flags", "logic_flaws", "structural_recommendations"],
   properties: {
     risk_score: { type: "number", minimum: 0, maximum: 100 },
+    verdict: {
+      type: "string",
+      enum: ["PASS", "FAIL"],
+    },
     primary_bias_detected: {
       type: "string",
       enum: ["FOMO", "Sunk_Cost", "Narrative_Reaction", "Authority_Bias", "Confirmation_Bias", "Recency_Bias", "None"],
+    },
+    flags: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["code", "severity", "message"],
+        properties: {
+          code: { type: "string", enum: ["DJZS-S01", "DJZS-S02", "DJZS-E01", "DJZS-E02", "DJZS-I01", "DJZS-I02", "DJZS-X01"] },
+          severity: { type: "string", enum: ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+          message: { type: "string" },
+        },
+      },
     },
     logic_flaws: {
       type: "array",
@@ -87,6 +104,23 @@ ${typeInstructions[auditType] || typeInstructions.general}
 
 Your job is to be adversarial. Try to kill the thesis. Find where the logic breaks. Identify what bias is driving the decision. Score the risk ruthlessly — 0 means perfect logic with no detectable flaws, 100 means the reasoning is critically compromised.
 
+VERDICT RULES:
+- PASS: risk_score <= 60 AND no CRITICAL or HIGH severity flags. The thesis survives adversarial pressure.
+- FAIL: risk_score > 60 OR any CRITICAL/HIGH flag detected. The thesis has structural ruptures that would collapse under real-world stress.
+
+LOGIC FAILURE TAXONOMY (DJZS-LF):
+You MUST classify every detected reasoning rupture using these deterministic codes:
+- DJZS-S01 (CIRCULAR_LOGIC): Conclusion used as premise. Self-referencing reasoning without external validation.
+- DJZS-S02 (MISSING_FALSIFIABILITY): No failure condition defined. Thesis cannot be disproven.
+- DJZS-E01 (CONFIRMATION_TUNNEL): Asymmetric evidence selection. Only confirming data cited.
+- DJZS-E02 (AUTHORITY_SUBSTITUTION): Argument depends on reputation/authority rather than structural evidence.
+- DJZS-I01 (MISALIGNED_INCENTIVE): Proposed action benefits proposer disproportionately vs stated stakeholders.
+- DJZS-I02 (NARRATIVE_DEPENDENCY): Strategy survival depends on a specific narrative remaining true. No hedge.
+- DJZS-X01 (UNHEDGED_EXECUTION): No fallback plan. Single point of failure with no abort conditions.
+
+Each flag MUST include: code (from above), severity (LOW/MEDIUM/HIGH/CRITICAL), and a message explaining the specific rupture.
+CRITICAL/HIGH flags = automatic FAIL verdict. Agents receiving these codes should abort execution.
+
 Rules:
 - No first-person language ("I think/notice/see")
 - No validation of weak reasoning
@@ -94,11 +128,14 @@ Rules:
 - Be precise about what specific bias is present
 - Every flaw must include why it fails under stress
 - Recommendations must be concrete and actionable, not generic advice
+- The flags array is the machine-readable output. logic_flaws is the human-readable narrative.
 
 IMPORTANT: Respond with valid JSON only. No markdown, no explanation outside the JSON structure.
 {
   "risk_score": <0-100>,
+  "verdict": "PASS|FAIL",
   "primary_bias_detected": "<FOMO|Sunk_Cost|Narrative_Reaction|Authority_Bias|Confirmation_Bias|Recency_Bias|None>",
+  "flags": [{"code": "DJZS-S01|S02|E01|E02|I01|I02|X01", "severity": "LOW|MEDIUM|HIGH|CRITICAL", "message": "Specific description of the logic rupture"}],
   "logic_flaws": [{"flaw_type": "...", "severity": "low|medium|critical", "explanation": "..."}],
   "structural_recommendations": ["...", "..."]
 }`;
@@ -167,12 +204,24 @@ export async function runLogicAuditAgent(
   );
   const parsed = JSON.parse(sanitizedContent);
 
+  const flags = (parsed.flags || []).filter((f: any) =>
+    f.code && f.severity && ["DJZS-S01","DJZS-S02","DJZS-E01","DJZS-E02","DJZS-I01","DJZS-I02","DJZS-X01"].includes(f.code) &&
+    ["LOW","MEDIUM","HIGH","CRITICAL"].includes(f.severity)
+  );
+
+  const hasHighOrCritical = flags.some((f: any) => f.severity === "HIGH" || f.severity === "CRITICAL");
+  const computedVerdict: Verdict = (parsed.risk_score > 60 || hasHighOrCritical) ? "FAIL" : "PASS";
+  const verdict: Verdict = parsed.verdict === "PASS" || parsed.verdict === "FAIL" ? parsed.verdict : computedVerdict;
+  const finalVerdict: Verdict = hasHighOrCritical ? "FAIL" : verdict;
+
   const fullAudit: DJZSLogicAudit = {
     audit_id: auditId,
     timestamp,
     tier,
     risk_score: parsed.risk_score,
+    verdict: finalVerdict,
     primary_bias_detected: parsed.primary_bias_detected,
+    flags,
     logic_flaws: parsed.logic_flaws || [],
     structural_recommendations: parsed.structural_recommendations || [],
     cryptographic_hash: inputHash,

@@ -140,6 +140,16 @@ export interface DecisionLog {
 export type AuditZoneTier = 'micro' | 'founder' | 'treasury';
 export type BiasTy = 'FOMO' | 'Sunk_Cost' | 'Narrative_Reaction' | 'Authority_Bias' | 'Confirmation_Bias' | 'Recency_Bias' | 'None';
 
+export type AuditVerdict = 'PASS' | 'FAIL';
+export type AuditFlagSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type LogicFailureCode = 'DJZS-S01' | 'DJZS-S02' | 'DJZS-E01' | 'DJZS-E02' | 'DJZS-I01' | 'DJZS-I02' | 'DJZS-X01';
+
+export interface AuditFlag {
+  code: LogicFailureCode;
+  severity: AuditFlagSeverity;
+  message: string;
+}
+
 export interface AuditRecord {
   id?: number;
   audit_id: string;
@@ -148,7 +158,9 @@ export interface AuditRecord {
   original_payload: string;
   audit_type: string;
   risk_score: number;
+  verdict: AuditVerdict;
   primary_bias_detected: BiasTy;
+  flags: AuditFlag[];
   logic_flaws: Array<{ flaw_type: string; severity: string; explanation: string }>;
   structural_recommendations: string[];
   cryptographic_hash: string;
@@ -291,6 +303,31 @@ class VaultDatabase extends Dexie {
       decisionLogs: '++id, status, stakes, outcome, createdAt, updatedAt',
       contentPipeline: '++id, status, format, createdAt, updatedAt',
       auditRecords: '++id, &audit_id, zone_tier, risk_score, timestamp, cryptographic_hash',
+    });
+
+    this.version(10).stores({
+      entries: '++id, type, createdAt, updatedAt, videoAssetId',
+      insights: '++id, entryId, type, createdAt',
+      memoryPins: '++id, kind, content, isActive, createdAt',
+      tradeRecords: '++id, action, status, createdAt',
+      researchDossiers: '++id, name, isArchived, createdAt, updatedAt',
+      researchQueries: '++id, dossierId, createdAt',
+      researchClaims: '++id, dossierId, queryId, status, trustLevel, createdAt',
+      musicTracks: '++id, name, zone, uploadedAt',
+      tradeArtifacts: '++id, &hash, createdAt, thesisAsset, thesisSide, thesisTimeframe, *linkedJournalEntryIds, *linkedResearchDossierIds',
+      marketAlerts: '++id, asset, condition, isActive, createdAt',
+      decisionLogs: '++id, status, stakes, outcome, createdAt, updatedAt',
+      contentPipeline: '++id, status, format, createdAt, updatedAt',
+      auditRecords: '++id, &audit_id, zone_tier, verdict, risk_score, timestamp, cryptographic_hash',
+    }).upgrade(tx => {
+      return tx.table('auditRecords').toCollection().modify(record => {
+        if (!record.verdict) {
+          record.verdict = record.risk_score > 60 ? 'FAIL' : 'PASS';
+        }
+        if (!record.flags) {
+          record.flags = [];
+        }
+      });
     });
   }
 }

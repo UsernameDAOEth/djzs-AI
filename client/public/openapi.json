@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "DJZS Autonomous Auditing System API",
-    "description": "Adversarial logic auditing API for the Agent-to-Agent (A2A) economy. DJZS pressure-tests reasoning, flags FOMO, and ensures decisions survive volatility. Three x402-gated tiers: Micro ($2.50), Founder ($5.00), Treasury ($50.00) USDC on Base Mainnet.",
+    "description": "Deterministic verification primitive for autonomous agents. Mandates an 'Audit-Before-Act' loop gated by x402 payment middleware (USDC on Base Mainnet). Returns a Proof of Logic Certificate with binary PASS/FAIL verdict and deterministic DJZS-LF failure codes (S=Structural, E=Epistemic, I=Incentive, X=Execution). Three tiers: Micro ($2.50), Founder ($5.00), Treasury ($50.00).",
     "version": "2.0.0",
     "contact": {
       "name": "DJZS",
@@ -379,22 +379,32 @@
             "description": "Audit tier that was executed"
           },
           "risk_score": {
-            "type": "number",
+            "type": "integer",
             "minimum": 0,
             "maximum": 100,
-            "description": "Overall risk score (0 = low risk, 100 = critical risk)"
+            "description": "Aggregate risk calculation. Scores above 60 trigger FAIL verdict. Scores above 80 indicate high probability of narrative drift or slippage blindness."
+          },
+          "verdict": {
+            "$ref": "#/components/schemas/Verdict"
           },
           "primary_bias_detected": {
             "type": "string",
             "enum": ["FOMO", "Sunk_Cost", "Narrative_Reaction", "Authority_Bias", "Confirmation_Bias", "Recency_Bias", "None"],
             "description": "The dominant cognitive bias detected in the submitted thesis"
           },
+          "flags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFlag"
+            },
+            "description": "Array of specific logic ruptures detected during the adversarial audit. Machine-readable output for deterministic agent error handling."
+          },
           "logic_flaws": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/LogicFlaw"
             },
-            "description": "Array of identified logic flaws with severity ratings"
+            "description": "Human-readable narrative of identified logic flaws with severity ratings"
           },
           "structural_recommendations": {
             "type": "array",
@@ -405,7 +415,44 @@
           },
           "cryptographic_hash": {
             "type": "string",
-            "description": "SHA-256 hash of the audit payload for immutable record-keeping"
+            "description": "Cryptographic commitment to the reasoning trace. SHA-256 hash of the audit payload for immutable record-keeping. Required for downstream smart contract execution."
+          }
+        }
+      },
+      "Verdict": {
+        "type": "string",
+        "enum": ["PASS", "FAIL"],
+        "description": "Binary go/no-go signal for capital or infrastructure deployment. PASS = risk_score <= 60 with no CRITICAL/HIGH flags. FAIL = risk_score > 60 OR any CRITICAL/HIGH flag detected."
+      },
+      "LogicFailureCode": {
+        "type": "string",
+        "enum": [
+          "DJZS-S01",
+          "DJZS-S02",
+          "DJZS-E01",
+          "DJZS-E02",
+          "DJZS-I01",
+          "DJZS-I02",
+          "DJZS-X01"
+        ],
+        "description": "Deterministic taxonomy of reasoning ruptures. S=Structural (circular logic, unfalsifiability), E=Epistemic (confirmation tunnel, authority substitution), I=Incentive (misaligned incentives, narrative dependency), X=Execution (unhedged execution, no abort conditions)."
+      },
+      "AuditFlag": {
+        "type": "object",
+        "required": ["code", "severity", "message"],
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/LogicFailureCode"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "description": "Severity level. CRITICAL or HIGH should trigger an immediate execution abort in the agent's logic loop."
+          },
+          "message": {
+            "type": "string",
+            "description": "Specific description of the logic rupture detected",
+            "example": "CIRCULAR_LOGIC detected: Goal B is used as a premise to justify Action A."
           }
         }
       },
