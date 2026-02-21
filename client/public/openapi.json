@@ -1,17 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "DJZS Autonomous Auditing System API",
-    "description": "Deterministic verification primitive for autonomous agents. Mandates an 'Audit-Before-Act' loop gated by x402 payment middleware (USDC on Base Mainnet). Returns a Proof of Logic Certificate with binary PASS/FAIL verdict and deterministic DJZS-LF failure codes (S=Structural, E=Epistemic, I=Incentive, X=Execution). Three tiers: Micro ($2.50), Founder ($5.00), Treasury ($50.00).",
-    "version": "2.0.0",
-    "contact": {
-      "name": "DJZS",
-      "url": "https://dj-z-s.replit.app",
-      "email": "hello@dj-z-s.box"
-    },
-    "license": {
-      "name": "Proprietary"
-    },
+    "title": "DJZS Logic-as-a-Service Protocol",
+    "version": "1.0.0",
+    "description": "Adversarial logic verification for autonomous systems. Returns deterministic Proof of Logic Certificates with DJZS-LF failure codes for auto-abort sequences. Three tiers: Micro ($2.50), Founder ($5.00), Treasury ($50.00) USDC on Base Mainnet.",
     "x-agent-discovery": "/.well-known/agent.json",
     "x-payment-protocol": "x402",
     "x-payment-currency": "USDC",
@@ -20,26 +12,23 @@
   },
   "servers": [
     {
-      "url": "https://dj-z-s.replit.app",
-      "description": "Production"
+      "url": "https://djzs.ai",
+      "description": "Mainnet Node"
     }
   ],
   "paths": {
     "/api/audit/micro": {
       "post": {
-        "operationId": "microZoneAudit",
-        "summary": "Micro-Zone Audit ($2.50 USDC)",
+        "operationId": "verifyLogicTrace",
+        "summary": "Micro-Zone ($2.50) Logic Audit",
         "description": "High-frequency sanity checks for trading bots. Fast execution, binary risk scoring. Character limit: 1000.",
-        "tags": ["Audit"],
         "parameters": [
           {
-            "name": "X-402-Payment",
+            "name": "x-payment-proof",
             "in": "header",
             "required": true,
-            "description": "x402 payment proof for $2.50 USDC on Base Mainnet",
-            "schema": {
-              "type": "string"
-            }
+            "description": "Base Mainnet TX hash for $2.50 USDC",
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -47,18 +36,32 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MicroAuditRequest"
+                "type": "object",
+                "required": ["strategy_memo"],
+                "properties": {
+                  "strategy_memo": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 1000,
+                    "description": "The reasoning trace or strategy memo to audit"
+                  },
+                  "audit_type": {
+                    "type": "string",
+                    "enum": ["treasury", "founder_drift", "strategy", "general"],
+                    "default": "general"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Audit verdict returned successfully",
+            "description": "Proof of Logic Certificate",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuditResponse"
+                  "$ref": "#/components/schemas/ProofOfLogic"
                 }
               }
             }
@@ -74,19 +77,16 @@
     },
     "/api/audit/founder": {
       "post": {
-        "operationId": "founderZoneAudit",
-        "summary": "Founder Zone Audit ($5.00 USDC)",
+        "operationId": "verifyFounderLogic",
+        "summary": "Founder Zone ($5.00) Logic Audit",
         "description": "Strategic roadmap diligence for VC agents. Detects narrative drift and confirmation bias. Character limit: 5000.",
-        "tags": ["Audit"],
         "parameters": [
           {
-            "name": "X-402-Payment",
+            "name": "x-payment-proof",
             "in": "header",
             "required": true,
-            "description": "x402 payment proof for $5.00 USDC on Base Mainnet",
-            "schema": {
-              "type": "string"
-            }
+            "description": "Base Mainnet TX hash for $5.00 USDC",
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -94,18 +94,32 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FounderAuditRequest"
+                "type": "object",
+                "required": ["strategy_memo"],
+                "properties": {
+                  "strategy_memo": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 5000,
+                    "description": "The reasoning trace or strategy memo to audit"
+                  },
+                  "audit_type": {
+                    "type": "string",
+                    "enum": ["treasury", "founder_drift", "strategy", "general"],
+                    "default": "general"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Audit verdict returned successfully",
+            "description": "Proof of Logic Certificate",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuditResponse"
+                  "$ref": "#/components/schemas/ProofOfLogic"
                 }
               }
             }
@@ -121,19 +135,16 @@
     },
     "/api/audit/treasury": {
       "post": {
-        "operationId": "treasuryZoneAudit",
-        "summary": "Treasury Zone Audit ($50.00 USDC)",
-        "description": "Exhaustive adversarial stress-test for DAO governance bots. Capital deployment proposal breakdown. Unlimited character length.",
-        "tags": ["Audit"],
+        "operationId": "verifyTreasuryLogic",
+        "summary": "Treasury Zone ($50.00) Logic Audit",
+        "description": "Exhaustive adversarial stress-test for capital deployment proposals. Unlimited character length.",
         "parameters": [
           {
-            "name": "X-402-Payment",
+            "name": "x-payment-proof",
             "in": "header",
             "required": true,
-            "description": "x402 payment proof for $50.00 USDC on Base Mainnet",
-            "schema": {
-              "type": "string"
-            }
+            "description": "Base Mainnet TX hash for $50.00 USDC",
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -141,18 +152,31 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TreasuryAuditRequest"
+                "type": "object",
+                "required": ["strategy_memo"],
+                "properties": {
+                  "strategy_memo": {
+                    "type": "string",
+                    "minLength": 20,
+                    "description": "The reasoning trace or strategy memo to audit"
+                  },
+                  "audit_type": {
+                    "type": "string",
+                    "enum": ["treasury", "founder_drift", "strategy", "general"],
+                    "default": "general"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Audit verdict returned successfully",
+            "description": "Proof of Logic Certificate",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuditResponse"
+                  "$ref": "#/components/schemas/ProofOfLogic"
                 }
               }
             }
@@ -165,502 +189,98 @@
           }
         }
       }
-    },
-    "/api/audit": {
-      "post": {
-        "operationId": "legacyAudit",
-        "summary": "Legacy Audit Endpoint (alias for Micro-Zone)",
-        "description": "Backward-compatible alias that routes to the Micro-Zone audit. Use /api/audit/micro for new integrations.",
-        "tags": ["Audit"],
-        "parameters": [
-          {
-            "name": "X-402-Payment",
-            "in": "header",
-            "required": true,
-            "description": "x402 payment proof for $2.50 USDC on Base Mainnet",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MicroAuditRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Audit verdict returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuditResponse"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "Payment required"
-          },
-          "400": {
-            "description": "Invalid request"
-          }
-        }
-      }
-    },
-    "/api/audit/schema": {
-      "get": {
-        "operationId": "getAuditSchema",
-        "summary": "Schema Discovery",
-        "description": "Returns API capabilities, tier details, pricing, and integration instructions for autonomous agents.",
-        "tags": ["Discovery"],
-        "responses": {
-          "200": {
-            "description": "Schema and capability manifest",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SchemaResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/intelligence/brief": {
-      "post": {
-        "operationId": "generateIntelligenceBrief",
-        "summary": "Founder Intelligence Brief (Free)",
-        "description": "Pre-flight intelligence analysis for AI agents. Submit your current strategy memo along with optional historical data (past audits, entries, memory pins, decisions) to receive a structured brief with 5 adversarial signals. Returns an intelligence_context string that can be injected into audit requests for deeper, context-aware analysis. No x402 payment required.",
-        "tags": ["Intelligence"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IntelligenceRequest"
-              },
-              "example": {
-                "current_memo": "We should raise a $5M Series A and expand into the EU market. Our MRR is $50k and growing 20% month-over-month. The team is ready to scale.",
-                "history": {
-                  "audits": [
-                    { "risk_score": 65, "primary_bias_detected": "Confirmation_Bias", "timestamp": "2026-01-15T10:00:00Z" },
-                    { "risk_score": 45, "primary_bias_detected": "None", "timestamp": "2026-02-01T14:30:00Z" }
-                  ],
-                  "entries": [
-                    { "text": "Need to focus on reducing burn rate before expanding", "created_at": "2026-01-10T09:00:00Z" }
-                  ],
-                  "memory_pins": [
-                    { "content": "Never expand without 18 months runway", "is_active": true }
-                  ],
-                  "decisions": [
-                    { "context": "EU expansion timing", "reasoning": "Wait until Series A closes before committing resources" }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Structured intelligence brief with 5 signals and injectable context string",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IntelligenceBriefResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request — check field validation errors"
-          }
-        }
-      }
-    },
-    "/.well-known/agent.json": {
-      "get": {
-        "operationId": "getAgentManifest",
-        "summary": "Agent Discovery Manifest",
-        "description": "Machine-readable manifest for A2A agent discovery. Contains system identity, payment requirements, capabilities, and response schema.",
-        "tags": ["Discovery"],
-        "responses": {
-          "200": {
-            "description": "Agent manifest",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
     "schemas": {
-      "MicroAuditRequest": {
+      "ProofOfLogic": {
         "type": "object",
-        "required": ["strategy_memo"],
         "properties": {
-          "strategy_memo": {
+          "system_id": {
             "type": "string",
-            "minLength": 20,
-            "maxLength": 1000,
-            "description": "The thesis, strategy, or decision to be audited"
+            "description": "Unique system identifier for this DJZS node"
           },
-          "audit_type": {
-            "type": "string",
-            "enum": ["treasury", "founder_drift", "strategy", "general"],
-            "default": "general",
-            "description": "Type of adversarial audit to perform"
-          }
-        }
-      },
-      "FounderAuditRequest": {
-        "type": "object",
-        "required": ["strategy_memo"],
-        "properties": {
-          "strategy_memo": {
-            "type": "string",
-            "minLength": 20,
-            "maxLength": 5000,
-            "description": "The roadmap, strategy document, or founder thesis to be audited"
-          },
-          "audit_type": {
-            "type": "string",
-            "enum": ["treasury", "founder_drift", "strategy", "general"],
-            "default": "general",
-            "description": "Type of adversarial audit to perform"
-          }
-        }
-      },
-      "TreasuryAuditRequest": {
-        "type": "object",
-        "required": ["strategy_memo"],
-        "properties": {
-          "strategy_memo": {
-            "type": "string",
-            "minLength": 20,
-            "description": "The capital deployment proposal or governance decision to be audited. No character limit."
-          },
-          "audit_type": {
-            "type": "string",
-            "enum": ["treasury", "founder_drift", "strategy", "general"],
-            "default": "general",
-            "description": "Type of adversarial audit to perform"
-          }
-        }
-      },
-      "AuditResponse": {
-        "type": "object",
-        "properties": {
           "audit_id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier for this audit"
+            "format": "uuid"
           },
           "timestamp": {
             "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 timestamp of audit execution"
+            "format": "date-time"
           },
           "tier": {
             "type": "string",
-            "enum": ["micro", "founder", "treasury"],
-            "description": "Audit tier that was executed"
+            "enum": ["micro", "founder", "treasury"]
+          },
+          "verdict": {
+            "type": "string",
+            "enum": ["PASS", "FAIL"],
+            "description": "Binary go/no-go. CRITICAL/HIGH flags = automatic FAIL. risk_score > 60 = automatic FAIL."
           },
           "risk_score": {
             "type": "integer",
             "minimum": 0,
             "maximum": 100,
-            "description": "Aggregate risk calculation. Scores above 60 trigger FAIL verdict. Scores above 80 indicate high probability of narrative drift or slippage blindness."
-          },
-          "verdict": {
-            "$ref": "#/components/schemas/Verdict"
+            "description": "Scores above 60 trigger FAIL. Above 80 = narrative drift or slippage blindness."
           },
           "primary_bias_detected": {
             "type": "string",
-            "enum": ["FOMO", "Sunk_Cost", "Narrative_Reaction", "Authority_Bias", "Confirmation_Bias", "Recency_Bias", "None"],
-            "description": "The dominant cognitive bias detected in the submitted thesis"
+            "enum": ["FOMO", "Sunk_Cost", "Narrative_Reaction", "Authority_Bias", "Confirmation_Bias", "Recency_Bias", "None"]
           },
           "flags": {
             "type": "array",
+            "description": "Machine-readable logic rupture codes. CRITICAL/HIGH = abort execution.",
             "items": {
-              "$ref": "#/components/schemas/AuditFlag"
-            },
-            "description": "Array of specific logic ruptures detected during the adversarial audit. Machine-readable output for deterministic agent error handling."
+              "type": "object",
+              "required": ["code", "severity", "description"],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": ["DJZS-S01", "DJZS-S02", "DJZS-E01", "DJZS-E02", "DJZS-I01", "DJZS-I02", "DJZS-X01"]
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "logic_flaws": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/LogicFlaw"
-            },
-            "description": "Human-readable narrative of identified logic flaws with severity ratings"
+              "type": "object",
+              "properties": {
+                "flaw_type": { "type": "string" },
+                "severity": { "type": "string", "enum": ["low", "medium", "critical"] },
+                "explanation": { "type": "string" }
+              }
+            }
           },
           "structural_recommendations": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Actionable recommendations to strengthen the thesis"
+            "items": { "type": "string" }
           },
-          "cryptographic_hash": {
-            "type": "string",
-            "description": "Cryptographic commitment to the reasoning trace. SHA-256 hash of the audit payload for immutable record-keeping. Required for downstream smart contract execution."
-          }
-        }
-      },
-      "Verdict": {
-        "type": "string",
-        "enum": ["PASS", "FAIL"],
-        "description": "Binary go/no-go signal for capital or infrastructure deployment. PASS = risk_score <= 60 with no CRITICAL/HIGH flags. FAIL = risk_score > 60 OR any CRITICAL/HIGH flag detected."
-      },
-      "LogicFailureCode": {
-        "type": "string",
-        "enum": [
-          "DJZS-S01",
-          "DJZS-S02",
-          "DJZS-E01",
-          "DJZS-E02",
-          "DJZS-I01",
-          "DJZS-I02",
-          "DJZS-X01"
-        ],
-        "description": "Deterministic taxonomy of reasoning ruptures. S=Structural (circular logic, unfalsifiability), E=Epistemic (confirmation tunnel, authority substitution), I=Incentive (misaligned incentives, narrative dependency), X=Execution (unhedged execution, no abort conditions)."
-      },
-      "AuditFlag": {
-        "type": "object",
-        "required": ["code", "severity", "message"],
-        "properties": {
-          "code": {
-            "$ref": "#/components/schemas/LogicFailureCode"
-          },
-          "severity": {
-            "type": "string",
-            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
-            "description": "Severity level. CRITICAL or HIGH should trigger an immediate execution abort in the agent's logic loop."
-          },
-          "message": {
-            "type": "string",
-            "description": "Specific description of the logic rupture detected",
-            "example": "CIRCULAR_LOGIC detected: Goal B is used as a premise to justify Action A."
-          }
-        }
-      },
-      "LogicFlaw": {
-        "type": "object",
-        "properties": {
-          "flaw_type": {
-            "type": "string",
-            "description": "Category of the logic flaw"
-          },
-          "severity": {
-            "type": "string",
-            "enum": ["low", "medium", "critical"],
-            "description": "Severity rating of the flaw"
-          },
-          "explanation": {
-            "type": "string",
-            "description": "Detailed explanation of why this is a flaw"
-          }
-        }
-      },
-      "IntelligenceRequest": {
-        "type": "object",
-        "required": ["current_memo"],
-        "properties": {
-          "current_memo": {
-            "type": "string",
-            "minLength": 20,
-            "description": "The strategy memo or thesis to analyze for intelligence signals"
-          },
-          "history": {
+          "proof": {
             "type": "object",
-            "description": "Optional historical context for deeper pattern analysis. More history = better signals.",
             "properties": {
-              "audits": {
-                "type": "array",
-                "maxItems": 50,
-                "description": "Past audit results for bias pattern and risk trend detection",
-                "items": {
-                  "type": "object",
-                  "required": ["risk_score", "primary_bias_detected", "timestamp"],
-                  "properties": {
-                    "risk_score": { "type": "number", "minimum": 0, "maximum": 100 },
-                    "primary_bias_detected": { "type": "string" },
-                    "timestamp": { "type": "string" }
-                  }
-                }
+              "logic_hash": {
+                "type": "string",
+                "description": "SHA-256 commitment to reasoning trace"
               },
-              "entries": {
-                "type": "array",
-                "maxItems": 20,
-                "description": "Historical journal/memo entries for narrative drift comparison",
-                "items": {
-                  "type": "object",
-                  "required": ["text"],
-                  "properties": {
-                    "text": { "type": "string" },
-                    "created_at": { "type": "string" }
-                  }
-                }
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
               },
-              "memory_pins": {
-                "type": "array",
-                "maxItems": 20,
-                "description": "Pinned memories or rules the agent should check against",
-                "items": {
-                  "type": "object",
-                  "required": ["content"],
-                  "properties": {
-                    "content": { "type": "string" },
-                    "is_active": { "type": "boolean", "default": true }
-                  }
-                }
-              },
-              "decisions": {
-                "type": "array",
-                "maxItems": 10,
-                "description": "Past decision logs for contradiction detection",
-                "items": {
-                  "type": "object",
-                  "required": ["context", "reasoning"],
-                  "properties": {
-                    "context": { "type": "string" },
-                    "reasoning": { "type": "string" }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "IntelligenceBriefResponse": {
-        "type": "object",
-        "properties": {
-          "generated_at": { "type": "string", "format": "date-time" },
-          "active_signals": { "type": "number", "description": "Count of signals that fired (0-5)" },
-          "intelligence_context": { "type": "string", "description": "Ready-to-inject context string for audit requests. Pass this as intelligence_context in your audit POST body." },
-          "bias_pattern": {
-            "type": "object",
-            "properties": {
-              "type": { "type": "string", "enum": ["bias_pattern"] },
-              "active": { "type": "boolean" },
-              "dominant_bias": { "type": "string", "nullable": true },
-              "bias_frequency": { "type": "object", "additionalProperties": { "type": "number" } },
-              "avg_risk_score": { "type": "number" },
-              "risk_trend": { "type": "string", "enum": ["increasing", "decreasing", "stable", "insufficient_data"] },
-              "total_audits": { "type": "number" },
-              "summary": { "type": "string" }
-            }
-          },
-          "narrative_drift": {
-            "type": "object",
-            "properties": {
-              "type": { "type": "string", "enum": ["narrative_drift"] },
-              "active": { "type": "boolean" },
-              "drift_detected": { "type": "boolean" },
-              "current_themes": { "type": "array", "items": { "type": "string" } },
-              "historical_themes": { "type": "array", "items": { "type": "string" } },
-              "contradictions": { "type": "array", "items": { "type": "string" } },
-              "summary": { "type": "string" }
-            }
-          },
-          "assumption_kill": {
-            "type": "object",
-            "properties": {
-              "type": { "type": "string", "enum": ["assumption_kill"] },
-              "active": { "type": "boolean" },
-              "critical_assumptions": { "type": "array", "items": { "type": "string" } },
-              "summary": { "type": "string" }
-            }
-          },
-          "volatility_sim": {
-            "type": "object",
-            "properties": {
-              "type": { "type": "string", "enum": ["volatility_sim"] },
-              "active": { "type": "boolean" },
-              "stress_questions": { "type": "array", "items": { "type": "string" } },
-              "summary": { "type": "string" }
-            }
-          },
-          "emotional_spike": {
-            "type": "object",
-            "properties": {
-              "type": { "type": "string", "enum": ["emotional_spike"] },
-              "active": { "type": "boolean" },
-              "spike_detected": { "type": "boolean" },
-              "high_confidence_count": { "type": "number" },
-              "recent_entry_count": { "type": "number" },
-              "flagged_phrases": { "type": "array", "items": { "type": "string" } },
-              "summary": { "type": "string" }
-            }
-          }
-        }
-      },
-      "SchemaResponse": {
-        "type": "object",
-        "properties": {
-          "service": {
-            "type": "string"
-          },
-          "version": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "tiers": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string" },
-                "endpoint": { "type": "string" },
-                "price": { "type": "string" },
-                "description": { "type": "string" },
-                "memo_limit": { "type": "string" }
+              "payment_verified": {
+                "type": "boolean"
               }
             }
           }
         }
       }
-    },
-    "securitySchemes": {
-      "x402": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "X-402-Payment",
-        "description": "x402 payment proof header. USDC micropayment on Base Mainnet. Amount varies by tier: Micro ($2.50), Founder ($5.00), Treasury ($50.00)."
-      }
     }
-  },
-  "security": [
-    {
-      "x402": []
-    }
-  ],
-  "tags": [
-    {
-      "name": "Audit",
-      "description": "Adversarial logic audit endpoints. Each tier requires x402 payment proof."
-    },
-    {
-      "name": "Intelligence",
-      "description": "Pre-flight intelligence analysis. Free endpoint for AI agents to generate structured briefs before deploying audits."
-    },
-    {
-      "name": "Discovery",
-      "description": "Agent and schema discovery endpoints for A2A integration."
-    }
-  ]
+  }
 }

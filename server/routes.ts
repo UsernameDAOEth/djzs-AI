@@ -792,6 +792,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const createTierHandler = (tier: AuditTier) => async (req: any, res: any) => {
     try {
+      if (!x402Initialized) {
+        const paymentProof = req.headers['x-payment-proof'] as string | undefined;
+        if (!paymentProof) {
+          return res.status(402).json({
+            error: "Payment Required. Provide Base Mainnet TX hash in 'x-payment-proof' header.",
+            zone: TIER_CONFIG[tier].name,
+            price: `${TIER_CONFIG[tier].price} USDC`,
+            payment_protocol: "x402",
+            network: X402_NETWORK,
+            pay_to: TREASURY_WALLET,
+          });
+        }
+      }
+
       const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
       const schema = createTieredRequestSchema(tier);
       const parsed = schema.safeParse(req.body);
