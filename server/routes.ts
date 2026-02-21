@@ -790,22 +790,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.warn("Get your keys at https://portal.cdp.coinbase.com/projects");
   }
 
+  const x402PaymentGate = (req: any, res: any, next: any) => {
+    if (x402Initialized) return next();
+
+    const paymentProof = req.headers['x-payment-proof'];
+
+    if (!paymentProof) {
+      return res.status(402).json({
+        error: "Payment Required. Provide Base Mainnet TX hash in 'x-payment-proof' header.",
+        code: "DJZS-AUTH-402",
+      });
+    }
+
+    req.paymentProof = paymentProof;
+    next();
+  };
+
   const createTierHandler = (tier: AuditTier) => async (req: any, res: any) => {
     try {
-      if (!x402Initialized) {
-        const paymentProof = req.headers['x-payment-proof'] as string | undefined;
-        if (!paymentProof) {
-          return res.status(402).json({
-            error: "Payment Required. Provide Base Mainnet TX hash in 'x-payment-proof' header.",
-            zone: TIER_CONFIG[tier].name,
-            price: `${TIER_CONFIG[tier].price} USDC`,
-            payment_protocol: "x402",
-            network: X402_NETWORK,
-            pay_to: TREASURY_WALLET,
-          });
-        }
-      }
-
       const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
       const schema = createTieredRequestSchema(tier);
       const parsed = schema.safeParse(req.body);
@@ -838,10 +840,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  app.post("/api/audit/micro", createTierHandler("micro"));
-  app.post("/api/audit/founder", createTierHandler("founder"));
-  app.post("/api/audit/treasury", createTierHandler("treasury"));
-  app.post("/api/audit", createTierHandler("micro"));
+  app.post("/api/audit/micro", x402PaymentGate, createTierHandler("micro"));
+  app.post("/api/audit/founder", x402PaymentGate, createTierHandler("founder"));
+  app.post("/api/audit/treasury", x402PaymentGate, createTierHandler("treasury"));
+  app.post("/api/audit", x402PaymentGate, createTierHandler("micro"));
 
   app.post("/api/intelligence/brief", (req, res) => {
     try {
