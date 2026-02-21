@@ -8,6 +8,7 @@ import { queryClient } from "./lib/queryClient";
 import { wagmiConfig } from "./lib/wagmi-config";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@/lib/theme";
 import Home from "@/pages/home";
 import Chat from "@/pages/chat";
 import Docs from "@/pages/docs";
@@ -57,24 +58,26 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider
-            coolMode
-            theme={darkTheme({
-              accentColor: "#F37E20",
-              accentColorForeground: "white",
-              borderRadius: "medium",
-            })}
-          >
-            <TooltipProvider>
-              <Toaster />
-              <Router />
-              <InstallPrompt />
-            </TooltipProvider>
-          </RainbowKitProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
+      <ThemeProvider>
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <RainbowKitProvider
+              coolMode
+              theme={darkTheme({
+                accentColor: "#F37E20",
+                accentColorForeground: "white",
+                borderRadius: "medium",
+              })}
+            >
+              <TooltipProvider>
+                <Toaster />
+                <Router />
+                <InstallPrompt />
+              </TooltipProvider>
+            </RainbowKitProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

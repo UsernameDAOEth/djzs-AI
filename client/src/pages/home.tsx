@@ -1,15 +1,17 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code } from "lucide-react";
+import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code, Sun, Moon } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
 import { RevealSection } from "@/components/hero";
 import { Helmet } from "react-helmet";
+import { useTheme } from "@/lib/theme";
 
 export default function Home() {
   const { isConnected } = useAccount();
+  const { theme, toggleTheme } = useTheme();
   const [mobileBarDismissed, setMobileBarDismissed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -19,7 +21,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen text-white overflow-hidden" style={{ background: '#0F1115' }}>
+    <div className="min-h-screen text-foreground overflow-hidden bg-background">
       <style>{`
         @keyframes breathe {
           0%, 100% { opacity: 0.4; transform: scale(1); }
@@ -30,7 +32,7 @@ export default function Home() {
         .calm-card:hover { box-shadow: 0 0 24px rgba(255,255,255,0.02), 0 4px 32px rgba(0,0,0,0.3); }
       `}</style>
 
-      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.06]" style={{ background: 'rgba(15,17,21,0.88)', boxShadow: '0 1px 20px rgba(0,0,0,0.15)' }}>
+      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-border bg-background/90" style={{ boxShadow: '0 1px 20px rgba(0,0,0,0.08)' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <Link href="/">
             <span className="flex items-center gap-2.5" data-testid="link-home-logo">
@@ -74,8 +76,17 @@ export default function Home() {
               <ConnectButton showBalance={false} />
             )}
             <button
+              onClick={toggleTheme}
+              className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-white/[0.06] dark:hover:bg-white/[0.06] hover:bg-black/[0.06]"
+              style={{ color: '#9a9bb0' }}
+              data-testid="button-theme-toggle"
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-white/[0.06]"
+              className="md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-white/[0.06] dark:hover:bg-white/[0.06] hover:bg-black/[0.06]"
               style={{ color: '#9a9bb0' }}
               data-testid="button-mobile-menu"
               aria-label="Menu"
@@ -93,8 +104,7 @@ export default function Home() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="md:hidden border-t border-white/[0.06] overflow-hidden"
-              style={{ background: 'rgba(15,17,21,0.98)' }}
+              className="md:hidden border-t border-border overflow-hidden bg-background/98"
             >
               <nav className="flex flex-col px-4 py-3 gap-1">
                 {[

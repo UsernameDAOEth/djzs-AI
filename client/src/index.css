@@ -23,41 +23,70 @@ input, textarea, [contenteditable] {
   cursor: url('/cursor-pen.png') 4 28, text;
 }
 
-/* ===== DJZS Ghibli Design System ===== */
+/* ===== DJZS Design System ===== */
 :root {
   --brand-orange: #F37E20;
   --brand-teal: #2E8B8B;
   --brand-navy: #2A2E3F;
   --brand-gold: #FFB84D;
   --brand-skin: #A06A42;
+
+  --font-heading: 'Merriweather', serif;
+  --font-body: 'Nunito', sans-serif;
+  --radius: 0.5rem;
+
+  /* Light mode */
+  --text-primary: #1a1a2e;
+  --text-secondary: #555770;
+  --bg-surface: #f0f0f5;
+  --bg-overlay: rgba(255, 255, 255, 0.7);
+
+  --background: 0 0% 98%;
+  --foreground: 225 20% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 225 20% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 225 20% 12%;
+  --primary: 28 90% 54%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 180 50% 36%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 220 15% 93%;
+  --muted-foreground: 220 10% 40%;
+  --accent: 28 90% 54%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 220 15% 88%;
+  --input: 220 15% 88%;
+  --ring: 28 90% 54%;
+}
+
+.dark {
   --text-primary: #E0E0E0;
   --text-secondary: #A0A0A0;
   --bg-surface: #14171D;
   --bg-overlay: rgba(0, 0, 0, 0.5);
 
-  --font-heading: 'Merriweather', serif;
-  --font-body: 'Nunito', sans-serif;
-
-  --background: hsl(225, 20%, 7%);
-  --foreground: hsl(0, 0%, 100%);
-  --card: hsl(220, 18%, 10%);
-  --card-foreground: hsl(0, 0%, 95%);
-  --popover: hsl(225, 20%, 7%);
-  --popover-foreground: hsl(0, 0%, 100%);
-  --primary: hsl(28, 90%, 54%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(180, 50%, 36%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(220, 15%, 12%);
-  --muted-foreground: hsl(0, 0%, 70%);
-  --accent: hsl(28, 90%, 54%);
-  --accent-foreground: hsl(0, 0%, 100%);
-  --destructive: hsl(0, 84%, 60%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --border: hsl(0, 0%, 100%, 0.06);
-  --input: hsl(0, 0%, 100%, 0.06);
-  --ring: hsl(28, 90%, 54%);
-  --radius: 0.5rem;
+  --background: 225 20% 7%;
+  --foreground: 0 0% 100%;
+  --card: 220 18% 10%;
+  --card-foreground: 0 0% 95%;
+  --popover: 225 20% 7%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 28 90% 54%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 180 50% 36%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 220 15% 12%;
+  --muted-foreground: 0 0% 70%;
+  --accent: 28 90% 54%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 100% / 0.06;
+  --input: 0 0% 100% / 0.06;
+  --ring: 28 90% 54%;
 }
 
 @layer base {

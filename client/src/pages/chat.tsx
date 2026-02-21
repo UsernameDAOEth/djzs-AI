@@ -43,6 +43,7 @@ import {
   LogOut,
   PenLine,
   Moon,
+  Sun,
   RefreshCw,
   Compass,
   ArrowUpRight,
@@ -103,6 +104,7 @@ import {
   getLastBackupDate,
 } from "@/lib/vault-backup";
 import { generateIntelligenceBrief, buildIntelligenceContext, type IntelligenceBrief } from "@/lib/founder-intelligence";
+import { useTheme } from "@/lib/theme";
 import { 
   vault, 
   saveEntry, 
@@ -281,6 +283,7 @@ export default function Chat() {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { toast } = useToast();
+  const { theme, toggleTheme } = useTheme();
   const { displayName, ensName } = useDisplayName(address);
   const { client: xmtpClient, isConnecting: xmtpConnecting, connect: connectXmtp } = useXmtp();
   const { signMessageAsync } = useSignMessage();
@@ -1168,12 +1171,12 @@ export default function Chat() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#0F1115' }}>
+      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
         <div className="text-center max-w-sm">
           <div className="w-20 h-20 rounded-lg bg-orange-600/10 flex items-center justify-center mx-auto mb-8 border border-orange-500/20">
             <Shield className="w-10 h-10 text-orange-400" />
           </div>
-          <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Access Locked</h2>
+          <h2 className="text-3xl font-black text-foreground mb-3 tracking-tight">Access Locked</h2>
           <p className="text-gray-400 mb-8 leading-relaxed">DJZS requires a cryptographic identity to ensure absolute privacy for your Journal.</p>
           <div className="flex justify-center">
             <ConnectButton />
@@ -1185,7 +1188,7 @@ export default function Chat() {
 
   if (memberLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: '#0F1115' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
         <img src="/logo.png" alt="DJZS" className="w-16 h-16 rounded-lg logo-pulse" style={{ filter: 'drop-shadow(0 0 8px rgba(243,126,32,0.3))' }} data-testid="img-logo-loading" />
         <p className="text-sm font-medium" style={{ color: '#7a7b90' }}>Loading your vault...</p>
       </div>
@@ -1194,9 +1197,9 @@ export default function Chat() {
 
   if (!member) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#0F1115' }}>
+      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
         <div className="text-center max-w-md">
-          <h2 className="text-3xl font-black text-white mb-4 tracking-tight">Enter the Zone</h2>
+          <h2 className="text-3xl font-black text-foreground mb-4 tracking-tight">Enter the Zone</h2>
           <p className="mb-8" style={{ color: '#9a9bb0' }}>Deploy your first thesis. The System will stress-test your thinking.</p>
           <Button
             onClick={() => registerMember.mutate()}
@@ -1221,7 +1224,7 @@ export default function Chat() {
   return (
     <>
     <TooltipProvider>
-      <div className="h-screen text-gray-300 flex overflow-hidden font-sans selection:bg-teal-500/30" style={{ background: '#0F1115' }}>
+      <div className="h-screen text-foreground flex overflow-hidden font-sans selection:bg-teal-500/30 bg-background">
         {/* Mobile sidebar overlay */}
         {mobileSidebarOpen && (
           <div 
@@ -1236,9 +1239,9 @@ export default function Chat() {
           md:translate-x-0
           fixed md:relative z-50 md:z-auto
           w-64 h-full border-r flex flex-col 
-          transition-all duration-300
+          transition-all duration-300 bg-card
           ${isFocused && !mobileSidebarOpen ? 'md:opacity-40' : 'opacity-100'}
-        `} style={{ background: '#0D0F13', borderColor: 'rgba(255,255,255,0.04)' }}>
+        `} style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
           <div className="p-8 pb-4 flex items-center justify-between">
             <Link href="/">
               <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-orange-400 transition-all group">
@@ -1598,7 +1601,7 @@ export default function Chat() {
         {/* Main Interface */}
         <main className="flex-1 flex flex-col relative">
           {/* Transparent Glassy Header */}
-          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 backdrop-blur-xl border-b sticky top-0 z-30" style={{ background: 'rgba(15,17,21,0.85)', borderColor: 'rgba(255,255,255,0.04)' }}>
+          <header className="h-14 sm:h-16 md:h-20 flex items-center justify-between px-3 sm:px-4 md:px-10 backdrop-blur-xl border-b border-border sticky top-0 z-30 bg-background/90">
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Hamburger menu for mobile */}
               <button 
@@ -1691,7 +1694,14 @@ export default function Chat() {
                 </DialogContent>
               </Dialog>
               
-              {/* Memory/Insights toggle button - more visible on mobile */}
+              <button
+                onClick={toggleTheme}
+                className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors text-gray-400 hover:text-white hover:bg-white/5 dark:hover:bg-white/5 hover:bg-black/5"
+                data-testid="button-theme-toggle-chat"
+                aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
               <button 
                 onClick={() => setMemoryDrawerOpen(!memoryDrawerOpen)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all touch-target ${memoryDrawerOpen ? 'bg-orange-600/15 text-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5 bg-white/[0.03]'}`}
@@ -2361,7 +2371,7 @@ export default function Chat() {
               className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden" 
               onClick={() => setMemoryDrawerOpen(false)}
             />
-            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-white/[0.06] flex flex-col md:bg-[#1a1d26]/80 backdrop-blur-xl animate-in slide-in-from-right duration-300" style={{ background: '#1a1d26' }}>
+            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-border flex flex-col bg-card backdrop-blur-xl animate-in slide-in-from-right duration-300">
               <Tabs defaultValue="memories" className="flex-1 flex flex-col">
                 <div className="px-5 pt-5 pb-4 border-b border-white/[0.04]">
                   <div className="flex items-center justify-between mb-4 md:hidden">

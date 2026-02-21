@@ -10,7 +10,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend
 - **Technology Stack**: React 18 with TypeScript, Vite.
-- **UI/UX**: Radix UI components with Tailwind CSS, utilizing a "calm intelligence" dark theme. The design system features a futuristic dark palette (charcoal, orange, teal, purple, gold), sharp corners, and subtle borders. Fonts include Merriweather (headings) and Nunito (body).
+- **UI/UX**: Radix UI components with Tailwind CSS, with dark/light mode toggle (dark default). The design system features a futuristic dark palette (charcoal, orange, teal, purple, gold) and a warm light palette, sharp corners, and subtle borders. Fonts include Merriweather (headings) and Nunito (body). Theme managed via `client/src/lib/theme.tsx` ThemeProvider with localStorage persistence.
 - **Routing**: Wouter for client-side navigation.
 - **State Management**: React hooks for local state, TanStack Query for server state, Dexie (IndexedDB) for local-first vault.
 
@@ -63,6 +63,8 @@ Preferred communication style: Simple, everyday language.
 - XMTP messaging is End-to-End Encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## Recent Changes
+- **2026-02-21**: Added dark/light mode toggle across all pages. Created ThemeProvider (`client/src/lib/theme.tsx`) with localStorage sync and Tailwind class-based dark mode. Updated CSS variables in `index.css` with light `:root` and dark `.dark` themes. Sun/Moon toggle in headers on all 8 pages. Page wrappers, headers, and sidebars use theme-aware classes (`bg-background`, `bg-card`, `border-border`).
+- **2026-02-21**: Updated docs.tsx and about.tsx — added Proof of Logic Certificate section (DJZS-LF taxonomy, 7 failure codes, binary verdict rules), Founder Intelligence engine section (5 pattern analyzers), updated API endpoint card to show three tiered endpoints, updated response schema card with verdict/flags/tier fields. Fixed server-side verdict enforcement to deterministically FAIL when risk_score > 60. Renamed "Content Creators" to "Researchers" (verified clean).
 - **2026-02-20**: Implemented Proof of Logic Certificate with DJZS-LF taxonomy — deterministic Logic Failure Codes (S01/S02 Structural, E01/E02 Epistemic, I01/I02 Incentive, X01 Execution) and binary PASS/FAIL verdict. Updated Zod schemas, AI agent prompt, openapi.json, agent.json, frontend results display, Cryptographic Ledger, and Dexie vault schema (v10). CRITICAL/HIGH flags auto-trigger FAIL verdict.
 - **2026-02-20**: Built Founder Intelligence engine — 5 pattern analyzers (Bias Pattern Memory, Narrative Drift Detection, Assumption Kill Switch, Volatility Simulation, Emotional Spike Flag) that run pre-flight vault scans before each audit deployment. Intelligence context is injected into the AI agent prompt and displayed as a collapsible Intelligence Brief panel alongside audit results.
 - **2026-02-20**: Removed Privacy Architecture section from landing page (content lives in docs).

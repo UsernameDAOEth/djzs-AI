@@ -33,9 +33,12 @@ import {
   Code2,
   AlertTriangle,
   Activity,
-  Scan
+  Scan,
+  Sun,
+  Moon
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTheme } from "@/lib/theme";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -114,9 +117,10 @@ function TechStackItem({ category, items }: TechStackItemProps) {
 }
 
 export default function Docs() {
+  const { theme, toggleTheme } = useTheme();
   return (
-    <div className="min-h-screen text-gray-300 selection:bg-orange-500/30" style={{ background: '#0F1115' }}>
-      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/[0.02]" style={{ background: 'rgba(15,17,21,0.8)' }}>
+    <div className="min-h-screen bg-background text-gray-300 selection:bg-orange-500/30">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/90 border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
             <button className="flex items-center gap-2 text-sm font-bold text-white tracking-wide uppercase opacity-60 hover:opacity-100 hover:text-orange-400 transition-all group">
@@ -130,6 +134,7 @@ export default function Docs() {
                 Open App
               </button>
             </Link>
+            <button onClick={toggleTheme} className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors text-muted-foreground hover:text-foreground hover:bg-muted" data-testid="button-theme-toggle" aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>{theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}</button>
           </div>
         </div>
       </header>
