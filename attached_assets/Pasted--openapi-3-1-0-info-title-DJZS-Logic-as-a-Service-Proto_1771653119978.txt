@@ -1,0 +1,81 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DJZS Logic-as-a-Service Protocol",
+    "version": "1.0.0",
+    "description": "Adversarial logic verification for autonomous systems."
+  },
+  "servers": [
+    {
+      "url": "https://djzs.ai",
+      "description": "Mainnet Node"
+    }
+  ],
+  "paths": {
+    "/api/audit/micro": {
+      "post": {
+        "operationId": "verifyLogicTrace",
+        "summary": "Micro-Zone ($2.50) Logic Audit",
+        "parameters": [
+          {
+            "name": "x-payment-proof",
+            "in": "header",
+            "required": true,
+            "description": "Base Mainnet TX hash for $2.50 USDC",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "strategy_memo": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Proof of Logic Certificate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProofOfLogic"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProofOfLogic": {
+        "type": "object",
+        "properties": {
+          "verdict": { "type": "string", "enum": ["PASS", "FAIL"] },
+          "risk_score": { "type": "integer" },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": { 
+                  "type": "string", 
+                  "enum": ["DJZS-S01", "DJZS-S02", "DJZS-E01", "DJZS-E02", "DJZS-I01", "DJZS-I02", "DJZS-X01", "DJZS-X02"] 
+                },
+                "severity": { "type": "string" },
+                "description": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
