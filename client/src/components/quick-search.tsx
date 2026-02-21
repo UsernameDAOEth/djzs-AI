@@ -131,9 +131,9 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
 
     return (
       <>
-        <span className="text-gray-400">{before}</span>
+        <span className="text-muted-foreground">{before}</span>
         <span className="text-orange-400 font-semibold bg-orange-500/15 px-0.5 rounded">{match}</span>
-        <span className="text-gray-400">{after}</span>
+        <span className="text-muted-foreground">{after}</span>
       </>
     );
   };
@@ -165,17 +165,15 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="relative w-full max-w-xl rounded-2xl overflow-hidden"
+            className="relative w-full max-w-xl rounded-2xl overflow-hidden bg-card border border-border"
             style={{
-              background: 'linear-gradient(180deg, #1e2130 0%, #1a1d26 100%)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), 0 0 80px -20px rgba(243,126,32,0.06)',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 80px -20px rgba(243,126,32,0.06)',
             }}
             onClick={(e) => e.stopPropagation()}
             data-testid="quick-search-panel"
           >
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.06]">
-              <Search className="w-5 h-5 text-gray-500 shrink-0" />
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-border">
+              <Search className="w-5 h-5 text-muted-foreground shrink-0" />
               <input
                 ref={inputRef}
                 type="text"
@@ -183,24 +181,24 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                 onChange={(e) => handleQueryChange(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search your entries..."
-                className="flex-1 bg-transparent text-base text-white placeholder-gray-600 outline-none"
+                className="flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground/60 outline-none"
                 data-testid="input-quick-search-modal"
               />
               {query && (
                 <button
                   onClick={() => { setQuery(""); setResults([]); }}
-                  className="p-1 text-gray-500 hover:text-white transition-colors"
+                  className="p-1 text-muted-foreground hover:text-foreground transition-colors"
                   data-testid="button-clear-search-modal"
                 >
                   <X className="w-4 h-4" />
                 </button>
               )}
-              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono text-gray-600 border border-white/[0.08] bg-white/[0.03]">
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono text-muted-foreground/80 border border-border bg-muted/50">
                 ESC
               </kbd>
             </div>
 
-            <div className="flex items-center gap-2 px-5 py-2.5 border-b border-white/[0.04]">
+            <div className="flex items-center gap-2 px-5 py-2.5 border-b border-border">
               {filters.map(({ key, label, icon: Icon }) => (
                 <button
                   key={key}
@@ -211,8 +209,8 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                         ? "text-orange-400 bg-orange-500/10 border border-orange-500/20"
                         : key === "research"
                         ? "text-teal-400 bg-teal-500/10 border border-teal-500/20"
-                        : "text-white bg-white/[0.08] border border-white/[0.1]"
-                      : "text-gray-500 hover:text-gray-300 border border-transparent hover:bg-white/[0.04]"
+                        : "text-foreground bg-muted border border-border"
+                      : "text-muted-foreground hover:text-foreground border border-transparent hover:bg-muted/50"
                   }`}
                   data-testid={`filter-${key}`}
                 >
@@ -226,7 +224,7 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                 </div>
               )}
               {query && !isSearching && (
-                <span className="ml-auto text-[10px] text-gray-600">
+                <span className="ml-auto text-[10px] text-muted-foreground/80">
                   {results.length} {results.length === 1 ? "result" : "results"}
                 </span>
               )}
@@ -239,7 +237,7 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
             >
               {!query.trim() && displayItems.length > 0 && (
                 <div className="px-5 pt-3 pb-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
                     Recent entries
                   </span>
                 </div>
@@ -249,19 +247,19 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                 <div className="flex flex-col items-center justify-center py-14 text-center px-6">
                   {query.trim() ? (
                     <>
-                      <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-3">
-                        <Search className="w-6 h-6 text-gray-600" />
+                      <div className="w-12 h-12 rounded-xl bg-muted/50 border border-border flex items-center justify-center mb-3">
+                        <Search className="w-6 h-6 text-muted-foreground/80" />
                       </div>
-                      <p className="text-sm text-gray-400 font-medium">No entries match "{query}"</p>
-                      <p className="text-xs text-gray-600 mt-1">Try different keywords or change the filter</p>
+                      <p className="text-sm text-muted-foreground font-medium">No entries match "{query}"</p>
+                      <p className="text-xs text-muted-foreground/80 mt-1">Try different keywords or change the filter</p>
                     </>
                   ) : (
                     <>
                       <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-3">
                         <Search className="w-6 h-6 text-orange-400/60" />
                       </div>
-                      <p className="text-sm text-gray-400 font-medium">Search your thinking</p>
-                      <p className="text-xs text-gray-600 mt-1">Find past journal entries and research notes instantly</p>
+                      <p className="text-sm text-muted-foreground font-medium">Search your thinking</p>
+                      <p className="text-xs text-muted-foreground/80 mt-1">Find past journal entries and research notes instantly</p>
                     </>
                   )}
                 </div>
@@ -274,7 +272,7 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                       onClick={() => handleSelect(entry)}
                       onMouseEnter={() => setSelectedIndex(i)}
                       className={`group w-full text-left px-5 py-3.5 flex items-start gap-3.5 transition-all duration-150 ${
-                        i === selectedIndex ? "bg-white/[0.05]" : "hover:bg-white/[0.03]"
+                        i === selectedIndex ? "bg-muted" : "hover:bg-muted/50"
                       }`}
                       data-testid={`search-result-modal-${entry.id}`}
                     >
@@ -296,17 +294,17 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                           {highlightMatch(entry.text, query)}
                         </p>
                         <div className="flex items-center gap-2 mt-1.5">
-                          <span className="flex items-center gap-1 text-[10px] text-gray-600">
+                          <span className="flex items-center gap-1 text-[10px] text-muted-foreground/80">
                             <Clock className="w-2.5 h-2.5" />
                             {format(new Date(entry.createdAt), "MMM d, yyyy")}
                           </span>
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-600">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">
                             {entry.type}
                           </span>
                           {entry.tags && entry.tags.length > 0 && (
                             <>
-                              <span className="text-gray-700">·</span>
-                              <span className="flex items-center gap-1 text-[10px] text-gray-600 truncate max-w-[120px]">
+                              <span className="text-muted-foreground/60">·</span>
+                              <span className="flex items-center gap-1 text-[10px] text-muted-foreground/80 truncate max-w-[120px]">
                                 <Tag className="w-2.5 h-2.5" />
                                 {entry.tags.slice(0, 2).join(", ")}
                               </span>
@@ -323,22 +321,22 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
               )}
             </div>
 
-            <div className="px-5 py-2.5 border-t border-white/[0.04] flex items-center justify-between">
-              <div className="flex items-center gap-3 text-[10px] text-gray-600">
+            <div className="px-5 py-2.5 border-t border-border flex items-center justify-between">
+              <div className="flex items-center gap-3 text-[10px] text-muted-foreground/80">
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] font-mono text-[9px]">↑↓</kbd>
+                  <kbd className="px-1 py-0.5 rounded border border-border bg-muted/50 font-mono text-[9px]">↑↓</kbd>
                   navigate
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] font-mono text-[9px]">↵</kbd>
+                  <kbd className="px-1 py-0.5 rounded border border-border bg-muted/50 font-mono text-[9px]">↵</kbd>
                   select
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] font-mono text-[9px]">⌘K</kbd>
+                  <kbd className="px-1 py-0.5 rounded border border-border bg-muted/50 font-mono text-[9px]">⌘K</kbd>
                   toggle
                 </span>
               </div>
-              <p className="text-[10px] text-gray-700">Local search only</p>
+              <p className="text-[10px] text-muted-foreground/60">Local search only</p>
             </div>
           </motion.div>
         </motion.div>

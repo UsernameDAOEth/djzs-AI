@@ -36,7 +36,7 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#1a1d26' }}>
+        <div className="min-h-screen flex items-center justify-center px-4 bg-card">
           <div className="max-w-md w-full text-center space-y-6">
             <div className="flex justify-center">
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(243,126,32,0.15)' }}>
@@ -44,10 +44,10 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Merriweather, serif' }}>
+              <h1 className="text-xl font-bold text-foreground mb-2" style={{ fontFamily: 'Merriweather, serif' }}>
                 Something went wrong
               </h1>
-              <p className="text-sm text-gray-400 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 DJZS hit an unexpected error. Your local data is safe — it's stored in your browser and hasn't been affected.
               </p>
             </div>
@@ -64,7 +64,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <Button
                 onClick={this.handleDismiss}
                 variant="outline"
-                className="border-gray-600 text-gray-300 hover:bg-gray-800"
+                className="border-border text-muted-foreground hover:bg-muted"
                 data-testid="button-error-dismiss"
               >
                 Try again
@@ -72,10 +72,10 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             {this.state.error && (
               <details className="text-left">
-                <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-400">
+                <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
                   Technical details
                 </summary>
-                <pre className="mt-2 p-3 rounded-lg bg-black/40 text-xs text-gray-500 overflow-auto max-h-32">
+                <pre className="mt-2 p-3 rounded-lg bg-black/40 text-xs text-muted-foreground overflow-auto max-h-32">
                   {this.state.error.message}
                 </pre>
               </details>

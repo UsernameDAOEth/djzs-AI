@@ -172,11 +172,11 @@ export function AuditTutorial({ onComplete, isOpen }: AuditTutorialProps) {
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={handleSkip} />
 
       <div
-        className="relative w-[90%] max-w-lg mx-auto rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-300"
-        style={{ background: '#1a1d26', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}
+        className="relative w-[90%] max-w-lg mx-auto rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-300 bg-card border border-border"
+        style={{ boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}
         data-testid="tutorial-card"
       >
-        <div className="h-1 w-full" style={{ background: 'rgba(255,255,255,0.04)' }}>
+        <div className="h-1 w-full bg-muted/50">
           <div
             className="h-full transition-all duration-500 ease-out"
             style={{ width: `${progress}%`, background: step.color }}
@@ -184,12 +184,12 @@ export function AuditTutorial({ onComplete, isOpen }: AuditTutorialProps) {
         </div>
 
         <div className="flex items-center justify-between px-5 pt-4">
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80">
             Step {currentStep + 1} of {TUTORIAL_STEPS.length}
           </span>
           <button
             onClick={handleSkip}
-            className="text-gray-600 hover:text-gray-300 transition-colors p-1"
+            className="text-muted-foreground/80 hover:text-foreground transition-colors p-1"
             data-testid="button-skip-tutorial"
           >
             <X className="w-4 h-4" />
@@ -204,26 +204,25 @@ export function AuditTutorial({ onComplete, isOpen }: AuditTutorialProps) {
             >
               <StepIcon className="w-5 h-5" style={{ color: step.color }} />
             </div>
-            <h3 className="text-lg font-black text-white">{step.title}</h3>
+            <h3 className="text-lg font-black text-foreground">{step.title}</h3>
           </div>
 
-          <p className="text-sm text-gray-300 leading-relaxed mb-4">{step.description}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">{step.description}</p>
 
           {"zones" in step && step.zones && (
             <div className="space-y-2 mb-4">
               {step.zones.map((zone) => (
                 <div
                   key={zone.name}
-                  className="flex items-center gap-3 p-3 rounded-lg"
-                  style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border border-border"
                 >
                   <div className="w-2 h-2 rounded-full" style={{ background: zone.color }} />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-white">{zone.name}</span>
+                      <span className="text-xs font-bold text-foreground">{zone.name}</span>
                       <span className="text-[10px] font-mono" style={{ color: zone.color }}>{zone.price}</span>
                     </div>
-                    <p className="text-[11px] text-gray-500">{zone.desc}</p>
+                    <p className="text-[11px] text-muted-foreground">{zone.desc}</p>
                   </div>
                 </div>
               ))}
@@ -239,14 +238,14 @@ export function AuditTutorial({ onComplete, isOpen }: AuditTutorialProps) {
                   style={{ background: `${level.color}10`, border: `1px solid ${level.color}25` }}
                 >
                   <span className="text-xs font-black block" style={{ color: level.color }}>{level.label}</span>
-                  <span className="text-[10px] font-mono text-gray-500">{level.range}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">{level.range}</span>
                 </div>
               ))}
             </div>
           )}
 
           <div className="p-3 rounded-lg mb-5" style={{ background: 'rgba(243,126,32,0.05)', border: '1px solid rgba(243,126,32,0.12)' }}>
-            <p className="text-[11px] text-gray-400 leading-relaxed">
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
               <span className="font-bold text-orange-400/80 mr-1">TIP:</span>
               {step.tip}
             </p>
@@ -256,7 +255,7 @@ export function AuditTutorial({ onComplete, isOpen }: AuditTutorialProps) {
             <button
               onClick={goBack}
               disabled={isFirst}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-0 disabled:pointer-events-none text-gray-400 hover:text-white hover:bg-white/[0.03]"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-0 disabled:pointer-events-none text-muted-foreground hover:text-foreground hover:bg-muted"
               data-testid="button-tutorial-back"
             >
               <ArrowLeft className="w-3.5 h-3.5" />

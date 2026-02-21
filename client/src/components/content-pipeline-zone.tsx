@@ -14,8 +14,8 @@ const TABS: { id: TabId; label: string; icon: typeof Pen }[] = [
 ];
 
 const INPUT_CLS =
-  "w-full px-3 py-2 rounded-md text-sm text-white placeholder:text-gray-600 outline-none focus:border-teal-500/50 transition-colors"
-  + " " + "bg-[#0F1115] border border-white/[0.06]";
+  "w-full px-3 py-2 rounded-md text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-teal-500/50 transition-colors"
+  + " " + "bg-muted border border-border";
 
 const FORMAT_OPTIONS: ContentFormat[] = ["article", "thread", "video", "newsletter", "podcast", "post"];
 const STATUS_OPTIONS: ContentStatus[] = ["idea", "drafting", "refining", "ready", "published"];
@@ -26,11 +26,11 @@ const FORMAT_COLORS: Record<ContentFormat, string> = {
   video: "bg-red-500/20 text-red-400 border-red-500/30",
   newsletter: "bg-green-500/20 text-green-400 border-green-500/30",
   podcast: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  post: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+  post: "bg-muted text-muted-foreground border-border",
 };
 
 const STATUS_COLORS: Record<ContentStatus, string> = {
-  idea: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+  idea: "bg-muted text-muted-foreground border-border",
   drafting: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
   refining: "bg-blue-500/20 text-blue-400 border-blue-500/30",
   ready: "bg-green-500/20 text-green-400 border-green-500/30",
@@ -58,7 +58,7 @@ function ToggleGroup({
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
             value === opt
               ? "bg-[rgba(46,139,139,0.1)] text-teal-400 border border-[rgba(46,139,139,0.3)]"
-              : "bg-[#14171D] text-gray-500 border border-white/[0.06] hover:text-gray-300 hover:border-white/[0.08]"
+              : "bg-muted text-muted-foreground border border-border hover:text-foreground hover:border-border"
           }`}
         >
           {opt}
@@ -69,7 +69,7 @@ function ToggleGroup({
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <label className="block text-xs font-medium text-gray-400 mb-1.5">{children}</label>;
+  return <label className="block text-xs font-medium text-muted-foreground mb-1.5">{children}</label>;
 }
 
 const formatDate = (d: Date) => {
@@ -227,10 +227,10 @@ export function ContentPipelineZone() {
     <div className="w-full max-w-2xl mx-auto" data-testid="content-pipeline-zone">
       <div className="flex items-center gap-2 mb-4">
         <FileText size={18} className="text-teal-400" />
-        <h2 className="text-sm font-semibold text-white">Content Pipeline</h2>
+        <h2 className="text-sm font-semibold text-foreground">Content Pipeline</h2>
       </div>
 
-      <div className="flex items-center gap-1 mb-4 p-1 bg-[#14171D] rounded-lg border border-white/[0.06] overflow-x-auto">
+      <div className="flex items-center gap-1 mb-4 p-1 bg-muted rounded-lg border border-border overflow-x-auto">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -241,7 +241,7 @@ export function ContentPipelineZone() {
               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === tab.id
                   ? "bg-[rgba(46,139,139,0.1)] text-teal-400 border border-[rgba(46,139,139,0.3)]"
-                  : "text-gray-500 hover:text-gray-300"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon size={14} />
@@ -253,10 +253,10 @@ export function ContentPipelineZone() {
 
       {activeTab === "compose" && (
         <div className="space-y-4" data-testid="compose-tab">
-          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
+          <div className="p-4 rounded-lg bg-muted border border-border space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Pen size={16} className="text-teal-400" />
-              <h3 className="text-sm font-semibold text-white">Compose Content Idea</h3>
+              <h3 className="text-sm font-semibold text-foreground">Compose Content Idea</h3>
             </div>
 
             <div>
@@ -342,7 +342,7 @@ export function ContentPipelineZone() {
                       <button
                         data-testid={`button-remove-point-${idx}`}
                         onClick={() => removeKeyPoint(idx)}
-                        className="p-2 text-gray-500 hover:text-red-400 transition-colors"
+                        className="p-2 text-muted-foreground hover:text-red-400 transition-colors"
                       >
                         <X size={14} />
                       </button>
@@ -374,23 +374,23 @@ export function ContentPipelineZone() {
       {activeTab === "refine" && (
         <div className="space-y-4" data-testid="refine-tab">
           {!savedItemId ? (
-            <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] text-center">
-              <Sparkles size={24} className="text-gray-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-500" data-testid="text-compose-first">
+            <div className="p-6 rounded-lg bg-muted border border-border text-center">
+              <Sparkles size={24} className="text-muted-foreground/80 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground" data-testid="text-compose-first">
                 Compose and save a content idea first to refine it with AI.
               </p>
             </div>
           ) : (
-            <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
+            <div className="p-4 rounded-lg bg-muted border border-border space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles size={16} className="text-teal-400" />
-                <h3 className="text-sm font-semibold text-white">AI Refinement</h3>
+                <h3 className="text-sm font-semibold text-foreground">AI Refinement</h3>
               </div>
 
-              <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
-                <p className="text-xs text-gray-400 mb-1">Content idea:</p>
-                <p className="text-sm text-white font-medium" data-testid="text-refine-title">{title}</p>
-                <p className="text-xs text-gray-500 mt-1">{format} · {audience || "General audience"}</p>
+              <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                <p className="text-xs text-muted-foreground mb-1">Content idea:</p>
+                <p className="text-sm text-foreground font-medium" data-testid="text-refine-title">{title}</p>
+                <p className="text-xs text-muted-foreground mt-1">{format} · {audience || "General audience"}</p>
               </div>
 
               {!refineResult && !refineLoading && (
@@ -407,27 +407,27 @@ export function ContentPipelineZone() {
               {refineLoading && (
                 <div className="flex items-center justify-center gap-2 py-6" data-testid="refine-loading">
                   <Loader2 size={16} className="animate-spin text-teal-400" />
-                  <span className="text-sm text-gray-400">Refining your content idea...</span>
+                  <span className="text-sm text-muted-foreground">Refining your content idea...</span>
                 </div>
               )}
 
               {refineResult && (
                 <div className="space-y-3">
-                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <p className="text-xs font-medium text-teal-400 mb-1">Analysis</p>
-                    <p className="text-sm text-gray-300" data-testid="text-refine-said">{refineResult.said}</p>
+                    <p className="text-sm text-muted-foreground" data-testid="text-refine-said">{refineResult.said}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <p className="text-xs font-medium text-teal-400 mb-1">Why It Matters</p>
-                    <p className="text-sm text-gray-300" data-testid="text-refine-matters">{refineResult.matters}</p>
+                    <p className="text-sm text-muted-foreground" data-testid="text-refine-matters">{refineResult.matters}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <p className="text-xs font-medium text-teal-400 mb-1">Suggested Next Move</p>
-                    <p className="text-sm text-gray-300" data-testid="text-refine-nextmove">{refineResult.nextMove}</p>
+                    <p className="text-sm text-muted-foreground" data-testid="text-refine-nextmove">{refineResult.nextMove}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <p className="text-xs font-medium text-teal-400 mb-1">Reflective Question</p>
-                    <p className="text-sm text-gray-300 italic" data-testid="text-refine-question">{refineResult.question}</p>
+                    <p className="text-sm text-muted-foreground italic" data-testid="text-refine-question">{refineResult.question}</p>
                   </div>
 
                   <button
@@ -447,9 +447,9 @@ export function ContentPipelineZone() {
       {activeTab === "pipeline" && (
         <div className="space-y-3" data-testid="pipeline-tab">
           {pipelineItems.length === 0 ? (
-            <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] text-center">
-              <Clock size={24} className="text-gray-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-500" data-testid="text-empty-pipeline">No content ideas in your pipeline yet.</p>
+            <div className="p-6 rounded-lg bg-muted border border-border text-center">
+              <Clock size={24} className="text-muted-foreground/80 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground" data-testid="text-empty-pipeline">No content ideas in your pipeline yet.</p>
             </div>
           ) : (
             pipelineItems.map((item) => {
@@ -457,7 +457,7 @@ export function ContentPipelineZone() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-lg bg-[#14171D] border border-white/[0.06] overflow-hidden"
+                  className="rounded-lg bg-muted border border-border overflow-hidden"
                   data-testid={`card-content-${item.id}`}
                 >
                   <button
@@ -467,14 +467,14 @@ export function ContentPipelineZone() {
                   >
                     <div className="mt-0.5">
                       {isExpanded ? (
-                        <ChevronDown size={14} className="text-gray-500" />
+                        <ChevronDown size={14} className="text-muted-foreground" />
                       ) : (
-                        <ChevronRight size={14} className="text-gray-500" />
+                        <ChevronRight size={14} className="text-muted-foreground" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className="text-sm font-medium text-white truncate" data-testid={`text-title-${item.id}`}>
+                        <span className="text-sm font-medium text-foreground truncate" data-testid={`text-title-${item.id}`}>
                           {item.title}
                         </span>
                         <Badge
@@ -492,9 +492,9 @@ export function ContentPipelineZone() {
                           {item.status}
                         </Badge>
                       </div>
-                      <p className="text-xs text-gray-500">{formatDate(item.createdAt)}</p>
+                      <p className="text-xs text-muted-foreground">{formatDate(item.createdAt)}</p>
                       {item.hook && (
-                        <p className="text-xs text-gray-400 mt-1 line-clamp-1" data-testid={`text-hook-${item.id}`}>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-1" data-testid={`text-hook-${item.id}`}>
                           {item.hook}
                         </p>
                       )}
@@ -502,37 +502,37 @@ export function ContentPipelineZone() {
                   </button>
 
                   {isExpanded && (
-                    <div className="px-4 pb-4 pt-0 border-t border-white/[0.06] space-y-3">
+                    <div className="px-4 pb-4 pt-0 border-t border-border space-y-3">
                       {item.topic && (
                         <div className="pt-3">
-                          <p className="text-xs font-medium text-gray-400 mb-0.5">Topic</p>
-                          <p className="text-sm text-gray-300" data-testid={`text-topic-${item.id}`}>{item.topic}</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-0.5">Topic</p>
+                          <p className="text-sm text-muted-foreground" data-testid={`text-topic-${item.id}`}>{item.topic}</p>
                         </div>
                       )}
                       {item.angle && (
                         <div>
-                          <p className="text-xs font-medium text-gray-400 mb-0.5">Angle</p>
-                          <p className="text-sm text-gray-300" data-testid={`text-angle-${item.id}`}>{item.angle}</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-0.5">Angle</p>
+                          <p className="text-sm text-muted-foreground" data-testid={`text-angle-${item.id}`}>{item.angle}</p>
                         </div>
                       )}
                       {item.audience && (
                         <div>
-                          <p className="text-xs font-medium text-gray-400 mb-0.5">Audience</p>
-                          <p className="text-sm text-gray-300" data-testid={`text-audience-${item.id}`}>{item.audience}</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-0.5">Audience</p>
+                          <p className="text-sm text-muted-foreground" data-testid={`text-audience-${item.id}`}>{item.audience}</p>
                         </div>
                       )}
                       {item.hook && (
                         <div>
-                          <p className="text-xs font-medium text-gray-400 mb-0.5">Hook</p>
-                          <p className="text-sm text-gray-300" data-testid={`text-hook-full-${item.id}`}>{item.hook}</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-0.5">Hook</p>
+                          <p className="text-sm text-muted-foreground" data-testid={`text-hook-full-${item.id}`}>{item.hook}</p>
                         </div>
                       )}
                       {item.keyPoints && item.keyPoints.length > 0 && (
                         <div>
-                          <p className="text-xs font-medium text-gray-400 mb-0.5">Key Points</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-0.5">Key Points</p>
                           <ul className="list-disc list-inside space-y-0.5">
                             {item.keyPoints.map((pt, i) => (
-                              <li key={i} className="text-sm text-gray-300">{pt}</li>
+                              <li key={i} className="text-sm text-muted-foreground">{pt}</li>
                             ))}
                           </ul>
                         </div>
@@ -540,7 +540,7 @@ export function ContentPipelineZone() {
                       {item.aiRefinement && (
                         <div className="p-3 rounded-lg bg-teal-500/5 border border-teal-500/10">
                           <p className="text-xs font-medium text-teal-400 mb-1">AI Refinement</p>
-                          <p className="text-sm text-gray-300 whitespace-pre-wrap" data-testid={`text-refinement-${item.id}`}>
+                          <p className="text-sm text-muted-foreground whitespace-pre-wrap" data-testid={`text-refinement-${item.id}`}>
                             {item.aiRefinement}
                           </p>
                         </div>
@@ -552,10 +552,10 @@ export function ContentPipelineZone() {
                           data-testid={`select-status-${item.id}`}
                           value={item.status}
                           onChange={(e) => item.id !== undefined && handleStatusChange(item.id, e.target.value as ContentStatus)}
-                          className="px-2 py-1 bg-[#0F1115] border border-white/[0.06] rounded-md text-xs text-white outline-none"
+                          className="px-2 py-1 bg-muted border border-border rounded-md text-xs text-foreground outline-none"
                         >
                           {STATUS_OPTIONS.map((s) => (
-                            <option key={s} value={s} className="bg-gray-900">
+                            <option key={s} value={s} className="bg-card">
                               {s}
                             </option>
                           ))}
@@ -597,7 +597,7 @@ export function ContentPipelineZone() {
                             <button
                               data-testid={`button-cancel-delete-${item.id}`}
                               onClick={() => setDeleteConfirmId(null)}
-                              className="px-2 py-1 text-xs bg-white/[0.05] text-gray-400 border border-white/[0.08] rounded-lg hover:text-white transition-all"
+                              className="px-2 py-1 text-xs bg-muted text-muted-foreground border border-border rounded-lg hover:text-foreground transition-all"
                             >
                               No
                             </button>
@@ -606,7 +606,7 @@ export function ContentPipelineZone() {
                           <button
                             data-testid={`button-delete-${item.id}`}
                             onClick={() => setDeleteConfirmId(item.id ?? null)}
-                            className="p-2 text-gray-500 hover:text-red-400 transition-colors"
+                            className="p-2 text-muted-foreground hover:text-red-400 transition-colors"
                           >
                             <Trash2 size={14} />
                           </button>

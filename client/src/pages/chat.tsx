@@ -1177,7 +1177,7 @@ export default function Chat() {
             <Shield className="w-10 h-10 text-orange-400" />
           </div>
           <h2 className="text-3xl font-black text-foreground mb-3 tracking-tight">Access Locked</h2>
-          <p className="text-gray-400 mb-8 leading-relaxed">DJZS requires a cryptographic identity to ensure absolute privacy for your Journal.</p>
+          <p className="text-muted-foreground mb-8 leading-relaxed">DJZS requires a cryptographic identity to ensure absolute privacy for your Journal.</p>
           <div className="flex justify-center">
             <ConnectButton />
           </div>
@@ -1190,7 +1190,7 @@ export default function Chat() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
         <img src="/logo.png" alt="DJZS" className="w-16 h-16 rounded-lg logo-pulse" style={{ filter: 'drop-shadow(0 0 8px rgba(243,126,32,0.3))' }} data-testid="img-logo-loading" />
-        <p className="text-sm font-medium" style={{ color: '#7a7b90' }}>Loading your vault...</p>
+        <p className="text-sm font-medium text-muted-foreground">Loading your vault...</p>
       </div>
     );
   }
@@ -1200,7 +1200,7 @@ export default function Chat() {
       <div className="min-h-screen flex items-center justify-center p-6 bg-background">
         <div className="text-center max-w-md">
           <h2 className="text-3xl font-black text-foreground mb-4 tracking-tight">Enter the Zone</h2>
-          <p className="mb-8" style={{ color: '#9a9bb0' }}>Deploy your first thesis. The System will stress-test your thinking.</p>
+          <p className="mb-8 text-muted-foreground">Deploy your first thesis. The System will stress-test your thinking.</p>
           <Button
             onClick={() => registerMember.mutate()}
             disabled={registerMember.isPending}
@@ -1241,10 +1241,10 @@ export default function Chat() {
           w-64 h-full border-r flex flex-col 
           transition-all duration-300 bg-card
           ${isFocused && !mobileSidebarOpen ? 'md:opacity-40' : 'opacity-100'}
-        `} style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+        `} style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="p-8 pb-4 flex items-center justify-between">
             <Link href="/">
-              <button className="flex items-center gap-2 text-sm font-black text-white tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-orange-400 transition-all group">
+              <button className="flex items-center gap-2 text-sm font-black text-foreground tracking-[0.2em] uppercase opacity-40 hover:opacity-100 hover:text-orange-400 transition-all group">
                 <img src="/logo.png" alt="DJZS" className="w-6 h-6 rounded transition-transform group-hover:-translate-x-1" style={{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.3))' }} data-testid="img-logo-sidebar" />
                 <span>DJZS AI</span>
               </button>
@@ -1252,7 +1252,7 @@ export default function Chat() {
             {/* Close button on mobile */}
             <button 
               onClick={() => setMobileSidebarOpen(false)}
-              className="md:hidden p-2 text-gray-500 hover:text-white"
+              className="md:hidden p-2 text-muted-foreground hover:text-foreground"
               aria-label="Close sidebar"
               data-testid="button-close-sidebar"
             >
@@ -1261,7 +1261,7 @@ export default function Chat() {
           </div>
 
           <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600 px-4 mb-2 mt-2">Workspace</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 px-4 mb-2 mt-2">Workspace</p>
             {V1_ZONES.map((zone) => {
               const Icon = zone.icon;
               const isActive = activeView === "workspace" && !showLedger && selectedZone === zone.id;
@@ -1276,8 +1276,8 @@ export default function Chat() {
                   }}
                   className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group ${
                     isActive 
-                      ? "bg-white/[0.03] text-white" 
-                      : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
+                      ? "bg-muted/50 text-foreground" 
+                      : "text-muted-foreground hover:text-muted-foreground hover:bg-muted/30"
                   }`}
                   aria-current={isActive ? "page" : undefined}
                   data-testid={`button-workspace-${zone.id}`}
@@ -1289,9 +1289,9 @@ export default function Chat() {
               );
             })}
 
-            <div className="my-3 border-t border-white/[0.04]" />
+            <div className="my-3 border-t border-border" />
 
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600 px-4 mb-2" data-testid="sidebar-zones">Execution Zones</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 px-4 mb-2" data-testid="sidebar-zones">Execution Zones</p>
             {ZONE_CONFIGS.map((zone) => {
               const Icon = zone.icon;
               const isActive = activeView === "execution" && !showLedger && activeZoneTier === zone.id;
@@ -1306,8 +1306,8 @@ export default function Chat() {
                   }}
                   className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group ${
                     isActive 
-                      ? "bg-white/[0.03] text-white" 
-                      : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
+                      ? "bg-muted/50 text-foreground" 
+                      : "text-muted-foreground hover:text-muted-foreground hover:bg-muted/30"
                   }`}
                   aria-current={isActive ? "page" : undefined}
                   data-testid={`button-zone-${zone.id}`}
@@ -1322,7 +1322,7 @@ export default function Chat() {
               );
             })}
 
-            <div className="my-3 border-t border-white/[0.04]" />
+            <div className="my-3 border-t border-border" />
             
             <button
               onClick={() => {
@@ -1331,30 +1331,30 @@ export default function Chat() {
               }}
               className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all group ${
                 showLedger 
-                  ? "bg-white/[0.03] text-white" 
-                  : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.01]"
+                  ? "bg-muted/50 text-foreground" 
+                  : "text-muted-foreground hover:text-muted-foreground hover:bg-muted/30"
               }`}
               data-testid="button-ledger"
             >
-              <ScrollText className={`w-5 h-5 transition-colors ${showLedger ? "text-amber-400" : "text-gray-600 group-hover:text-gray-400"}`} />
+              <ScrollText className={`w-5 h-5 transition-colors ${showLedger ? "text-amber-400" : "text-muted-foreground/80 group-hover:text-muted-foreground"}`} />
               <span className="text-sm font-bold tracking-tight">Cryptographic Ledger</span>
               {auditRecords && auditRecords.length > 0 && (
-                <span className="ml-auto text-[10px] font-mono text-gray-600">{auditRecords.length}</span>
+                <span className="ml-auto text-[10px] font-mono text-muted-foreground/80">{auditRecords.length}</span>
               )}
             </button>
 
             <button
               onClick={openTutorial}
-              className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-white/[0.01] transition-all group"
+              className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-muted-foreground hover:text-muted-foreground hover:bg-muted/30 transition-all group"
               data-testid="button-tutorial"
             >
-              <HelpCircle className="w-5 h-5 text-gray-600 group-hover:text-gray-400 transition-colors" />
+              <HelpCircle className="w-5 h-5 text-muted-foreground/80 group-hover:text-muted-foreground transition-colors" />
               <span className="text-sm font-bold tracking-tight">How It Works</span>
             </button>
           </nav>
 
           <div className="p-4 mt-auto">
-            <div className="p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+            <div className="p-4 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }}>
               <div className="flex items-center gap-3 mb-3">
                 {primaryProfile?.avatar ? (
                   <img 
@@ -1371,33 +1371,33 @@ export default function Chat() {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-white truncate">{primaryProfile?.displayName || ensName || formatAddress(address || "")}</p>
+                  <p className="text-xs font-bold text-foreground truncate">{primaryProfile?.displayName || ensName || formatAddress(address || "")}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <div className="w-1 h-1 rounded-full bg-green-500 shadow-[0_0_4px_rgba(34,197,94,0.5)]"></div>
-                    <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Connected</span>
+                    <span className="text-[9px] font-black text-muted-foreground/80 uppercase tracking-widest">Connected</span>
                   </div>
                 </div>
               </div>
 
               {primaryProfile?.description && (
-                <p className="text-[10px] text-gray-500 leading-relaxed mb-3 line-clamp-2">{primaryProfile.description}</p>
+                <p className="text-[10px] text-muted-foreground leading-relaxed mb-3 line-clamp-2">{primaryProfile.description}</p>
               )}
 
               {totalFollowers > 0 && (
                 <div className="flex items-center gap-1 mb-3">
-                  <Users className="w-3 h-3 text-gray-600" />
-                  <span className="text-[9px] font-bold text-gray-500">{totalFollowers.toLocaleString()} followers</span>
+                  <Users className="w-3 h-3 text-muted-foreground/80" />
+                  <span className="text-[9px] font-bold text-muted-foreground">{totalFollowers.toLocaleString()} followers</span>
                 </div>
               )}
 
               {Object.keys(profileLinks).length > 0 && (
-                <div className="flex items-center gap-2 pt-2 border-t border-white/[0.03]">
+                <div className="flex items-center gap-2 pt-2 border-t border-border">
                   {profileLinks.twitter && (
                     <a 
                       href={profileLinks.twitter.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-muted hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                       title={`@${profileLinks.twitter.handle}`}
                       data-testid="link-twitter"
                     >
@@ -1409,7 +1409,7 @@ export default function Chat() {
                       href={profileLinks.github.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-muted hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                       title={profileLinks.github.handle}
                       data-testid="link-github"
                     >
@@ -1421,7 +1421,7 @@ export default function Chat() {
                       href={profileLinks.farcaster.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-orange-400 transition-colors"
+                      className="p-1.5 rounded-lg bg-muted hover:bg-muted text-muted-foreground hover:text-orange-400 transition-colors"
                       title={profileLinks.farcaster.handle}
                       data-testid="link-farcaster"
                     >
@@ -1433,7 +1433,7 @@ export default function Chat() {
                       href={profileLinks.website.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-muted hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                       title={profileLinks.website.handle}
                       data-testid="link-website"
                     >
@@ -1445,7 +1445,7 @@ export default function Chat() {
               
               <button
                 onClick={() => setSettingsOpen(!settingsOpen)}
-                className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-[#14171D] hover:bg-white/[0.05] text-gray-500 hover:text-white transition-colors border border-white/[0.03]"
+                className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-muted hover:bg-muted text-muted-foreground hover:text-foreground transition-colors border border-border"
                 aria-expanded={settingsOpen}
                 data-testid="button-settings"
               >
@@ -1454,14 +1454,14 @@ export default function Chat() {
               </button>
 
               {settingsOpen && (
-                <div className="mt-2 p-3 rounded-lg bg-white/[0.03] border border-white/[0.06] space-y-3" data-testid="panel-settings">
+                <div className="mt-2 p-3 rounded-lg bg-muted/50 border border-border space-y-3" data-testid="panel-settings">
                   <div>
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1">Venice API Key (BYOK)</label>
-                    <p className="text-[9px] text-gray-600 mb-2">Use your own Venice key instead of the shared one. Stored locally in your browser.</p>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Venice API Key (BYOK)</label>
+                    <p className="text-[9px] text-muted-foreground/80 mb-2">Use your own Venice key instead of the shared one. Stored locally in your browser.</p>
                     <input
                       data-testid="input-venice-api-key"
                       type="password"
-                      className="w-full px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-[11px] text-white placeholder:text-gray-600 outline-none focus:border-teal-500/50"
+                      className="w-full px-2.5 py-1.5 bg-muted border border-border rounded-lg text-[11px] text-foreground placeholder:text-muted-foreground/80 outline-none focus:border-teal-500/50"
                       placeholder="venice-..."
                       value={veniceKeyInput}
                       onChange={(e) => setVeniceKeyInput(e.target.value)}
@@ -1493,9 +1493,9 @@ export default function Chat() {
                     </div>
                   </div>
 
-                  <div className="border-t border-white/[0.06] pt-3">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1">Vault Encryption</label>
-                    <p className="text-[9px] text-gray-600 mb-2">
+                  <div className="border-t border-border pt-3">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Vault Encryption</label>
+                    <p className="text-[9px] text-muted-foreground/80 mb-2">
                       {vaultEncrypted
                         ? "Your vault is passphrase-protected. Lock it when you step away."
                         : "Set a passphrase to encrypt your local vault data."}
@@ -1505,7 +1505,7 @@ export default function Chat() {
                         <input
                           data-testid="input-vault-passphrase"
                           type="password"
-                          className="w-full px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-[11px] text-white placeholder:text-gray-600 outline-none focus:border-purple-500/50"
+                          className="w-full px-2.5 py-1.5 bg-muted border border-border rounded-lg text-[11px] text-foreground placeholder:text-muted-foreground/80 outline-none focus:border-purple-500/50"
                           placeholder="Choose a passphrase..."
                           value={vaultPassphrase}
                           onChange={(e) => setVaultPassphrase(e.target.value)}
@@ -1532,7 +1532,7 @@ export default function Chat() {
                         <input
                           data-testid="input-vault-unlock"
                           type="password"
-                          className="w-full px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-[11px] text-white placeholder:text-gray-600 outline-none focus:border-green-500/50"
+                          className="w-full px-2.5 py-1.5 bg-muted border border-border rounded-lg text-[11px] text-foreground placeholder:text-muted-foreground/80 outline-none focus:border-green-500/50"
                           placeholder="Enter passphrase to unlock..."
                           value={vaultPassphrase}
                           onChange={(e) => setVaultPassphrase(e.target.value)}
@@ -1588,7 +1588,7 @@ export default function Chat() {
 
               <button
                 onClick={() => disconnect()}
-                className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-[#14171D] hover:bg-red-500/10 text-gray-500 hover:text-red-400 transition-colors border border-white/[0.03] hover:border-red-500/20"
+                className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-muted hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-colors border border-border hover:border-red-500/20"
                 data-testid="button-disconnect-wallet"
               >
                 <LogOut className="w-3 h-3" />
@@ -1606,16 +1606,16 @@ export default function Chat() {
               {/* Hamburger menu for mobile */}
               <button 
                 onClick={() => setMobileSidebarOpen(true)}
-                className="md:hidden p-2.5 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-colors touch-target"
+                className="md:hidden p-2.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors touch-target"
                 data-testid="button-open-sidebar"
               >
                 <Menu className="w-5 h-5" />
               </button>
               <div className="flex flex-col">
-                <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">
+                <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground">
                   {showLedger ? "Cryptographic Ledger" : activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.name || "Journal") : currentZoneConfig.name}
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">
+                <p className="text-xs text-muted-foreground mt-0.5 hidden sm:block">
                   {showLedger ? "Immutable audit trail — all zone deployments recorded locally." : activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.purpose || "") : currentZoneConfig.purpose}
                 </p>
               </div>
@@ -1625,21 +1625,21 @@ export default function Chat() {
               {/* Status badges - hidden on mobile, E2E badge is clickable */}
               <Dialog open={securityDialogOpen} onOpenChange={setSecurityDialogOpen}>
                 <DialogTrigger asChild>
-                  <button className="hidden lg:flex items-center gap-4 px-4 py-2 rounded-lg transition-all cursor-pointer" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)'; }} data-testid="button-security-info">
+                  <button className="hidden lg:flex items-center gap-4 px-4 py-2 rounded-lg transition-all cursor-pointer" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'hsl(var(--border))'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'hsl(var(--border))'; }} data-testid="button-security-info">
                     <div className="flex items-center gap-2">
                       <Lock className="w-3 h-3 text-green-500/50" />
-                      <span className="text-[10px] font-medium" style={{ color: 'var(--rz-text-muted)' }}>Local-First</span>
+                      <span className="text-[10px] font-medium text-muted-foreground">Local-First</span>
                     </div>
-                    <div className="w-px h-3" style={{ background: 'rgba(255,255,255,0.06)' }}></div>
+                    <div className="w-px h-3" style={{ background: 'hsl(var(--border))' }}></div>
                     <div className="flex items-center gap-2">
                       <Bot className="w-3 h-3" style={{ color: 'rgba(243,126,32,0.5)' }} />
-                      <span className="text-[10px] font-medium" style={{ color: 'var(--rz-text-muted)' }}>Thinking Partner</span>
+                      <span className="text-[10px] font-medium text-muted-foreground">Thinking Partner</span>
                     </div>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="border-white/10 max-w-lg p-8 rounded-lg shadow-2xl" style={{ background: '#1a1d26' }}>
+                <DialogContent className="border-border max-w-lg p-8 rounded-lg shadow-2xl" style={{ background: 'hsl(var(--card))' }}>
                   <DialogHeader>
-                    <DialogTitle className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                    <DialogTitle className="text-xl font-black text-foreground uppercase tracking-tight flex items-center gap-3">
                       <div className="w-10 h-10 rounded-md bg-green-500/10 border border-green-500/20 flex items-center justify-center">
                         <Lock className="w-5 h-5 text-green-400" />
                       </div>
@@ -1647,27 +1647,27 @@ export default function Chat() {
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6 py-4">
-                    <p className="text-sm text-gray-300 leading-relaxed">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       Your journal and research data is stored locally on your device using IndexedDB. AI only sees what you explicitly share by clicking "Think with me" or running a research query.
                     </p>
                     
                     <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
                       <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Local-First Storage</p>
-                      <p className="text-sm text-gray-400 leading-relaxed">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         All entries, insights, and memories are stored in your browser's IndexedDB. This data stays on your device and works offline for writing and browsing.
                       </p>
                     </div>
 
                     <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
                       <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Privacy-Focused AI</p>
-                      <p className="text-sm text-gray-400 leading-relaxed">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         Your Thinking Partner is powered by Venice AI — privacy-first AI infrastructure with no data retention. Your prompts are never stored or used to train models.
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06]">
-                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Privacy Stack</p>
-                      <ul className="space-y-2 text-sm text-gray-400">
+                    <div className="p-4 rounded-lg bg-muted border border-border">
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Privacy Stack</p>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
                         <li className="flex items-start gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
                           Local-first storage (IndexedDB on your device)
@@ -1687,7 +1687,7 @@ export default function Chat() {
                       </ul>
                     </div>
 
-                    <p className="text-[10px] text-gray-600 text-center uppercase tracking-wider">
+                    <p className="text-[10px] text-muted-foreground/80 text-center uppercase tracking-wider">
                       Built on XMTP + Venice AI for complete privacy
                     </p>
                   </div>
@@ -1696,7 +1696,7 @@ export default function Chat() {
               
               <button
                 onClick={toggleTheme}
-                className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors text-gray-400 hover:text-white hover:bg-white/5 dark:hover:bg-white/5 hover:bg-black/5"
+                className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors text-muted-foreground hover:text-foreground hover:bg-muted dark:hover:bg-muted hover:bg-black/5"
                 data-testid="button-theme-toggle-chat"
                 aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               >
@@ -1704,7 +1704,7 @@ export default function Chat() {
               </button>
               <button 
                 onClick={() => setMemoryDrawerOpen(!memoryDrawerOpen)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all touch-target ${memoryDrawerOpen ? 'bg-orange-600/15 text-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5 bg-white/[0.03]'}`}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all touch-target ${memoryDrawerOpen ? 'bg-orange-600/15 text-orange-400' : 'text-muted-foreground hover:text-foreground hover:bg-muted bg-muted/50'}`}
                 data-testid="button-toggle-memory"
               >
                 <Zap className="w-4 h-4" />
@@ -1720,9 +1720,9 @@ export default function Chat() {
               <div className="space-y-4">
                 {(!auditRecords || auditRecords.length === 0) ? (
                   <div className="text-center py-20">
-                    <ScrollText className="w-12 h-12 mx-auto mb-4 text-gray-600" />
-                    <p className="text-lg font-bold text-gray-400 mb-2">No audit records yet</p>
-                    <p className="text-sm text-gray-600">Deploy your first strategy memo to a Zone to create an immutable record.</p>
+                    <ScrollText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/80" />
+                    <p className="text-lg font-bold text-muted-foreground mb-2">No audit records yet</p>
+                    <p className="text-sm text-muted-foreground/80">Deploy your first strategy memo to a Zone to create an immutable record.</p>
                     <button
                       onClick={() => { setShowLedger(false); setActiveView("execution"); setActiveZoneTier('micro'); }}
                       className="mt-6 px-6 py-3 rounded-lg text-sm font-bold transition-all"
@@ -1740,12 +1740,12 @@ export default function Chat() {
                       <div
                         key={record.id}
                         className="rounded-lg overflow-hidden transition-all"
-                        style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}
+                        style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}
                         data-testid={`audit-record-${record.id}`}
                       >
                         <button
                           onClick={() => setExpandedAuditId(isExpanded ? null : (record.id ?? null))}
-                          className="w-full text-left p-4 sm:p-5 flex items-center gap-4 hover:bg-white/[0.02] transition-colors"
+                          className="w-full text-left p-4 sm:p-5 flex items-center gap-4 hover:bg-muted/30 transition-colors"
                         >
                           <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ background: tierConfig?.bgColor, border: `1px solid ${tierConfig?.borderColor}` }}>
                             <span className="text-lg font-black font-mono" style={{ color: tierConfig?.color }}>{record.risk_score}</span>
@@ -1755,11 +1755,11 @@ export default function Chat() {
                               <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded" style={{ background: tierConfig?.bgColor, color: tierConfig?.color }}>
                                 {record.zone_tier}
                               </span>
-                              <span className="text-[10px] font-mono text-gray-600">
+                              <span className="text-[10px] font-mono text-muted-foreground/80">
                                 {format(new Date(record.timestamp), "MMM d, yyyy HH:mm")}
                               </span>
                             </div>
-                            <p className="text-sm text-gray-400 truncate">{record.original_payload.length > 80 ? `${record.original_payload.slice(0, 80)}...` : record.original_payload}</p>
+                            <p className="text-sm text-muted-foreground truncate">{record.original_payload.length > 80 ? `${record.original_payload.slice(0, 80)}...` : record.original_payload}</p>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             {record.verdict && (
@@ -1774,30 +1774,30 @@ export default function Chat() {
                             <span className="text-[10px] font-black uppercase px-2 py-1 rounded" style={{ background: `${getRiskColor(record.risk_score)}15`, color: getRiskColor(record.risk_score) }}>
                               {getRiskLabel(record.risk_score)}
                             </span>
-                            <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                            <ChevronDown className={`w-4 h-4 text-muted-foreground/80 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                           </div>
                         </button>
                         {isExpanded && (
-                          <div className="px-5 pb-5 space-y-4 border-t border-white/[0.04] pt-4">
+                          <div className="px-5 pb-5 space-y-4 border-t border-border pt-4">
                             <div>
-                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Primary Bias Detected</p>
+                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Primary Bias Detected</p>
                               <span className="px-3 py-1.5 rounded-lg text-xs font-bold" style={{ background: record.primary_bias_detected !== 'None' ? 'rgba(239,68,68,0.1)' : 'rgba(52,211,153,0.1)', color: record.primary_bias_detected !== 'None' ? '#ef4444' : '#34d399' }}>
                                 {record.primary_bias_detected.replace(/_/g, ' ')}
                               </span>
                             </div>
                             {record.flags && record.flags.length > 0 && (
                               <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Logic Failure Codes ({record.flags.length})</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Logic Failure Codes ({record.flags.length})</p>
                                 <div className="space-y-2">
                                   {record.flags.map((flag, idx) => {
                                     const sevColor = flag.severity === 'CRITICAL' ? '#ef4444' : flag.severity === 'HIGH' ? '#f97316' : flag.severity === 'MEDIUM' ? '#f59e0b' : '#6b7280';
                                     return (
-                                      <div key={idx} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${sevColor}20` }}>
+                                      <div key={idx} className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: `1px solid ${sevColor}20` }}>
                                         <div className="flex items-center gap-2 mb-1">
                                           <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded" style={{ background: `${sevColor}15`, color: sevColor }}>{flag.code}</span>
                                           <span className="text-[9px] font-black uppercase tracking-[0.15em]" style={{ color: sevColor }}>{flag.severity}</span>
                                         </div>
-                                        <p className="text-xs text-gray-400 leading-relaxed">{flag.message}</p>
+                                        <p className="text-xs text-muted-foreground leading-relaxed">{flag.message}</p>
                                       </div>
                                     );
                                   })}
@@ -1806,15 +1806,15 @@ export default function Chat() {
                             )}
                             {record.logic_flaws.length > 0 && (
                               <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Logic Flaws ({record.logic_flaws.length})</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Logic Flaws ({record.logic_flaws.length})</p>
                                 <div className="space-y-2">
                                   {record.logic_flaws.map((flaw, idx) => (
-                                    <div key={idx} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                                    <div key={idx} className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }}>
                                       <div className="flex items-center gap-2 mb-1">
                                         <span className="text-[10px] font-bold uppercase" style={{ color: flaw.severity === 'critical' ? '#ef4444' : flaw.severity === 'medium' ? '#f59e0b' : '#6b7280' }}>{flaw.severity}</span>
-                                        <span className="text-xs font-bold text-white">{flaw.flaw_type}</span>
+                                        <span className="text-xs font-bold text-foreground">{flaw.flaw_type}</span>
                                       </div>
-                                      <p className="text-xs text-gray-400 leading-relaxed">{flaw.explanation}</p>
+                                      <p className="text-xs text-muted-foreground leading-relaxed">{flaw.explanation}</p>
                                     </div>
                                   ))}
                                 </div>
@@ -1822,20 +1822,20 @@ export default function Chat() {
                             )}
                             {record.structural_recommendations.length > 0 && (
                               <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Recommendations</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Recommendations</p>
                                 <ul className="space-y-1.5">
                                   {record.structural_recommendations.map((rec, idx) => (
                                     <li key={idx} className="flex items-start gap-2">
                                       <span className="w-1 h-1 rounded-full mt-2 shrink-0" style={{ background: tierConfig?.color }}></span>
-                                      <p className="text-sm text-gray-300 leading-relaxed">{rec}</p>
+                                      <p className="text-sm text-muted-foreground leading-relaxed">{rec}</p>
                                     </li>
                                   ))}
                                 </ul>
                               </div>
                             )}
-                            <div className="pt-3 border-t border-white/[0.04]">
-                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-1">Cryptographic Hash</p>
-                              <p className="text-[11px] font-mono text-gray-500 break-all">{record.cryptographic_hash}</p>
+                            <div className="pt-3 border-t border-border">
+                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-1">Cryptographic Hash</p>
+                              <p className="text-[11px] font-mono text-muted-foreground break-all">{record.cryptographic_hash}</p>
                             </div>
                             <button
                               onClick={() => { setShowLedger(false); setActiveView("execution"); setActiveZoneTier(record.zone_tier as AuditTier); setAuditPayload(record.original_payload); }}
@@ -1857,24 +1857,24 @@ export default function Chat() {
             <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 sm:px-8">
               {selectedZone === "journal" || selectedZone === "research" ? (
                 <div className="flex-1 flex flex-col py-6 sm:py-10">
-                  <div className="mb-6 p-4 sm:p-5 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div className="mb-6 p-4 sm:p-5 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }}>
                     <div className="flex items-center gap-3 mb-2">
                       {(() => { const zoneInfo = V1_ZONES.find(z => z.id === selectedZone); const Icon = zoneInfo?.icon || PenLine; return <Icon className="w-5 h-5" style={{ color: zoneInfo?.color }} />; })()}
-                      <h3 className="text-base font-black text-white">{V1_ZONES.find(z => z.id === selectedZone)?.name}</h3>
+                      <h3 className="text-base font-black text-foreground">{V1_ZONES.find(z => z.id === selectedZone)?.name}</h3>
                     </div>
-                    <p className="text-xs text-gray-400 leading-relaxed">{V1_ZONES.find(z => z.id === selectedZone)?.purpose}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{V1_ZONES.find(z => z.id === selectedZone)?.purpose}</p>
                   </div>
 
                   {agentResponse ? (
                     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="p-5 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">
+                      <div className="p-5 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-3">
                           {selectedZone === "research" ? "Research Analysis" : "AI Thinking Partner"}
                         </p>
-                        <div className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{agentResponse.said}{agentResponse.matters ? `\n\n${agentResponse.matters}` : ""}{agentResponse.nextMove ? `\n\n${agentResponse.nextMove}` : ""}</div>
+                        <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{agentResponse.said}{agentResponse.matters ? `\n\n${agentResponse.matters}` : ""}{agentResponse.nextMove ? `\n\n${agentResponse.nextMove}` : ""}</div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <button onClick={clearAndReset} className="text-xs text-gray-500 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/[0.03]" data-testid="button-clear-analysis">
+                        <button onClick={clearAndReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-muted/50" data-testid="button-clear-analysis">
                           New Entry
                         </button>
                         <button
@@ -1901,8 +1901,8 @@ export default function Chat() {
                           onFocus={() => setIsFocused(true)}
                           onBlur={() => setIsFocused(false)}
                           placeholder={selectedZone === "research" ? currentPrompts[currentPromptIndex] : currentPrompts[currentPromptIndex]}
-                          className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-gray-200 leading-relaxed resize-none focus:outline-none transition-all placeholder:text-gray-700"
-                          style={{ background: '#14171D', border: `1px solid ${messageInput.length > 0 ? 'rgba(243,126,32,0.25)' : 'rgba(255,255,255,0.06)'}` }}
+                          className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-foreground leading-relaxed resize-none focus:outline-none transition-all placeholder:text-muted-foreground/60"
+                          style={{ background: 'hsl(var(--muted))', border: `1px solid ${messageInput.length > 0 ? 'rgba(243,126,32,0.25)' : 'hsl(var(--border))'}` }}
                           data-testid="textarea-workspace-input"
                         />
                       </div>
@@ -1950,7 +1950,7 @@ export default function Chat() {
                     <div className="mt-8">
                       <button
                         onClick={() => setShowHistory(!showHistory)}
-                        className="flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-white transition-colors mb-4"
+                        className="flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors mb-4"
                         data-testid="button-toggle-history"
                       >
                         <Clock className="w-3 h-3" />
@@ -1960,9 +1960,9 @@ export default function Chat() {
                       {showHistory && (
                         <div className="space-y-3">
                           {localEntries.slice(0, 20).map((entry) => (
-                            <div key={entry.id} className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
-                              <p className="text-sm text-gray-300 leading-relaxed line-clamp-3">{entry.text}</p>
-                              <p className="text-[10px] text-gray-600 mt-2 font-mono">{format(new Date(entry.createdAt), "MMM d, yyyy HH:mm")}</p>
+                            <div key={entry.id} className="p-4 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{entry.text}</p>
+                              <p className="text-[10px] text-muted-foreground/80 mt-2 font-mono">{format(new Date(entry.createdAt), "MMM d, yyyy HH:mm")}</p>
                             </div>
                           ))}
                         </div>
@@ -1976,7 +1976,7 @@ export default function Chat() {
                   <div className="mt-6 p-4 rounded-lg flex items-center justify-between" style={{ background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)' }}>
                     <div>
                       <p className="text-xs font-bold text-purple-300">Stress-test your thesis</p>
-                      <p className="text-[10px] text-gray-500">Send your trade thesis to an Execution Zone for adversarial audit.</p>
+                      <p className="text-[10px] text-muted-foreground">Send your trade thesis to an Execution Zone for adversarial audit.</p>
                     </div>
                     <button
                       onClick={() => { setActiveView("execution"); setActiveZoneTier("micro"); }}
@@ -1994,7 +1994,7 @@ export default function Chat() {
                   <div className="mt-6 p-4 rounded-lg flex items-center justify-between" style={{ background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)' }}>
                     <div>
                       <p className="text-xs font-bold text-purple-300">Pressure-test your decision</p>
-                      <p className="text-[10px] text-gray-500">Submit your reasoning to an Execution Zone for adversarial review.</p>
+                      <p className="text-[10px] text-muted-foreground">Submit your reasoning to an Execution Zone for adversarial review.</p>
                     </div>
                     <button
                       onClick={() => { setActiveView("execution"); setActiveZoneTier("founder"); }}
@@ -2012,7 +2012,7 @@ export default function Chat() {
                   <div className="mt-6 p-4 rounded-lg flex items-center justify-between" style={{ background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)' }}>
                     <div>
                       <p className="text-xs font-bold text-purple-300">Challenge your content angle</p>
-                      <p className="text-[10px] text-gray-500">Run your content strategy through an Execution Zone audit.</p>
+                      <p className="text-[10px] text-muted-foreground">Run your content strategy through an Execution Zone audit.</p>
                     </div>
                     <button
                       onClick={() => { setActiveView("execution"); setActiveZoneTier("micro"); }}
@@ -2029,19 +2029,19 @@ export default function Chat() {
                   <div className="mb-6 p-4 sm:p-5 rounded-lg" style={{ background: 'rgba(244,63,94,0.06)', border: '1px solid rgba(244,63,94,0.15)' }}>
                     <div className="flex items-center gap-3 mb-2">
                       <MessageSquare className="w-5 h-5" style={{ color: '#f43f5e' }} />
-                      <h3 className="text-base font-black text-white">Thinking Partner</h3>
+                      <h3 className="text-base font-black text-foreground">Thinking Partner</h3>
                     </div>
-                    <p className="text-xs text-gray-400 leading-relaxed">Adversarial AI for reasoning attack. Paste your thesis, argument, or decision — it will expose contradictions, challenge assumptions, and pressure-test your logic.</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">Adversarial AI for reasoning attack. Paste your thesis, argument, or decision — it will expose contradictions, challenge assumptions, and pressure-test your logic.</p>
                   </div>
 
                   {agentResponse ? (
                     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="p-5 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(244,63,94,0.15)' }}>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">Adversarial Analysis</p>
-                        <div className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{agentResponse.said}{agentResponse.matters ? `\n\n${agentResponse.matters}` : ""}{agentResponse.nextMove ? `\n\n${agentResponse.nextMove}` : ""}</div>
+                      <div className="p-5 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid rgba(244,63,94,0.15)' }}>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-3">Adversarial Analysis</p>
+                        <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{agentResponse.said}{agentResponse.matters ? `\n\n${agentResponse.matters}` : ""}{agentResponse.nextMove ? `\n\n${agentResponse.nextMove}` : ""}</div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <button onClick={clearAndReset} className="text-xs text-gray-500 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/[0.03]" data-testid="button-clear-thinking">
+                        <button onClick={clearAndReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-muted/50" data-testid="button-clear-thinking">
                           New Session
                         </button>
                         <button
@@ -2067,8 +2067,8 @@ export default function Chat() {
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
                         placeholder="Paste your thesis, argument, or assumption here..."
-                        className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-gray-200 leading-relaxed resize-none focus:outline-none transition-all placeholder:text-gray-700"
-                        style={{ background: '#14171D', border: `1px solid ${messageInput.length > 0 ? 'rgba(244,63,94,0.25)' : 'rgba(255,255,255,0.06)'}` }}
+                        className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-foreground leading-relaxed resize-none focus:outline-none transition-all placeholder:text-muted-foreground/60"
+                        style={{ background: 'hsl(var(--muted))', border: `1px solid ${messageInput.length > 0 ? 'rgba(244,63,94,0.25)' : 'hsl(var(--border))'}` }}
                         data-testid="textarea-thinking-input"
                       />
                       <div className="flex items-center justify-between">
@@ -2114,11 +2114,11 @@ export default function Chat() {
                   <div className="flex items-center gap-3 mb-2">
                     {(() => { const Icon = currentZoneConfig.icon; return <Icon className="w-5 h-5" style={{ color: currentZoneConfig.color }} />; })()}
                     <div>
-                      <h3 className="text-base font-black text-white">{currentZoneConfig.name}</h3>
+                      <h3 className="text-base font-black text-foreground">{currentZoneConfig.name}</h3>
                       <p className="text-[10px] font-mono" style={{ color: currentZoneConfig.color }}>{currentZoneConfig.price} USDC per deployment</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-400 leading-relaxed">{currentZoneConfig.description}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{currentZoneConfig.description}</p>
                 </div>
 
                 {auditResult ? (
@@ -2147,19 +2147,19 @@ export default function Chat() {
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-gray-500 mt-1 font-mono">{auditResult.audit_id}</p>
+                          <p className="text-xs text-muted-foreground mt-1 font-mono">{auditResult.audit_id}</p>
                         </div>
                       </div>
-                      <button onClick={clearAuditResult} className="text-xs text-gray-500 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/[0.03]" data-testid="button-new-audit">
+                      <button onClick={clearAuditResult} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-muted/50" data-testid="button-new-audit">
                         New Audit
                       </button>
                     </div>
 
                     {intelligenceBrief && (
-                      <div className="rounded-lg overflow-hidden" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }} data-testid="panel-intelligence-brief">
+                      <div className="rounded-lg overflow-hidden" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }} data-testid="panel-intelligence-brief">
                         <button
                           onClick={() => setBriefExpanded(!briefExpanded)}
-                          className="w-full flex items-center justify-between p-4 text-left transition-colors hover:bg-white/[0.02]"
+                          className="w-full flex items-center justify-between p-4 text-left transition-colors hover:bg-muted/30"
                           data-testid="button-toggle-intelligence-brief"
                         >
                           <div className="flex items-center gap-3">
@@ -2167,38 +2167,38 @@ export default function Chat() {
                               <Brain className="w-4 h-4" style={{ color: '#F37E20' }} />
                             </div>
                             <div>
-                              <p className="text-xs font-black text-white tracking-tight">Founder Intelligence Brief</p>
-                              <p className="text-[10px] text-gray-500">{intelligenceBrief.activeSignals} active signal{intelligenceBrief.activeSignals !== 1 ? 's' : ''} detected</p>
+                              <p className="text-xs font-black text-foreground tracking-tight">Founder Intelligence Brief</p>
+                              <p className="text-[10px] text-muted-foreground">{intelligenceBrief.activeSignals} active signal{intelligenceBrief.activeSignals !== 1 ? 's' : ''} detected</p>
                             </div>
                           </div>
-                          <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${briefExpanded ? 'rotate-180' : ''}`} />
+                          <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${briefExpanded ? 'rotate-180' : ''}`} />
                         </button>
                         {briefExpanded && (
                           <div className="px-4 pb-4 space-y-3">
-                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-bias-pattern">
+                            <div className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }} data-testid="signal-bias-pattern">
                               <div className="flex items-center gap-2 mb-1.5">
                                 <Activity className="w-3.5 h-3.5" style={{ color: intelligenceBrief.biasPattern.dominantBias ? '#ef4444' : '#34d399' }} />
-                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Bias Pattern Memory</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Bias Pattern Memory</span>
                               </div>
-                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.biasPattern.summary}</p>
+                              <p className="text-xs text-muted-foreground leading-relaxed">{intelligenceBrief.biasPattern.summary}</p>
                               {intelligenceBrief.biasPattern.dominantBias && (
                                 <div className="mt-2 flex items-center gap-2">
                                   <span className="text-[10px] px-2 py-0.5 rounded font-bold" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>
                                     {intelligenceBrief.biasPattern.dominantBias.replace(/_/g, ' ')}
                                   </span>
-                                  <span className="text-[10px] text-gray-600">
+                                  <span className="text-[10px] text-muted-foreground/80">
                                     Risk trend: {intelligenceBrief.biasPattern.riskTrend === 'increasing' ? '↑ increasing' : intelligenceBrief.biasPattern.riskTrend === 'decreasing' ? '↓ decreasing' : intelligenceBrief.biasPattern.riskTrend === 'stable' ? '→ stable' : '—'}
                                   </span>
                                 </div>
                               )}
                             </div>
 
-                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-narrative-drift">
+                            <div className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }} data-testid="signal-narrative-drift">
                               <div className="flex items-center gap-2 mb-1.5">
                                 <Compass className="w-3.5 h-3.5" style={{ color: intelligenceBrief.narrativeDrift.driftDetected ? '#f59e0b' : '#34d399' }} />
-                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Narrative Drift Detection</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Narrative Drift Detection</span>
                               </div>
-                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.narrativeDrift.summary}</p>
+                              <p className="text-xs text-muted-foreground leading-relaxed">{intelligenceBrief.narrativeDrift.summary}</p>
                               {intelligenceBrief.narrativeDrift.contradictions.length > 0 && (
                                 <div className="mt-2 space-y-1">
                                   {intelligenceBrief.narrativeDrift.contradictions.map((c, i) => (
@@ -2208,27 +2208,27 @@ export default function Chat() {
                               )}
                             </div>
 
-                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-assumption-kill">
+                            <div className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }} data-testid="signal-assumption-kill">
                               <div className="flex items-center gap-2 mb-1.5">
                                 <AlertCircle className="w-3.5 h-3.5" style={{ color: intelligenceBrief.assumptionKill.criticalAssumptions.length > 0 ? '#ef4444' : '#6b7280' }} />
-                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Assumption Kill Switch</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Assumption Kill Switch</span>
                               </div>
-                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.assumptionKill.summary}</p>
+                              <p className="text-xs text-muted-foreground leading-relaxed">{intelligenceBrief.assumptionKill.summary}</p>
                               {intelligenceBrief.assumptionKill.criticalAssumptions.length > 0 && (
                                 <div className="mt-2 space-y-1.5">
                                   {intelligenceBrief.assumptionKill.criticalAssumptions.map((a, i) => (
-                                    <p key={i} className="text-[11px] text-gray-400 leading-relaxed pl-3" style={{ borderLeft: '2px solid rgba(239,68,68,0.3)' }}>{a}</p>
+                                    <p key={i} className="text-[11px] text-muted-foreground leading-relaxed pl-3" style={{ borderLeft: '2px solid rgba(239,68,68,0.3)' }}>{a}</p>
                                   ))}
                                 </div>
                               )}
                             </div>
 
-                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-volatility-sim">
+                            <div className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }} data-testid="signal-volatility-sim">
                               <div className="flex items-center gap-2 mb-1.5">
                                 <Zap className="w-3.5 h-3.5" style={{ color: '#2dd4bf' }} />
-                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Volatility Simulation</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Volatility Simulation</span>
                               </div>
-                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.volatilitySim.summary}</p>
+                              <p className="text-xs text-muted-foreground leading-relaxed">{intelligenceBrief.volatilitySim.summary}</p>
                               {intelligenceBrief.volatilitySim.stressQuestions.length > 0 && (
                                 <div className="mt-2 space-y-1.5">
                                   {intelligenceBrief.volatilitySim.stressQuestions.map((q, i) => (
@@ -2238,12 +2238,12 @@ export default function Chat() {
                               )}
                             </div>
 
-                            <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }} data-testid="signal-emotional-spike">
+                            <div className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }} data-testid="signal-emotional-spike">
                               <div className="flex items-center gap-2 mb-1.5">
                                 <Activity className="w-3.5 h-3.5" style={{ color: intelligenceBrief.emotionalSpike.spikeDetected ? '#f59e0b' : '#34d399' }} />
-                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Emotional Spike Flag</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Emotional Spike Flag</span>
                               </div>
-                              <p className="text-xs text-gray-300 leading-relaxed">{intelligenceBrief.emotionalSpike.summary}</p>
+                              <p className="text-xs text-muted-foreground leading-relaxed">{intelligenceBrief.emotionalSpike.summary}</p>
                               {intelligenceBrief.emotionalSpike.flaggedPhrases.length > 0 && (
                                 <div className="mt-2 flex flex-wrap gap-1.5">
                                   {intelligenceBrief.emotionalSpike.flaggedPhrases.map((p, i) => (
@@ -2258,18 +2258,18 @@ export default function Chat() {
                     )}
 
                     {(auditResult as any).flags && (auditResult as any).flags.length > 0 && (
-                      <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }} data-testid="panel-logic-flags">
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">Logic Failure Codes ({(auditResult as any).flags.length})</p>
+                      <div className="p-4 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }} data-testid="panel-logic-flags">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-3">Logic Failure Codes ({(auditResult as any).flags.length})</p>
                         <div className="space-y-2">
                           {(auditResult as any).flags.map((flag: any, idx: number) => {
                             const severityColor = flag.severity === 'CRITICAL' ? '#ef4444' : flag.severity === 'HIGH' ? '#f97316' : flag.severity === 'MEDIUM' ? '#f59e0b' : '#6b7280';
                             return (
-                              <div key={idx} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${severityColor}20` }} data-testid={`flag-${flag.code}`}>
+                              <div key={idx} className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: `1px solid ${severityColor}20` }} data-testid={`flag-${flag.code}`}>
                                 <div className="flex items-center gap-2 mb-1">
                                   <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded" style={{ background: `${severityColor}15`, color: severityColor }}>{flag.code}</span>
                                   <span className="text-[9px] font-black uppercase tracking-[0.15em] px-1.5 py-0.5 rounded" style={{ background: `${severityColor}10`, color: severityColor }}>{flag.severity}</span>
                                 </div>
-                                <p className="text-xs text-gray-400 leading-relaxed mt-1">{flag.message}</p>
+                                <p className="text-xs text-muted-foreground leading-relaxed mt-1">{flag.message}</p>
                               </div>
                             );
                           })}
@@ -2277,24 +2277,24 @@ export default function Chat() {
                       </div>
                     )}
 
-                    <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2">Primary Bias</p>
+                    <div className="p-4 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Primary Bias</p>
                       <span className="px-3 py-1.5 rounded-lg text-sm font-bold" style={{ background: auditResult.primary_bias_detected !== 'None' ? 'rgba(239,68,68,0.1)' : 'rgba(52,211,153,0.1)', color: auditResult.primary_bias_detected !== 'None' ? '#ef4444' : '#34d399' }}>
                         {auditResult.primary_bias_detected.replace(/_/g, ' ')}
                       </span>
                     </div>
 
                     {auditResult.logic_flaws.length > 0 && (
-                      <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">Logic Flaws ({auditResult.logic_flaws.length})</p>
+                      <div className="p-4 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-3">Logic Flaws ({auditResult.logic_flaws.length})</p>
                         <div className="space-y-3">
                           {auditResult.logic_flaws.map((flaw, idx) => (
-                            <div key={idx} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                            <div key={idx} className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }}>
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="text-[10px] font-black uppercase" style={{ color: flaw.severity === 'critical' ? '#ef4444' : flaw.severity === 'medium' ? '#f59e0b' : '#6b7280' }}>{flaw.severity}</span>
-                                <span className="text-xs font-bold text-white">{flaw.flaw_type}</span>
+                                <span className="text-xs font-bold text-foreground">{flaw.flaw_type}</span>
                               </div>
-                              <p className="text-xs text-gray-400 leading-relaxed">{flaw.explanation}</p>
+                              <p className="text-xs text-muted-foreground leading-relaxed">{flaw.explanation}</p>
                             </div>
                           ))}
                         </div>
@@ -2302,22 +2302,22 @@ export default function Chat() {
                     )}
 
                     {auditResult.structural_recommendations.length > 0 && (
-                      <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-3">Recommendations</p>
+                      <div className="p-4 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-3">Recommendations</p>
                         <ul className="space-y-2">
                           {auditResult.structural_recommendations.map((rec, idx) => (
                             <li key={idx} className="flex items-start gap-2">
                               <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: currentZoneConfig.color }}></span>
-                              <p className="text-sm text-gray-300 leading-relaxed">{rec}</p>
+                              <p className="text-sm text-muted-foreground leading-relaxed">{rec}</p>
                             </li>
                           ))}
                         </ul>
                       </div>
                     )}
 
-                    <div className="p-4 rounded-lg" style={{ background: '#14171D', border: '1px solid rgba(255,255,255,0.06)' }}>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-1">Cryptographic Hash</p>
-                      <p className="text-[11px] font-mono text-gray-500 break-all">{auditResult.cryptographic_hash}</p>
+                    <div className="p-4 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-1">Cryptographic Hash</p>
+                      <p className="text-[11px] font-mono text-muted-foreground break-all">{auditResult.cryptographic_hash}</p>
                     </div>
                   </div>
                 ) : (
@@ -2327,17 +2327,17 @@ export default function Chat() {
                         value={auditPayload}
                         onChange={(e) => setAuditPayload(e.target.value.slice(0, currentZoneConfig.maxChars))}
                         placeholder={currentZoneConfig.placeholder}
-                        className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-gray-200 font-mono leading-relaxed resize-none focus:outline-none transition-all placeholder:text-gray-700"
-                        style={{ background: '#14171D', border: `1px solid ${auditPayload.length > 0 ? currentZoneConfig.borderColor : 'rgba(255,255,255,0.06)'}` }}
+                        className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-foreground font-mono leading-relaxed resize-none focus:outline-none transition-all placeholder:text-muted-foreground/60"
+                        style={{ background: 'hsl(var(--muted))', border: `1px solid ${auditPayload.length > 0 ? currentZoneConfig.borderColor : 'hsl(var(--border))'}` }}
                         disabled={isDeploying}
                         data-testid="textarea-audit-payload"
                       />
                       <div className="absolute bottom-3 right-4 flex items-center gap-3">
-                        <span className="text-[10px] font-mono text-gray-600">{auditPayload.length}/{currentZoneConfig.maxChars}</span>
+                        <span className="text-[10px] font-mono text-muted-foreground/80">{auditPayload.length}/{currentZoneConfig.maxChars}</span>
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <p className="text-[10px] text-gray-600">{auditPayload.length >= 20 ? 'Ready to deploy' : 'Min 20 characters'}</p>
+                      <p className="text-[10px] text-muted-foreground/80">{auditPayload.length >= 20 ? 'Ready to deploy' : 'Min 20 characters'}</p>
                       <button
                         onClick={handleDeploy}
                         disabled={isDeploying || auditPayload.trim().length < 20}
@@ -2373,18 +2373,18 @@ export default function Chat() {
             />
             <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-border flex flex-col bg-card backdrop-blur-xl animate-in slide-in-from-right duration-300">
               <Tabs defaultValue="memories" className="flex-1 flex flex-col">
-                <div className="px-5 pt-5 pb-4 border-b border-white/[0.04]">
+                <div className="px-5 pt-5 pb-4 border-b border-border">
                   <div className="flex items-center justify-between mb-4 md:hidden">
-                    <h3 className="text-lg font-bold text-white">Memory & Insights</h3>
+                    <h3 className="text-lg font-bold text-foreground">Memory & Insights</h3>
                     <button 
                       onClick={() => setMemoryDrawerOpen(false)}
-                      className="p-2.5 rounded-full bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors touch-target"
+                      className="p-2.5 rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-muted transition-colors touch-target"
                       data-testid="button-close-memory"
                     >
                       <X className="w-5 h-5" />
                     </button>
                   </div>
-                  <TabsList className="w-full bg-white/[0.03] p-1 rounded-lg h-11">
+                  <TabsList className="w-full bg-muted/50 p-1 rounded-lg h-11">
                     <TabsTrigger value="memories" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-orange-600/20 data-[state=active]:text-orange-300">
                       <Pin className="w-3.5 h-3.5 mr-2" />
                       Memories
@@ -2397,39 +2397,39 @@ export default function Chat() {
                 </div>
 
               <TabsContent value="memories" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
-                <div className="px-5 py-3 border-b border-white/[0.03]">
-                  <p className="text-xs text-gray-500 font-medium">{localMemories?.length || 0} patterns saved</p>
+                <div className="px-5 py-3 border-b border-border">
+                  <p className="text-xs text-muted-foreground font-medium">{localMemories?.length || 0} patterns saved</p>
                 </div>
                 <ScrollArea className="flex-1">
                   <div className="p-4 space-y-3">
                     {!localMemories || localMemories.length === 0 ? (
                       <div className="text-center py-12 px-4">
-                        <div className="w-12 h-12 rounded-lg bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
-                          <Pin className="w-6 h-6 text-gray-600" />
+                        <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                          <Pin className="w-6 h-6 text-muted-foreground/80" />
                         </div>
-                        <p className="text-sm text-gray-500 font-medium">No patterns pinned yet</p>
-                        <p className="text-xs text-gray-600 mt-2 leading-relaxed">Pin patterns worth remembering from your entries</p>
+                        <p className="text-sm text-muted-foreground font-medium">No patterns pinned yet</p>
+                        <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">Pin patterns worth remembering from your entries</p>
                       </div>
                     ) : (
                       localMemories.map((memory) => (
-                        <div key={memory.id} className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] entry-card">
+                        <div key={memory.id} className="p-4 rounded-lg bg-muted border border-border entry-card">
                           <div className="flex items-center gap-2 mb-2">
                             <Badge variant="outline" className="text-[9px] font-medium border-orange-500/30 text-orange-400/70 px-2 py-0.5">
                               {memory.kind}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-300 leading-relaxed mb-3">
+                          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                             {memory.content}
                           </p>
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-gray-600">
+                            <span className="text-xs text-muted-foreground/80">
                               {format(new Date(memory.createdAt), "MMM d, yyyy")}
                             </span>
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={() => memory.id && handleForgetMemory(memory.id)}
-                              className="text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-8 px-3 text-xs touch-target"
+                              className="text-muted-foreground hover:text-red-400 hover:bg-red-500/10 h-8 px-3 text-xs touch-target"
                               data-testid={`button-forget-memory-${memory.id}`}
                             >
                               Forget
@@ -2440,11 +2440,11 @@ export default function Chat() {
                     )}
                   </div>
                 </ScrollArea>
-                <div className="p-4 border-t border-white/[0.04] space-y-3">
+                <div className="p-4 border-t border-border space-y-3">
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-2">
                       <div className={`w-2 h-2 rounded-full ${storagePersisted ? 'bg-green-400' : 'bg-yellow-400'}`} />
-                      <span className="text-[10px] text-gray-500" data-testid="text-storage-status">
+                      <span className="text-[10px] text-muted-foreground" data-testid="text-storage-status">
                         {storagePersisted === null ? 'Checking...' : storagePersisted ? 'Persistent storage: On' : 'Persistent storage: Off'}
                       </span>
                     </div>
@@ -2462,12 +2462,12 @@ export default function Chat() {
                       </button>
                     )}
                   </div>
-                  <p className="text-[10px] text-gray-600 px-1" data-testid="text-last-backup">
+                  <p className="text-[10px] text-muted-foreground/80 px-1" data-testid="text-last-backup">
                     Last backup: {lastBackupDate ? format(new Date(lastBackupDate), "MMM d, yyyy 'at' h:mm a") : 'never'}
                   </p>
                   <Button 
                     variant="outline" 
-                    className="w-full border-white/[0.06] bg-[#14171D] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-lg font-medium text-xs transition-all touch-target"
+                    className="w-full border-border bg-muted hover:bg-muted text-muted-foreground hover:text-foreground h-11 rounded-lg font-medium text-xs transition-all touch-target"
                     disabled={isExporting}
                     onClick={async () => {
                       setIsExporting(true);
@@ -2524,7 +2524,7 @@ export default function Chat() {
                   />
                   <Button
                     variant="outline"
-                    className="w-full border-white/[0.06] bg-[#14171D] hover:bg-white/[0.04] text-gray-500 hover:text-white h-11 rounded-lg font-medium text-xs transition-all touch-target"
+                    className="w-full border-border bg-muted hover:bg-muted text-muted-foreground hover:text-foreground h-11 rounded-lg font-medium text-xs transition-all touch-target"
                     disabled={isImporting}
                     onClick={() => importFileRef.current?.click()}
                     data-testid="button-import-vault"
@@ -2536,8 +2536,8 @@ export default function Chat() {
               </TabsContent>
 
               <TabsContent value="insights" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
-                <div className="px-5 py-3 border-b border-white/[0.03]">
-                  <p className="text-xs text-gray-500 font-medium">Latest thinking</p>
+                <div className="px-5 py-3 border-b border-border">
+                  <p className="text-xs text-muted-foreground font-medium">Latest thinking</p>
                 </div>
                 <ScrollArea className="flex-1">
                   <div className="p-4 space-y-3">
@@ -2550,19 +2550,19 @@ export default function Chat() {
                           </span>
                         </div>
                         <div className="space-y-3">
-                          <p className="text-sm text-white/90 leading-relaxed">{agentResponse.said}</p>
-                          <p className="text-xs text-gray-500 leading-relaxed">{agentResponse.matters}</p>
+                          <p className="text-sm text-foreground/90 leading-relaxed">{agentResponse.said}</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">{agentResponse.matters}</p>
                           <p className="text-sm text-orange-300 italic leading-relaxed">{agentResponse.question}</p>
                         </div>
-                        <p className="text-xs text-gray-600 mt-4">Just now</p>
+                        <p className="text-xs text-muted-foreground/80 mt-4">Just now</p>
                       </div>
                     ) : (
                       <div className="text-center py-12 px-4">
-                        <div className="w-12 h-12 rounded-lg bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
-                          <Bot className="w-6 h-6 text-gray-600" />
+                        <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                          <Bot className="w-6 h-6 text-muted-foreground/80" />
                         </div>
-                        <p className="text-sm text-gray-500 font-medium">No thinking yet</p>
-                        <p className="text-xs text-gray-600 mt-2 leading-relaxed">Write an entry and click "Think with me"</p>
+                        <p className="text-sm text-muted-foreground font-medium">No thinking yet</p>
+                        <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">Write an entry and click "Think with me"</p>
                       </div>
                     )}
                   </div>

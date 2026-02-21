@@ -103,11 +103,11 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
     }, 1000);
     
     return (
-      <div className="bg-gray-900 rounded-lg p-6 border border-green-600/50 text-center">
+      <div className="bg-card rounded-lg p-6 border border-green-600/50 text-center">
         <div className="w-12 h-12 rounded-full bg-green-600/30 flex items-center justify-center mx-auto mb-3">
           <Check className="w-6 h-6 text-green-400" />
         </div>
-        <h3 className="text-white font-semibold mb-2">Payment Sent!</h3>
+        <h3 className="text-foreground font-semibold mb-2">Payment Sent!</h3>
         <a
           href={`https://basescan.org/tx/${txHash}`}
           target="_blank"
@@ -121,7 +121,7 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
   }
 
   return (
-    <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+    <div className="bg-card rounded-lg p-4 border border-border">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <FormField
@@ -129,12 +129,12 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
             name="to"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Recipient Address</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Recipient Address</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     placeholder="0x..."
-                    className="bg-gray-800 border-gray-700 text-white font-mono text-sm"
+                    className="bg-muted border-border text-foreground font-mono text-sm"
                     data-testid="input-payment-to"
                   />
                 </FormControl>
@@ -149,7 +149,7 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400 text-xs">Amount</FormLabel>
+                  <FormLabel className="text-muted-foreground text-xs">Amount</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -157,7 +157,7 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
                       step="0.0001"
                       min="0"
                       placeholder="0.1"
-                      className="bg-gray-800 border-gray-700 text-white"
+                      className="bg-muted border-border text-foreground"
                       data-testid="input-payment-amount"
                     />
                   </FormControl>
@@ -170,10 +170,10 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
               name="token"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400 text-xs">Token</FormLabel>
+                  <FormLabel className="text-muted-foreground text-xs">Token</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white" data-testid="select-token">
+                      <SelectTrigger className="bg-muted border-border text-foreground" data-testid="select-token">
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -192,12 +192,12 @@ export function PaymentComposer({ onSuccess }: PaymentComposerProps) {
             name="note"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Note (optional)</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Note (optional)</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     placeholder="What's this for?"
-                    className="bg-gray-800 border-gray-700 text-white resize-none"
+                    className="bg-muted border-border text-foreground resize-none"
                     rows={2}
                   />
                 </FormControl>

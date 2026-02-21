@@ -71,7 +71,7 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
   };
 
   return (
-    <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+    <div className="bg-card rounded-lg p-4 border border-border">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -80,12 +80,12 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
               name="asset"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400 text-xs">Asset</FormLabel>
+                  <FormLabel className="text-muted-foreground text-xs">Asset</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="BTC, ETH, SOL..."
-                      className="bg-gray-800 border-gray-700 text-white"
+                      className="bg-muted border-border text-foreground"
                       data-testid="input-trade-asset"
                     />
                   </FormControl>
@@ -98,10 +98,10 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
               name="direction"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400 text-xs">Direction</FormLabel>
+                  <FormLabel className="text-muted-foreground text-xs">Direction</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white" data-testid="select-direction">
+                      <SelectTrigger className="bg-muted border-border text-foreground" data-testid="select-direction">
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -121,12 +121,12 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
               name="entry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400 text-xs">Entry Price</FormLabel>
+                  <FormLabel className="text-muted-foreground text-xs">Entry Price</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="$45,000"
-                      className="bg-gray-800 border-gray-700 text-white"
+                      className="bg-muted border-border text-foreground"
                       data-testid="input-entry"
                     />
                   </FormControl>
@@ -139,12 +139,12 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
               name="invalidation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400 text-xs">Stop Loss</FormLabel>
+                  <FormLabel className="text-muted-foreground text-xs">Stop Loss</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="$43,500"
-                      className="bg-gray-800 border-gray-700 text-white"
+                      className="bg-muted border-border text-foreground"
                       data-testid="input-invalidation"
                     />
                   </FormControl>
@@ -156,7 +156,7 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-xs">Take Profit Targets</span>
+              <span className="text-muted-foreground text-xs">Take Profit Targets</span>
               {tpTargets.length < 5 && (
                 <Button
                   type="button"
@@ -176,7 +176,7 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
                     value={target}
                     onChange={(e) => updateTpTarget(idx, e.target.value)}
                     placeholder={`TP${idx + 1}: $48,000`}
-                    className="bg-gray-800 border-gray-700 text-white"
+                    className="bg-muted border-border text-foreground"
                     data-testid={`input-tp-${idx}`}
                   />
                   {tpTargets.length > 1 && (
@@ -185,7 +185,7 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
                       variant="ghost"
                       size="icon"
                       onClick={() => removeTpTarget(idx)}
-                      className="text-gray-500 hover:text-red-400"
+                      className="text-muted-foreground hover:text-red-400"
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -201,12 +201,12 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
               name="timeframe"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400 text-xs">Timeframe (optional)</FormLabel>
+                  <FormLabel className="text-muted-foreground text-xs">Timeframe (optional)</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="4H, 1D..."
-                      className="bg-gray-800 border-gray-700 text-white"
+                      className="bg-muted border-border text-foreground"
                     />
                   </FormControl>
                 </FormItem>
@@ -217,12 +217,12 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
               name="leverage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400 text-xs">Leverage (optional)</FormLabel>
+                  <FormLabel className="text-muted-foreground text-xs">Leverage (optional)</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="10x"
-                      className="bg-gray-800 border-gray-700 text-white"
+                      className="bg-muted border-border text-foreground"
                     />
                   </FormControl>
                 </FormItem>
@@ -235,12 +235,12 @@ export function TradeComposer({ onSubmit, isSubmitting }: TradeComposerProps) {
             name="notes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Notes (optional)</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Notes (optional)</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     placeholder="Analysis notes..."
-                    className="bg-gray-800 border-gray-700 text-white resize-none"
+                    className="bg-muted border-border text-foreground resize-none"
                     rows={2}
                   />
                 </FormControl>

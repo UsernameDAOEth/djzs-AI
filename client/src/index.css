@@ -106,15 +106,15 @@ input, textarea, [contenteditable] {
 
 /* ===== Zone Gradients ===== */
 .gradient-journal {
-  background: #0F1115;
+  background: hsl(var(--card));
 }
 
 .gradient-research {
-  background: #0F1115;
+  background: hsl(var(--card));
 }
 
 .gradient-thinking {
-  background: #0F1115;
+  background: hsl(var(--card));
 }
 
 /* ===== Paper Texture ===== */

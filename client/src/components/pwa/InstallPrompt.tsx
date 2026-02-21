@@ -60,13 +60,13 @@ export function InstallPrompt() {
   if (!showPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 p-4 rounded-2xl bg-gray-900/95 border border-purple-500/30 backdrop-blur-xl shadow-2xl z-50" data-testid="install-prompt">
+    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 p-4 rounded-2xl bg-card/95 border border-purple-500/30 backdrop-blur-xl shadow-2xl z-50" data-testid="install-prompt">
       <button
         onClick={handleDismiss}
-        className="absolute top-2 right-2 p-1 rounded-full hover:bg-white/10 transition-colors"
+        className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted transition-colors"
         data-testid="button-dismiss-install"
       >
-        <X className="w-4 h-4 text-gray-500" />
+        <X className="w-4 h-4 text-muted-foreground" />
       </button>
       
       <div className="flex items-start gap-3">

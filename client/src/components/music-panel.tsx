@@ -237,31 +237,31 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed right-0 top-0 h-full w-[340px] sm:w-[380px] z-50 flex flex-col border-l border-white/[0.08] bg-[#1a1d26]/95 backdrop-blur-xl shadow-2xl animate-in slide-in-from-right duration-300" data-testid="music-panel">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
+    <div className="fixed right-0 top-0 h-full w-[340px] sm:w-[380px] z-50 flex flex-col border-l border-border bg-card/95 backdrop-blur-xl shadow-2xl animate-in slide-in-from-right duration-300" data-testid="music-panel">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-border">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-orange-500/15">
             <Headphones className="w-4.5 h-4.5 text-orange-400" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">Music Library</p>
-            <p className="text-[10px] text-gray-500">{tracks.length} track{tracks.length !== 1 ? "s" : ""}</p>
+            <p className="text-sm font-semibold text-foreground">Music Library</p>
+            <p className="text-[10px] text-muted-foreground">{tracks.length} track{tracks.length !== 1 ? "s" : ""}</p>
           </div>
         </div>
-        <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors" data-testid="button-close-music">
-          <X className="w-4 h-4 text-gray-400" />
+        <button onClick={onClose} className="p-2 rounded-lg hover:bg-muted transition-colors" data-testid="button-close-music">
+          <X className="w-4 h-4 text-muted-foreground" />
         </button>
       </div>
 
       {currentTrack && (
-        <div className="px-5 py-4 border-b border-white/[0.06] bg-orange-500/[0.04]">
+        <div className="px-5 py-4 border-b border-border bg-orange-500/[0.04]">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center shrink-0">
               <Music className="w-5 h-5 text-orange-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-white truncate" data-testid="text-now-playing">{currentTrack.name}</p>
-              <p className="text-[10px] text-gray-500">
+              <p className="text-sm font-medium text-foreground truncate" data-testid="text-now-playing">{currentTrack.name}</p>
+              <p className="text-[10px] text-muted-foreground">
                 {currentTrack.zone ? `${currentTrack.zone} zone` : "Local file"} · {formatFileSize(currentTrack.size)}
               </p>
             </div>
@@ -269,7 +269,7 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
 
           <div
             ref={progressRef}
-            className="w-full h-1.5 bg-white/[0.08] rounded-full cursor-pointer mb-2 group"
+            className="w-full h-1.5 bg-muted rounded-full cursor-pointer mb-2 group"
             onClick={handleSeek}
             data-testid="music-progress-bar"
           >
@@ -280,14 +280,14 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-orange-400 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           </div>
-          <div className="flex justify-between text-[10px] text-gray-500">
+          <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>{formatDuration(currentTime)}</span>
             <span>{duration > 0 ? formatDuration(duration) : "--:--"}</span>
           </div>
 
           <div className="flex items-center justify-center gap-4 mt-3">
-            <button onClick={playPrev} className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors" data-testid="button-prev-track">
-              <SkipBack className="w-4 h-4 text-gray-300" />
+            <button onClick={playPrev} className="p-2 rounded-lg hover:bg-muted transition-colors" data-testid="button-prev-track">
+              <SkipBack className="w-4 h-4 text-muted-foreground" />
             </button>
             <button
               onClick={togglePlayPause}
@@ -297,17 +297,17 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
             >
               {isPlaying ? <Pause className="w-4 h-4 text-white" /> : <Play className="w-4 h-4 text-white ml-0.5" />}
             </button>
-            <button onClick={playNext} className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors" data-testid="button-next-track">
-              <SkipForward className="w-4 h-4 text-gray-300" />
+            <button onClick={playNext} className="p-2 rounded-lg hover:bg-muted transition-colors" data-testid="button-next-track">
+              <SkipForward className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
 
           <div className="flex items-center gap-2 mt-3">
-            <button onClick={toggleMute} className="p-1 rounded hover:bg-white/[0.06]" data-testid="button-mute">
+            <button onClick={toggleMute} className="p-1 rounded hover:bg-muted" data-testid="button-mute">
               {isMuted || volume === 0 ? (
-                <VolumeX className="w-3.5 h-3.5 text-gray-500" />
+                <VolumeX className="w-3.5 h-3.5 text-muted-foreground" />
               ) : (
-                <Volume2 className="w-3.5 h-3.5 text-gray-400" />
+                <Volume2 className="w-3.5 h-3.5 text-muted-foreground" />
               )}
             </button>
             <input
@@ -316,22 +316,22 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
               max="100"
               value={isMuted ? 0 : volume}
               onChange={handleVolumeChange}
-              className="flex-1 h-1 accent-orange-500 bg-white/[0.08] rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-400"
+              className="flex-1 h-1 accent-orange-500 bg-muted rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-400"
               data-testid="input-volume"
             />
-            <span className="text-[10px] text-gray-500 w-7 text-right">{isMuted ? 0 : volume}%</span>
+            <span className="text-[10px] text-muted-foreground w-7 text-right">{isMuted ? 0 : volume}%</span>
           </div>
         </div>
       )}
 
-      <div className="px-5 py-3 border-b border-white/[0.06]">
+      <div className="px-5 py-3 border-b border-border">
         <div className="flex gap-1.5">
           <button
             onClick={() => setActiveZoneFilter(null)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               activeZoneFilter === null
                 ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
-                : "text-gray-500 hover:text-gray-300 bg-white/[0.04] border border-white/[0.06]"
+                : "text-muted-foreground hover:text-foreground bg-muted/50 border border-border"
             }`}
             data-testid="button-filter-all"
           >
@@ -346,7 +346,7 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
                   activeZoneFilter === z.id
                     ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
-                    : "text-gray-500 hover:text-gray-300 bg-white/[0.04] border border-white/[0.06]"
+                    : "text-muted-foreground hover:text-foreground bg-muted/50 border border-border"
                 }`}
                 data-testid={`button-filter-${z.id}`}
               >
@@ -361,24 +361,24 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         {filteredTracks.length === 0 && !isUploading && (
           <div className="px-5 py-10 text-center">
-            <Music className="w-8 h-8 text-gray-600 mx-auto mb-3" />
-            <p className="text-sm text-gray-500">
+            <Music className="w-8 h-8 text-muted-foreground/80 mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">
               {activeZoneFilter ? `No tracks in ${activeZoneFilter} zone` : "No music yet"}
             </p>
-            <p className="text-xs text-gray-600 mt-1">Upload audio files below</p>
+            <p className="text-xs text-muted-foreground/80 mt-1">Upload audio files below</p>
           </div>
         )}
 
         {filteredTracks.map((track) => (
           <div
             key={track.id}
-            className={`group flex items-center gap-3 px-5 py-3 border-b border-white/[0.03] cursor-pointer transition-all hover:bg-white/[0.04] ${
+            className={`group flex items-center gap-3 px-5 py-3 border-b border-border cursor-pointer transition-all hover:bg-muted ${
               currentTrackId === track.id ? "bg-orange-500/[0.08] border-l-2 border-l-orange-500" : ""
             }`}
             onClick={() => playTrack(track)}
             data-testid={`track-item-${track.id}`}
           >
-            <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
               {currentTrackId === track.id && isPlaying ? (
                 <div className="flex items-end gap-[2px] h-3">
                   <span className="w-[3px] bg-orange-400 rounded-full animate-pulse" style={{ height: "60%", animationDelay: "0ms" }} />
@@ -386,14 +386,14 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
                   <span className="w-[3px] bg-orange-400 rounded-full animate-pulse" style={{ height: "40%", animationDelay: "300ms" }} />
                 </div>
               ) : (
-                <Music className="w-3.5 h-3.5 text-gray-500" />
+                <Music className="w-3.5 h-3.5 text-muted-foreground" />
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className={`text-sm truncate ${currentTrackId === track.id ? "text-orange-300 font-medium" : "text-white/80"}`}>
+              <p className={`text-sm truncate ${currentTrackId === track.id ? "text-orange-300 font-medium" : "text-foreground/80"}`}>
                 {track.name}
               </p>
-              <p className="text-[10px] text-gray-600">
+              <p className="text-[10px] text-muted-foreground/80">
                 {formatFileSize(track.size)}
                 {track.zone && (
                   <span className="ml-1.5 text-orange-400/60">· {track.zone}</span>
@@ -406,13 +406,13 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
                   e.stopPropagation();
                   setTrackMenuId(trackMenuId === track.id ? null : track.id!);
                 }}
-                className="p-1.5 rounded-lg text-gray-600 hover:text-gray-300 hover:bg-white/[0.06] opacity-0 group-hover:opacity-100 transition-all"
+                className="p-1.5 rounded-lg text-muted-foreground/80 hover:text-foreground hover:bg-muted opacity-0 group-hover:opacity-100 transition-all"
                 data-testid={`button-track-menu-${track.id}`}
               >
                 <MoreVertical className="w-3.5 h-3.5" />
               </button>
               {trackMenuId === track.id && (
-                <div className="absolute right-0 top-8 z-10 w-44 py-1.5 rounded-xl bg-[#22252f] border border-white/[0.1] shadow-xl animate-in fade-in zoom-in-95 duration-150" data-testid={`track-menu-${track.id}`}>
+                <div className="absolute right-0 top-8 z-10 w-44 py-1.5 rounded-xl bg-card border border-border shadow-xl animate-in fade-in zoom-in-95 duration-150" data-testid={`track-menu-${track.id}`}>
                   {ZONES.map((z) => {
                     const Icon = z.icon;
                     return (
@@ -422,8 +422,8 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
                           e.stopPropagation();
                           handleAssignZone(track.id!, z.id);
                         }}
-                        className={`w-full px-3 py-2 text-left text-xs flex items-center gap-2 hover:bg-white/[0.06] transition-colors ${
-                          track.zone === z.id ? "text-orange-400" : "text-gray-400"
+                        className={`w-full px-3 py-2 text-left text-xs flex items-center gap-2 hover:bg-muted transition-colors ${
+                          track.zone === z.id ? "text-orange-400" : "text-muted-foreground"
                         }`}
                         data-testid={`button-assign-zone-${z.id}-${track.id}`}
                       >
@@ -433,7 +433,7 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
                       </button>
                     );
                   })}
-                  <div className="border-t border-white/[0.06] my-1" />
+                  <div className="border-t border-border my-1" />
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -452,7 +452,7 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
         ))}
       </div>
 
-      <div className="px-5 py-4 border-t border-white/[0.06]">
+      <div className="px-5 py-4 border-t border-border">
         <div
           onClick={() => fileInputRef.current?.click()}
           onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
@@ -461,19 +461,19 @@ export function MusicPanel({ isOpen, onClose }: MusicPanelProps) {
           className={`w-full p-4 rounded-xl border-2 border-dashed cursor-pointer transition-all text-center ${
             isDragOver
               ? "border-orange-500/50 bg-orange-500/[0.08]"
-              : "border-white/[0.1] hover:border-orange-500/30 hover:bg-white/[0.03]"
+              : "border-border hover:border-orange-500/30 hover:bg-muted"
           }`}
           data-testid="music-upload-area"
         >
           {isUploading ? (
             <div className="flex items-center justify-center gap-2">
               <div className="w-4 h-4 border-2 border-orange-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-xs text-gray-400">Uploading...</span>
+              <span className="text-xs text-muted-foreground">Uploading...</span>
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
-              <Upload className="w-4 h-4 text-gray-500" />
-              <span className="text-xs text-gray-400">Drop audio files or click to upload</span>
+              <Upload className="w-4 h-4 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Drop audio files or click to upload</span>
             </div>
           )}
         </div>

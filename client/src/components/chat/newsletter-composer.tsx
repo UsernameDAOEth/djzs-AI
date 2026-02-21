@@ -106,14 +106,14 @@ export function NewsletterComposer({ onSubmit, isSubmitting }: NewsletterCompose
   };
 
   return (
-    <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+    <div className="bg-card rounded-lg p-4 border border-border">
       <div className="flex gap-2 mb-4">
         <div className="flex-1">
           <Input
             value={publicationSlug}
             onChange={(e) => setPublicationSlug(e.target.value)}
             placeholder="Publication slug (e.g., djzs or @djzs)"
-            className="bg-gray-800 border-gray-700 text-white"
+            className="bg-muted border-border text-foreground"
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             data-testid="input-publication-slug"
           />
@@ -140,7 +140,7 @@ export function NewsletterComposer({ onSubmit, isSubmitting }: NewsletterCompose
       )}
 
       {data?.publication && (
-        <div className="flex items-center gap-2 mb-3 p-2 bg-gray-800 rounded-lg">
+        <div className="flex items-center gap-2 mb-3 p-2 bg-muted rounded-lg">
           {data.publication.logoUrl && (
             <img 
               src={data.publication.logoUrl} 
@@ -149,8 +149,8 @@ export function NewsletterComposer({ onSubmit, isSubmitting }: NewsletterCompose
             />
           )}
           <div>
-            <p className="text-white font-medium text-sm">{data.publication.name}</p>
-            <p className="text-gray-500 text-xs">@{data.publication.slug.replace(/^@/, '')}</p>
+            <p className="text-foreground font-medium text-sm">{data.publication.name}</p>
+            <p className="text-muted-foreground text-xs">@{data.publication.slug.replace(/^@/, '')}</p>
           </div>
         </div>
       )}
@@ -165,7 +165,7 @@ export function NewsletterComposer({ onSubmit, isSubmitting }: NewsletterCompose
                 className={`w-full text-left p-3 rounded-lg transition-colors ${
                   selectedPost?.id === post.id
                     ? "bg-blue-600/20 border border-blue-500"
-                    : "bg-gray-800 hover:bg-gray-700 border border-transparent"
+                    : "bg-muted hover:bg-muted border border-transparent"
                 }`}
                 data-testid={`post-item-${post.id}`}
               >
@@ -178,12 +178,12 @@ export function NewsletterComposer({ onSubmit, isSubmitting }: NewsletterCompose
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-white text-sm font-medium line-clamp-1">{post.title}</h4>
+                    <h4 className="text-foreground text-sm font-medium line-clamp-1">{post.title}</h4>
                     {post.subtitle && (
-                      <p className="text-gray-400 text-xs line-clamp-1 mt-0.5">{post.subtitle}</p>
+                      <p className="text-muted-foreground text-xs line-clamp-1 mt-0.5">{post.subtitle}</p>
                     )}
                     {post.publishedAt && (
-                      <p className="text-gray-500 text-xs mt-1">
+                      <p className="text-muted-foreground text-xs mt-1">
                         {new Date(post.publishedAt).toLocaleDateString()}
                       </p>
                     )}
@@ -196,7 +196,7 @@ export function NewsletterComposer({ onSubmit, isSubmitting }: NewsletterCompose
       )}
 
       {data?.posts && data.posts.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-muted-foreground">
           <Newspaper className="w-8 h-8 mx-auto mb-2 opacity-50" />
           <p className="text-sm">No posts found in this publication</p>
         </div>
@@ -213,9 +213,9 @@ export function NewsletterComposer({ onSubmit, isSubmitting }: NewsletterCompose
               />
             )}
             <div className="flex-1 min-w-0">
-              <h4 className="text-white font-medium text-sm">{selectedPost.title}</h4>
+              <h4 className="text-foreground font-medium text-sm">{selectedPost.title}</h4>
               {selectedPost.subtitle && (
-                <p className="text-gray-400 text-xs mt-1">{selectedPost.subtitle}</p>
+                <p className="text-muted-foreground text-xs mt-1">{selectedPost.subtitle}</p>
               )}
             </div>
           </div>

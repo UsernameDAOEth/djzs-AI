@@ -14,7 +14,7 @@ const TABS: { id: TabId; label: string; icon: typeof Pen }[] = [
 ];
 
 const INPUT_CLS =
-  "w-full px-3 py-2 bg-[#0F1115] border border-white/[0.06] rounded-md text-sm text-white placeholder:text-gray-600 outline-none focus:border-amber-500/50 transition-colors";
+  "w-full px-3 py-2 bg-muted border border-border rounded-md text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-amber-500/50 transition-colors";
 
 function ToggleGroup({
   options,
@@ -37,7 +37,7 @@ function ToggleGroup({
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
             value === opt
               ? "bg-[rgba(255,184,77,0.1)] text-amber-400 border border-[rgba(255,184,77,0.3)]"
-              : "bg-[#14171D] text-gray-500 border border-white/[0.06] hover:text-gray-300 hover:border-white/[0.08]"
+              : "bg-muted text-muted-foreground border border-border hover:text-foreground hover:border-border"
           }`}
         >
           {opt}
@@ -48,25 +48,25 @@ function ToggleGroup({
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <label className="block text-xs font-medium text-gray-400 mb-1.5">{children}</label>;
+  return <label className="block text-xs font-medium text-muted-foreground mb-1.5">{children}</label>;
 }
 
 const STAKES_COLORS: Record<DecisionStakes, string> = {
-  low: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+  low: "bg-muted text-muted-foreground border-border",
   medium: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
   high: "bg-orange-500/20 text-orange-400 border-orange-500/30",
   critical: "bg-red-500/20 text-red-400 border-red-500/30",
 };
 
 const STATUS_COLORS: Record<DecisionStatus, string> = {
-  draft: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+  draft: "bg-muted text-muted-foreground border-border",
   reviewed: "bg-blue-500/20 text-blue-400 border-blue-500/30",
   decided: "bg-green-500/20 text-green-400 border-green-500/30",
   revisited: "bg-purple-500/20 text-purple-400 border-purple-500/30",
 };
 
 const OUTCOME_COLORS: Record<DecisionOutcome, string> = {
-  pending: "bg-gray-500/20 text-gray-400",
+  pending: "bg-muted text-muted-foreground",
   positive: "bg-green-500/20 text-green-400",
   negative: "bg-red-500/20 text-red-400",
   mixed: "bg-yellow-500/20 text-yellow-400",
@@ -226,10 +226,10 @@ export function DecisionLogZone() {
     <div className="w-full max-w-2xl mx-auto" data-testid="decision-log-zone">
       <div className="flex items-center gap-2 mb-4">
         <Brain size={18} className="text-amber-400" />
-        <h2 className="text-sm font-semibold text-white">Decision Log</h2>
+        <h2 className="text-sm font-semibold text-foreground">Decision Log</h2>
       </div>
 
-      <div className="flex items-center gap-1 mb-4 p-1 bg-[#14171D] rounded-lg border border-white/[0.06] overflow-x-auto">
+      <div className="flex items-center gap-1 mb-4 p-1 bg-muted rounded-lg border border-border overflow-x-auto">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -240,7 +240,7 @@ export function DecisionLogZone() {
               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === tab.id
                   ? "bg-[rgba(255,184,77,0.1)] text-amber-400 border border-[rgba(255,184,77,0.3)]"
-                  : "text-gray-500 hover:text-gray-300"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon size={14} />
@@ -252,10 +252,10 @@ export function DecisionLogZone() {
 
       {activeTab === "compose" && (
         <div className="space-y-4" data-testid="compose-tab">
-          <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
+          <div className="p-4 rounded-lg bg-muted border border-border space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Pen size={16} className="text-amber-400" />
-              <h3 className="text-sm font-semibold text-white">Log a Decision</h3>
+              <h3 className="text-sm font-semibold text-foreground">Log a Decision</h3>
             </div>
 
             <div>
@@ -297,7 +297,7 @@ export function DecisionLogZone() {
                       <button
                         data-testid={`button-remove-option-${idx}`}
                         onClick={() => removeOption(idx)}
-                        className="p-2 text-gray-500 hover:text-red-400 transition-colors"
+                        className="p-2 text-muted-foreground hover:text-red-400 transition-colors"
                       >
                         <X size={14} />
                       </button>
@@ -352,9 +352,9 @@ export function DecisionLogZone() {
       {activeTab === "review" && (
         <div className="space-y-4" data-testid="review-tab">
           {!savedDecision ? (
-            <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] text-center">
-              <AlertCircle size={24} className="mx-auto text-gray-500 mb-2" />
-              <p className="text-sm text-gray-400">Compose and save a decision first before requesting AI review.</p>
+            <div className="p-6 rounded-lg bg-muted border border-border text-center">
+              <AlertCircle size={24} className="mx-auto text-muted-foreground mb-2" />
+              <p className="text-sm text-muted-foreground">Compose and save a decision first before requesting AI review.</p>
               <button
                 data-testid="button-go-compose"
                 onClick={() => setActiveTab("compose")}
@@ -364,15 +364,15 @@ export function DecisionLogZone() {
               </button>
             </div>
           ) : (
-            <div className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] space-y-4">
+            <div className="p-4 rounded-lg bg-muted border border-border space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <Brain size={16} className="text-amber-400" />
-                <h3 className="text-sm font-semibold text-white">AI Review: {savedDecision.title}</h3>
+                <h3 className="text-sm font-semibold text-foreground">AI Review: {savedDecision.title}</h3>
               </div>
 
-              <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
-                <p className="text-xs text-gray-400 mb-1">Decision Summary</p>
-                <p className="text-sm text-gray-300">{savedDecision.context || "No context provided."}</p>
+              <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                <p className="text-xs text-muted-foreground mb-1">Decision Summary</p>
+                <p className="text-sm text-muted-foreground">{savedDecision.context || "No context provided."}</p>
                 <div className="flex gap-2 mt-2">
                   <Badge className={`text-[10px] rounded-md ${STAKES_COLORS[savedDecision.stakes]}`}>
                     {savedDecision.stakes}
@@ -400,36 +400,36 @@ export function DecisionLogZone() {
 
               {aiResponse && (
                 <div className="space-y-3">
-                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <BarChart3 size={12} className="text-amber-400" />
                       <p className="text-xs font-medium text-amber-400">Analysis</p>
                     </div>
-                    <p className="text-sm text-gray-300 whitespace-pre-wrap">{aiResponse.said}</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{aiResponse.said}</p>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <AlertCircle size={12} className="text-yellow-400" />
                       <p className="text-xs font-medium text-yellow-400">Why It Matters</p>
                     </div>
-                    <p className="text-sm text-gray-300 whitespace-pre-wrap">{aiResponse.matters}</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{aiResponse.matters}</p>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <CheckCircle size={12} className="text-green-400" />
                       <p className="text-xs font-medium text-green-400">Suggested Next Move</p>
                     </div>
-                    <p className="text-sm text-gray-300 whitespace-pre-wrap">{aiResponse.nextMove}</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{aiResponse.nextMove}</p>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-[rgba(255,255,255,0.015)] border border-white/[0.06]">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <Brain size={12} className="text-purple-400" />
                       <p className="text-xs font-medium text-purple-400">Reflective Question</p>
                     </div>
-                    <p className="text-sm text-gray-300 italic whitespace-pre-wrap">{aiResponse.question}</p>
+                    <p className="text-sm text-muted-foreground italic whitespace-pre-wrap">{aiResponse.question}</p>
                   </div>
 
                   <button
@@ -450,9 +450,9 @@ export function DecisionLogZone() {
       {activeTab === "history" && (
         <div className="space-y-3" data-testid="history-tab">
           {historyLogs.length === 0 ? (
-            <div className="p-6 rounded-lg bg-[#14171D] border border-white/[0.06] text-center">
-              <Clock size={24} className="mx-auto text-gray-500 mb-2" />
-              <p className="text-sm text-gray-400">No decisions logged yet.</p>
+            <div className="p-6 rounded-lg bg-muted border border-border text-center">
+              <Clock size={24} className="mx-auto text-muted-foreground mb-2" />
+              <p className="text-sm text-muted-foreground">No decisions logged yet.</p>
             </div>
           ) : (
             historyLogs.map((log) => {
@@ -461,7 +461,7 @@ export function DecisionLogZone() {
                 <div
                   key={log.id}
                   data-testid={`card-decision-${log.id}`}
-                  className="p-4 rounded-lg bg-[#14171D] border border-white/[0.06] hover:border-white/[0.08] transition-all"
+                  className="p-4 rounded-lg bg-muted border border-border hover:border-border transition-all"
                 >
                   <div
                     className="flex items-start gap-2 cursor-pointer"
@@ -469,13 +469,13 @@ export function DecisionLogZone() {
                     data-testid={`button-expand-${log.id}`}
                   >
                     {isExpanded ? (
-                      <ChevronDown size={14} className="text-gray-500 mt-0.5 shrink-0" />
+                      <ChevronDown size={14} className="text-muted-foreground mt-0.5 shrink-0" />
                     ) : (
-                      <ChevronRight size={14} className="text-gray-500 mt-0.5 shrink-0" />
+                      <ChevronRight size={14} className="text-muted-foreground mt-0.5 shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium text-white truncate">{log.title}</span>
+                        <span className="text-sm font-medium text-foreground truncate">{log.title}</span>
                         <Badge className={`text-[10px] rounded-md ${STAKES_COLORS[log.stakes]}`}>
                           {log.stakes}
                         </Badge>
@@ -488,9 +488,9 @@ export function DecisionLogZone() {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-[11px] text-gray-500 mt-0.5">{formatDate(log.createdAt)}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{formatDate(log.createdAt)}</p>
                       {!isExpanded && log.context && (
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{log.context}</p>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{log.context}</p>
                       )}
                     </div>
                   </div>
@@ -499,17 +499,17 @@ export function DecisionLogZone() {
                     <div className="mt-3 pl-6 space-y-3">
                       {log.context && (
                         <div>
-                          <p className="text-xs font-medium text-gray-400 mb-1">Context</p>
-                          <p className="text-sm text-gray-300 whitespace-pre-wrap">{log.context}</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-1">Context</p>
+                          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{log.context}</p>
                         </div>
                       )}
 
                       {log.optionsConsidered && log.optionsConsidered.length > 0 && (
                         <div>
-                          <p className="text-xs font-medium text-gray-400 mb-1">Options Considered</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-1">Options Considered</p>
                           <ul className="space-y-1">
                             {log.optionsConsidered.map((opt, i) => (
-                              <li key={i} className="text-sm text-gray-300 flex items-start gap-1.5">
+                              <li key={i} className="text-sm text-muted-foreground flex items-start gap-1.5">
                                 <span className="text-amber-400 text-xs mt-0.5">{i + 1}.</span>
                                 {opt}
                               </li>
@@ -520,8 +520,8 @@ export function DecisionLogZone() {
 
                       {log.reasoning && (
                         <div>
-                          <p className="text-xs font-medium text-gray-400 mb-1">Reasoning</p>
-                          <p className="text-sm text-gray-300 whitespace-pre-wrap">{log.reasoning}</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-1">Reasoning</p>
+                          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{log.reasoning}</p>
                         </div>
                       )}
 
@@ -531,18 +531,18 @@ export function DecisionLogZone() {
                             <Brain size={12} className="text-amber-400" />
                             <p className="text-xs font-medium text-amber-400">AI Review</p>
                           </div>
-                          <p className="text-sm text-gray-300 whitespace-pre-wrap">{log.aiReview}</p>
+                          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{log.aiReview}</p>
                         </div>
                       )}
 
                       <div className="flex items-center gap-3 flex-wrap">
                         <div>
-                          <label className="text-[10px] text-gray-500 block mb-0.5">Status</label>
+                          <label className="text-[10px] text-muted-foreground block mb-0.5">Status</label>
                           <select
                             data-testid={`select-status-${log.id}`}
                             value={log.status}
                             onChange={(e) => log.id !== undefined && handleStatusChange(log.id, e.target.value as DecisionStatus)}
-                            className="bg-[#0F1115] border border-white/[0.06] rounded-md text-xs text-white px-2 py-1 outline-none"
+                            className="bg-muted border border-border rounded-md text-xs text-foreground px-2 py-1 outline-none"
                           >
                             <option value="draft">Draft</option>
                             <option value="reviewed">Reviewed</option>
@@ -553,12 +553,12 @@ export function DecisionLogZone() {
 
                         {(log.status === "decided" || log.status === "revisited") && (
                           <div>
-                            <label className="text-[10px] text-gray-500 block mb-0.5">Outcome</label>
+                            <label className="text-[10px] text-muted-foreground block mb-0.5">Outcome</label>
                             <select
                               data-testid={`select-outcome-${log.id}`}
                               value={log.outcome || "pending"}
                               onChange={(e) => log.id !== undefined && handleOutcomeChange(log.id, e.target.value as DecisionOutcome)}
-                              className="bg-[#0F1115] border border-white/[0.06] rounded-md text-xs text-white px-2 py-1 outline-none"
+                              className="bg-muted border border-border rounded-md text-xs text-foreground px-2 py-1 outline-none"
                             >
                               <option value="pending">Pending</option>
                               <option value="positive">Positive</option>
@@ -583,7 +583,7 @@ export function DecisionLogZone() {
                               <button
                                 data-testid={`button-cancel-delete-${log.id}`}
                                 onClick={() => setDeleteConfirmId(null)}
-                                className="text-[10px] px-2 py-0.5 rounded bg-white/[0.05] text-gray-400 border border-white/[0.08] hover:text-gray-300"
+                                className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border hover:text-foreground"
                               >
                                 No
                               </button>
@@ -592,7 +592,7 @@ export function DecisionLogZone() {
                             <button
                               data-testid={`button-delete-${log.id}`}
                               onClick={() => setDeleteConfirmId(log.id ?? null)}
-                              className="p-1.5 text-gray-500 hover:text-red-400 transition-colors"
+                              className="p-1.5 text-muted-foreground hover:text-red-400 transition-colors"
                             >
                               <Trash2 size={13} />
                             </button>

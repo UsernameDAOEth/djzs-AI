@@ -40,7 +40,7 @@ export function EventComposer({ onSubmit, isSubmitting }: EventComposerProps) {
   const now = new Date().toISOString().slice(0, 16);
 
   return (
-    <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+    <div className="bg-card rounded-lg p-4 border border-border">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <FormField
@@ -48,12 +48,12 @@ export function EventComposer({ onSubmit, isSubmitting }: EventComposerProps) {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Event Title</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Event Title</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     placeholder="Weekly Trading Call"
-                    className="bg-gray-800 border-gray-700 text-white"
+                    className="bg-muted border-border text-foreground"
                     data-testid="input-event-title"
                   />
                 </FormControl>
@@ -67,15 +67,15 @@ export function EventComposer({ onSubmit, isSubmitting }: EventComposerProps) {
             name="startsAt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Date & Time</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Date & Time</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       {...field}
                       type="datetime-local"
                       min={now}
-                      className="bg-gray-800 border-gray-700 text-white pl-10"
+                      className="bg-muted border-border text-foreground pl-10"
                       data-testid="input-event-starts"
                     />
                   </div>
@@ -90,14 +90,14 @@ export function EventComposer({ onSubmit, isSubmitting }: EventComposerProps) {
             name="locationOrLink"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Location or Link</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Location or Link</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       {...field}
                       placeholder="https://meet.google.com/... or NYC"
-                      className="bg-gray-800 border-gray-700 text-white pl-10"
+                      className="bg-muted border-border text-foreground pl-10"
                     />
                   </div>
                 </FormControl>
@@ -110,12 +110,12 @@ export function EventComposer({ onSubmit, isSubmitting }: EventComposerProps) {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Description (optional)</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Description (optional)</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     placeholder="What will we cover..."
-                    className="bg-gray-800 border-gray-700 text-white resize-none"
+                    className="bg-muted border-border text-foreground resize-none"
                     rows={2}
                   />
                 </FormControl>

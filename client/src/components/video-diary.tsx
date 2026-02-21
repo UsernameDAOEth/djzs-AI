@@ -292,7 +292,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
   const formatTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
 
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] overflow-hidden" data-testid="video-diary-upload">
+    <div className="rounded-2xl border border-border bg-muted/50 overflow-hidden" data-testid="video-diary-upload">
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -300,7 +300,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
             <span className="text-xs font-semibold text-orange-400 uppercase tracking-wider">Video Journal</span>
           </div>
           {state !== "uploading" && state !== "processing" && (
-            <button onClick={() => { cleanup(); onCancel(); }} className="p-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all" data-testid="button-close-video">
+            <button onClick={() => { cleanup(); onCancel(); }} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all" data-testid="button-close-video">
               <X className="w-4 h-4" />
             </button>
           )}
@@ -313,12 +313,12 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
                 <Video className="w-4 h-4 mr-2" />
                 Record
               </Button>
-              <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="h-12 px-6 rounded-xl border-white/10 text-gray-300 hover:text-white hover:bg-white/5 font-medium text-sm" data-testid="button-upload-video">
+              <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="h-12 px-6 rounded-xl border-border text-muted-foreground hover:text-foreground hover:bg-muted font-medium text-sm" data-testid="button-upload-video">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload
               </Button>
             </div>
-            <p className="text-xs text-gray-500">Record a video journal or upload one (max 500MB)</p>
+            <p className="text-xs text-muted-foreground">Record a video journal or upload one (max 500MB)</p>
             <input ref={fileInputRef} type="file" accept="video/*" onChange={handleFileSelect} className="hidden" data-testid="input-video-file" />
           </div>
         )}
@@ -330,8 +330,8 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
               {!cameraReady && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80">
                   <Loader2 className="w-8 h-8 animate-spin text-orange-400 mb-3" />
-                  <p className="text-sm text-gray-400 font-medium">Connecting camera...</p>
-                  <p className="text-xs text-gray-600 mt-1">Allow access if prompted</p>
+                  <p className="text-sm text-muted-foreground font-medium">Connecting camera...</p>
+                  <p className="text-xs text-muted-foreground/80 mt-1">Allow access if prompted</p>
                 </div>
               )}
               {cameraReady && (
@@ -354,7 +354,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
               <video ref={previewVideoRef} src={previewUrl} controls playsInline className="w-full h-full object-contain" />
             </div>
             <div className="flex gap-2">
-              <Button onClick={retake} variant="outline" className="flex-1 h-11 rounded-xl border-white/10 text-gray-300 hover:text-white font-medium text-sm" data-testid="button-retake">
+              <Button onClick={retake} variant="outline" className="flex-1 h-11 rounded-xl border-border text-muted-foreground hover:text-foreground font-medium text-sm" data-testid="button-retake">
                 Retake
               </Button>
               <Button onClick={uploadVideo} className="flex-1 h-11 rounded-xl text-white font-medium text-sm shadow-lg" style={{ background: '#F37E20' }} data-testid="button-upload-confirm">
@@ -369,7 +369,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
           <div className="py-6 space-y-4">
             <div className="flex items-center gap-3">
               <Loader2 className="w-5 h-5 animate-spin text-orange-400" />
-              <span className="text-sm text-gray-300 font-medium">Uploading... {progress}%</span>
+              <span className="text-sm text-muted-foreground font-medium">Uploading... {progress}%</span>
             </div>
             <Progress value={progress} className="h-2" />
           </div>
@@ -379,8 +379,8 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
           <div className="py-6 flex items-center gap-3">
             <Loader2 className="w-5 h-5 animate-spin text-orange-400" />
             <div>
-              <p className="text-sm text-gray-300 font-medium">Processing video...</p>
-              <p className="text-xs text-gray-500">This may take a minute</p>
+              <p className="text-sm text-muted-foreground font-medium">Processing video...</p>
+              <p className="text-xs text-muted-foreground">This may take a minute</p>
             </div>
           </div>
         )}
@@ -397,7 +397,7 @@ export function VideoUpload({ onVideoReady, onCancel }: VideoUploadProps) {
         {state === "error" && (
           <div className="py-4 space-y-3">
             <p className="text-sm text-red-400">{errorMsg}</p>
-            <Button onClick={retake} variant="outline" className="h-10 rounded-xl border-white/10 text-gray-300 hover:text-white font-medium text-sm" data-testid="button-retry-video">
+            <Button onClick={retake} variant="outline" className="h-10 rounded-xl border-border text-muted-foreground hover:text-foreground font-medium text-sm" data-testid="button-retry-video">
               Try Again
             </Button>
           </div>
@@ -469,7 +469,7 @@ export function VideoPlayer({ playbackId, assetId, compact = false }: VideoPlaye
     return (
       <div className={`flex items-center gap-2 ${compact ? 'py-2' : 'py-4'}`}>
         <Loader2 className="w-4 h-4 animate-spin text-orange-400" />
-        <span className="text-xs text-gray-500">Loading video...</span>
+        <span className="text-xs text-muted-foreground">Loading video...</span>
       </div>
     );
   }
@@ -477,8 +477,8 @@ export function VideoPlayer({ playbackId, assetId, compact = false }: VideoPlaye
   if (error) {
     return (
       <div className={`flex items-center gap-2 ${compact ? 'py-2' : 'py-4'}`}>
-        <Video className="w-4 h-4 text-gray-500" />
-        <span className="text-xs text-gray-500">Video unavailable</span>
+        <Video className="w-4 h-4 text-muted-foreground" />
+        <span className="text-xs text-muted-foreground">Video unavailable</span>
       </div>
     );
   }
@@ -495,7 +495,7 @@ export function VideoPlayer({ playbackId, assetId, compact = false }: VideoPlaye
         />
       </div>
       <div className="flex gap-2">
-        <button onClick={handleDownload} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-400 hover:text-white bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] transition-all" data-testid="button-download-video">
+        <button onClick={handleDownload} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted border border-border transition-all" data-testid="button-download-video">
           <Download className="w-3.5 h-3.5" />
           Download
         </button>

@@ -40,7 +40,7 @@ export function PredictionComposer({ onSubmit, isSubmitting }: PredictionCompose
   const minDate = tomorrow.toISOString().split('T')[0];
 
   return (
-    <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+    <div className="bg-card rounded-lg p-4 border border-border">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <FormField
@@ -48,12 +48,12 @@ export function PredictionComposer({ onSubmit, isSubmitting }: PredictionCompose
             name="question"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Prediction Question</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Prediction Question</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     placeholder="Will BTC hit $100k by end of Q1 2025?"
-                    className="bg-gray-800 border-gray-700 text-white resize-none"
+                    className="bg-muted border-border text-foreground resize-none"
                     rows={2}
                     data-testid="input-prediction-question"
                   />
@@ -68,15 +68,15 @@ export function PredictionComposer({ onSubmit, isSubmitting }: PredictionCompose
             name="endsAt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Voting Ends</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Voting Ends</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       {...field}
                       type="datetime-local"
                       min={minDate}
-                      className="bg-gray-800 border-gray-700 text-white pl-10"
+                      className="bg-muted border-border text-foreground pl-10"
                       data-testid="input-prediction-ends"
                     />
                   </div>
@@ -91,12 +91,12 @@ export function PredictionComposer({ onSubmit, isSubmitting }: PredictionCompose
             name="notes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-400 text-xs">Context (optional)</FormLabel>
+                <FormLabel className="text-muted-foreground text-xs">Context (optional)</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     placeholder="Additional context or criteria..."
-                    className="bg-gray-800 border-gray-700 text-white resize-none"
+                    className="bg-muted border-border text-foreground resize-none"
                     rows={2}
                   />
                 </FormControl>
