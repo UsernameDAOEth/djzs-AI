@@ -79,7 +79,7 @@ export const djzsLogicAuditSchema = z.object({
   flags: z.array(auditFlagSchema).default([]),
   logic_flaws: z.array(z.object({
     flaw_type: z.string(),
-    severity: z.enum(["low", "medium", "critical"]),
+    severity: z.enum(["low", "medium", "high", "critical"]),
     explanation: z.string(),
   })).min(0),
   structural_recommendations: z.array(z.string()),
