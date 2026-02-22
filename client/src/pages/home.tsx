@@ -6,6 +6,8 @@ import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
 import { RevealSection } from "@/components/hero";
+import { ApiTiers } from "@/components/ApiTiers";
+import { FinalCTA } from "@/components/FinalCTA";
 import { Helmet } from "react-helmet";
 import { useTheme } from "@/lib/theme";
 
@@ -1224,50 +1226,11 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-border bg-muted">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4 tracking-tight" data-testid="text-terminal-cta-headline">
-              Ready to secure your treasury?
-            </h2>
-            <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-              One cURL command. One deterministic verdict. Zero ambiguity.
-            </p>
+        <ApiTiers />
+      </RevealSection>
 
-            <div className="relative rounded-xl border border-border overflow-hidden text-left max-w-2xl mx-auto shadow-2xl" style={{ background: '#111214' }} data-testid="terminal-cta-block">
-              <div className="flex items-center px-4 py-3 border-b border-border/50" style={{ background: '#1a1d23' }}>
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ background: 'rgba(239,68,68,0.8)' }} />
-                  <div className="w-3 h-3 rounded-full" style={{ background: 'rgba(234,179,8,0.8)' }} />
-                  <div className="w-3 h-3 rounded-full" style={{ background: 'rgba(34,197,94,0.8)' }} />
-                </div>
-                <span className="ml-4 text-xs font-mono text-muted-foreground/60">terminal</span>
-              </div>
-              <pre className="p-5 sm:p-6 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto text-muted-foreground">
-{`curl -X POST https://djzs.ai/api/audit/micro \\
-  -H "Content-Type: application/json" \\
-  -H "`}<span style={{ color: '#F37E20' }}>x-payment-proof</span>{`: 0x_your_base_tx_hash" \\
-  -d '{
-    "`}<span style={{ color: '#2E8B8B' }}>strategy_memo</span>{`": "Your reasoning trace here."
-  }'`}
-              </pre>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
-              <Link href="/docs">
-                <button className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-bold text-white transition-all hover:-translate-y-0.5" style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }} data-testid="button-cta-docs">
-                  <Code2 size={20} />
-                  Read the API Reference
-                </button>
-              </Link>
-              <Link href="/chat">
-                <button className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-bold border transition-all hover:-translate-y-0.5 text-foreground hover:bg-muted/50" style={{ borderColor: 'rgba(46,139,139,0.4)' }} data-testid="button-cta-terminal">
-                  <Terminal size={20} />
-                  Deploy an Audit
-                </button>
-              </Link>
-            </div>
-          </div>
-        </section>
+      <RevealSection>
+        <FinalCTA />
       </RevealSection>
 
       <RevealSection>
