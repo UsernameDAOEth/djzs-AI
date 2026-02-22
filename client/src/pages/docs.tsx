@@ -177,91 +177,291 @@ export default function Docs() {
           </div>
         </motion.section>
 
-        <motion.section variants={fadeUp} className="mb-20" data-testid="section-a2a-audit-api">
+        <motion.section variants={fadeUp} className="mb-20" data-testid="section-api-reference">
           <div className="p-8 rounded-3xl bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20">
-            <h2 className="text-2xl font-bold text-foreground mb-2">A2A Audit API</h2>
-            <p className="text-muted-foreground mb-8">Machine-readable logic audits for autonomous agents</p>
+            <h2 className="text-3xl font-black text-foreground mb-3 tracking-tight">API Reference</h2>
+            <p className="text-lg text-muted-foreground mb-4 leading-relaxed max-w-3xl">
+              DJZS is the native <strong className="text-foreground">Adversarial Logic Layer</strong> for the Agent-to-Agent (A2A) economy.
+            </p>
+            <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-3xl">
+              Our API provides <strong className="text-foreground">Journal Entry Testing (JET)</strong> as a deterministic primitive. By routing an autonomous agent's reasoning trace through our Oracle prior to execution, developers receive a cryptographic <code className="text-teal-400 bg-teal-500/10 px-1.5 py-0.5 rounded font-mono text-xs">ProofOfLogic</code> certificate that identifies hallucinations, logical loops, and FOMO bias.
+            </p>
+            <div className="p-4 rounded-lg bg-muted border border-border mb-10">
+              <p className="text-xs text-muted-foreground font-mono"><span className="text-teal-400 font-bold">Base URL:</span> https://djzs.ai/api</p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              <div className="p-5 rounded-lg bg-muted border border-border hover:border-teal-500/20 transition-all" data-testid="card-api-endpoint">
-                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center mb-3">
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                  <KeyRound className="w-5 h-5 text-orange-400" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">Authentication: The x402 Tollbooth</h3>
+              </div>
+              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed mb-6">
+                <p>
+                  DJZS operates strictly on a <strong className="text-foreground">Pay-to-Verify</strong> model. There are no API keys, webhooks, or monthly subscriptions. Access to the Oracle is gated entirely by the <strong className="text-foreground">x402 Payment Protocol</strong> on Base Mainnet.
+                </p>
+                <p>
+                  To successfully authenticate a request, your agent must execute a USDC micro-transaction and inject the resulting on-chain transaction hash into the request header.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="p-4 rounded-lg bg-muted border border-border">
+                  <p className="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-1">Required Header</p>
+                  <code className="text-xs text-foreground font-mono">x-payment-proof</code>
+                </div>
+                <div className="p-4 rounded-lg bg-muted border border-border">
+                  <p className="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-1">Value</p>
+                  <code className="text-xs text-foreground font-mono">Base Mainnet TX Hash</code>
+                </div>
+                <div className="p-4 rounded-lg bg-muted border border-border">
+                  <p className="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-1">Micro-Zone Cost</p>
+                  <code className="text-xs text-foreground font-mono">$2.50 USDC</code>
+                </div>
+              </div>
+              <div className="p-4 rounded-lg bg-red-500/[0.04] border border-red-500/15">
+                <p className="text-xs text-red-400 font-semibold mb-1">402 Payment Required</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">If the header is omitted or the cryptographic hash cannot be verified on-chain, the API will instantly reject the payload with a <code className="text-red-400 font-mono">402 Payment Required</code> status (Error Code: <code className="text-red-400 font-mono">DJZS-AUTH-402</code>).</p>
+              </div>
+            </div>
+
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center">
                   <Code2 className="w-5 h-5 text-teal-400" />
                 </div>
-                <h4 className="text-sm font-bold text-foreground mb-2">Tiered API Endpoints</h4>
-                <div className="space-y-1.5 mb-2">
-                  <code className="block text-xs text-teal-300 bg-teal-500/10 px-3 py-2 rounded font-mono">POST /api/audit/micro</code>
-                  <code className="block text-xs text-orange-300 bg-orange-500/10 px-3 py-2 rounded font-mono">POST /api/audit/founder</code>
-                  <code className="block text-xs text-purple-300 bg-purple-500/10 px-3 py-2 rounded font-mono">POST /api/audit/treasury</code>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Request schema: <code className="text-muted-foreground">strategy_memo</code> (string) + <code className="text-muted-foreground">audit_type</code> (treasury | founder_drift | strategy | general)</p>
+                <h3 className="text-xl font-bold text-foreground">Endpoint: Micro-Zone Audit</h3>
+              </div>
+              <code className="inline-block text-sm text-teal-300 bg-teal-500/10 px-4 py-2 rounded font-mono font-bold mb-4" data-testid="code-endpoint-micro">POST /audit/micro</code>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                This endpoint accepts a raw strategy payload, evaluates the agent's logic against the DJZS-LF taxonomy, and returns a deterministic Proof of Logic certificate.
+              </p>
+
+              <h4 className="text-sm font-bold text-foreground mb-3">Request Schema (JSON)</h4>
+              <div className="overflow-x-auto mb-6">
+                <table className="w-full text-sm" data-testid="table-request-schema">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-3 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Parameter</th>
+                      <th className="text-left py-3 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Type</th>
+                      <th className="text-left py-3 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Required</th>
+                      <th className="text-left py-3 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-border/50">
+                      <td className="py-3 px-4"><code className="text-teal-400 font-mono text-xs">strategy_memo</code></td>
+                      <td className="py-3 px-4 text-xs text-muted-foreground font-mono">string</td>
+                      <td className="py-3 px-4 text-xs font-bold text-foreground">Yes</td>
+                      <td className="py-3 px-4 text-xs text-muted-foreground">The complete reasoning trace, internal agent dialogue, or execution plan intended for the transaction.</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
 
-              <div className="p-5 rounded-lg bg-muted border border-border hover:border-teal-500/20 transition-all" data-testid="card-schema-discovery">
-                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center mb-3">
-                  <FileCode className="w-5 h-5 text-teal-400" />
+              <h4 className="text-sm font-bold text-foreground mb-3">Example cURL Implementation</h4>
+              <div className="relative mb-8" data-testid="code-curl-example">
+                <div className="absolute top-0 left-0 right-0 h-8 bg-[#1a1d23] rounded-t-lg flex items-center px-4">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">bash</span>
                 </div>
-                <h4 className="text-sm font-bold text-foreground mb-2">Schema Discovery</h4>
-                <code className="block text-xs text-teal-300 bg-teal-500/10 px-3 py-2 rounded mb-2 font-mono">GET /api/audit/schema</code>
-                <p className="text-xs text-muted-foreground leading-relaxed">Returns pricing, schema, and integration details for autonomous agent discovery</p>
+                <pre className="bg-[#1a1d23] rounded-lg pt-10 pb-5 px-5 overflow-x-auto border border-border/50">
+                  <code className="text-xs font-mono leading-relaxed text-muted-foreground">
+{`curl -X POST https://djzs.ai/api/audit/micro \\
+  -H "Content-Type: application/json" \\
+  -H "`}<span className="text-orange-400">x-payment-proof</span>{`: 0x_your_base_mainnet_tx_hash" \\
+  -d '{
+    "`}<span className="text-teal-400">strategy_memo</span>{`": "Executing market buy of 500 SOL. Twitter sentiment is highly bullish."
+  }'`}
+                  </code>
+                </pre>
               </div>
+            </div>
 
-              <div className="p-5 rounded-lg bg-muted border border-border hover:border-purple-500/20 transition-all" data-testid="card-response-schema">
-                <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center mb-3">
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-purple-400" />
                 </div>
-                <h4 className="text-sm font-bold text-foreground mb-2">Proof of Logic Certificate</h4>
-                <div className="space-y-1 text-xs text-muted-foreground">
-                  <p><code className="text-red-300">verdict</code> — binary PASS / FAIL determination</p>
-                  <p><code className="text-red-300">flags[]</code> — DJZS-LF failure codes with severity</p>
-                  <p><code className="text-purple-300">tier</code> — micro | founder | treasury</p>
-                  <p><code className="text-purple-300">risk_score</code> — 0-100 severity rating</p>
-                  <p><code className="text-purple-300">primary_bias_detected</code> — top bias identified</p>
-                  <p><code className="text-purple-300">logic_flaws[]</code> — array of reasoning errors</p>
-                  <p><code className="text-purple-300">structural_recommendations[]</code> — actionable fixes</p>
-                  <p><code className="text-purple-300">cryptographic_hash</code> — SHA-256 audit proof</p>
-                </div>
+                <h3 className="text-xl font-bold text-foreground">Response Schema (JSON)</h3>
               </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                The Oracle returns a fully assembled <code className="text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded font-mono text-xs">ProofOfLogic</code> object. If the <code className="text-red-400 font-mono text-xs">verdict</code> evaluates to <code className="text-red-400 font-mono text-xs">FAIL</code>, developers are expected to program their agents to automatically abort the execution sequence to prevent capital destruction.
+              </p>
+              <div className="relative mb-4" data-testid="code-response-schema">
+                <div className="absolute top-0 left-0 right-0 h-8 bg-[#1a1d23] rounded-t-lg flex items-center px-4">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">json</span>
+                </div>
+                <pre className="bg-[#1a1d23] rounded-lg pt-10 pb-5 px-5 overflow-x-auto border border-border/50">
+                  <code className="text-xs font-mono leading-relaxed text-muted-foreground">
+{`{
+  "`}<span className="text-purple-400">system_id</span>{`": "djzs-mainnet-01",
+  "`}<span className="text-red-400">verdict</span>{`": "FAIL",
+  "`}<span className="text-orange-400">risk_score</span>{`": 60,
+  "`}<span className="text-red-400">flags</span>{`": [
+    {
+      "`}<span className="text-teal-400">code</span>{`": "DJZS-I01",
+      "`}<span className="text-teal-400">severity</span>{`": "MEDIUM",
+      "`}<span className="text-teal-400">description</span>{`": "Logic relies entirely on social momentum and unverified Twitter sentiment."
+    }
+  ],
+  "`}<span className="text-purple-400">proof</span>{`": {
+    "logic_hash": "0x4a9b2c...",
+    "timestamp": "2026-02-21T11:45:00Z",
+    "payment_verified": true,
+    "payment_proof": "0x_your_base_mainnet_tx_hash"
+  }
+}`}
+                  </code>
+                </pre>
+              </div>
+            </div>
 
-              <div className="p-5 rounded-lg bg-muted border border-border hover:border-orange-500/20 transition-all" data-testid="card-payment">
-                <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center mb-3">
-                  <DollarSign className="w-5 h-5 text-orange-400" />
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-red-400" />
                 </div>
-                <h4 className="text-sm font-bold text-foreground mb-2">Payment (x402)</h4>
-                <div className="space-y-1 text-xs text-muted-foreground mb-2">
-                  <p><strong className="text-teal-300">Micro-Zone</strong> — $2.50 USDC</p>
-                  <p><strong className="text-orange-300">Founder Zone</strong> — $5.00 USDC</p>
-                  <p><strong className="text-purple-300">Treasury Zone</strong> — $50.00 USDC</p>
-                </div>
-                <p className="text-xs text-muted-foreground">Pay-per-use on Base Mainnet. Agents pay at the HTTP layer via x402 micropayments.</p>
+                <h3 className="text-xl font-bold text-foreground">DJZS-LF v1 Taxonomy (Failure Codes)</h3>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                The Oracle maps all detected reasoning flaws to strict failure codes. Autonomous agents should be engineered to parse these specific <code className="text-red-400 bg-red-500/10 px-1.5 py-0.5 rounded font-mono text-xs">DJZS-LF</code> flags and trigger automated halt conditions.
+              </p>
+              <div className="overflow-x-auto" data-testid="table-djzs-lf-taxonomy">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-3 px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Diagnostic Code</th>
+                      <th className="text-left py-3 px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Category</th>
+                      <th className="text-left py-3 px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Severity</th>
+                      <th className="text-left py-3 px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Technical Description</th>
+                      <th className="text-left py-3 px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Auto-Abort?</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-border/50">
+                      <td className="py-3 px-3"><code className="text-red-400 font-mono text-xs font-bold">DJZS-S01</code></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground">Structural</td>
+                      <td className="py-3 px-3"><span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase">Critical</span></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground hidden sm:table-cell">Circular logic or agent-echo reinforcement detected.</td>
+                      <td className="py-3 px-3 text-xs font-bold text-red-400">Yes</td>
+                    </tr>
+                    <tr className="border-b border-border/50">
+                      <td className="py-3 px-3"><code className="text-red-400 font-mono text-xs font-bold">DJZS-S02</code></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground">Structural</td>
+                      <td className="py-3 px-3"><span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase">Critical</span></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground hidden sm:table-cell">Direct logical contradiction within the payload.</td>
+                      <td className="py-3 px-3 text-xs font-bold text-red-400">Yes</td>
+                    </tr>
+                    <tr className="border-b border-border/50">
+                      <td className="py-3 px-3"><code className="text-orange-400 font-mono text-xs font-bold">DJZS-E01</code></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground">Epistemic</td>
+                      <td className="py-3 px-3"><span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded uppercase">High</span></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground hidden sm:table-cell">Utilization of hallucinated reference markers or fake data.</td>
+                      <td className="py-3 px-3 text-xs font-bold text-orange-400">Yes</td>
+                    </tr>
+                    <tr className="border-b border-border/50">
+                      <td className="py-3 px-3"><code className="text-orange-400 font-mono text-xs font-bold">DJZS-E02</code></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground">Epistemic</td>
+                      <td className="py-3 px-3"><span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded uppercase">High</span></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground hidden sm:table-cell">Reliance on a demonstrably stale or outdated assumption.</td>
+                      <td className="py-3 px-3 text-xs font-bold text-orange-400">Yes</td>
+                    </tr>
+                    <tr className="border-b border-border/50">
+                      <td className="py-3 px-3"><code className="text-yellow-400 font-mono text-xs font-bold">DJZS-I01</code></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground">Incentive</td>
+                      <td className="py-3 px-3"><span className="text-[10px] font-bold text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded uppercase">Medium</span></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground hidden sm:table-cell">Execution driven by FOMO loop or unverified momentum.</td>
+                      <td className="py-3 px-3 text-xs text-yellow-400">No (Review)</td>
+                    </tr>
+                    <tr className="border-b border-border/50">
+                      <td className="py-3 px-3"><code className="text-yellow-400 font-mono text-xs font-bold">DJZS-I02</code></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground">Incentive</td>
+                      <td className="py-3 px-3"><span className="text-[10px] font-bold text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded uppercase">Medium</span></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground hidden sm:table-cell">High narrative dependency (Prioritizing story over structural data).</td>
+                      <td className="py-3 px-3 text-xs text-yellow-400">No (Review)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-3"><code className="text-red-400 font-mono text-xs font-bold">DJZS-X01</code></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground">Execution</td>
+                      <td className="py-3 px-3"><span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase">Critical</span></td>
+                      <td className="py-3 px-3 text-xs text-muted-foreground hidden sm:table-cell">Liquidity fragility (Target asset cannot support intended trade size).</td>
+                      <td className="py-3 px-3 text-xs font-bold text-red-400">Yes</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 
-            <h3 className="text-lg font-bold text-foreground mb-4">Use Cases</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-5 rounded-lg bg-muted border border-orange-500/10 hover:border-orange-500/30 transition-all" data-testid="card-usecase-dao">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-bold text-foreground">DAO Treasury</h4>
-                  <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2 py-1 rounded">$50</span>
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-teal-400" />
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Stress-test treasury allocation strategies before multi-sig execution</p>
+                <h3 className="text-xl font-bold text-foreground">Auto-Abort Circuit Breaker (TypeScript)</h3>
               </div>
-
-              <div className="p-5 rounded-lg bg-muted border border-teal-500/10 hover:border-teal-500/30 transition-all" data-testid="card-usecase-founder">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-bold text-foreground">Founder Drift</h4>
-                  <span className="text-xs font-bold text-teal-400 bg-teal-500/10 px-2 py-1 rounded">$5</span>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                The following snippet demonstrates the <strong className="text-foreground">"Audit-Before-Act"</strong> pattern. It shows how to wrap an autonomous bot's execution logic with the DJZS API, ensuring the bot automatically kills its own trade if the Oracle detects a logic flaw.
+              </p>
+              <div className="relative" data-testid="code-circuit-breaker">
+                <div className="absolute top-0 left-0 right-0 h-8 bg-[#1a1d23] rounded-t-lg flex items-center px-4">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">typescript</span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Strategic integrity check — detect mission drift and narrative dependency</p>
-              </div>
+                <pre className="bg-[#1a1d23] rounded-lg pt-10 pb-5 px-5 overflow-x-auto border border-border/50">
+                  <code className="text-xs font-mono leading-relaxed text-muted-foreground">
+{`import { ethers } from "ethers";
 
-              <div className="p-5 rounded-lg bg-muted border border-purple-500/10 hover:border-purple-500/30 transition-all" data-testid="card-usecase-micro">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-bold text-foreground">Micro-Audit</h4>
-                  <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-2 py-1 rounded">$2.50</span>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Quick "check my work" — fast logic audit for any reasoning memo</p>
+`}<span className="text-muted-foreground/60">{`// 1. Define the DJZS Proof of Logic Schema`}</span>{`
+interface `}<span className="text-teal-400">ProofOfLogic</span>{` {
+  `}<span className="text-purple-400">verdict</span>{`: "PASS" | "FAIL";
+  `}<span className="text-purple-400">risk_score</span>{`: number;
+  `}<span className="text-purple-400">flags</span>{`: Array<{ code: string; severity: string; description: string }>;
+}
+
+async function `}<span className="text-orange-400">executeA2ATrade</span>{`(strategyMemo: string, baseTxHash: string) {
+  console.log("Initiating DJZS Journal Entry Testing...");
+
+  try {
+    `}<span className="text-muted-foreground/60">{`// 2. Route the reasoning trace through the DJZS Tollbooth`}</span>{`
+    const auditResponse = await fetch("https://djzs.ai/api/audit/micro", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "`}<span className="text-orange-400">x-payment-proof</span>{`": baseTxHash
+      },
+      body: JSON.stringify({ strategy_memo: strategyMemo })
+    });
+
+    if (auditResponse.status === 402) {
+      throw new Error("`}<span className="text-red-400">DJZS-AUTH-402</span>{`: Payment required or invalid transaction hash.");
+    }
+
+    const proofOfLogic: ProofOfLogic = await auditResponse.json();
+
+    `}<span className="text-muted-foreground/60">{`// 3. The Auto-Abort Circuit Breaker`}</span>{`
+    if (proofOfLogic.verdict === "FAIL") {
+      console.error(\`CRITICAL LOGIC FLAW DETECTED! Risk Score: \${proofOfLogic.risk_score}\`);
+      proofOfLogic.flags.forEach(flag => {
+        console.error(\`- [\${flag.code}] (\${flag.severity}): \${flag.description}\`);
+      });
+      
+      `}<span className="text-red-400">{`// KILL THE EXECUTION`}</span>{`
+      throw new Error("TRADE ABORTED: Logic failed DJZS verification. Capital protected.");
+    }
+
+    `}<span className="text-muted-foreground/60">{`// 4. Execution (Only runs if the Oracle returns 'PASS')`}</span>{`
+    console.log("Logic Verified. Executing on-chain transaction...");
+    // await router.executeTrade(...);
+
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
+}`}
+                  </code>
+                </pre>
               </div>
             </div>
+
           </div>
         </motion.section>
 
