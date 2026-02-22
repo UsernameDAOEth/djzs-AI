@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code, Sun, Moon, Terminal, ShieldAlert, Code2, AlertTriangle } from "lucide-react";
+import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code, Sun, Moon, Terminal, ShieldAlert, Code2, AlertTriangle, BrainCircuit, Coins, ShieldCheck } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -245,78 +245,83 @@ export default function Home() {
       </section>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-border bg-muted">
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
-                <Zap className="w-6 h-6" style={{ color: '#2E8B8B' }} />
-                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>How It Works</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-foreground mb-6 tracking-tight" data-testid="text-protocol-flow-headline">
-                Three steps. One deterministic verdict.
+        <section className="relative py-24 border-t border-border bg-background dark:bg-[#050505] overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+
+            <div className="text-center mb-20">
+              <h2 className="text-3xl lg:text-5xl font-bold tracking-tight mb-4 text-foreground" data-testid="text-protocol-flow-headline">
+                The <span className="text-foreground font-black">Audit-Before-Act</span> Pipeline
               </h2>
-              <p className="text-xl max-w-3xl mx-auto text-muted-foreground">
-                The DJZS Protocol enforces an "Audit-Before-Act" loop. No agent executes without a cryptographic logic certificate.
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+                A deterministic execution environment. If the reasoning is flawed, the transaction never reaches the blockchain.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              <div className="relative p-8 rounded-lg border bg-card calm-card" data-testid="card-flow-agent">
-                <div className="absolute -top-6 -left-2 text-8xl font-black select-none pointer-events-none text-foreground/[0.03]">01</div>
-                <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
-                    <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+            <div className="relative">
+              <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-[2px] bg-border dark:bg-gray-800 z-0" data-testid="flow-connecting-line">
+                <motion.div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500 via-purple-500 to-green-500"
+                  initial={{ width: "0%" }}
+                  whileInView={{ width: "100%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 2, ease: "easeInOut", delay: 0.5 }}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0 }}
+                  className="flex flex-col items-center text-center relative group"
+                  data-testid="card-flow-agent"
+                >
+                  <div className="w-24 h-24 rounded-2xl bg-card dark:bg-[#111] border border-border dark:border-gray-800 flex items-center justify-center mb-6 transition-all duration-500 group-hover:-translate-y-2 group-hover:border-cyan-500/30 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+                    <BrainCircuit size={32} className="text-cyan-500 dark:text-cyan-400" />
                   </div>
+                  <div className="text-sm font-mono text-muted-foreground mb-2" data-testid="text-phase-01">PHASE 01</div>
                   <h3 className="text-xl font-bold text-foreground mb-3">Agent Logic</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    The autonomous bot generates a trading memo, strategy thesis, or governance proposal — its raw reasoning trace before execution.
+                  <p className="text-muted-foreground leading-relaxed max-w-xs">
+                    Your autonomous agent formulates a trading strategy or execution plan and formats it as a JSON payload.
                   </p>
-                </div>
-              </div>
+                </motion.div>
 
-              <div className="relative p-8 rounded-lg border bg-card calm-card" data-testid="card-flow-tollbooth">
-                <div className="absolute -top-6 -left-2 text-8xl font-black select-none pointer-events-none text-foreground/[0.03]">02</div>
-                <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
-                    <DollarSign className="w-7 h-7" style={{ color: '#F37E20' }} />
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="flex flex-col items-center text-center relative group"
+                  data-testid="card-flow-tollbooth"
+                >
+                  <div className="w-24 h-24 rounded-2xl bg-card dark:bg-[#111] border border-border dark:border-gray-800 flex items-center justify-center mb-6 transition-all duration-500 group-hover:-translate-y-2 group-hover:border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
+                    <Coins size={32} className="text-purple-500 dark:text-purple-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">The Tollbooth</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    The bot pays $2.50 USDC via the x402 Payment Protocol on Base Mainnet. The transaction hash is injected as the authentication header.
+                  <div className="text-sm font-mono text-muted-foreground mb-2" data-testid="text-phase-02">PHASE 02</div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">The x402 Tollbooth</h3>
+                  <p className="text-muted-foreground leading-relaxed max-w-xs">
+                    The agent pays a $2.50 USDC micro-transaction on Base Mainnet. The TX hash is injected into the request header.
                   </p>
-                </div>
-              </div>
+                </motion.div>
 
-              <div className="relative p-8 rounded-lg border bg-card calm-card" data-testid="card-flow-oracle">
-                <div className="absolute -top-6 -left-2 text-8xl font-black select-none pointer-events-none text-foreground/[0.03]">03</div>
-                <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
-                    <Shield className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  className="flex flex-col items-center text-center relative group"
+                  data-testid="card-flow-oracle"
+                >
+                  <div className="w-24 h-24 rounded-2xl bg-card dark:bg-[#111] border border-border dark:border-gray-800 flex items-center justify-center mb-6 transition-all duration-500 group-hover:-translate-y-2 group-hover:border-green-500/30 shadow-[0_0_30px_rgba(74,222,128,0.3)]">
+                    <ShieldCheck size={32} className="text-green-500 dark:text-green-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">The Oracle</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    DJZS issues a cryptographic <strong className="text-foreground">PASS / FAIL</strong> certificate — the Proof of Logic. If FAIL, the agent aborts. Capital protected.
+                  <div className="text-sm font-mono text-muted-foreground mb-2" data-testid="text-phase-03">PHASE 03</div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">The Zero-Trust Oracle</h3>
+                  <p className="text-muted-foreground leading-relaxed max-w-xs">
+                    DJZS mathematically evaluates the logic against the DJZS-LF taxonomy and returns a deterministic PASS/FAIL certificate.
                   </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 text-sm font-medium text-muted-foreground">
-              <div className="flex items-center gap-2" data-testid="text-trust-local">
-                <Lock className="w-4 h-4" style={{ color: '#F37E20' }} />
-                <span>x402-Gated</span>
-              </div>
-              <div className="flex items-center gap-2" data-testid="text-trust-ai">
-                <Zap className="w-4 h-4" style={{ color: '#2E8B8B' }} />
-                <span>Adversarial Simulation</span>
-              </div>
-              <div className="flex items-center gap-2" data-testid="text-trust-encrypted">
-                <Target className="w-4 h-4" style={{ color: '#7B6B8D' }} />
-                <span>Deterministic Output</span>
-              </div>
-              <div className="flex items-center gap-2" data-testid="text-trust-private">
-                <Shield className="w-4 h-4" style={{ color: '#FFB84D' }} />
-                <span>E2E Encrypted</span>
+                </motion.div>
               </div>
             </div>
           </div>
