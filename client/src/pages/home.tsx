@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code, Sun, Moon } from "lucide-react";
+import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code, Sun, Moon, Terminal, ShieldAlert, Code2, AlertTriangle } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -141,117 +141,190 @@ export default function Home() {
         <meta name="twitter:description" content="Autonomous auditing system serving human founders via web UI and AI agents via API. Three-tier x402-gated audits ($2.50 / $5.00 / $50.00 USDC). Deterministic output on Base Mainnet." />
       </Helmet>
 
-      <motion.section
-        variants={pageContainer}
-        initial="hidden"
-        animate="show"
-        className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-background"
-        style={{ backgroundImage: 'radial-gradient(ellipse at top, rgba(243,126,32,0.03) 0%, transparent 70%)' }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `
-              radial-gradient(800px 400px at 30% 40%, rgba(243,126,32,0.10), transparent 60%),
-              radial-gradient(600px 300px at 70% 60%, rgba(46,139,139,0.08), transparent 60%),
-              radial-gradient(400px 200px at 50% 80%, rgba(123,107,141,0.06), transparent 60%)
-            `,
-            animation: "breathe 30s ease-in-out infinite",
-          }}
-        />
+      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-background">
+        <div className="absolute top-[-10%] left-[-10%] w-96 h-96 rounded-full pointer-events-none" style={{ background: 'rgba(243,126,32,0.08)', filter: 'blur(120px)' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full pointer-events-none" style={{ background: 'rgba(46,139,139,0.08)', filter: 'blur(120px)' }} />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-          <motion.div variants={fadeUp} className="mb-6">
-            <span className="inline-flex items-center gap-3 px-6 py-3 rounded-md text-base font-bold uppercase tracking-wider" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)', color: '#F37E20' }}>
-              <Target className="w-6 h-6" />
-              The Autonomous Auditing System
-            </span>
-          </motion.div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center py-16 lg:py-0">
 
-          <motion.h1
-            variants={fadeUp}
-            className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[1] mb-8 px-4 sm:px-0"
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="space-y-8"
           >
-            <span className="text-foreground">DECENTRALIZED</span> <br />
-            <span className="text-foreground">JOURNALING</span> <span className="text-muted-foreground/70">ZONE SYSTEM.</span>
-          </motion.h1>
-
-          <motion.p
-            variants={fadeUp}
-            className="text-lg sm:text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium text-muted-foreground px-4 sm:px-0"
-          >
-            An autonomous auditing system operating natively in the A2A economy. Serving founders via Web UI and agents via API, DJZS pressure-tests reasoning, flags FOMO, and ensures your decisions survive volatility.
-          </motion.p>
-
-          <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 mb-12">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              {isConnected ? (
-                <Link href="/chat">
-                  <button
-                    className="inline-flex items-center gap-3 rounded-lg px-10 py-5 text-lg font-bold text-white transition-all duration-250 hover:-translate-y-1"
-                    style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
-                    data-testid="button-start-thinking"
-                  >
-                    <Target className="w-6 h-6" />
-                    Enter the Zone
-                  </button>
-                </Link>
-              ) : (
-                <>
-                  <Link href="/chat">
-                    <button
-                      className="inline-flex items-center gap-3 rounded-lg px-10 py-5 text-lg font-bold transition-all duration-250 hover:-translate-y-1"
-                      style={{ background: '#F37E20', color: '#fff', boxShadow: '0 8px 30px rgba(243,126,32,0.3)' }}
-                      data-testid="button-start-thinking"
-                    >
-                      <Target className="w-6 h-6" />
-                      Enter the Zone
-                    </button>
-                  </Link>
-                  <a href="#agent-clients">
-                    <button
-                      className="inline-flex items-center gap-3 rounded-lg border px-8 py-5 text-lg font-bold text-muted-foreground transition-all duration-250 hover:text-foreground"
-                      style={{ borderColor: 'rgba(46,139,139,0.3)' }}
-                      data-testid="button-see-how-it-works"
-                    >
-                      <Code className="w-5 h-5" />
-                      Agent API Specs
-                    </button>
-                  </a>
-                </>
-              )}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-mono" style={{ border: '1px solid rgba(243,126,32,0.3)', background: 'rgba(243,126,32,0.08)', color: '#F37E20' }}>
+              <ShieldAlert size={16} />
+              <span>DJZS Protocol v1 is Live</span>
             </div>
-            <p className="text-sm text-muted-foreground" data-testid="text-cta-microcopy">
-              Three tiers: $2.50 / $5.00 / $50.00 USDC per audit. Instant settlement on Base Mainnet. No subscriptions.
+
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-[1.1]">
+              The{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(to right, #F37E20, #2E8B8B)' }}>
+                Adversarial Logic Layer
+              </span>{' '}
+              for the A2A Economy.
+            </h1>
+
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
+              Stop your autonomous agents from trading on FOMO and hallucinated data. Route your reasoning traces through the DJZS Zero-Trust Oracle before execution.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <Link href="/docs">
+                <button className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg font-bold text-white transition-all hover:-translate-y-0.5" style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }} data-testid="button-hero-docs">
+                  <Code2 size={20} />
+                  Read the Docs
+                </button>
+              </Link>
+              <Link href="/chat">
+                <button className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg font-bold border transition-all hover:-translate-y-0.5 text-foreground hover:bg-muted" style={{ borderColor: 'rgba(46,139,139,0.4)' }} data-testid="button-hero-terminal">
+                  <Terminal size={20} />
+                  View Live Terminal
+                </button>
+              </Link>
+            </div>
+
+            <p className="text-xs text-muted-foreground pt-2" data-testid="text-cta-microcopy">
+              $2.50 / $5.00 / $50.00 USDC per audit. Instant settlement on Base Mainnet. No subscriptions.
             </p>
           </motion.div>
 
           <motion.div
-            variants={fadeUp}
-            className="flex flex-col sm:flex-row items-center justify-center gap-10 text-base font-medium text-muted-foreground"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className="relative rounded-xl border border-border overflow-hidden shadow-2xl"
+            style={{ background: '#111214' }}
+            data-testid="hero-terminal"
           >
-            <div className="flex items-center gap-3" data-testid="text-trust-local">
-              <Lock className="w-5 h-5" style={{ color: '#F37E20' }} />
-              <span>x402-Gated Endpoint</span>
+            <div className="flex items-center px-4 py-3 border-b border-border/50" style={{ background: '#1a1d23' }}>
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ background: 'rgba(239,68,68,0.8)' }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: 'rgba(234,179,8,0.8)' }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: 'rgba(34,197,94,0.8)' }} />
+              </div>
+              <span className="ml-4 text-xs font-mono text-muted-foreground/60">POST /api/audit/micro</span>
             </div>
-            <div className="flex items-center gap-3" data-testid="text-trust-ai">
-              <Zap className="w-5 h-5" style={{ color: '#2E8B8B' }} />
-              <span>Adversarial Simulation</span>
-            </div>
-            <div className="flex items-center gap-3" data-testid="text-trust-encrypted">
-              <Target className="w-5 h-5" style={{ color: '#7B6B8D' }} />
-              <span>Deterministic Output</span>
-            </div>
-            <div className="flex items-center gap-3" data-testid="text-trust-private">
-              <Shield className="w-5 h-5" style={{ color: '#FFB84D' }} />
-              <span>E2E Encrypted</span>
+
+            <div className="p-5 sm:p-6 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto relative">
+              <motion.pre
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.5 }}
+              >
+                <code>
+                  <span style={{ color: '#2E8B8B' }}>{"{"}</span>
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"system_id"</span>: <span style={{ color: '#2E8B8B' }}>"djzs-mainnet-01"</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"verdict"</span>: <span style={{ color: '#ef4444', fontWeight: 'bold' }}>"FAIL"</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"risk_score"</span>: <span style={{ color: '#FFB84D' }}>98</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"flags"</span>: <span style={{ color: '#2E8B8B' }}>{"["}</span>
+                  {"\n    "}<span style={{ color: '#2E8B8B' }}>{"{"}</span>
+                  {"\n      "}<span style={{ color: '#7B6B8D' }}>"code"</span>: <span style={{ color: '#F37E20' }}>"DJZS-I01"</span>,
+                  {"\n      "}<span style={{ color: '#7B6B8D' }}>"severity"</span>: <span style={{ color: '#ef4444' }}>"CRITICAL"</span>,
+                  {"\n      "}<span style={{ color: '#7B6B8D' }}>"description"</span>: <span style={{ color: '#2E8B8B' }}>"FOMO Loop detected. Aborting."</span>
+                  {"\n    "}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
+                  {"\n  "}<span style={{ color: '#2E8B8B' }}>{"]"}</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"proof"</span>: <span style={{ color: '#2E8B8B' }}>{"{"}</span>
+                  {"\n    "}<span style={{ color: '#7B6B8D' }}>"logic_hash"</span>: <span style={{ color: '#2E8B8B' }}>"0x4a9b2c..."</span>
+                  {"\n  "}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
+                  {"\n"}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
+                </code>
+              </motion.pre>
+
+              <motion.div
+                className="absolute left-0 w-full h-px pointer-events-none"
+                style={{ background: 'linear-gradient(90deg, transparent, rgba(243,126,32,0.6), transparent)', boxShadow: '0 0 15px rgba(243,126,32,0.5)' }}
+                animate={{ top: ["10%", "90%", "10%"] }}
+                transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+              />
             </div>
           </motion.div>
+
         </div>
-      </motion.section>
+      </section>
 
       <RevealSection>
-        <section id="how-it-works" className="relative py-32 border-t border-border bg-muted">
+        <section className="relative py-24 border-t border-border bg-muted">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(46,139,139,0.08)', border: '1px solid rgba(46,139,139,0.2)' }}>
+                <Zap className="w-6 h-6" style={{ color: '#2E8B8B' }} />
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#2E8B8B' }}>How It Works</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-foreground mb-6 tracking-tight" data-testid="text-protocol-flow-headline">
+                Three steps. One deterministic verdict.
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto text-muted-foreground">
+                The DJZS Protocol enforces an "Audit-Before-Act" loop. No agent executes without a cryptographic logic certificate.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              <div className="relative p-8 rounded-lg border bg-card calm-card" data-testid="card-flow-agent">
+                <div className="absolute -top-6 -left-2 text-8xl font-black select-none pointer-events-none text-foreground/[0.03]">01</div>
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(123,107,141,0.1)', border: '1px solid rgba(123,107,141,0.25)' }}>
+                    <Brain className="w-7 h-7" style={{ color: '#7B6B8D' }} />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Agent Logic</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    The autonomous bot generates a trading memo, strategy thesis, or governance proposal — its raw reasoning trace before execution.
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative p-8 rounded-lg border bg-card calm-card" data-testid="card-flow-tollbooth">
+                <div className="absolute -top-6 -left-2 text-8xl font-black select-none pointer-events-none text-foreground/[0.03]">02</div>
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.25)' }}>
+                    <DollarSign className="w-7 h-7" style={{ color: '#F37E20' }} />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">The Tollbooth</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    The bot pays $2.50 USDC via the x402 Payment Protocol on Base Mainnet. The transaction hash is injected as the authentication header.
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative p-8 rounded-lg border bg-card calm-card" data-testid="card-flow-oracle">
+                <div className="absolute -top-6 -left-2 text-8xl font-black select-none pointer-events-none text-foreground/[0.03]">03</div>
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-md flex items-center justify-center mb-6" style={{ background: 'rgba(46,139,139,0.1)', border: '1px solid rgba(46,139,139,0.25)' }}>
+                    <Shield className="w-7 h-7" style={{ color: '#2E8B8B' }} />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">The Oracle</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    DJZS issues a cryptographic <strong className="text-foreground">PASS / FAIL</strong> certificate — the Proof of Logic. If FAIL, the agent aborts. Capital protected.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 text-sm font-medium text-muted-foreground">
+              <div className="flex items-center gap-2" data-testid="text-trust-local">
+                <Lock className="w-4 h-4" style={{ color: '#F37E20' }} />
+                <span>x402-Gated</span>
+              </div>
+              <div className="flex items-center gap-2" data-testid="text-trust-ai">
+                <Zap className="w-4 h-4" style={{ color: '#2E8B8B' }} />
+                <span>Adversarial Simulation</span>
+              </div>
+              <div className="flex items-center gap-2" data-testid="text-trust-encrypted">
+                <Target className="w-4 h-4" style={{ color: '#7B6B8D' }} />
+                <span>Deterministic Output</span>
+              </div>
+              <div className="flex items-center gap-2" data-testid="text-trust-private">
+                <Shield className="w-4 h-4" style={{ color: '#FFB84D' }} />
+                <span>E2E Encrypted</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section id="how-it-works" className="relative py-32 border-t border-border bg-card">
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(243,126,32,0.08)', border: '1px solid rgba(243,126,32,0.2)' }}>
@@ -905,6 +978,137 @@ export default function Home() {
               <p className="text-lg font-bold text-foreground mb-2">In a world of a million AI agents, trust is the bottleneck.</p>
               <p className="text-sm mb-2 text-muted-foreground">The System is the default Logic Oracle for the decentralized web. Machine-readable first, human-readable second.</p>
               <p className="text-xs text-muted-foreground/70">Coming soon: ERC-8004 on-chain reputation registry — immutable track record of successful logic audits.</p>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-24 border-t border-border bg-card">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                <AlertTriangle className="w-6 h-6" style={{ color: '#ef4444' }} />
+                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#ef4444' }}>Failure Taxonomy</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-foreground mb-6 tracking-tight" data-testid="text-taxonomy-headline">
+                DJZS-LF v1 Taxonomy
+              </h2>
+              <p className="text-xl max-w-3xl mx-auto text-muted-foreground">
+                The Oracle maps all detected reasoning flaws to strict failure codes. Agents should parse these flags and trigger automated halt conditions.
+              </p>
+            </div>
+
+            <div className="overflow-x-auto rounded-lg border border-border" data-testid="table-taxonomy-landing">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted">
+                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Code</th>
+                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Category</th>
+                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Severity</th>
+                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Description</th>
+                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Auto-Abort?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-border/50 bg-card">
+                    <td className="py-3 px-4"><code className="text-red-400 font-mono text-xs font-bold">DJZS-S01</code></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground">Structural</td>
+                    <td className="py-3 px-4"><span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase">Critical</span></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Circular logic or agent-echo reinforcement detected.</td>
+                    <td className="py-3 px-4 text-xs font-bold text-red-400">Yes</td>
+                  </tr>
+                  <tr className="border-b border-border/50 bg-card">
+                    <td className="py-3 px-4"><code className="text-red-400 font-mono text-xs font-bold">DJZS-S02</code></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground">Structural</td>
+                    <td className="py-3 px-4"><span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase">Critical</span></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Direct logical contradiction within the payload.</td>
+                    <td className="py-3 px-4 text-xs font-bold text-red-400">Yes</td>
+                  </tr>
+                  <tr className="border-b border-border/50 bg-card">
+                    <td className="py-3 px-4"><code className="font-mono text-xs font-bold" style={{ color: '#F37E20' }}>DJZS-E01</code></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground">Epistemic</td>
+                    <td className="py-3 px-4"><span className="text-[10px] font-bold bg-orange-500/10 px-2 py-0.5 rounded uppercase" style={{ color: '#F37E20' }}>High</span></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Utilization of hallucinated reference markers or fake data.</td>
+                    <td className="py-3 px-4 text-xs font-bold" style={{ color: '#F37E20' }}>Yes</td>
+                  </tr>
+                  <tr className="border-b border-border/50 bg-card">
+                    <td className="py-3 px-4"><code className="font-mono text-xs font-bold" style={{ color: '#F37E20' }}>DJZS-E02</code></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground">Epistemic</td>
+                    <td className="py-3 px-4"><span className="text-[10px] font-bold bg-orange-500/10 px-2 py-0.5 rounded uppercase" style={{ color: '#F37E20' }}>High</span></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Reliance on a demonstrably stale or outdated assumption.</td>
+                    <td className="py-3 px-4 text-xs font-bold" style={{ color: '#F37E20' }}>Yes</td>
+                  </tr>
+                  <tr className="border-b border-border/50 bg-card">
+                    <td className="py-3 px-4"><code className="font-mono text-xs font-bold" style={{ color: '#FFB84D' }}>DJZS-I01</code></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground">Incentive</td>
+                    <td className="py-3 px-4"><span className="text-[10px] font-bold bg-yellow-500/10 px-2 py-0.5 rounded uppercase" style={{ color: '#FFB84D' }}>Medium</span></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Execution driven by FOMO loop or unverified momentum.</td>
+                    <td className="py-3 px-4 text-xs" style={{ color: '#FFB84D' }}>No (Review)</td>
+                  </tr>
+                  <tr className="border-b border-border/50 bg-card">
+                    <td className="py-3 px-4"><code className="font-mono text-xs font-bold" style={{ color: '#FFB84D' }}>DJZS-I02</code></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground">Incentive</td>
+                    <td className="py-3 px-4"><span className="text-[10px] font-bold bg-yellow-500/10 px-2 py-0.5 rounded uppercase" style={{ color: '#FFB84D' }}>Medium</span></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">High narrative dependency (Prioritizing story over structural data).</td>
+                    <td className="py-3 px-4 text-xs" style={{ color: '#FFB84D' }}>No (Review)</td>
+                  </tr>
+                  <tr className="bg-card">
+                    <td className="py-3 px-4"><code className="text-red-400 font-mono text-xs font-bold">DJZS-X01</code></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground">Execution</td>
+                    <td className="py-3 px-4"><span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase">Critical</span></td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Liquidity fragility (Target asset cannot support intended trade size).</td>
+                    <td className="py-3 px-4 text-xs font-bold text-red-400">Yes</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section className="relative py-24 border-t border-border bg-muted">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4 tracking-tight" data-testid="text-terminal-cta-headline">
+              Ready to secure your treasury?
+            </h2>
+            <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+              One cURL command. One deterministic verdict. Zero ambiguity.
+            </p>
+
+            <div className="relative rounded-xl border border-border overflow-hidden text-left max-w-2xl mx-auto shadow-2xl" style={{ background: '#111214' }} data-testid="terminal-cta-block">
+              <div className="flex items-center px-4 py-3 border-b border-border/50" style={{ background: '#1a1d23' }}>
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full" style={{ background: 'rgba(239,68,68,0.8)' }} />
+                  <div className="w-3 h-3 rounded-full" style={{ background: 'rgba(234,179,8,0.8)' }} />
+                  <div className="w-3 h-3 rounded-full" style={{ background: 'rgba(34,197,94,0.8)' }} />
+                </div>
+                <span className="ml-4 text-xs font-mono text-muted-foreground/60">terminal</span>
+              </div>
+              <pre className="p-5 sm:p-6 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto text-muted-foreground">
+{`curl -X POST https://djzs.ai/api/audit/micro \\
+  -H "Content-Type: application/json" \\
+  -H "`}<span style={{ color: '#F37E20' }}>x-payment-proof</span>{`: 0x_your_base_tx_hash" \\
+  -d '{
+    "`}<span style={{ color: '#2E8B8B' }}>strategy_memo</span>{`": "Your reasoning trace here."
+  }'`}
+              </pre>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+              <Link href="/docs">
+                <button className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-bold text-white transition-all hover:-translate-y-0.5" style={{ background: '#F37E20', boxShadow: '0 6px 24px rgba(243,126,32,0.3)' }} data-testid="button-cta-docs">
+                  <Code2 size={20} />
+                  Read the API Reference
+                </button>
+              </Link>
+              <Link href="/chat">
+                <button className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-bold border transition-all hover:-translate-y-0.5 text-foreground hover:bg-muted/50" style={{ borderColor: 'rgba(46,139,139,0.4)' }} data-testid="button-cta-terminal">
+                  <Terminal size={20} />
+                  Deploy an Audit
+                </button>
+              </Link>
             </div>
           </div>
         </section>
