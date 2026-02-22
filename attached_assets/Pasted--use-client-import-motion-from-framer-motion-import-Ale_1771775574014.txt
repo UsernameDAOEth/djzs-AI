@@ -1,0 +1,79 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { AlertOctagon, TrendingDown, Repeat } from "lucide-react";
+
+const taxonomy = [
+  {
+    code: "DJZS-S01",
+    category: "Structural",
+    severity: "CRITICAL",
+    color: "text-red-400",
+    bg: "bg-red-500/10",
+    border: "border-red-500/30",
+    icon: <Repeat size={24} />,
+    desc: "Circular Logic or Agent-Echo reinforcement. The agent validates its own assumptions without external ground truth."
+  },
+  {
+    code: "DJZS-E01",
+    category: "Epistemic",
+    severity: "HIGH",
+    color: "text-orange-400",
+    bg: "bg-orange-500/10",
+    border: "border-orange-500/30",
+    icon: <AlertOctagon size={24} />,
+    desc: "Hallucinated references, fake data integration, or reliance on mathematically impossible yield metrics."
+  },
+  {
+    code: "DJZS-I01",
+    category: "Incentive",
+    severity: "MEDIUM",
+    color: "text-yellow-400",
+    bg: "bg-yellow-500/10",
+    border: "border-yellow-500/30",
+    icon: <TrendingDown size={24} />,
+    desc: "FOMO Loop. Execution is driven by social momentum, Twitter sentiment, or fear of missing liquidity."
+  }
+];
+
+export default function TaxonomyMatrix() {
+  return (
+    <section className="py-24 bg-[#050505] text-gray-200 border-t border-gray-900 font-sans">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="mb-16">
+          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-white mb-4">
+            The DJZS-LF Taxonomy
+          </h2>
+          <p className="text-gray-500 max-w-2xl text-lg">
+            Our Zero-Trust Oracle doesn't just return a score. It maps logical failures to a strict, parseable diagnostic matrix.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {taxonomy.map((item, i) => (
+            <motion.div 
+              key={item.code}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.2 }}
+              className={`p-8 rounded-2xl border bg-[#0a0a0a] hover:bg-[#111] transition-colors ${item.border}`}
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div className={`p-3 rounded-lg ${item.bg} ${item.color}`}>
+                  {item.icon}
+                </div>
+                <div className={`text-xs font-mono font-bold px-2 py-1 rounded border ${item.color} ${item.bg} ${item.border}`}>
+                  {item.severity}
+                </div>
+              </div>
+              <div className="font-mono text-sm text-gray-500 mb-2">{item.category} Failure</div>
+              <h3 className="text-2xl font-bold text-white mb-3">{item.code}</h3>
+              <p className="text-gray-400 leading-relaxed">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
