@@ -6,26 +6,26 @@ import { useTheme } from "@/lib/theme";
 const roadmapPhases = [
   {
     phase: "01",
-    title: "Core Ritual Engine",
+    title: "Core Audit Engine",
     status: "completed",
     quarter: "Q4 2025",
     items: [
       { text: "Audit Ledger: ProofOfLogic certificates → verdicts → risk scores → DJZS-LF failure codes", done: true },
       { text: "Local-first vault architecture (IndexedDB / Dexie)", done: true },
       { text: "Wallet-based authentication (RainbowKit / Base)", done: true },
-      { text: "Video journal: record & playback via Livepeer", done: true },
+      { text: "Forensic video capture: record & playback audit context via Livepeer", done: true },
     ],
   },
   {
     phase: "02",
-    title: "Thinking Partner & Depth",
+    title: "Adversarial Oracle & Depth",
     status: "completed",
     quarter: "Q1 2026",
     items: [
-      { text: "Thinking Partner: challenges assumptions in Journal, synthesizes in Research", done: true },
+      { text: "Adversarial Oracle: pressure-tests reasoning traces, synthesizes cross-zone intelligence", done: true },
       { text: "Research Zone: Brave Mode privacy-first search + Web Mode + Explain Mode", done: true },
       { text: "Research tracker management & claim tracking with trust levels", done: true },
-      { text: "Cross-zone linking (claims ↔ journal entries)", done: true },
+      { text: "Cross-zone linking (claims ↔ audit records)", done: true },
       { text: "Vault export & data portability", done: true },
     ],
   },
@@ -52,7 +52,7 @@ const roadmapPhases = [
       { text: "OpenClaw headless AI architecture — replacing direct AI calls with proper agent layer", done: false },
       { text: "XMTP Builder Agent as clean dispatcher (intent detection → structured JSON → formatted reply)", done: false },
       { text: "Cross-zone pattern recognition", done: false },
-      { text: "Journal-to-research correlation & personalized AI tuning", done: false },
+      { text: "Audit-to-research correlation & personalized agent tuning", done: false },
     ],
   },
   {
@@ -80,10 +80,10 @@ const roadmapPhases = [
 ];
 
 const cutItems = [
-  { text: "Community governance framework", reason: "Ritual over governance — focus on helping individuals think, not building committees." },
-  { text: "Plugin marketplace", reason: "Depth over breadth — one tool that works deeply beats a platform that does everything shallowly." },
-  { text: "Ecosystem APIs for developers", reason: "Too early — build the ritual first, open the platform later." },
-  { text: "Full hardware device", reason: "Software-first prototypes let us learn what rituals stick before investing in atoms." },
+  { text: "Community governance framework", reason: "Protocol over governance — focus on deterministic verification before building committees." },
+  { text: "Plugin marketplace", reason: "Depth over breadth — one audit primitive that works deeply beats a platform that does everything shallowly." },
+  { text: "Ecosystem APIs for developers", reason: "Too early — harden the Oracle first, open the platform later." },
+  { text: "Full hardware device", reason: "Software-first prototypes let us learn what audit patterns stick before investing in atoms." },
 ];
 
 export default function Roadmap() {
@@ -223,7 +223,7 @@ export default function Roadmap() {
             </div>
           </motion.div>
 
-          {/* The Sacred Daily Ritual */}
+          {/* The Audit-Before-Act Loop */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -231,25 +231,25 @@ export default function Roadmap() {
             className="mt-8 p-8 rounded-lg border border-orange-500/20 bg-gradient-to-br from-orange-500/[0.08] to-muted"
           >
             <div className="flex items-center gap-3 mb-6">
-              <Sun className="w-5 h-5" style={{ color: '#FFB84D' }} />
-              <h3 className="text-foreground font-black uppercase tracking-widest" data-testid="text-sacred-ritual-title">
-                The Sacred Daily Ritual
+              <Rocket className="w-5 h-5" style={{ color: '#FFB84D' }} />
+              <h3 className="text-foreground font-black uppercase tracking-widest" data-testid="text-audit-loop-title">
+                The Audit-Before-Act Loop
               </h3>
             </div>
             <p className="text-xs text-muted-foreground mb-8 font-mono">
-              The core loop that everything else serves.
+              The core operational cycle. No agent acts without audit.
             </p>
 
             <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
-              {/* Morning */}
-              <div className="flex-1 p-5 rounded-lg border border-border" style={{ background: 'rgba(255,184,77,0.06)' }} data-testid="card-morning-reflection">
+              {/* Deploy */}
+              <div className="flex-1 p-5 rounded-lg border border-border" style={{ background: 'rgba(255,184,77,0.06)' }} data-testid="card-deploy-audit">
                 <div className="flex items-center gap-2 mb-3">
-                  <Sun className="w-4 h-4" style={{ color: '#FFB84D' }} />
-                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#FFB84D' }} data-testid="text-morning-title">Morning Reflection</span>
+                  <Rocket className="w-4 h-4" style={{ color: '#FFB84D' }} />
+                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#FFB84D' }} data-testid="text-deploy-title">Deploy</span>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Open your journal. Write what's on your mind. Let the Thinking Partner challenge your assumptions 
-                  and surface patterns you missed. Pin what matters.
+                  Submit your reasoning trace to the Oracle. The adversarial agent pressure-tests 
+                  your logic, surfaces blind spots, and returns a ProofOfLogic certificate with a deterministic verdict.
                 </p>
               </div>
 
@@ -258,15 +258,15 @@ export default function Roadmap() {
                 →
               </div>
 
-              {/* Evening */}
-              <div className="flex-1 p-5 rounded-lg border border-border" style={{ background: 'rgba(46,139,139,0.06)' }} data-testid="card-evening-synthesis">
+              {/* Review */}
+              <div className="flex-1 p-5 rounded-lg border border-border" style={{ background: 'rgba(46,139,139,0.06)' }} data-testid="card-review-compound">
                 <div className="flex items-center gap-2 mb-3">
-                  <Moon className="w-4 h-4" style={{ color: '#2E8B8B' }} />
-                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#2E8B8B' }} data-testid="text-evening-title">Evening Synthesis</span>
+                  <Compass className="w-4 h-4" style={{ color: '#2E8B8B' }} />
+                  <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#2E8B8B' }} data-testid="text-review-title">Review & Compound</span>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Review what you wrote. See connections between your journal and research. 
-                  Let insights compound over time. Export what you want to keep forever.
+                  Inspect your Audit Ledger. Track DJZS-LF failure codes across deployments. 
+                  Let intelligence compound as patterns emerge across audits, research, and decisions.
                 </p>
               </div>
             </div>
@@ -287,11 +287,11 @@ export default function Roadmap() {
             </div>
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground leading-relaxed" data-testid="text-north-star-context">
-                1,000 people use DJZS daily. 300 of them pay for it. When you ask them why, 
-                they don't talk about features or encryption or decentralization.
+                Autonomous agents will move billions. When the first treasury gets drained by flawed reasoning, 
+                the question won't be "who built the agent?" — it will be "why wasn't there an audit?"
               </p>
               <p className="text-sm leading-relaxed" style={{ color: '#FFB84D' }} data-testid="text-north-star-quote">
-                They say: "It helps me think clearer."
+                "It caught what we missed."
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed" data-testid="text-north-star-mission">
                 That's the metric. That's the mission. Everything on this roadmap either 
