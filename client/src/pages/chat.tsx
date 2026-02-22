@@ -1197,19 +1197,43 @@ export default function Chat() {
 
   if (!member) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <div className="text-center max-w-md">
-          <h2 className="text-3xl font-black text-foreground mb-4 tracking-tight">Enter the Zone</h2>
-          <p className="mb-8 text-muted-foreground">Deploy your first thesis. The System will stress-test your thinking.</p>
+      <div className="min-h-screen flex items-center justify-center p-6 bg-background relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.02]"
+          style={{
+            backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+        <div className="absolute top-[-15%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'rgba(243,126,32,0.06)', filter: 'blur(120px)' }} />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'rgba(46,139,139,0.06)', filter: 'blur(120px)' }} />
+
+        <div className="text-center max-w-lg relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono mb-6" style={{ border: '1px solid rgba(243,126,32,0.3)', background: 'rgba(243,126,32,0.08)', color: '#F37E20' }}>
+            <Shield className="w-3.5 h-3.5" />
+            <span>DJZS ARCHITECT CONSOLE</span>
+          </div>
+
+          <h2
+            className="text-3xl sm:text-4xl font-black tracking-tight mb-4 text-transparent bg-clip-text"
+            style={{ backgroundImage: 'linear-gradient(135deg, #F37E20, #2E8B8B)' }}
+          >
+            Initialize Your Workspace
+          </h2>
+          <p className="mb-8 text-muted-foreground leading-relaxed max-w-md mx-auto">
+            Deploy your first strategy memo into the adversarial logic layer. The Oracle will stress-test your reasoning before execution.
+          </p>
           <Button
             onClick={() => registerMember.mutate()}
             disabled={registerMember.isPending}
-            className="h-14 px-10 rounded-lg font-bold text-lg text-white border-0 hover:opacity-90"
+            className="h-14 px-10 rounded-lg font-bold text-lg text-white border-0 transition-all hover:-translate-y-0.5"
             style={{ background: '#F37E20', boxShadow: '0 8px 30px rgba(243,126,32,0.25)' }}
+            data-testid="button-begin-entry"
           >
             {registerMember.isPending && <Loader2 className="w-5 h-5 mr-3 animate-spin" />}
             Begin First Entry
           </Button>
+          <p className="text-xs text-muted-foreground/60 mt-4 font-mono">Local-first storage · Zero data retention · Wallet-authenticated</p>
         </div>
       </div>
     );
