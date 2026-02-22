@@ -165,13 +165,13 @@ export default function Docs() {
             <h2 className="text-2xl font-bold text-foreground mb-4">What is DJZS?</h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p className="text-lg">
-                DJZS is <strong className="text-foreground">cognitive infrastructure for the Agent-to-Agent (A2A) economy</strong>. It serves two clients: human founders via the web UI, and autonomous AI agents via a machine-readable programmatic API. Local-first data ownership, decentralized AI inference via Venice, and x402 micropayments on Base. No centralized model training on your thoughts. No cloud surveillance layer.
+                DJZS is the <strong className="text-foreground">Adversarial Logic Layer for the Agent-to-Agent (A2A) economy</strong> — a deterministic verification primitive that enforces an <strong className="text-foreground">"Audit-Before-Act"</strong> loop for autonomous agents. It applies <strong className="text-foreground">Journal Entry Testing (JET)</strong>, a 100-year-old financial security primitive modernized for AI reasoning traces. "Journaling" in DJZS is not a diary — it is the mandatory act of an autonomous agent committing its reasoning trace to an immutable log before executing a transaction.
               </p>
               <p>
-                The system is split into two layers. <strong className="text-foreground">Workspace Zones</strong> are free — Journal, Research, Trade, Decisions, Content, and Thinking Partner — where you capture thinking, build theses, and track decisions locally on your device. <strong className="text-foreground">Execution Zones</strong> are paid — Micro ($2.50), Founder ($5.00), and Treasury ($50.00) — where you deploy your work for adversarial audits via x402 USDC on Base.
+                The system serves two clients. <strong className="text-foreground">Human architects</strong> interact via the Architect Console — a web-based command center with six Workspace Zones (Audit Ledger, Research, Trade, Decisions, Content, Thinking Partner) for capturing reasoning, building theses, and reviewing forensic audit records locally on-device. <strong className="text-foreground">Autonomous AI agents</strong> interact programmatically via the x402-gated API, receiving machine-readable <strong className="text-foreground">Proof of Logic Certificates</strong> with deterministic <code className="text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded font-mono text-xs">DJZS-LF</code> failure codes (binary PASS/FAIL verdicts) across three tiers: Micro ($2.50), Founder ($5.00), and Treasury ($50.00 USDC on Base).
               </p>
               <p>
-                The AI is adversarial — not a chatbot, not a validator. It pushes back on weak reasoning, FOMO-driven logic, and narrative dependency. Each Workspace Zone has a "Deploy to Zone" button to send your work directly into an Execution Zone for pressure-testing. Write first, audit when the stakes are high. DJZS is designed to be honest, not helpful.
+                Every audit generates a cryptographic certificate. If the Oracle detects circular logic, hallucinated data, FOMO-driven reasoning, or structural contradictions, it returns a <strong className="text-red-400">FAIL</strong> verdict with specific failure codes — and well-engineered agents automatically abort execution. DJZS is the Logic Oracle for the decentralized web. It is designed to be honest, not helpful.
               </p>
             </div>
           </div>
@@ -577,23 +577,23 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                   <BookOpen className="w-6 h-6 text-orange-400" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-foreground">Journal</h3>
-                  <p className="text-xs text-orange-400/80">Private reflection and daily thinking</p>
+                  <h3 className="text-xl font-bold text-foreground">Audit Ledger</h3>
+                  <p className="text-xs text-orange-400/80">Immutable forensic log of all ProofOfLogic certificates</p>
                 </div>
               </div>
-              <p className="text-muted-foreground mb-5 leading-relaxed">Your private space to think — and have your thinking challenged. AI interrogates your entries for contradictions, blind spots, and weak assumptions.</p>
+              <p className="text-muted-foreground mb-5 leading-relaxed">The primary workspace view for Agent Architects. Every audit verdict, risk score, DJZS-LF failure code, and logic hash is recorded here as an immutable forensic record.</p>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Deep Reasoning</strong> - AI interrogates your entry for contradictions and weak assumptions</span>
+                  <span><strong className="text-orange-300">ProofOfLogic Certificates</strong> - PASS/FAIL verdicts with risk scores and cryptographic hashes</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Memory Pinning</strong> - Save insights worth remembering long-term</span>
+                  <span><strong className="text-orange-300">DJZS-LF Failure Codes</strong> - Deterministic logic failure taxonomy for autonomous error handling</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-orange-300">Deploy to Zone</strong> - Send entries directly to an Execution Zone for paid adversarial audit</span>
+                  <span><strong className="text-orange-300">Re-Deploy</strong> - Re-audit any previous payload against the Oracle for updated analysis</span>
                 </li>
               </ul>
             </div>
