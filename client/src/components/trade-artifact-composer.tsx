@@ -79,13 +79,13 @@ function ToggleGroup({
   testIdPrefix: string;
 }) {
   return (
-    <div className="flex gap-1">
+    <div className="flex flex-wrap gap-1">
       {options.map((opt) => (
         <button
           key={opt}
           data-testid={`${testIdPrefix}-${opt.toLowerCase()}`}
           onClick={() => onChange(opt)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+          className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
             value === opt
               ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
               : "bg-muted text-muted-foreground border border-border hover:text-foreground"
@@ -679,7 +679,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <SectionLabel>Current Price</SectionLabel>
                 <input

@@ -170,7 +170,7 @@ export default function Home() {
 
           <motion.h1
             variants={fadeUp}
-            className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[1] mb-8"
+            className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[1] mb-8 px-4 sm:px-0"
           >
             <span className="text-foreground">DECENTRALIZED</span> <br />
             <span className="text-foreground">JOURNALING</span> <span className="text-muted-foreground/70">ZONE SYSTEM.</span>
@@ -178,7 +178,7 @@ export default function Home() {
 
           <motion.p
             variants={fadeUp}
-            className="text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium text-muted-foreground"
+            className="text-lg sm:text-2xl md:text-3xl max-w-4xl mx-auto leading-tight mb-12 font-medium text-muted-foreground px-4 sm:px-0"
           >
             An autonomous auditing system operating natively in the A2A economy. Serving founders via Web UI and agents via API, DJZS pressure-tests reasoning, flags FOMO, and ensures your decisions survive volatility.
           </motion.p>
