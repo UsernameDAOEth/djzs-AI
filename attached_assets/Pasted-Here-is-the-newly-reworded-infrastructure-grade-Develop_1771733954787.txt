@@ -1,0 +1,101 @@
+Here is the newly reworded, infrastructure-grade Developer Documentation. It retains the exact same endpoints, JSON schemas, and structural requirements, but the language has been elevated to match the authority of a tier-1 Web3 API like Chainlink or Stripe.
+
+You can drop this directly into `djzs.ai/docs`.
+
+---
+
+# DJZS Protocol: API Reference
+
+DJZS is the native Adversarial Logic Layer for the Agent-to-Agent (A2A) economy.
+
+Our API provides **Journal Entry Testing (JET)** as a deterministic primitive. By routing an autonomous agent's reasoning trace through our Oracle prior to execution, developers receive a cryptographic `ProofOfLogic` certificate that identifies hallucinations, logical loops, and FOMO bias.
+
+**Base URL:** `https://djzs.ai/api`
+
+---
+
+## Authentication: The x402 Tollbooth
+
+DJZS operates strictly on a Pay-to-Verify model. There are no API keys, webhooks, or monthly subscriptions. Access to the Oracle is gated entirely by the **x402 Payment Protocol** on Base Mainnet.
+
+To successfully authenticate a request, your agent must execute a USDC micro-transaction and inject the resulting on-chain transaction hash into the request header.
+
+* **Required Header:** `x-payment-proof`
+* **Value:** A valid Base Mainnet TX Hash (e.g., `0xabc123...`)
+* **Execution Cost:** $2.50 USDC per Micro-Zone Audit
+
+*Note: If the header is omitted or the cryptographic hash cannot be verified on-chain, the API will instantly reject the payload with a `402 Payment Required` status (Error Code: `DJZS-AUTH-402`).*
+
+---
+
+## Endpoint: Micro-Zone Audit
+
+**`POST /audit/micro`**
+
+This endpoint accepts a raw strategy payload, evaluates the agent's logic against the DJZS-LF taxonomy, and returns a deterministic Proof of Logic certificate.
+
+### Request Schema (JSON)
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `strategy_memo` | `string` | **Yes** | The complete reasoning trace, internal agent dialogue, or execution plan intended for the transaction. |
+
+**Example cURL Implementation:**
+
+```bash
+curl -X POST https://djzs.ai/api/audit/micro \
+  -H "Content-Type: application/json" \
+  -H "x-payment-proof: 0x_your_base_mainnet_tx_hash" \
+  -d '{
+    "strategy_memo": "Executing market buy of 500 SOL. Twitter sentiment is highly bullish."
+  }'
+
+```
+
+---
+
+### Response Schema (JSON)
+
+The Oracle returns a fully assembled `ProofOfLogic` object. If the `verdict` evaluates to `FAIL`, developers are expected to program their agents to automatically abort the execution sequence to prevent capital destruction.
+
+```json
+{
+  "system_id": "djzs-mainnet-01",
+  "verdict": "FAIL",
+  "risk_score": 60,
+  "flags": [
+    {
+      "code": "DJZS-I01",
+      "severity": "MEDIUM",
+      "description": "Logic relies entirely on social momentum and unverified Twitter sentiment."
+    }
+  ],
+  "proof": {
+    "logic_hash": "0x4a9b2c...",
+    "timestamp": "2026-02-21T11:45:00Z",
+    "payment_verified": true,
+    "payment_proof": "0x_your_base_mainnet_tx_hash"
+  }
+}
+
+```
+
+---
+
+## DJZS-LF v1 Taxonomy (Failure Codes)
+
+The Oracle maps all detected reasoning flaws to strict failure codes. Autonomous agents should be engineered to parse these specific `DJZS-LF` flags and trigger automated halt conditions.
+
+| Diagnostic Code | Category | Severity | Technical Description | Auto-Abort Recommended? |
+| --- | --- | --- | --- | --- |
+| **`DJZS-S01`** | Structural | CRITICAL | Circular logic or agent-echo reinforcement detected. | **Yes** |
+| **`DJZS-S02`** | Structural | CRITICAL | Direct logical contradiction within the payload. | **Yes** |
+| **`DJZS-E01`** | Epistemic | HIGH | Utilization of hallucinated reference markers or fake data. | **Yes** |
+| **`DJZS-E02`** | Epistemic | HIGH | Reliance on a demonstrably stale or outdated assumption. | **Yes** |
+| **`DJZS-I01`** | Incentive | MEDIUM | Execution driven by FOMO loop or unverified momentum. | No (Review required) |
+| **`DJZS-I02`** | Incentive | MEDIUM | High narrative dependency (Prioritizing story over structural data). | No (Review required) |
+| **`DJZS-X01`** | Execution | CRITICAL | Liquidity fragility (Target asset cannot support intended trade size). | **Yes** |
+
+---
+
+This reads exactly like the documentation for a core infrastructure layer. **Would you like me to draft a quick React component snippet to show developers exactly how to build the auto-abort feature into their own bots?**

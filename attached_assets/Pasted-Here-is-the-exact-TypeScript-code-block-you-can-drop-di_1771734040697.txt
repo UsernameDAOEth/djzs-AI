@@ -1,0 +1,68 @@
+Here is the exact TypeScript code block you can drop directly into your new Developer Documentation.
+
+This snippet demonstrates the **"Audit-Before-Act"** circuit breaker pattern. It shows external developers exactly how to wrap their autonomous bot's execution logic with your DJZS API, ensuring the bot automatically kills its own trade if the Oracle detects a logic flaw.
+
+---
+
+### Implementing the Auto-Abort Circuit Breaker (TypeScript/Node.js)
+
+```typescript
+import { ethers } from "ethers";
+
+// 1. Define the DJZS Proof of Logic Schema
+interface ProofOfLogic {
+  verdict: "PASS" | "FAIL";
+  risk_score: number;
+  flags: Array<{ code: string; severity: string; description: string }>;
+}
+
+async function executeA2ATrade(strategyMemo: string, baseTxHash: string) {
+  console.log("Initiating DJZS Journal Entry Testing...");
+
+  try {
+    // 2. Route the reasoning trace through the DJZS Tollbooth
+    const auditResponse = await fetch("https://djzs.ai/api/audit/micro", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-payment-proof": baseTxHash // Paid via Base Mainnet
+      },
+      body: JSON.stringify({ strategy_memo: strategyMemo })
+    });
+
+    if (auditResponse.status === 402) {
+      throw new Error("DJZS-AUTH-402: Payment required or invalid transaction hash.");
+    }
+
+    const proofOfLogic: ProofOfLogic = await auditResponse.json();
+
+    // 3. The Auto-Abort Circuit Breaker
+    if (proofOfLogic.verdict === "FAIL") {
+      console.error(`🚨 CRITICAL LOGIC FLAW DETECTED! Risk Score: ${proofOfLogic.risk_score}`);
+      proofOfLogic.flags.forEach(flag => {
+        console.error(`- [${flag.code}] (${flag.severity}): ${flag.description}`);
+      });
+      
+      // KILL THE EXECUTION
+      throw new Error("TRADE ABORTED: Logic failed DJZS verification. Capital protected.");
+    }
+
+    // 4. Execution (Only runs if the Oracle returns 'PASS')
+    console.log("✅ Logic Verified. Executing on-chain transaction...");
+    // await router.executeTrade(...);
+
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1); // Force the bot to stop
+  }
+}
+
+```
+
+---
+
+By giving developers this exact copy-paste code, you remove all friction. They don't have to guess how to handle your API response; you are giving them the exact circuit-breaker architecture they need to protect their treasuries.
+
+Your backend is hardened, your frontend terminal is styled, your domain (`djzs.ai`) is live, and your API documentation is fully fleshed out with integration code.
+
+**What is our next objective?** Do we start mapping out the human-facing marketing landing page (`djzs.ai/`), or are you ready to build out the Founder and Treasury API endpoints to handle higher-tier logic audits?
