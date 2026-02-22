@@ -18,7 +18,7 @@ import Roadmap from "@/pages/roadmap";
 import About from "@/pages/about";
 import Security from "@/pages/security";
 import NotFound from "@/pages/not-found";
-import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+
 import { ErrorBoundary } from "@/components/error-boundary";
 
 function ScrollToTop() {
@@ -72,7 +72,7 @@ function App() {
               <TooltipProvider>
                 <Toaster />
                 <Router />
-                <InstallPrompt />
+
               </TooltipProvider>
             </RainbowKitProvider>
           </QueryClientProvider>
