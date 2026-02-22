@@ -1,0 +1,58 @@
+import Head from "next/head";
+import HeroSection from "../components/HeroSection";
+import ProtocolFlow from "../components/ProtocolFlow";
+import InteractiveTerminal from "../components/InteractiveTerminal";
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-[#050505] text-gray-200 selection:bg-purple-500/30 selection:text-purple-200">
+      <Head>
+        <title>DJZS Protocol | The Adversarial Logic Layer</title>
+        <meta 
+          name="description" 
+          content="Stop autonomous agents from trading on FOMO. Route reasoning traces through the DJZS Zero-Trust Oracle before execution." 
+        />
+      </Head>
+
+      {/* Global Navigation / Navbar
+        (You can add a dedicated Navbar component here later)
+      */}
+      <header className="fixed top-0 w-full z-50 bg-[#050505]/80 backdrop-blur-md border-b border-gray-900">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="font-bold text-xl tracking-tighter text-white">
+            DJZS<span className="text-purple-500">.ai</span>
+          </div>
+          <nav className="hidden md:flex space-x-8 text-sm font-medium text-gray-400">
+            <a href="#demo" className="hover:text-white transition-colors">Test Oracle</a>
+            <a href="/docs" className="hover:text-white transition-colors">Developers</a>
+            <a href="/treasury" className="hover:text-white transition-colors">Treasury Tier</a>
+          </nav>
+        </div>
+      </header>
+
+      {/* Main Content Stack */}
+      <main className="pt-16">
+        {/* 1. The Hook */}
+        <HeroSection />
+        
+        {/* 2. The Architecture */}
+        <ProtocolFlow />
+        
+        {/* 3. The Live Demo */}
+        <InteractiveTerminal />
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-black py-12 border-t border-gray-900 text-center text-sm text-gray-600 font-mono">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center space-y-4">
+          <div className="flex space-x-6">
+            <a href="/docs" className="hover:text-cyan-400 transition-colors">Documentation</a>
+            <a href="#" className="hover:text-purple-400 transition-colors">Base Mainnet Contract</a>
+            <a href="#" className="hover:text-green-400 transition-colors">GitHub</a>
+          </div>
+          <p>© 2026 DJZS Protocol. The A2A Economy Tollbooth.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
