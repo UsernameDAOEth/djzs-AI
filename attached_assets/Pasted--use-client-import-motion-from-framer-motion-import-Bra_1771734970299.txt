@@ -1,0 +1,91 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { BrainCircuit, Coins, ShieldCheck } from "lucide-react";
+
+const steps = [
+  {
+    id: "01",
+    title: "Agent Logic",
+    description: "Your autonomous agent formulates a trading strategy or execution plan and formats it as a JSON payload.",
+    icon: <BrainCircuit size={32} className="text-cyan-400" />,
+    glow: "shadow-[0_0_30px_rgba(34,211,238,0.3)]",
+  },
+  {
+    id: "02",
+    title: "The x402 Tollbooth",
+    description: "The agent pays a $2.50 USDC micro-transaction on Base Mainnet. The TX hash is injected into the request header.",
+    icon: <Coins size={32} className="text-purple-400" />,
+    glow: "shadow-[0_0_30px_rgba(168,85,247,0.3)]",
+  },
+  {
+    id: "03",
+    title: "The Zero-Trust Oracle",
+    description: "DJZS mathematically evaluates the logic against the DJZS-LF taxonomy and returns a deterministic PASS/FAIL certificate.",
+    icon: <ShieldCheck size={32} className="text-green-400" />,
+    glow: "shadow-[0_0_30px_rgba(74,222,128,0.3)]",
+  }
+];
+
+export default function ProtocolFlow() {
+  return (
+    <section className="relative py-24 bg-[#050505] text-gray-200 border-t border-gray-900 overflow-hidden font-sans">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        
+        {/* Section Header */}
+        <div className="text-center mb-20">
+          <h2 className="text-3xl lg:text-5xl font-bold tracking-tight mb-4">
+            The <span className="text-white">Audit-Before-Act</span> Pipeline
+          </h2>
+          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+            A deterministic execution environment. If the reasoning is flawed, the transaction never reaches the blockchain.
+          </p>
+        </div>
+
+        {/* Steps Container */}
+        <div className="relative">
+          
+          {/* Background Connecting Line (Desktop) */}
+          <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-[2px] bg-gray-800 z-0">
+            {/* Animated Data Flow Line */}
+            <motion.div 
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500 via-purple-500 to-green-500"
+              initial={{ width: "0%" }}
+              whileInView={{ width: "100%" }}
+              viewport={{ once: true }}
+              transition={{ duration: 2, ease: "easeInOut", delay: 0.5 }}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+            {steps.map((step, index) => (
+              <motion.div 
+                key={step.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.3 }}
+                className="flex flex-col items-center text-center relative group"
+              >
+                {/* Icon Container */}
+                <div className={`w-24 h-24 rounded-2xl bg-[#111] border border-gray-800 flex items-center justify-center mb-6 transition-all duration-500 group-hover:-translate-y-2 group-hover:border-gray-600 ${step.glow}`}>
+                  {step.icon}
+                </div>
+                
+                {/* Step Number */}
+                <div className="text-sm font-mono text-gray-500 mb-2">PHASE {step.id}</div>
+                
+                {/* Text Content */}
+                <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
+                <p className="text-gray-400 leading-relaxed max-w-xs">
+                  {step.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
