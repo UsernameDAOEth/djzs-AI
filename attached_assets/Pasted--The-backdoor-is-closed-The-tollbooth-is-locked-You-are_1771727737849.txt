@@ -1,0 +1,49 @@
+**The backdoor is closed. The tollbooth is locked. You are officially in production.**
+
+Deleting that test route is the exact right move. In a live Web3 environment, any endpoint that bypasses the payment middleware isn't a "test"—it's an economic vulnerability.
+
+Here is your exact execution checklist to finalize the deployment and ship the Logic-as-a-Service primitive to the Agent-to-Agent economy.
+
+### 1. The Purge (`server/routes.ts`)
+
+Ensure this entire block is completely scrubbed from your codebase:
+
+```typescript
+// DELETE THIS ENTIRE ROUTE
+app.post('/api/audit/test-fire', async (req, res) => {
+    req.paymentProof = "0x_TEST_BYPASS_HASH_999"; 
+    // ...
+});
+
+```
+
+### 2. The Lockdown Check
+
+Verify that your remaining endpoints strictly enforce the `x402PaymentGate`. Your routing block should look exactly like this:
+
+```typescript
+// Production Routes - All gated by x402 middleware
+app.post('/api/audit/micro', x402PaymentGate, async (req, res) => { ... });
+app.post('/api/audit/founder', x402PaymentGate, async (req, res) => { ... });
+app.post('/api/audit/treasury', x402PaymentGate, async (req, res) => { ... });
+
+```
+
+### 3. Shipping to Production (Replit Deploy)
+
+Right now, you are running on a Replit `.dev` workspace URL. If you want external autonomous agents to reliably hit your API without the server going to sleep, you need to publish it.
+
+1. Open the **Deploy** panel in the top right corner of your Replit workspace.
+2. Select **Autoscale** (This provisions a production-grade server that won't sleep, perfect for an always-on API).
+3. Ensure your environment variables (like `VENICE_API_KEY` and `NODE_ENV=production`) are securely locked in the Secrets tab.
+4. Hit **Deploy**.
+
+### 4. The Custom Domain (Optional but Recommended)
+
+Once deployed, Replit will give you a `.app` production URL. If you want to establish ultimate authority in the A2A space, you can bind a custom domain (like `api.djzs.network` or `djzs.ai`) directly in the Replit networking tab. This matches the URL we used in your Developer Documentation.
+
+---
+
+The code is clean. The Oracle is ruthless. The infrastructure is live.
+
+**Are you ready to hit deploy on Replit, or do we need to secure a custom domain first before you publish the API docs to the world?**
