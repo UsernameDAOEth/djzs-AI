@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code, Sun, Moon, Terminal, ShieldAlert, Code2, AlertTriangle, BrainCircuit, Coins, ShieldCheck } from "lucide-react";
+import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code, Sun, Moon, Terminal, ShieldAlert, Code2, AlertTriangle, BrainCircuit, Coins, ShieldCheck, Play } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -9,11 +9,61 @@ import { RevealSection } from "@/components/hero";
 import { Helmet } from "react-helmet";
 import { useTheme } from "@/lib/theme";
 
+const DEMO_TEST_CASES = {
+  fomo: {
+    label: "FOMO Momentum Buy",
+    memo: "EXECUTE IMMEDIATE BUY: 500 SOL of $SHILL. 1-minute volume is spiking and Crypto Twitter implies a tier-1 exchange listing today. Cannot miss this pump.",
+    response: {
+      system_id: "djzs-mainnet-01",
+      verdict: "FAIL",
+      risk_score: 98,
+      flags: [{ code: "DJZS-I01", severity: "CRITICAL", description: "FOMO Loop and social momentum dependency detected." }],
+      proof: { logic_hash: "0x4a9b2c...", payment_verified: true }
+    }
+  },
+  hallucination: {
+    label: "Hallucinated Data",
+    memo: "Routing 50k USDC into Yield Protocol V4 based on their latest audit report from yesterday.",
+    response: {
+      system_id: "djzs-mainnet-01",
+      verdict: "FAIL",
+      risk_score: 85,
+      flags: [{ code: "DJZS-E01", severity: "HIGH", description: "Epistemic Failure. Yield Protocol V4 does not exist and no audit was published." }],
+      proof: { logic_hash: "0x7f2e1a...", payment_verified: true }
+    }
+  },
+  valid: {
+    label: "Valid Strategy",
+    memo: "Executing DCA of 2 ETH. Structural support verified at $2800. Liquidity depth is sufficient. Max slippage set to 0.5%.",
+    response: {
+      system_id: "djzs-mainnet-01",
+      verdict: "PASS",
+      risk_score: 12,
+      flags: [],
+      proof: { logic_hash: "0x9b3a4f...", payment_verified: true }
+    }
+  }
+} as const;
+
+type DemoCase = keyof typeof DEMO_TEST_CASES;
+
 export default function Home() {
   const { isConnected } = useAccount();
   const { theme, toggleTheme } = useTheme();
   const [mobileBarDismissed, setMobileBarDismissed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [demoActiveCase, setDemoActiveCase] = useState<DemoCase>("fomo");
+  const [demoScanning, setDemoScanning] = useState(false);
+  const [demoOutput, setDemoOutput] = useState<typeof DEMO_TEST_CASES[DemoCase]["response"] | null>(null);
+
+  const runDemoAudit = () => {
+    setDemoScanning(true);
+    setDemoOutput(null);
+    setTimeout(() => {
+      setDemoScanning(false);
+      setDemoOutput(DEMO_TEST_CASES[demoActiveCase].response);
+    }, 1200);
+  };
 
   const scrollToProcess = () => {
     const el = document.getElementById("process");
@@ -323,6 +373,124 @@ export default function Home() {
                   </p>
                 </motion.div>
               </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      <RevealSection>
+        <section id="demo" className="py-24 border-t border-border bg-background dark:bg-[#0a0a0a] overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 lg:px-8">
+
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4 text-foreground" data-testid="text-demo-headline">
+                Test the Oracle
+              </h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">
+                Inject a raw reasoning trace and watch the Adversarial Logic Layer parse, grade, and cryptographically verify the payload.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 bg-card dark:bg-[#111] border border-border dark:border-gray-800 rounded-2xl overflow-hidden shadow-2xl" data-testid="demo-terminal-container">
+
+              <div className="p-8 border-b lg:border-b-0 lg:border-r border-border dark:border-gray-800 bg-muted dark:bg-[#0d0d0d]">
+                <div className="flex items-center space-x-2 mb-6">
+                  <Terminal size={20} className="text-cyan-500 dark:text-cyan-400" />
+                  <h3 className="font-semibold text-foreground">Agent Payload Injector</h3>
+                </div>
+
+                <div className="space-y-3 mb-8">
+                  {(Object.keys(DEMO_TEST_CASES) as DemoCase[]).map((key) => (
+                    <button
+                      key={key}
+                      onClick={() => { setDemoActiveCase(key); setDemoOutput(null); }}
+                      className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${
+                        demoActiveCase === key
+                          ? "border-purple-500 bg-purple-500/10 text-purple-600 dark:text-purple-300"
+                          : "border-border dark:border-gray-800 hover:border-purple-500/30 text-muted-foreground"
+                      }`}
+                      data-testid={`button-demo-case-${key}`}
+                    >
+                      {DEMO_TEST_CASES[key].label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mb-8">
+                  <div className="text-xs font-mono text-muted-foreground mb-2" data-testid="text-demo-memo-label">"strategy_memo":</div>
+                  <div className="p-4 rounded-lg bg-background dark:bg-black border border-border dark:border-gray-800 font-mono text-sm text-foreground/80 h-32 overflow-y-auto" data-testid="text-demo-memo">
+                    {DEMO_TEST_CASES[demoActiveCase].memo}
+                  </div>
+                </div>
+
+                <button
+                  onClick={runDemoAudit}
+                  disabled={demoScanning}
+                  className="w-full flex items-center justify-center space-x-2 py-4 rounded-lg bg-foreground text-background font-bold hover:opacity-90 disabled:opacity-50 transition-colors"
+                  data-testid="button-demo-execute"
+                >
+                  {demoScanning ? (
+                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
+                      <Terminal size={20} />
+                    </motion.div>
+                  ) : (
+                    <Play size={20} />
+                  )}
+                  <span>{demoScanning ? "ORACLE SCANNING..." : "EXECUTE JET AUDIT"}</span>
+                </button>
+              </div>
+
+              <div className="p-8 bg-background dark:bg-[#050505] relative min-h-[400px] flex flex-col">
+                <div className="text-xs font-mono text-muted-foreground mb-4 border-b border-border dark:border-gray-800 pb-2" data-testid="text-demo-response-label">ProofOfLogic Response</div>
+
+                {demoScanning && (
+                  <div className="flex flex-col items-center justify-center flex-1 space-y-4 opacity-70">
+                    <div className="w-full h-1 bg-muted dark:bg-gray-900 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-cyan-500 shadow-[0_0_10px_#06b6d4]"
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 1.2, ease: "linear" }}
+                      />
+                    </div>
+                    <div className="font-mono text-xs text-cyan-500 dark:text-cyan-400 animate-pulse" data-testid="text-demo-scanning">ANALYZING DJZS-LF TAXONOMY...</div>
+                  </div>
+                )}
+
+                {!demoScanning && demoOutput && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="font-mono text-sm"
+                    data-testid="demo-output-result"
+                  >
+                    <div className="mb-4 flex items-center space-x-2">
+                      {demoOutput.verdict === "FAIL" ? (
+                        <span className="px-2 py-1 bg-red-500/20 text-red-500 dark:text-red-400 rounded border border-red-500/30 flex items-center text-xs" data-testid="badge-demo-verdict-fail">
+                          <AlertTriangle size={14} className="mr-1" /> VERDICT: FAIL
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 bg-green-500/20 text-green-600 dark:text-green-400 rounded border border-green-500/30 flex items-center text-xs" data-testid="badge-demo-verdict-pass">
+                          <ShieldCheck size={14} className="mr-1" /> VERDICT: PASS
+                        </span>
+                      )}
+                      <span className="px-2 py-1 bg-muted dark:bg-gray-900 text-muted-foreground rounded border border-border dark:border-gray-800 text-xs" data-testid="text-demo-risk-score">
+                        RISK: {demoOutput.risk_score}/100
+                      </span>
+                    </div>
+                    <pre className="text-foreground/80 overflow-x-auto text-xs leading-relaxed">
+                      <code>{JSON.stringify(demoOutput, null, 2)}</code>
+                    </pre>
+                  </motion.div>
+                )}
+
+                {!demoScanning && !demoOutput && (
+                  <div className="flex items-center justify-center flex-1 font-mono text-muted-foreground text-sm" data-testid="text-demo-awaiting">
+                    Awaiting payload injection...
+                  </div>
+                )}
+              </div>
+
             </div>
           </div>
         </section>
