@@ -35,31 +35,31 @@ input, textarea, [contenteditable] {
   --font-body: 'Nunito', sans-serif;
   --radius: 0.5rem;
 
-  /* Light mode */
-  --text-primary: #1a1a2e;
-  --text-secondary: #555770;
-  --bg-surface: #f0f0f5;
-  --bg-overlay: rgba(255, 255, 255, 0.7);
+  /* Light mode — deepened for contrast */
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --bg-surface: #e8e8ef;
+  --bg-overlay: rgba(255, 255, 255, 0.8);
 
-  --background: 0 0% 98%;
-  --foreground: 225 20% 12%;
-  --card: 0 0% 100%;
-  --card-foreground: 225 20% 12%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 225 20% 12%;
-  --primary: 28 90% 54%;
+  --background: 220 15% 95%;
+  --foreground: 225 25% 8%;
+  --card: 220 10% 98%;
+  --card-foreground: 225 25% 8%;
+  --popover: 220 10% 98%;
+  --popover-foreground: 225 25% 8%;
+  --primary: 28 90% 48%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 180 50% 36%;
+  --secondary: 180 50% 30%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 220 15% 93%;
-  --muted-foreground: 220 10% 40%;
-  --accent: 28 90% 54%;
+  --muted: 220 15% 88%;
+  --muted-foreground: 220 15% 28%;
+  --accent: 28 90% 48%;
   --accent-foreground: 0 0% 100%;
-  --destructive: 0 84% 60%;
+  --destructive: 0 84% 50%;
   --destructive-foreground: 0 0% 98%;
-  --border: 220 15% 88%;
-  --input: 220 15% 88%;
-  --ring: 28 90% 54%;
+  --border: 220 15% 78%;
+  --input: 220 15% 80%;
+  --ring: 28 90% 48%;
 }
 
 .dark {
