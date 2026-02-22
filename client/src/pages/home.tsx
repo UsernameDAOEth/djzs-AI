@@ -1012,11 +1012,11 @@ export default function Home() {
                 <p>Six audit services, one compounding loop. Each designed to pressure-test a different part of your thinking:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
                   <div>
-                    <p className="font-semibold mb-1" style={{ color: '#F37E20' }}>Journal Zone</p>
+                    <p className="font-semibold mb-1" style={{ color: '#F37E20' }}>Audit Ledger</p>
                     <ul className="list-disc list-inside ml-2 text-sm">
-                      <li>Write daily thinking</li>
-                      <li>AI exposes blind spots</li>
-                      <li>Contradictions surface over time</li>
+                      <li>Immutable ProofOfLogic certificates</li>
+                      <li>DJZS-LF failure code tracking</li>
+                      <li>Verdict and risk score history</li>
                     </ul>
                   </div>
                   <div>

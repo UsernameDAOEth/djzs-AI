@@ -140,7 +140,7 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
 
   const filters: { key: FilterType; label: string; icon: typeof Layers }[] = [
     { key: "all", label: "All", icon: Layers },
-    { key: "journal", label: "Journal", icon: BookOpen },
+    { key: "journal", label: "Audit Ledger", icon: BookOpen },
     { key: "research", label: "Research", icon: Globe },
   ];
 

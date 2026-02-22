@@ -10,7 +10,7 @@ const roadmapPhases = [
     status: "completed",
     quarter: "Q4 2025",
     items: [
-      { text: "Journal Zone: daily entry → AI reflection → summary → pattern-over-time", done: true },
+      { text: "Audit Ledger: ProofOfLogic certificates → verdicts → risk scores → DJZS-LF failure codes", done: true },
       { text: "Local-first vault architecture (IndexedDB / Dexie)", done: true },
       { text: "Wallet-based authentication (RainbowKit / Base)", done: true },
       { text: "Video journal: record & playback via Livepeer", done: true },

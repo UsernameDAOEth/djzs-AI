@@ -948,7 +948,7 @@ export default function Docs() {
                 <p className="text-sm font-bold text-purple-300">Seamless Thinking Partner Transition</p>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Found something worth pressure-testing? Click the "Think deeper with Thinking Partner" button on any research result. It auto-loads your research context into the Journal Zone so the adversarial AI can challenge your conclusions — no copy-pasting, no context loss. Research flows into interrogation in one click.
+                Found something worth pressure-testing? Click the "Think deeper with Thinking Partner" button on any research result. It auto-loads your research context into the Thinking Partner so the adversarial AI can challenge your conclusions — no copy-pasting, no context loss. Research flows into interrogation in one click.
               </p>
             </div>
 
@@ -981,7 +981,7 @@ export default function Docs() {
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                  <span>When you write in the <strong className="text-orange-300">Journal Zone</strong> and click <strong className="text-foreground">"Think with me"</strong>, the JournalInsight agent interrogates your entry, pulls in your recent entries and memory pins as context, and returns a structured breakdown of contradictions, blind spots, emotional biases, and adversarial questions.</span>
+                  <span>The <strong className="text-orange-300">Audit Ledger</strong> displays all ProofOfLogic certificates from your deployed audits — binary PASS/FAIL verdicts, risk scores, DJZS-LF failure codes, and cryptographic hashes. Each record links back to the original payload for re-deployment.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>

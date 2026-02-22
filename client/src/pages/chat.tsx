@@ -159,7 +159,7 @@ interface ResearchAnalysisResult {
 type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
 
 const V1_ZONES = [
-  { id: "journal", name: "Journal", icon: PenLine, description: "Personal reflection", purpose: "Your private space to think, reflect, and extract insight.", color: "#F37E20" },
+  { id: "journal", name: "Audit Ledger", icon: ScrollText, description: "Forensic logic trail", purpose: "Immutable log of all ProofOfLogic certificates — verdicts, risk scores, and DJZS-LF failure codes.", color: "#F37E20" },
   { id: "research", name: "Research", icon: Search, description: "Quick research", purpose: "Search and synthesize information related to your thinking.", color: "#2dd4bf" },
   { id: "trade", name: "Trade", icon: Receipt, description: "Trade artifacts", purpose: "Build thesis, stress test, sign & track trade artifacts.", color: "#60a5fa" },
   { id: "decisions", name: "Decisions", icon: Brain, description: "Decision log", purpose: "Track high-stakes decisions, stress test reasoning with AI.", color: "#fbbf24" },
@@ -1177,7 +1177,7 @@ export default function Chat() {
             <Shield className="w-10 h-10 text-orange-400" />
           </div>
           <h2 className="text-3xl font-black text-foreground mb-3 tracking-tight">Access Locked</h2>
-          <p className="text-muted-foreground mb-8 leading-relaxed">DJZS requires a cryptographic identity to ensure absolute privacy for your Journal.</p>
+          <p className="text-muted-foreground mb-8 leading-relaxed">DJZS requires a cryptographic identity to access the Architect Console.</p>
           <div className="flex justify-center">
             <ConnectButton />
           </div>
@@ -1613,7 +1613,7 @@ export default function Chat() {
               </button>
               <div className="flex flex-col">
                 <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground">
-                  {showLedger ? "Cryptographic Ledger" : activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.name || "Journal") : currentZoneConfig.name}
+                  {showLedger ? "Cryptographic Ledger" : activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.name || "Audit Ledger") : currentZoneConfig.name}
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5 hidden sm:block">
                   {showLedger ? "Immutable audit trail — all zone deployments recorded locally." : activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.purpose || "") : currentZoneConfig.purpose}
@@ -1855,11 +1855,162 @@ export default function Chat() {
             </div>
             ) : activeView === "workspace" ? (
             <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 sm:px-8">
-              {selectedZone === "journal" || selectedZone === "research" ? (
+              {selectedZone === "journal" ? (
+                <div className="flex-1 flex flex-col py-6 sm:py-10">
+                  <div className="w-full font-mono text-sm">
+                    <h2 className="text-xl text-foreground font-bold mb-6 tracking-tight uppercase flex items-center gap-2">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                      Audit Ledger
+                    </h2>
+
+                    {(!auditRecords || auditRecords.length === 0) ? (
+                      <div className="text-center py-20">
+                        <ScrollText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/80" />
+                        <p className="text-lg font-bold text-muted-foreground mb-2">No logic traces committed to the ledger.</p>
+                        <p className="text-sm text-muted-foreground/80">Deploy your first strategy memo to a Zone to create an immutable record.</p>
+                        <button
+                          onClick={() => { setActiveView("execution"); setActiveZoneTier('micro'); }}
+                          className="mt-6 px-6 py-3 rounded-lg text-sm font-bold transition-all"
+                          style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
+                          data-testid="button-first-deployment"
+                        >
+                          Deploy to Micro-Zone ($2.50)
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {auditRecords.map((record) => {
+                          const tierConfig = ZONE_CONFIGS.find(z => z.id === record.zone_tier);
+                          const isExpanded = expandedAuditId === record.id;
+                          return (
+                            <div
+                              key={record.id}
+                              className={`rounded-xl overflow-hidden transition-all ${
+                                record.verdict === 'FAIL'
+                                  ? 'border border-red-900/30 hover:border-red-700/50'
+                                  : 'border border-emerald-900/30 hover:border-emerald-700/50'
+                              }`}
+                              style={{ background: record.verdict === 'FAIL' ? 'rgba(127,29,29,0.06)' : 'rgba(6,78,59,0.06)' }}
+                              data-testid={`audit-record-${record.id}`}
+                            >
+                              <button
+                                onClick={() => setExpandedAuditId(isExpanded ? null : (record.id ?? null))}
+                                className="w-full text-left p-4 sm:p-5"
+                              >
+                                <div className="flex justify-between items-center border-b border-border/50 pb-3 mb-4">
+                                  <span className="text-muted-foreground truncate mr-4 text-xs">
+                                    TX: <span className="text-foreground/80">{record.cryptographic_hash?.slice(0, 24) || "pending"}...</span>
+                                  </span>
+                                  <span className="text-muted-foreground/60 whitespace-nowrap text-xs">
+                                    {format(new Date(record.timestamp), "MMM d, yyyy HH:mm")}
+                                  </span>
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                  <span className={`px-2.5 py-1 rounded text-xs font-bold tracking-wider ${
+                                    record.verdict === 'FAIL'
+                                      ? 'bg-red-500/10 text-red-500 border border-red-500/20'
+                                      : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                  }`}>
+                                    {record.verdict || "PENDING"}
+                                  </span>
+                                  <span className="text-muted-foreground text-xs">
+                                    Risk Score: <strong className="text-foreground">{record.risk_score}</strong>/100
+                                  </span>
+                                  <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded" style={{ background: tierConfig?.bgColor, color: tierConfig?.color }}>
+                                    {record.zone_tier}
+                                  </span>
+                                  <ChevronDown className={`w-4 h-4 text-muted-foreground/80 transition-transform ml-auto ${isExpanded ? 'rotate-180' : ''}`} />
+                                </div>
+                              </button>
+
+                              {isExpanded && (
+                                <div className="px-5 pb-5 space-y-4 border-t border-border pt-4">
+                                  <div>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Original Payload</p>
+                                    <p className="text-xs text-muted-foreground leading-relaxed bg-muted/30 p-3 rounded-lg border border-border/50">{record.original_payload}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Primary Bias Detected</p>
+                                    <span className="px-3 py-1.5 rounded-lg text-xs font-bold" style={{ background: record.primary_bias_detected !== 'None' ? 'rgba(239,68,68,0.1)' : 'rgba(52,211,153,0.1)', color: record.primary_bias_detected !== 'None' ? '#ef4444' : '#34d399' }}>
+                                      {record.primary_bias_detected.replace(/_/g, ' ')}
+                                    </span>
+                                  </div>
+                                  {record.flags && record.flags.length > 0 && (
+                                    <div>
+                                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">DJZS-LF Failure Codes ({record.flags.length})</p>
+                                      <div className="space-y-2 bg-muted/20 p-3 rounded-lg border border-border/50">
+                                        {record.flags.map((flag, idx) => {
+                                          const sevColor = flag.severity === 'CRITICAL' ? '#ef4444' : flag.severity === 'HIGH' ? '#f97316' : flag.severity === 'MEDIUM' ? '#f59e0b' : '#6b7280';
+                                          return (
+                                            <div key={idx} className="flex items-start gap-3">
+                                              <span className="px-1.5 py-0.5 bg-muted text-foreground/80 rounded text-xs whitespace-nowrap font-mono font-black" style={{ borderLeft: `2px solid ${sevColor}` }}>
+                                                {flag.code}
+                                              </span>
+                                              <span className="text-muted-foreground text-xs leading-relaxed">
+                                                <strong style={{ color: sevColor }}>{flag.severity}</strong>: {flag.message}
+                                              </span>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {record.logic_flaws.length > 0 && (
+                                    <div>
+                                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Logic Flaws ({record.logic_flaws.length})</p>
+                                      <div className="space-y-2">
+                                        {record.logic_flaws.map((flaw, idx) => (
+                                          <div key={idx} className="p-3 rounded-lg bg-muted/30 border border-border/50">
+                                            <div className="flex items-center gap-2 mb-1">
+                                              <span className="text-[10px] font-bold uppercase" style={{ color: flaw.severity === 'critical' ? '#ef4444' : flaw.severity === 'medium' ? '#f59e0b' : '#6b7280' }}>{flaw.severity}</span>
+                                              <span className="text-xs font-bold text-foreground">{flaw.flaw_type}</span>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground leading-relaxed">{flaw.explanation}</p>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {record.structural_recommendations.length > 0 && (
+                                    <div>
+                                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Recommendations</p>
+                                      <ul className="space-y-1.5">
+                                        {record.structural_recommendations.map((rec, idx) => (
+                                          <li key={idx} className="flex items-start gap-2">
+                                            <span className="w-1 h-1 rounded-full mt-2 shrink-0" style={{ background: tierConfig?.color }}></span>
+                                            <p className="text-sm text-muted-foreground leading-relaxed">{rec}</p>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  <div className="pt-3 border-t border-border">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-1">Cryptographic Hash</p>
+                                    <p className="text-[11px] font-mono text-muted-foreground break-all">{record.cryptographic_hash}</p>
+                                  </div>
+                                  <button
+                                    onClick={() => { setActiveView("execution"); setActiveZoneTier(record.zone_tier as AuditTier); setAuditPayload(record.original_payload); }}
+                                    className="text-xs font-bold transition-colors px-4 py-2 rounded-lg"
+                                    style={{ color: tierConfig?.color, background: tierConfig?.bgColor, border: `1px solid ${tierConfig?.borderColor}` }}
+                                    data-testid={`button-redeploy-${record.id}`}
+                                  >
+                                    Re-deploy to {tierConfig?.name}
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : selectedZone === "research" ? (
                 <div className="flex-1 flex flex-col py-6 sm:py-10">
                   <div className="mb-6 p-4 sm:p-5 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }}>
                     <div className="flex items-center gap-3 mb-2">
-                      {(() => { const zoneInfo = V1_ZONES.find(z => z.id === selectedZone); const Icon = zoneInfo?.icon || PenLine; return <Icon className="w-5 h-5" style={{ color: zoneInfo?.color }} />; })()}
+                      {(() => { const zoneInfo = V1_ZONES.find(z => z.id === selectedZone); const Icon = zoneInfo?.icon || Search; return <Icon className="w-5 h-5" style={{ color: zoneInfo?.color }} />; })()}
                       <h3 className="text-base font-black text-foreground">{V1_ZONES.find(z => z.id === selectedZone)?.name}</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">{V1_ZONES.find(z => z.id === selectedZone)?.purpose}</p>
@@ -1869,7 +2020,7 @@ export default function Chat() {
                     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
                       <div className="p-5 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-3">
-                          {selectedZone === "research" ? "Research Analysis" : "AI Thinking Partner"}
+                          Research Analysis
                         </p>
                         <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{agentResponse.said}{agentResponse.matters ? `\n\n${agentResponse.matters}` : ""}{agentResponse.nextMove ? `\n\n${agentResponse.nextMove}` : ""}</div>
                       </div>
@@ -1900,7 +2051,7 @@ export default function Chat() {
                           onChange={(e) => setMessageInput(e.target.value)}
                           onFocus={() => setIsFocused(true)}
                           onBlur={() => setIsFocused(false)}
-                          placeholder={selectedZone === "research" ? currentPrompts[currentPromptIndex] : currentPrompts[currentPromptIndex]}
+                          placeholder={currentPrompts[currentPromptIndex]}
                           className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-foreground leading-relaxed resize-none focus:outline-none transition-all placeholder:text-muted-foreground/60"
                           style={{ background: 'hsl(var(--muted))', border: `1px solid ${messageInput.length > 0 ? 'rgba(243,126,32,0.25)' : 'hsl(var(--border))'}` }}
                           data-testid="textarea-workspace-input"
@@ -1924,7 +2075,7 @@ export default function Chat() {
                             style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
                             data-testid="button-think-with-me"
                           >
-                            {isAnalyzing ? <Loader2 className="w-3 h-3 animate-spin" /> : selectedZone === "research" ? "Research" : "Think with me"}
+                            {isAnalyzing ? <Loader2 className="w-3 h-3 animate-spin" /> : "Research"}
                           </button>
                         </div>
                         <button

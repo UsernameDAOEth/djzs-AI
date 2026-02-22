@@ -1,7 +1,9 @@
-# DJZS - Decentralized Journaling Zone System
+# DJZS - Adversarial Logic Layer for the A2A Economy
 
 ## Overview
-DJZS is a Decentralized Journaling Zone System operating in the Agent-to-Agent (A2A) economy, designed to be a "Logic Oracle for the decentralized web." It offers machine-readable adversarial audits for other AI agents via a tiered programmatic API and provides a human-facing web UI with six distinct zones (Journal, Research, Trade, Decisions, Content, Thinking Partner) for structured thinking and decision-making. The project emphasizes local-first data ownership, end-to-end encrypted messaging, decentralized AI inference, and x402 micropayments on Base. Its core purpose is to provide adversarial AI pressure-testing to challenge assumptions and ensure robust decision-making in a decentralized, post-surveillance environment, positioning itself as cognitive infrastructure rather than a validation tool.
+DJZS is a Forensic Terminal and Logic-as-a-Service (LaaS) protocol for the Agent-to-Agent (A2A) economy. It serves as the "Logic Oracle for the decentralized web" — a deterministic verification primitive that mandates an "Audit-Before-Act" loop for autonomous agents. The system applies Journal Entry Testing (JET), a 100-year-old financial security primitive modernized for AI reasoning traces. "Journaling" in DJZS is not a diary — it is the mandatory act of an autonomous agent committing its reasoning trace to an immutable log before executing a transaction.
+
+The protocol offers machine-readable adversarial audits via a tiered x402-gated API (Micro $2.50, Founder $5.00, Treasury $50.00 USDC on Base) and provides a human-facing Architect Console with six workspace zones (Audit Ledger, Research, Trade, Decisions, Content, Thinking Partner). Every audit generates a Proof of Logic Certificate with deterministic DJZS-LF failure codes for autonomous agent error handling.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -48,7 +50,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Key Features
 - **Six Zones**:
-    - **Journal**: Daily thinking, video entries (Livepeer), AI interrogation.
+    - **Audit Ledger**: Immutable forensic log of all ProofOfLogic certificates — verdicts, risk scores, DJZS-LF failure codes, logic hashes. The primary workspace view for Agent Architects.
     - **Research**: Article/link saving, AI interrogation of research, evidence scoring, research trackers, claim tracking (Brave, Web, Explain modes).
     - **Trade**: Trade thesis building, AI stress-testing, risk computation, wallet-signed artifacts, paper/live trading, autonomous market alerts.
     - **Decision**: Structured tracking of high-stakes decisions, AI pressure-testing.
@@ -63,6 +65,7 @@ Preferred communication style: Simple, everyday language.
 - XMTP messaging is End-to-End Encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## Recent Changes
+- **2026-02-22**: Replaced Journal zone with Audit Ledger — forensic terminal-styled ProofOfLogic certificate display with PASS/FAIL conditional borders (emerald/red), logic hash display, DJZS-LF failure code blocks, and risk scores. Updated all references across home, docs, roadmap, tutorial, and quick-search. Wallet connect screen updated to "Architect Console" identity. replit.md updated with JET protocol positioning.
 - **2026-02-21**: Completed A2A handshake — Created `client/public/.well-known/ai-plugin.json` (OpenAI plugin discovery manifest pointing to openapi.json), replaced `client/public/openapi.json` with streamlined ProofOfLogic schema covering all 3 tiers (Micro/Founder/Treasury) with `x-payment-proof` header parameters, and added x402 payment gate fallback to Express audit routes (returns 402 with descriptive JSON when CDP middleware is inactive). All discovery endpoints live: `/.well-known/ai-plugin.json`, `/.well-known/agent.json`, `/openapi.json`, `/api/audit/schema`.
 - **2026-02-21**: Comprehensive dark/light mode theme fix — replaced ALL hardcoded dark-mode colors across every page (docs, about, home, chat, roadmap, terms, privacy, security, not-found) and every component (audit-tutorial, quick-search, video-diary, error-boundary, decision-log-zone, content-pipeline-zone, trade-artifact-composer, music-panel, message-cards, trade/prediction/newsletter/event/payment composers, InstallPrompt). Systematic replacements: `text-white` → `text-foreground`, `text-gray-*` → `text-muted-foreground`, `bg-[#14171D]`/`bg-[#0F1115]` → `bg-muted`, `bg-gray-800/900` → `bg-muted`/`bg-card`, `border-white/[0.06]` → `border-border`, inline dark backgrounds → CSS variables. Zone gradient classes in index.css now use `hsl(var(--card))`.
 - **2026-02-21**: Added dark/light mode toggle across all pages. Created ThemeProvider (`client/src/lib/theme.tsx`) with localStorage sync and Tailwind class-based dark mode. Updated CSS variables in `index.css` with light `:root` and dark `.dark` themes. Sun/Moon toggle in headers on all 8 pages.

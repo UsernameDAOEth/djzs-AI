@@ -18,9 +18,9 @@ const TUTORIAL_STEPS = [
     icon: PenLine,
     color: "#60a5fa",
     highlight: "button-workspace-journal",
-    tip: "Write in Journal, research in Research, build theses in Trade, track decisions in Decisions, refine ideas in Content, or spar with the Thinking Partner.",
+    tip: "Review audits in the Audit Ledger, research in Research, build theses in Trade, track decisions in Decisions, refine ideas in Content, or spar with the Thinking Partner.",
     zones: [
-      { name: "Journal", price: "Free", color: "#F37E20", desc: "Private reflection and daily thinking" },
+      { name: "Audit Ledger", price: "Free", color: "#F37E20", desc: "Immutable forensic log of ProofOfLogic certificates" },
       { name: "Research", price: "Free", color: "#2dd4bf", desc: "Search, synthesize, and track claims" },
       { name: "Trade", price: "Free", color: "#60a5fa", desc: "Build and stress-test trade theses" },
       { name: "Decisions", price: "Free", color: "#fbbf24", desc: "Track high-stakes decisions" },
