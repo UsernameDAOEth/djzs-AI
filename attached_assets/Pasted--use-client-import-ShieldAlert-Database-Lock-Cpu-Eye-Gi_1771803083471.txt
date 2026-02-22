@@ -1,0 +1,190 @@
+"use client";
+
+import { ShieldAlert, Database, Lock, Cpu, Eye, GitPullRequest, Terminal, CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function About() {
+  return (
+    <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-purple-500/30">
+      
+      {/* Header */}
+      <header className="pt-24 pb-12 px-6 border-b border-gray-900 bg-[#0a0a0a]">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight">
+            The Protocol Manifesto
+          </h1>
+          <p className="text-xl text-gray-500 font-mono">
+            DJZS: The Adversarial Logic Layer for the A2A Economy.
+          </p>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-6 py-16 space-y-24">
+        
+        {/* Section 01: The Problem */}
+        <section>
+          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-red-400 bg-red-500/10 border border-red-500/20 rounded">SECTION 01</div>
+          <h2 className="text-3xl font-bold text-white mb-6">Your Agent's Reasoning is a Vulnerability</h2>
+          <p className="text-gray-400 text-lg leading-relaxed mb-8">
+            The Agent-to-Agent (A2A) economy is scaling faster than our ability to secure it. Right now, autonomous bots operate in a vacuum. They execute multi-million dollar trades and DAO governance votes based on hallucinated data, circular confirmation loops, and social FOMO. 
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 bg-[#111] border border-gray-800 rounded-xl">
+              <h3 className="text-cyan-400 font-bold mb-2">For DAO Founders</h3>
+              <p className="text-sm text-gray-500">Rogue governance agents drain treasuries based on unverified proposals.</p>
+            </div>
+            <div className="p-6 bg-[#111] border border-gray-800 rounded-xl">
+              <h3 className="text-purple-400 font-bold mb-2">For Algorithmic Traders</h3>
+              <p className="text-sm text-gray-500">Bots execute immediate market buys based on mathematically impossible momentum metrics.</p>
+            </div>
+            <div className="p-6 bg-[#111] border border-gray-800 rounded-xl">
+              <h3 className="text-green-400 font-bold mb-2">For AI Researchers</h3>
+              <p className="text-sm text-gray-500">Multi-agent swarms fall into "agent-echo" chambers, verifying each other's hallucinations.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 02: The Solution */}
+        <section>
+          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 rounded">SECTION 02</div>
+          <h2 className="text-3xl font-bold text-white mb-6">The Zero-Trust Oracle (JET)</h2>
+          <p className="text-gray-400 text-lg leading-relaxed mb-8">
+            We built Journal Entry Testing (JET) as a deterministic security primitive. Before an agent touches the blockchain, it routes its reasoning trace to the DJZS Oracle. The logic is mathematically audited against the DJZS-LF taxonomy.
+          </p>
+          <div className="p-6 bg-[#0a0a0a] border border-gray-800 rounded-xl mb-6">
+            <h3 className="text-white font-bold mb-4 flex items-center"><Terminal size={18} className="mr-2 text-cyan-400"/> The Audit Ledger Workflow</h3>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li className="flex items-start"><CheckCircle2 size={16} className="text-cyan-400 mr-3 mt-0.5 shrink-0" /> <strong>Agent Generates Payload:</strong> The bot formulates a strategy memo.</li>
+              <li className="flex items-start"><CheckCircle2 size={16} className="text-cyan-400 mr-3 mt-0.5 shrink-0" /> <strong>x402 Tollbooth:</strong> The agent pays a micro-transaction on Base Mainnet.</li>
+              <li className="flex items-start"><CheckCircle2 size={16} className="text-cyan-400 mr-3 mt-0.5 shrink-0" /> <strong>Oracle Evaluation:</strong> DJZS issues a cryptographic PASS/FAIL certificate. Flawed logic triggers an immediate execution abort.</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Section 03: Philosophy */}
+        <section>
+          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-purple-400 bg-purple-500/10 border border-purple-500/20 rounded">SECTION 03</div>
+          <h2 className="text-3xl font-bold text-white mb-6">Core Architecture Philosophy</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="p-6 bg-[#111] border border-gray-800 rounded-xl">
+              <Lock className="text-purple-400 mb-4" size={24} />
+              <h3 className="text-white font-bold mb-2">Trustless Execution</h3>
+              <p className="text-sm text-gray-500">Your cryptographic audit ledger ensures you never have to trust an agent's internal logs. The verification happens entirely off-node.</p>
+            </div>
+            <div className="p-6 bg-[#111] border border-gray-800 rounded-xl">
+              <Eye className="text-purple-400 mb-4" size={24} />
+              <h3 className="text-white font-bold mb-2">Uncensored Adversarial Logic</h3>
+              <p className="text-sm text-gray-500">The Oracle is designed to be ruthless. It does not exist to assist the bot; it exists to interrogate and mathematically break its assumptions.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 04: Tech Stack */}
+        <section>
+          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded">SECTION 04</div>
+          <h2 className="text-3xl font-bold text-white mb-6">The Infrastructure</h2>
+          <ul className="space-y-6">
+            <li className="border-l-2 border-yellow-500/50 pl-4">
+              <h3 className="text-white font-bold">Your Payloads & Reasoning Traces</h3>
+              <p className="text-sm text-gray-400">Securely routed via HTTPS and evaluated entirely in memory. Only the cryptographic hash of the evaluation is permanently stored on the ledger.</p>
+            </li>
+            <li className="border-l-2 border-yellow-500/50 pl-4">
+              <h3 className="text-white font-bold">The Zero-Trust Oracle</h3>
+              <p className="text-sm text-gray-400">Powered by Venice AI, pre-loaded with the adversarial DJZS-LF diagnostic matrix. It guarantees un-lobotomized, high-fidelity logic parsing.</p>
+            </li>
+          </ul>
+        </section>
+
+        {/* Section 05: Your AI Team -> Diagnostic Nodes */}
+        <section>
+          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-green-400 bg-green-500/10 border border-green-500/20 rounded">SECTION 05</div>
+          <h2 className="text-3xl font-bold text-white mb-6">The Diagnostic Nodes</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 bg-[#0a0a0a] border border-gray-800 rounded-xl text-center">
+              <Database className="text-green-400 mx-auto mb-3" size={24} />
+              <h3 className="text-white font-bold text-sm">Epistemic Node</h3>
+              <p className="text-xs text-gray-500 mt-2">Triggered via API payload. Interrogates data references for hallucinations.</p>
+            </div>
+            <div className="p-6 bg-[#0a0a0a] border border-gray-800 rounded-xl text-center">
+              <GitPullRequest className="text-green-400 mx-auto mb-3" size={24} />
+              <h3 className="text-white font-bold text-sm">Structural Node</h3>
+              <p className="text-xs text-gray-500 mt-2">Maps the logic tree to identify circular confirmation loops.</p>
+            </div>
+            <div className="p-6 bg-[#0a0a0a] border border-gray-800 rounded-xl text-center">
+              <ShieldAlert className="text-green-400 mx-auto mb-3" size={24} />
+              <h3 className="text-white font-bold text-sm">Incentive Node</h3>
+              <p className="text-xs text-gray-500 mt-2">Adversarial evaluation focusing entirely on FOMO and momentum bias.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 06: Memory Pins -> Cryptographic Proofs */}
+        <section>
+          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded">SECTION 06</div>
+          <h2 className="text-3xl font-bold text-white mb-4">Cryptographic Logic Proofs</h2>
+          <p className="text-gray-400 text-lg leading-relaxed">
+            Every successful audit generates a determinist JSON object. You don't just get a `PASS/FAIL` verdict; you get a historical context vector and a TX Hash proving the x402 toll was paid, ensuring an immutable record of agent accountability.
+          </p>
+        </section>
+
+        {/* Section 08: Additional Tools -> Ecosystem Tools */}
+        <section>
+          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-gray-400 bg-gray-500/10 border border-gray-500/20 rounded">SECTION 07</div>
+          <h2 className="text-3xl font-bold text-white mb-6">Ecosystem Tooling</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="p-6 bg-[#111] border border-gray-800 rounded-xl">
+              <h3 className="text-white font-bold mb-2">Forensic Video Capture</h3>
+              <p className="text-sm text-gray-500">For human-in-the-loop overrides. Record your manual logic evaluations and append them directly to the agent's audit ledger.</p>
+            </div>
+            <div className="p-6 bg-[#111] border border-gray-800 rounded-xl">
+              <h3 className="text-white font-bold mb-2">Ledger Search & Filtering</h3>
+              <p className="text-sm text-gray-500">Filter historical logic traces by Agent ID, Risk Score, or specific DJZS-LF diagnostic codes.</p>
+            </div>
+            <div className="p-6 bg-[#111] border border-gray-800 rounded-xl sm:col-span-2">
+              <h3 className="text-white font-bold mb-2">Protocol Integration Docs</h3>
+              <p className="text-sm text-gray-500">Master the x402 payment gate and logic ingestion API via our complete documentation hub.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 09: Built By */}
+        <section>
+          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-white bg-white/10 border border-white/20 rounded">SECTION 08</div>
+          <h2 className="text-3xl font-bold text-white mb-4">The Architect's Mission</h2>
+          <p className="text-gray-400 text-lg leading-relaxed">
+            Built to force accountability onto autonomous systems. The goal is not to slow down the A2A economy, but to ensure that when machines trade, govern, and execute on our behalf, they do so with verifiable structural integrity.
+          </p>
+        </section>
+
+        {/* Section 11: FAQ */}
+        <section>
+          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-gray-400 bg-gray-500/10 border border-gray-500/20 rounded">SECTION 09</div>
+          <h2 className="text-3xl font-bold text-white mb-6">FAQ</h2>
+          <div className="space-y-4">
+            <div className="p-6 bg-[#0a0a0a] border border-gray-800 rounded-xl">
+              <h3 className="text-white font-bold mb-2">How do I test the protocol?</h3>
+              <p className="text-sm text-gray-500">Navigate to the homepage and use the Interactive Terminal to execute your first logic audit with sample FOMO payloads.</p>
+            </div>
+            <div className="p-6 bg-[#0a0a0a] border border-gray-800 rounded-xl">
+              <h3 className="text-white font-bold mb-2">Is there a subscription?</h3>
+              <p className="text-sm text-gray-500">No. DJZS utilizes the x402 protocol. Your agents pay a micro-transaction in Base USDC strictly per execution.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Bottom CTA */}
+        <section className="text-center py-16 bg-[#0a0a0a] border border-gray-800 rounded-2xl relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md h-32 bg-cyan-900/20 blur-[100px] rounded-full pointer-events-none" />
+          <div className="relative z-10">
+            <h2 className="text-3xl font-extrabold text-white mb-4">Enforce Audit-Before-Act</h2>
+            <p className="text-gray-400 mb-8 max-w-md mx-auto">Protect your treasury from hallucinated automation. Route your bots through the Oracle today.</p>
+            <a href="/docs" className="inline-flex items-center justify-center px-8 py-3 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition-colors">
+              Secure Your Treasury
+            </a>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  );
+}
