@@ -149,12 +149,12 @@ export default function Docs() {
             DJZS Documentation
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Six free Workspace Zones for thinking and building. Three paid Execution Zones for adversarial audits. Write locally, deploy to the System when you're ready to pressure-test.
+            The Adversarial Logic Layer for the A2A economy. Journal Entry Testing, Proof of Logic Certificates, and deterministic DJZS-LF failure codes — for human architects and autonomous agents alike.
           </p>
           <div className="flex justify-center gap-4 mt-8">
             <Link href="/chat">
               <button className="px-6 py-3 rounded-lg text-white font-bold transition-colors" style={{ background: '#F37E20' }} data-testid="button-start-writing">
-                Open Workspace
+                Open Architect Console
               </button>
             </Link>
           </div>
@@ -466,19 +466,19 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Your Thinking is a Data Mine</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-8">Your Reasoning is a Data Mine</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20 mb-8" data-testid="card-why-privacy-docs">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
                 <Shield className="w-6 h-6 text-orange-400" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-foreground">Every day, you capture your most valuable thoughts in digital notebooks. But where does that data really go?</h3>
+                <h3 className="text-xl font-bold text-foreground">Agent reasoning traces and founder strategies are the most valuable data in the A2A economy. Where does yours go?</h3>
               </div>
             </div>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                Your product roadmap. Your trade thesis. Your unpublished research. Your unreleased content strategy. This is your most sensitive data — and it shouldn't feed centralized AI models. Most apps say "we value your privacy" while building business models that depend on accessing your data.
+                Your trade thesis. Your treasury proposal. Your agent's execution plan. Your unpublished research. These reasoning traces are the raw material of the A2A economy — and they shouldn't feed centralized AI models. Most platforms say "we value your privacy" while training on your logic.
               </p>
               <p>
                 DJZS is designed differently from the ground up:
@@ -488,17 +488,17 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               <div className="p-4 rounded-lg bg-muted border border-border">
                 <HardDrive className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-foreground mb-1">Local-First Storage</h4>
-                <p className="text-xs text-muted-foreground">All entries, insights, memory pins, research trackers, and claims live in your browser's IndexedDB. We don't have a database of your thoughts. There's nothing to hack, subpoena, or sell.</p>
+                <p className="text-xs text-muted-foreground">Workspace data — audit records, research trackers, trade theses, memory pins, and claims — lives in your browser's IndexedDB. We don't have a database of your reasoning. There's nothing to hack, subpoena, or sell.</p>
               </div>
               <div className="p-4 rounded-lg bg-muted border border-border">
                 <ShieldCheck className="w-5 h-5 text-green-400 mb-2" />
                 <h4 className="text-sm font-bold text-foreground mb-1">Vault Encryption</h4>
-                <p className="text-xs text-muted-foreground">Set a passphrase to encrypt your vault with AES-256-GCM. Journal entries, AI insights, and memory pins are encrypted at rest. Even with device access, your thoughts stay locked.</p>
+                <p className="text-xs text-muted-foreground">Set a passphrase to encrypt your vault with AES-256-GCM. Audit records, AI insights, and memory pins are encrypted at rest. Even with device access, your reasoning stays locked.</p>
               </div>
               <div className="p-4 rounded-lg bg-muted border border-border">
                 <Bot className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-foreground mb-1">User-Controlled AI</h4>
-                <p className="text-xs text-muted-foreground">Your text is only sent to AI when you explicitly click "Think with me." The AI then pressure-tests your reasoning via Venice AI, which processes it without storing or training on your data. Nothing happens in the background.</p>
+                <p className="text-xs text-muted-foreground">Your reasoning trace is only sent to the Oracle when you explicitly deploy an audit. Venice AI processes it without storing or training on your data. Nothing happens in the background.</p>
               </div>
               <div className="p-4 rounded-lg bg-muted border border-border">
                 <KeyRound className="w-5 h-5 text-orange-400 mb-2" style={{ color: '#FFB84D' }} />
@@ -518,11 +518,11 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             </div>
             <div className="p-4 rounded-lg bg-amber-500/[0.04] border border-amber-500/15">
               <p className="text-xs text-amber-300 font-semibold mb-1">What we're honest about</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">When you click "Think with me," your entry text is sent to Venice AI over the internet for processing. This is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because we believe you deserve to know exactly when your data leaves your device.</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">When you deploy an audit, your reasoning trace is sent to Venice AI over the internet for adversarial analysis. This is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because you deserve to know exactly when your data leaves your device.</p>
             </div>
             <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15 mt-4">
               <p className="text-xs text-green-300 font-semibold mb-1">What IS encrypted at rest</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">When you set a vault passphrase, your journal entries, AI insights, and memory pins are encrypted locally using AES-256-GCM with PBKDF2 key derivation (600k iterations). Your passphrase never leaves your device. Even if someone copies your browser data, they cannot read your thoughts without your passphrase.</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">When you set a vault passphrase, your audit records, AI insights, and memory pins are encrypted locally using AES-256-GCM with PBKDF2 key derivation (600k iterations). Your passphrase never leaves your device. Even if someone copies your browser data, they cannot read your reasoning without your passphrase.</p>
             </div>
             <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15 mt-4">
               <p className="text-xs text-green-300 font-semibold mb-1">What IS end-to-end encrypted</p>
@@ -536,40 +536,40 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard 
               icon={HardDrive}
-              title="Local-First"
-              description="Your entries and memories are stored on your device using IndexedDB. No server-side storage of your private thoughts."
+              title="Audit-Before-Act"
+              description="Every reasoning trace must pass through the Oracle before execution. No audit, no action. This is the core enforcement loop for the A2A economy."
             />
             <FeatureCard 
               icon={Shield}
-              title="Privacy-First"
-              description="Wallet-based identity. Your data is stored locally and only accessible on your device."
+              title="Deterministic Verdicts"
+              description="Binary PASS/FAIL. The server enforces the verdict deterministically — the LLM detects, the server decides. No probabilistic hedging."
             />
             <FeatureCard 
               icon={Bot}
-              title="Adversarial Thinking Partner"
-              description="The AI challenges your thinking, not validates it. It exposes contradictions, flags weak logic, and asks the questions you're avoiding."
+              title="Adversarial Oracle"
+              description="The AI is adversarial by design. It exposes circular logic, hallucinated data, FOMO bias, and narrative dependency. Honest, not helpful."
             />
             <FeatureCard 
               icon={Lock}
-              title="No Surveillance"
-              description="No feeds, no tracking, no centralized memory. A tool for thinking, not a network for sharing."
+              title="Local-First Privacy"
+              description="Workspace data lives on your device. No server-side storage of your reasoning. No feeds, no tracking, no centralized memory."
             />
             <FeatureCard 
               icon={Zap}
-              title="Memory Control"
-              description="You decide what to remember. Pin patterns worth keeping, forget what doesn't serve you."
+              title="DJZS-LF Taxonomy"
+              description="7 deterministic failure codes across Structural, Epistemic, Incentive, and Execution categories. Machine-readable error handling for autonomous agents."
             />
             <FeatureCard 
               icon={Key}
-              title="Wallet Identity"
-              description="Your wallet address is your identity. ENS names displayed for readability. No email, no password."
+              title="x402 Pay-to-Verify"
+              description="No API keys or subscriptions. Access gated by on-chain USDC micropayments on Base. Your wallet is your identity."
             />
           </div>
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-foreground mb-2">Workspace Zones</h2>
-          <p className="text-muted-foreground mb-8">Free. Local-first. Your space to think and build before deploying to the System.</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Architect Console — Workspace Zones</h2>
+          <p className="text-muted-foreground mb-8">Free. Local-first. Six zones for capturing reasoning, building theses, and reviewing forensic audit records before deploying to the Oracle.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-6 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
