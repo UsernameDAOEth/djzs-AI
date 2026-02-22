@@ -87,27 +87,15 @@ export default function Home() {
           <Link href="/">
             <span className="flex items-center gap-2.5" data-testid="link-home-logo">
               <img src="/logo.png" alt="DJZS" className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg transition-transform hover:scale-105" style={{ filter: 'drop-shadow(0 0 4px rgba(243,126,32,0.3))' }} data-testid="img-logo-header" />
-              <span className="text-lg sm:text-xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }}>DJZS</span>
+              <span className="text-lg sm:text-xl font-bold tracking-tighter text-foreground" data-testid="text-header-brand">DJZS<span className="text-purple-500">.ai</span></span>
             </span>
           </Link>
           <div className="flex items-center gap-3 sm:gap-5">
-            <nav className="hidden md:flex items-center gap-1">
-              {[
-                { href: '/docs', label: 'Docs' },
-                { href: '/about', label: 'About' },
-                { href: '/privacy', label: 'Privacy' },
-                { href: '/roadmap', label: 'Roadmap' },
-              ].map(link => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="relative px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground group"
-                  data-testid={`link-header-${link.label.toLowerCase()}`}
-                >
-                  {link.label}
-                  <span className="absolute bottom-0 left-3 right-3 h-px scale-x-0 group-hover:scale-x-100 transition-transform origin-left" style={{ background: '#F37E20' }} />
-                </Link>
-              ))}
+            <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+              <a href="#demo" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-header-test-oracle">Test Oracle</a>
+              <Link href="/docs" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-header-developers">Developers</Link>
+              <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-header-about">About</Link>
+              <Link href="/roadmap" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-header-roadmap">Roadmap</Link>
             </nav>
             {isConnected ? (
               <Link href="/chat">
@@ -156,12 +144,19 @@ export default function Home() {
               className="md:hidden border-t border-border overflow-hidden bg-background/98"
             >
               <nav className="flex flex-col px-4 py-3 gap-1">
+                <a
+                  href="#demo"
+                  className="px-4 py-3 rounded-md text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  onClick={() => setMobileMenuOpen(false)}
+                  data-testid="link-mobile-test-oracle"
+                >
+                  Test Oracle
+                </a>
                 {[
-                  { href: '/docs', label: 'Docs' },
+                  { href: '/docs', label: 'Developers' },
                   { href: '/about', label: 'About' },
-                  { href: '/privacy', label: 'Privacy' },
-                  { href: '/security', label: 'Security' },
                   { href: '/roadmap', label: 'Roadmap' },
+                  { href: '/privacy', label: 'Privacy' },
                 ].map(link => (
                   <Link
                     key={link.href}
@@ -180,8 +175,8 @@ export default function Home() {
       </header>
 
       <Helmet>
-        <title>DJZS - Decentralized Journaling Zone System</title>
-        <meta name="description" content="Autonomous auditing system for the A2A economy. Serving human founders via web UI and AI agents via programmatic API. Three-tier adversarial logic audits ($2.50 / $5.00 / $50.00 USDC) via x402 on Base Mainnet." />
+        <title>DJZS Protocol | The Adversarial Logic Layer</title>
+        <meta name="description" content="Stop autonomous agents from trading on FOMO. Route reasoning traces through the DJZS Zero-Trust Oracle before execution. Three-tier adversarial logic audits ($2.50 / $5.00 / $50.00 USDC) via x402 on Base Mainnet." />
         <meta property="og:title" content="DJZS - Autonomous Auditing System for the A2A Economy" />
         <meta property="og:description" content="The autonomous auditing system that stress-tests your logic before reality does. Serving human founders and autonomous AI agents. Three-tier x402 micropayments on Base. Deterministic output. Machine-readable verdicts." />
         <meta property="og:type" content="website" />
@@ -1443,60 +1438,21 @@ export default function Home() {
         </section>
       </RevealSection>
 
-      <footer className="border-t border-border py-24 bg-card">
-        <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-10">
-          <div className="flex flex-col items-center gap-3">
-            <img src="/logo.png" alt="DJZS" className="w-16 h-16 rounded-lg" style={{ filter: 'drop-shadow(0 0 4px rgba(243,126,32,0.2))' }} data-testid="img-logo-footer" />
-            <h2 className="text-3xl font-black tracking-widest uppercase" style={{ color: '#F37E20' }}>
-              DJZS
-            </h2>
-            <p className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground">
-              Autonomous Auditing System
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-            <Link href="/about" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-muted hover:border-border text-muted-foreground border-border" data-testid="link-footer-about">
-              About
+      <footer className="border-t border-border py-12 bg-card dark:bg-black font-mono">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center space-y-4">
+          <div className="flex space-x-6">
+            <Link href="/docs" className="text-sm text-muted-foreground hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" data-testid="link-footer-docs">
+              Documentation
             </Link>
-            <Link href="/docs" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-muted hover:border-border text-muted-foreground border-border" data-testid="link-footer-docs">
-              Docs
-            </Link>
-            <Link href="/privacy" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-muted hover:border-border text-muted-foreground border-border" data-testid="link-footer-privacy">
-              Privacy
-            </Link>
-            <Link href="/security" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-muted hover:border-border text-muted-foreground border-border" data-testid="link-footer-security">
-              Security
-            </Link>
-            <Link href="/terms" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-muted hover:border-border text-muted-foreground border-border" data-testid="link-footer-terms">
-              Terms
-            </Link>
-            <Link href="/roadmap" className="px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-widest border transition-all hover:bg-muted hover:border-border text-muted-foreground border-border" data-testid="link-footer-roadmap">
-              Roadmap
-            </Link>
-            {isConnected && (
-              <Link href="/chat" className="px-6 py-2 rounded-md text-xs font-bold uppercase tracking-widest text-white transition-all hover:opacity-90" style={{ background: '#F37E20' }} data-testid="link-footer-enter">
-                Enter
-              </Link>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <a href="https://github.com/UsernameDAOEth" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-github">
+            <a href="https://basescan.org" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-purple-500 dark:hover:text-purple-400 transition-colors" data-testid="link-footer-contract">
+              Base Mainnet Contract
+            </a>
+            <a href="https://github.com/UsernameDAOEth" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-green-500 dark:hover:text-green-400 transition-colors" data-testid="link-footer-github">
               GitHub
             </a>
-            <span className="text-muted-foreground/40">·</span>
-            <a href="https://x.com/Dj_Z_S" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-twitter">
-              X / Twitter
-            </a>
-            <span className="text-muted-foreground/40">·</span>
-            <a href="mailto:hello@dj-z-s.box" className="text-[10px] uppercase tracking-widest transition-colors hover:opacity-80" data-testid="link-footer-contact">
-              Contact
-            </a>
           </div>
-
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
-            © 2026 DJZS — Autonomous Auditing System for the A2A Economy
+          <p className="text-sm text-muted-foreground/60" data-testid="text-footer-tagline">
+            © 2026 DJZS Protocol. The A2A Economy Tollbooth.
           </p>
         </div>
       </footer>
