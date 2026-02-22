@@ -17,6 +17,8 @@ import Privacy from "@/pages/privacy";
 import Roadmap from "@/pages/roadmap";
 import About from "@/pages/about";
 import Security from "@/pages/security";
+import DashboardLayout from "@/pages/dashboard/dashboard-layout";
+import DashboardOverview from "@/pages/dashboard/dashboard-overview";
 import NotFound from "@/pages/not-found";
 
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -49,6 +51,9 @@ function Router() {
         <Route path="/roadmap" component={Roadmap} />
         <Route path="/about" component={About} />
         <Route path="/security" component={Security} />
+        <Route path="/dashboard">
+          <DashboardLayout><DashboardOverview /></DashboardLayout>
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </>
