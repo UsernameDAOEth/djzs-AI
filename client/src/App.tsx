@@ -17,11 +17,26 @@ import Privacy from "@/pages/privacy";
 import Roadmap from "@/pages/roadmap";
 import About from "@/pages/about";
 import Security from "@/pages/security";
-import DashboardLayout from "@/pages/dashboard/dashboard-layout";
+import DashboardLayout, { useDashboardView } from "@/pages/dashboard/dashboard-layout";
 import DashboardOverview from "@/pages/dashboard/dashboard-overview";
+import { AuditLedgerView, RiskParametersView, APISettingsView } from "@/pages/dashboard/dashboard-views";
 import NotFound from "@/pages/not-found";
 
 import { ErrorBoundary } from "@/components/error-boundary";
+
+function DashboardContent() {
+  const { activeView } = useDashboardView();
+  switch (activeView) {
+    case "ledger":
+      return <AuditLedgerView />;
+    case "risk":
+      return <RiskParametersView />;
+    case "settings":
+      return <APISettingsView />;
+    default:
+      return <DashboardOverview />;
+  }
+}
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -52,7 +67,7 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/security" component={Security} />
         <Route path="/dashboard">
-          <DashboardLayout><DashboardOverview /></DashboardLayout>
+          <DashboardLayout><DashboardContent /></DashboardLayout>
         </Route>
         <Route component={NotFound} />
       </Switch>

@@ -241,6 +241,32 @@ export const insertPinnedMemorySchema = createInsertSchema(pinnedMemories).omit(
 export type InsertPinnedMemory = z.infer<typeof insertPinnedMemorySchema>;
 export type PinnedMemory = typeof pinnedMemories.$inferSelect;
 
+// Audit logs table — persistent record of every ProofOfLogic certificate
+export const auditLogs = pgTable("audit_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  auditId: varchar("audit_id").notNull().unique(),
+  tier: varchar("tier", { length: 20 }).notNull(),
+  verdict: varchar("verdict", { length: 10 }).notNull(),
+  riskScore: integer("risk_score").notNull(),
+  strategyMemo: text("strategy_memo").notNull(),
+  auditType: varchar("audit_type", { length: 30 }).notNull().default("general"),
+  primaryBiasDetected: varchar("primary_bias_detected", { length: 50 }),
+  flags: jsonb("flags").notNull().default([]),
+  logicFlaws: jsonb("logic_flaws").notNull().default([]),
+  structuralRecommendations: jsonb("structural_recommendations").notNull().default([]),
+  cryptographicHash: text("cryptographic_hash").notNull(),
+  walletAddress: text("wallet_address"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
+export type AuditLog = typeof auditLogs.$inferSelect;
+
 // Venice AI structured response schemas
 export const journalAnalysisSchema = z.object({
   summary: z.string().min(10).max(600),

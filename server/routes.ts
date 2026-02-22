@@ -809,6 +809,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const createTierHandler = (tier: AuditTier) => async (req: any, res: any) => {
     try {
       const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
+      const walletAddress = req.headers['x-wallet-address'] as string | undefined;
       const schema = createTieredRequestSchema(tier);
       const parsed = schema.safeParse(req.body);
 
@@ -826,6 +827,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const audit = await runLogicAuditAgent(parsed.data, tier, userVeniceKey);
+
+      try {
+        await storage.createAuditLog({
+          auditId: audit.audit_id,
+          tier: audit.tier,
+          verdict: audit.verdict,
+          riskScore: audit.risk_score,
+          strategyMemo: parsed.data.strategy_memo,
+          auditType: parsed.data.audit_type || "general",
+          primaryBiasDetected: audit.primary_bias_detected,
+          flags: audit.flags,
+          logicFlaws: audit.logic_flaws,
+          structuralRecommendations: audit.structural_recommendations,
+          cryptographicHash: audit.cryptographic_hash,
+          walletAddress: walletAddress || null,
+        });
+      } catch (dbError) {
+        console.error("Failed to persist audit log:", dbError);
+      }
+
       res.json(audit);
     } catch (error) {
       console.error(`${TIER_CONFIG[tier].name} Audit failed:`, error);
@@ -845,6 +866,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/audit/treasury", x402PaymentGate, createTierHandler("treasury"));
   app.post("/api/audit", x402PaymentGate, createTierHandler("micro"));
 
+  app.get("/api/audit/logs", async (req, res) => {
+    try {
+      const limit = Math.min(parseInt(req.query.limit as string) || 50, 200);
+      const logs = await storage.getAuditLogs(limit);
+      res.json(logs);
+    } catch (error) {
+      console.error("Failed to fetch audit logs:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 
   app.post("/api/intelligence/brief", (req, res) => {
     try {

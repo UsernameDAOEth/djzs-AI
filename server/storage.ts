@@ -1,5 +1,7 @@
-import { type Member, type InsertMember, type Room, type InsertRoom, type PaymentReceipt, type InsertPaymentReceipt, type StoredMessage, type InsertStoredMessage, type JournalEntry, type InsertJournalEntry, type PinnedMemory, type InsertPinnedMemory } from "@shared/schema";
+import { type Member, type InsertMember, type Room, type InsertRoom, type PaymentReceipt, type InsertPaymentReceipt, type StoredMessage, type InsertStoredMessage, type JournalEntry, type InsertJournalEntry, type PinnedMemory, type InsertPinnedMemory, type AuditLog, type InsertAuditLog, auditLogs } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { db } from "./db";
+import { desc, eq } from "drizzle-orm";
 
 export interface IStorage {
   getMember(address: string): Promise<Member | undefined>;
@@ -31,6 +33,11 @@ export interface IStorage {
   createPinnedMemory(memory: InsertPinnedMemory): Promise<PinnedMemory>;
   getPinnedMemories(walletAddress: string, limit: number): Promise<PinnedMemory[]>;
   deletePinnedMemory(id: string): Promise<boolean>;
+
+  // Audit logs
+  createAuditLog(log: InsertAuditLog): Promise<AuditLog>;
+  getAuditLogs(limit: number): Promise<AuditLog[]>;
+  getAuditLogByAuditId(auditId: string): Promise<AuditLog | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -253,6 +260,20 @@ export class MemStorage implements IStorage {
 
   async deletePinnedMemory(id: string): Promise<boolean> {
     return this.pinnedMemories.delete(id);
+  }
+
+  async createAuditLog(insertLog: InsertAuditLog): Promise<AuditLog> {
+    const [log] = await db.insert(auditLogs).values(insertLog).returning();
+    return log;
+  }
+
+  async getAuditLogs(limit: number): Promise<AuditLog[]> {
+    return db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)).limit(limit);
+  }
+
+  async getAuditLogByAuditId(auditId: string): Promise<AuditLog | undefined> {
+    const [log] = await db.select().from(auditLogs).where(eq(auditLogs.auditId, auditId));
+    return log;
   }
 }
 

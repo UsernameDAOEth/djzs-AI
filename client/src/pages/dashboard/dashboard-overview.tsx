@@ -1,46 +1,7 @@
-import { ShieldAlert, ShieldCheck, Activity, Database, ArrowUpRight, Zap } from "lucide-react";
+import { ShieldAlert, ShieldCheck, Activity, Database, ArrowUpRight, Zap, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-
-const recentAudits = [
-  { id: "req_0091", agent: "Alpha-Trader-Bot", payload: "Buy 50 SOL (Momentum)", verdict: "FAIL", code: "DJZS-I01", risk: 92, time: "2 min ago" },
-  { id: "req_0090", agent: "Treasury-Rebalancer", payload: "Bridge 10k USDC to Arbitrum", verdict: "PASS", code: "NONE", risk: 12, time: "15 min ago" },
-  { id: "req_0089", agent: "Governance-Voter", payload: "Vote YES on Prop 44 based on Twitter", verdict: "FAIL", code: "DJZS-E01", risk: 85, time: "1 hr ago" },
-  { id: "req_0088", agent: "Alpha-Trader-Bot", payload: "DCA 2 ETH at support level", verdict: "PASS", code: "NONE", risk: 18, time: "3 hrs ago" },
-];
-
-const statCards = [
-  {
-    label: "TOTAL AUDITS (24H)",
-    value: "1,248",
-    sub: "12% from yesterday",
-    subIcon: <ArrowUpRight size={12} className="mr-1" />,
-    color: "cyan",
-    glow: "rgba(6,182,212,0.15)",
-    borderGlow: "rgba(6,182,212,0.3)",
-    icon: <Database size={64} />,
-  },
-  {
-    label: "THREATS PREVENTED",
-    value: "84",
-    sub: "Capital destruction halted",
-    subIcon: <Zap size={12} className="mr-1" />,
-    color: "red",
-    glow: "rgba(239,68,68,0.15)",
-    borderGlow: "rgba(239,68,68,0.3)",
-    icon: <ShieldAlert size={64} />,
-  },
-  {
-    label: "AVG RISK SCORE",
-    value: "34",
-    valueSuffix: "/100",
-    sub: "Stable logic environment",
-    subIcon: null,
-    color: "purple",
-    glow: "rgba(147,51,234,0.15)",
-    borderGlow: "rgba(147,51,234,0.3)",
-    icon: <Activity size={64} />,
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import type { AuditLog } from "@shared/schema";
 
 const colorMap: Record<string, { border: string; text: string; iconText: string }> = {
   cyan: { border: "hover:border-cyan-500/50", text: "text-cyan-400", iconText: "text-cyan-400" },
@@ -65,7 +26,85 @@ const tableRowVariants = {
   show: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeOut" } },
 };
 
+function formatTimeAgo(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  if (diffSec < 60) return "Just now";
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin} min ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr} hr${diffHr > 1 ? "s" : ""} ago`;
+  const diffDay = Math.floor(diffHr / 24);
+  return `${diffDay} day${diffDay > 1 ? "s" : ""} ago`;
+}
+
+function getPrimaryFlagCode(log: AuditLog): string {
+  const flags = log.flags as Array<{ code: string; severity: string; message: string }>;
+  if (!flags || flags.length === 0) return "NONE";
+  const critical = flags.find(f => f.severity === "CRITICAL");
+  if (critical) return critical.code;
+  const high = flags.find(f => f.severity === "HIGH");
+  if (high) return high.code;
+  return flags[0]?.code || "NONE";
+}
+
 export default function DashboardOverview() {
+  const { data: audits = [], isLoading } = useQuery<AuditLog[]>({
+    queryKey: ["/api/audit/logs"],
+    refetchInterval: 10000,
+  });
+
+  const totalAudits = audits.length;
+  const threatsPrevented = audits.filter(a => a.verdict === "FAIL").length;
+  const avgRisk = totalAudits > 0
+    ? Math.round(audits.reduce((acc, curr) => acc + curr.riskScore, 0) / totalAudits)
+    : 0;
+
+  const statCards = [
+    {
+      label: "TOTAL AUDITS (RECORDED)",
+      value: totalAudits.toLocaleString(),
+      sub: "Live Sync Active",
+      subIcon: <ArrowUpRight size={12} className="mr-1" />,
+      color: "cyan",
+      glow: "rgba(6,182,212,0.15)",
+      borderGlow: "rgba(6,182,212,0.3)",
+      icon: <Database size={64} />,
+    },
+    {
+      label: "THREATS PREVENTED",
+      value: threatsPrevented.toLocaleString(),
+      sub: "Capital destruction halted",
+      subIcon: <Zap size={12} className="mr-1" />,
+      color: "red",
+      glow: "rgba(239,68,68,0.15)",
+      borderGlow: "rgba(239,68,68,0.3)",
+      icon: <ShieldAlert size={64} />,
+    },
+    {
+      label: "AVG RISK SCORE",
+      value: String(avgRisk),
+      valueSuffix: "/100",
+      sub: "Aggregated from ledger",
+      subIcon: null,
+      color: "purple",
+      glow: "rgba(147,51,234,0.15)",
+      borderGlow: "rgba(147,51,234,0.3)",
+      icon: <Activity size={64} />,
+    },
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
+        <Loader2 size={32} className="animate-spin text-cyan-400" />
+        <div className="text-sm font-mono tracking-widest text-cyan-400">SYNCING WITH DATABASE...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto space-y-8">
 
@@ -149,15 +188,13 @@ export default function DashboardOverview() {
               animation: 'rz-scan-line 3s ease-in-out infinite',
             }}
           />
-          <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] font-mono" data-testid="text-ledger-heading">
-            Recent Executions
+          <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] font-mono flex items-center" data-testid="text-ledger-heading">
+            <span className="relative flex h-2 w-2 mr-2">
+              <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+            </span>
+            Live Executions
           </h2>
-          <button
-            className="text-[10px] font-mono text-cyan-400 hover:text-cyan-300 transition-colors flex items-center tracking-wide"
-            data-testid="button-view-full-ledger"
-          >
-            VIEW FULL LEDGER <ArrowUpRight size={14} className="ml-1" />
-          </button>
         </div>
 
         <div className="overflow-x-auto">
@@ -165,7 +202,7 @@ export default function DashboardOverview() {
             <thead className="text-muted-foreground/60 text-[10px] border-b border-border tracking-wide" style={{ background: 'hsl(var(--muted) / 0.5)' }}>
               <tr>
                 <th className="px-6 py-4 font-medium">REQUEST ID</th>
-                <th className="px-6 py-4 font-medium">AGENT GROUP</th>
+                <th className="px-6 py-4 font-medium">TIER</th>
                 <th className="px-6 py-4 font-medium">PAYLOAD PREVIEW</th>
                 <th className="px-6 py-4 font-medium">RISK</th>
                 <th className="px-6 py-4 font-medium">VERDICT</th>
@@ -178,54 +215,75 @@ export default function DashboardOverview() {
               initial="hidden"
               animate="show"
             >
-              {recentAudits.map((audit, i) => (
-                <motion.tr
-                  key={audit.id}
-                  variants={tableRowVariants}
-                  custom={i}
-                  className="hover:bg-muted/30 transition-colors group cursor-pointer"
-                  data-testid={`row-audit-${audit.id}`}
-                >
-                  <td className="px-6 py-4 text-muted-foreground/60 group-hover:text-cyan-400 transition-colors">{audit.id}</td>
-                  <td className="px-6 py-4 font-medium">{audit.agent}</td>
-                  <td className="px-6 py-4 truncate max-w-[200px] text-muted-foreground">{audit.payload}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2.5 py-1 rounded-md text-xs font-bold border ${
-                        audit.risk > 80
-                          ? "text-red-400 bg-red-500/10"
-                          : audit.risk > 50
-                          ? "text-yellow-400 bg-yellow-500/10"
-                          : "text-muted-foreground bg-muted"
-                      }`}
-                      style={{
-                        borderColor: audit.risk > 80
-                          ? 'rgba(239,68,68,0.3)'
-                          : audit.risk > 50
-                          ? 'rgba(234,179,8,0.3)'
-                          : 'hsl(var(--border))',
-                      }}
-                      data-testid={`badge-risk-${audit.id}`}
+              {audits.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground/60 text-sm">
+                    Awaiting agent payloads... Deploy an audit from the DJZS.ai Workspace to see results here.
+                  </td>
+                </tr>
+              ) : (
+                audits.map((audit, i) => {
+                  const flagCode = getPrimaryFlagCode(audit);
+                  return (
+                    <motion.tr
+                      key={audit.id}
+                      variants={tableRowVariants}
+                      custom={i}
+                      className="hover:bg-muted/30 transition-colors group cursor-pointer"
+                      data-testid={`row-audit-${audit.auditId}`}
                     >
-                      {audit.risk}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {audit.verdict === "PASS" ? (
-                      <span className="inline-flex items-center text-green-400 text-xs font-bold" data-testid={`verdict-${audit.id}`}>
-                        <ShieldCheck size={14} className="mr-1.5" />
-                        PASS
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center text-red-400 text-xs font-bold" data-testid={`verdict-${audit.id}`}>
-                        <ShieldAlert size={14} className="mr-1.5" />
-                        {audit.code}
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-right text-muted-foreground/40 text-xs">{audit.time}</td>
-                </motion.tr>
-              ))}
+                      <td className="px-6 py-4 text-muted-foreground/60 group-hover:text-cyan-400 transition-colors">
+                        {audit.auditId.slice(0, 8)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider" style={{
+                          background: audit.tier === 'treasury' ? 'rgba(234,179,8,0.1)' : audit.tier === 'founder' ? 'rgba(147,51,234,0.1)' : 'rgba(6,182,212,0.1)',
+                          color: audit.tier === 'treasury' ? '#eab308' : audit.tier === 'founder' ? '#a855f7' : '#06b6d4',
+                          border: `1px solid ${audit.tier === 'treasury' ? 'rgba(234,179,8,0.3)' : audit.tier === 'founder' ? 'rgba(147,51,234,0.3)' : 'rgba(6,182,212,0.3)'}`,
+                        }}>
+                          {audit.tier}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 truncate max-w-[200px] text-muted-foreground">{audit.strategyMemo.slice(0, 60)}...</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-2.5 py-1 rounded-md text-xs font-bold border ${
+                            audit.riskScore > 80
+                              ? "text-red-400 bg-red-500/10"
+                              : audit.riskScore > 50
+                              ? "text-yellow-400 bg-yellow-500/10"
+                              : "text-muted-foreground bg-muted"
+                          }`}
+                          style={{
+                            borderColor: audit.riskScore > 80
+                              ? 'rgba(239,68,68,0.3)'
+                              : audit.riskScore > 50
+                              ? 'rgba(234,179,8,0.3)'
+                              : 'hsl(var(--border))',
+                          }}
+                          data-testid={`badge-risk-${audit.auditId}`}
+                        >
+                          {audit.riskScore}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {audit.verdict === "PASS" ? (
+                          <span className="inline-flex items-center text-green-400 text-xs font-bold" data-testid={`verdict-${audit.auditId}`}>
+                            <ShieldCheck size={14} className="mr-1.5" />
+                            PASS
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center text-red-400 text-xs font-bold" data-testid={`verdict-${audit.auditId}`}>
+                            <ShieldAlert size={14} className="mr-1.5" />
+                            {flagCode}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-right text-muted-foreground/40 text-xs">{formatTimeAgo(String(audit.createdAt))}</td>
+                    </motion.tr>
+                  );
+                })
+              )}
             </motion.tbody>
           </table>
         </div>
