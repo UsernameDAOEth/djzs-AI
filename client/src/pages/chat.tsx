@@ -1291,6 +1291,18 @@ export default function Chat() {
 
             <div className="my-3 border-t border-border" />
 
+            <Link href="/dashboard">
+              <button
+                className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group text-muted-foreground hover:text-muted-foreground hover:bg-muted/30"
+                data-testid="link-terminal-console"
+              >
+                <Terminal className="w-4 h-4 text-cyan-500/70 group-hover:text-cyan-400 transition-colors" />
+                <span className="text-sm font-bold tracking-tight">Terminal Console</span>
+              </button>
+            </Link>
+
+            <div className="my-3 border-t border-border" />
+
             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 px-4 mb-2" data-testid="sidebar-zones">Execution Zones</p>
             {ZONE_CONFIGS.map((zone) => {
               const Icon = zone.icon;

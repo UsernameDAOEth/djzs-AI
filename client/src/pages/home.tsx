@@ -224,7 +224,7 @@ export default function Home() {
                   Read the Docs
                 </button>
               </Link>
-              <Link href="/chat">
+              <Link href="/dashboard">
                 <button className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg font-bold border transition-all hover:-translate-y-0.5 text-foreground hover:bg-muted" style={{ borderColor: 'rgba(46,139,139,0.4)' }} data-testid="button-hero-terminal">
                   <Terminal size={20} />
                   View Live Terminal
