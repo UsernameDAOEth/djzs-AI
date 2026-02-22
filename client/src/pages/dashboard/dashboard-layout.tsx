@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Activity, Terminal, Shield, History, Settings, LogOut, Menu, X, Sun, Moon } from "lucide-react";
+import { Activity, Terminal, Shield, History, Settings, LogOut, Menu, X, Sun, Moon, ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useDisconnect } from "wagmi";
@@ -51,6 +51,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
 
         <div className="p-4 flex-1">
+          <Link
+            href="/"
+            className="flex items-center space-x-2 px-3 py-2 mb-4 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            data-testid="link-back-home"
+          >
+            <ArrowLeft size={16} />
+            <span className="text-sm font-medium">Back to Home</span>
+          </Link>
           <div className="text-xs font-mono text-muted-foreground/60 mb-4 px-2">SYSTEM NAVIGATION</div>
           <nav className="space-y-1">
             {navItems.map((item) => {
