@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code, Sun, Moon, Terminal, ShieldAlert, Code2, AlertTriangle, BrainCircuit, Coins, ShieldCheck, Play } from "lucide-react";
+import { Shield, Bot, ArrowRight, Search, Brain, ChevronDown, Plus, PenLine, TrendingUp, Layers, Zap, GitBranch, Eye, CheckCircle, Briefcase, Video, Menu, X, Pin, Lock, BarChart3, FlaskConical, DollarSign, Network, FileCode, Target, Cpu, Code, Sun, Moon, Terminal, ShieldAlert, Code2, AlertTriangle, BrainCircuit, Coins, ShieldCheck, Play, AlertOctagon, Repeat, TrendingDown } from "lucide-react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { pageContainer, fadeUp } from "@/lib/animations";
@@ -1152,84 +1152,72 @@ export default function Home() {
       </RevealSection>
 
       <RevealSection>
-        <section className="relative py-24 border-t border-border bg-card">
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-md mb-6" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
-                <AlertTriangle className="w-6 h-6" style={{ color: '#ef4444' }} />
-                <span className="text-base font-bold uppercase tracking-wider" style={{ color: '#ef4444' }}>Failure Taxonomy</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-foreground mb-6 tracking-tight" data-testid="text-taxonomy-headline">
-                DJZS-LF v1 Taxonomy
+        <section className="py-24 border-t border-border bg-background dark:bg-[#050505] overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-foreground mb-4" data-testid="text-taxonomy-headline">
+                The DJZS-LF Taxonomy
               </h2>
-              <p className="text-xl max-w-3xl mx-auto text-muted-foreground">
-                The Oracle maps all detected reasoning flaws to strict failure codes. Agents should parse these flags and trigger automated halt conditions.
+              <p className="text-muted-foreground max-w-2xl text-lg">
+                Our Zero-Trust Oracle doesn't just return a score. It maps logical failures to a strict, parseable diagnostic matrix.
               </p>
             </div>
 
-            <div className="overflow-x-auto rounded-lg border border-border" data-testid="table-taxonomy-landing">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-muted">
-                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Code</th>
-                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Category</th>
-                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Severity</th>
-                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Description</th>
-                    <th className="text-left py-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Auto-Abort?</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-border/50 bg-card">
-                    <td className="py-3 px-4"><code className="text-red-400 font-mono text-xs font-bold">DJZS-S01</code></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground">Structural</td>
-                    <td className="py-3 px-4"><span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase">Critical</span></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Circular logic or agent-echo reinforcement detected.</td>
-                    <td className="py-3 px-4 text-xs font-bold text-red-400">Yes</td>
-                  </tr>
-                  <tr className="border-b border-border/50 bg-card">
-                    <td className="py-3 px-4"><code className="text-red-400 font-mono text-xs font-bold">DJZS-S02</code></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground">Structural</td>
-                    <td className="py-3 px-4"><span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase">Critical</span></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Direct logical contradiction within the payload.</td>
-                    <td className="py-3 px-4 text-xs font-bold text-red-400">Yes</td>
-                  </tr>
-                  <tr className="border-b border-border/50 bg-card">
-                    <td className="py-3 px-4"><code className="font-mono text-xs font-bold" style={{ color: '#F37E20' }}>DJZS-E01</code></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground">Epistemic</td>
-                    <td className="py-3 px-4"><span className="text-[10px] font-bold bg-orange-500/10 px-2 py-0.5 rounded uppercase" style={{ color: '#F37E20' }}>High</span></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Utilization of hallucinated reference markers or fake data.</td>
-                    <td className="py-3 px-4 text-xs font-bold" style={{ color: '#F37E20' }}>Yes</td>
-                  </tr>
-                  <tr className="border-b border-border/50 bg-card">
-                    <td className="py-3 px-4"><code className="font-mono text-xs font-bold" style={{ color: '#F37E20' }}>DJZS-E02</code></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground">Epistemic</td>
-                    <td className="py-3 px-4"><span className="text-[10px] font-bold bg-orange-500/10 px-2 py-0.5 rounded uppercase" style={{ color: '#F37E20' }}>High</span></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Reliance on a demonstrably stale or outdated assumption.</td>
-                    <td className="py-3 px-4 text-xs font-bold" style={{ color: '#F37E20' }}>Yes</td>
-                  </tr>
-                  <tr className="border-b border-border/50 bg-card">
-                    <td className="py-3 px-4"><code className="font-mono text-xs font-bold" style={{ color: '#FFB84D' }}>DJZS-I01</code></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground">Incentive</td>
-                    <td className="py-3 px-4"><span className="text-[10px] font-bold bg-yellow-500/10 px-2 py-0.5 rounded uppercase" style={{ color: '#FFB84D' }}>Medium</span></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Execution driven by FOMO loop or unverified momentum.</td>
-                    <td className="py-3 px-4 text-xs" style={{ color: '#FFB84D' }}>No (Review)</td>
-                  </tr>
-                  <tr className="border-b border-border/50 bg-card">
-                    <td className="py-3 px-4"><code className="font-mono text-xs font-bold" style={{ color: '#FFB84D' }}>DJZS-I02</code></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground">Incentive</td>
-                    <td className="py-3 px-4"><span className="text-[10px] font-bold bg-yellow-500/10 px-2 py-0.5 rounded uppercase" style={{ color: '#FFB84D' }}>Medium</span></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">High narrative dependency (Prioritizing story over structural data).</td>
-                    <td className="py-3 px-4 text-xs" style={{ color: '#FFB84D' }}>No (Review)</td>
-                  </tr>
-                  <tr className="bg-card">
-                    <td className="py-3 px-4"><code className="text-red-400 font-mono text-xs font-bold">DJZS-X01</code></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground">Execution</td>
-                    <td className="py-3 px-4"><span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase">Critical</span></td>
-                    <td className="py-3 px-4 text-xs text-muted-foreground hidden sm:table-cell">Liquidity fragility (Target asset cannot support intended trade size).</td>
-                    <td className="py-3 px-4 text-xs font-bold text-red-400">Yes</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {([
+                {
+                  code: "DJZS-S01",
+                  category: "Structural",
+                  severity: "CRITICAL",
+                  color: "text-red-500 dark:text-red-400",
+                  bg: "bg-red-500/10",
+                  border: "border-red-500/30",
+                  icon: <Repeat size={24} />,
+                  desc: "Circular Logic or Agent-Echo reinforcement. The agent validates its own assumptions without external ground truth."
+                },
+                {
+                  code: "DJZS-E01",
+                  category: "Epistemic",
+                  severity: "HIGH",
+                  color: "text-orange-500 dark:text-orange-400",
+                  bg: "bg-orange-500/10",
+                  border: "border-orange-500/30",
+                  icon: <AlertOctagon size={24} />,
+                  desc: "Hallucinated references, fake data integration, or reliance on mathematically impossible yield metrics."
+                },
+                {
+                  code: "DJZS-I01",
+                  category: "Incentive",
+                  severity: "MEDIUM",
+                  color: "text-yellow-500 dark:text-yellow-400",
+                  bg: "bg-yellow-500/10",
+                  border: "border-yellow-500/30",
+                  icon: <TrendingDown size={24} />,
+                  desc: "FOMO Loop. Execution is driven by social momentum, Twitter sentiment, or fear of missing liquidity."
+                }
+              ]).map((item, i) => (
+                <motion.div
+                  key={item.code}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 }}
+                  className={`p-8 rounded-2xl border bg-card dark:bg-[#0a0a0a] hover:bg-muted dark:hover:bg-[#111] transition-colors ${item.border}`}
+                  data-testid={`card-taxonomy-${item.code.toLowerCase()}`}
+                >
+                  <div className="flex justify-between items-start mb-6">
+                    <div className={`p-3 rounded-lg ${item.bg} ${item.color}`}>
+                      {item.icon}
+                    </div>
+                    <div className={`text-xs font-mono font-bold px-2 py-1 rounded border ${item.color} ${item.bg} ${item.border}`} data-testid={`badge-severity-${item.code.toLowerCase()}`}>
+                      {item.severity}
+                    </div>
+                  </div>
+                  <div className="font-mono text-sm text-muted-foreground mb-2">{item.category} Failure</div>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">{item.code}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
