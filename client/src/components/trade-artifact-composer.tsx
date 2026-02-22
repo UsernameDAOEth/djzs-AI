@@ -773,7 +773,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
               if (journalEntries.length === 0) return null;
               return (
                 <div>
-                  <p className="text-xs text-muted-foreground mb-2">Journal Entries</p>
+                  <p className="text-xs text-muted-foreground mb-2">Audit Records</p>
                   <div className="space-y-1 max-h-40 overflow-y-auto">
                     {journalEntries.map((e) => {
                       const isRelevant = assetLower && matchedIds.has(e.id);
@@ -857,7 +857,7 @@ export function TradeArtifactZone({ walletAddress }: TradeArtifactZoneProps) {
               (!recentDossiers || recentDossiers.length === 0) &&
               relevantClaims.length === 0 && (
                 <p className="text-xs text-muted-foreground/60 text-center py-4">
-                  No journal entries or research dossiers to link yet.
+                  No audit records or research dossiers to link yet.
                 </p>
               )}
           </div>

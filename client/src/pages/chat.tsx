@@ -160,11 +160,11 @@ type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
 
 const V1_ZONES = [
   { id: "journal", name: "Audit Ledger", icon: ScrollText, description: "Forensic logic trail", purpose: "Immutable log of all ProofOfLogic certificates — verdicts, risk scores, and DJZS-LF failure codes.", color: "#F37E20" },
-  { id: "research", name: "Research", icon: Search, description: "Quick research", purpose: "Search and synthesize information related to your thinking.", color: "#2dd4bf" },
+  { id: "research", name: "Research", icon: Search, description: "Quick research", purpose: "Search and synthesize information related to your reasoning.", color: "#2dd4bf" },
   { id: "trade", name: "Trade", icon: Receipt, description: "Trade artifacts", purpose: "Build thesis, stress test, sign & track trade artifacts.", color: "#60a5fa" },
   { id: "decisions", name: "Decisions", icon: Brain, description: "Decision log", purpose: "Track high-stakes decisions, stress test reasoning with AI.", color: "#fbbf24" },
   { id: "content", name: "Content", icon: Palette, description: "Content pipeline", purpose: "Compose, refine, and track content ideas with AI.", color: "#c084fc" },
-  { id: "thinking", name: "Thinking Partner", icon: MessageSquare, description: "Adversarial AI", purpose: "Adversarial reasoning — expose contradictions, attack assumptions.", color: "#f43f5e" },
+  { id: "thinking", name: "Adversarial Oracle", icon: MessageSquare, description: "Adversarial AI", purpose: "Adversarial reasoning — expose contradictions, attack assumptions.", color: "#f43f5e" },
 ];
 
 const ZONE_CONFIGS = [
@@ -1150,7 +1150,7 @@ export default function Chat() {
   const handleLinkClaimToJournalEntry = async (claimId: number, journalEntryId: number) => {
     try {
       await updateClaim(claimId, { linkedJournalEntryId: journalEntryId });
-      toast({ title: "Linked!", description: "Claim connected to your journal entry" });
+      toast({ title: "Linked!", description: "Claim connected to your audit record" });
     } catch (err) {
       toast({ title: "Error", description: "Failed to link", variant: "destructive" });
     }
@@ -1669,7 +1669,7 @@ export default function Chat() {
                     <div className="w-px h-3" style={{ background: 'hsl(var(--border))' }}></div>
                     <div className="flex items-center gap-2">
                       <Bot className="w-3 h-3" style={{ color: 'rgba(243,126,32,0.5)' }} />
-                      <span className="text-[10px] font-medium text-muted-foreground">Thinking Partner</span>
+                      <span className="text-[10px] font-medium text-muted-foreground">Adversarial Oracle</span>
                     </div>
                   </button>
                 </DialogTrigger>
@@ -1684,7 +1684,7 @@ export default function Chat() {
                   </DialogHeader>
                   <div className="space-y-6 py-4">
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Your journal and research data is stored locally on your device using IndexedDB. AI only sees what you explicitly share by clicking "Think with me" or running a research query.
+                      Your audit records and research data are stored locally on your device using IndexedDB. AI only sees what you explicitly share by deploying an audit or running a research query.
                     </p>
                     
                     <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
@@ -1697,7 +1697,7 @@ export default function Chat() {
                     <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
                       <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Privacy-Focused AI</p>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        Your Thinking Partner is powered by Venice AI — privacy-first AI infrastructure with no data retention. Your prompts are never stored or used to train models.
+                        The Adversarial Oracle is powered by Venice AI — privacy-first AI infrastructure with no data retention. Your prompts are never stored or used to train models.
                       </p>
                     </div>
 
@@ -2216,7 +2216,7 @@ export default function Chat() {
                   <div className="mb-6 p-4 sm:p-5 rounded-lg" style={{ background: 'rgba(244,63,94,0.06)', border: '1px solid rgba(244,63,94,0.15)' }}>
                     <div className="flex items-center gap-3 mb-2">
                       <MessageSquare className="w-5 h-5" style={{ color: '#f43f5e' }} />
-                      <h3 className="text-base font-black text-foreground">Thinking Partner</h3>
+                      <h3 className="text-base font-black text-foreground">Adversarial Oracle</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">Adversarial AI for reasoning attack. Paste your thesis, argument, or decision — it will expose contradictions, challenge assumptions, and pressure-test your logic.</p>
                   </div>
@@ -2733,7 +2733,7 @@ export default function Chat() {
                         <div className="flex items-center gap-2 mb-3">
                           <Bot className="w-4 h-4 text-orange-400" />
                           <span className="text-xs font-medium text-orange-400">
-                            Thinking Partner
+                            Adversarial Oracle
                           </span>
                         </div>
                         <div className="space-y-3">
@@ -2749,7 +2749,7 @@ export default function Chat() {
                           <Bot className="w-6 h-6 text-muted-foreground/80" />
                         </div>
                         <p className="text-sm text-muted-foreground font-medium">No thinking yet</p>
-                        <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">Write an entry and click "Think with me"</p>
+                        <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">Write your reasoning and deploy an audit</p>
                       </div>
                     )}
                   </div>

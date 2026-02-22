@@ -89,21 +89,21 @@ export default function Security() {
                   <HardDrive className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-foreground font-bold mb-1">Data Stays on Your Device</h3>
-                    <p className="text-xs">All journal entries, research notes, and memories are stored in your browser's IndexedDB. This data never leaves your device unless you explicitly ask the AI for insights or export it.</p>
+                    <p className="text-xs">All audit records, research notes, and memories are stored in your browser's IndexedDB. This data never leaves your device unless you explicitly deploy an audit or export it.</p>
                   </div>
                 </div>
                 <div className="p-4 rounded-lg bg-muted border border-border flex gap-4">
                   <Smartphone className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-foreground font-bold mb-1">Works Offline</h3>
-                    <p className="text-xs">The core journaling functionality works without an internet connection. Your thinking doesn't depend on our servers being online.</p>
+                    <p className="text-xs">The core Architect Console functionality works without an internet connection. Your reasoning doesn't depend on our servers being online.</p>
                   </div>
                 </div>
                 <div className="p-4 rounded-lg bg-muted border border-border flex gap-4">
                   <Server className="w-5 h-5 text-orange-400 shrink-0" />
                   <div>
                     <h3 className="text-foreground font-bold mb-1">No Server-Side Storage</h3>
-                    <p className="text-xs">We do not permanently store your personal data, journal entries, or research on any server. When you request AI insights, your selected text is sent to Venice AI over HTTPS/TLS (not end-to-end encrypted — Venice sees the plaintext to compute a response). Venice claims no data retention.</p>
+                    <p className="text-xs">We do not permanently store your personal data, audit records, or research on any server. When you deploy an audit, your reasoning trace is sent to Venice AI over HTTPS/TLS (not end-to-end encrypted — Venice sees the plaintext to compute a response). Venice claims no data retention.</p>
                   </div>
                 </div>
               </div>
@@ -211,7 +211,7 @@ export default function Security() {
                     <Cpu className="w-6 h-6 text-orange-400 shrink-0" />
                     <div>
                       <h3 className="text-foreground font-bold mb-2">Channel B: Venice AI Inference (HTTPS/TLS)</h3>
-                      <p className="text-xs mb-3">When you ask the AI to analyze your thinking, the selected context is sent to Venice for inference.</p>
+                      <p className="text-xs mb-3">When you deploy an audit, the reasoning trace is sent to Venice for adversarial analysis.</p>
                       <ul className="space-y-2 text-xs">
                         <li className="flex items-start gap-2">
                           <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
@@ -264,7 +264,7 @@ export default function Security() {
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
-                  <span><strong className="text-foreground">User-initiated only</strong> — Nothing is sent unless you explicitly click "Think with me" or run a research query</span>
+                  <span><strong className="text-foreground">User-initiated only</strong> — Nothing is sent unless you explicitly deploy an audit or run a research query</span>
                 </li>
               </ul>
             </section>

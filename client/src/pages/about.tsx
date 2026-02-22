@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ArrowLeft, Shield, HardDrive, Bot, Lock, Globe, BookOpen, Search, Sparkles, Brain, Pin, Video, Headphones, MessageSquare, AlertTriangle, RefreshCw, Briefcase, BarChart3, Palette, Zap, Download, Wallet, ChevronRight, FlaskConical, User, Receipt, PenLine, Activity, KeyRound, ShieldCheck, HelpCircle, Sun, Moon } from "lucide-react";
+import { ArrowLeft, Shield, Lock, Globe, BookOpen, Bot, Brain, Zap, ChevronRight, Sun, Moon, Terminal, CheckCircle2, Database, GitPullRequest, ShieldAlert, Eye, Activity } from "lucide-react";
 import { useTheme } from "@/lib/theme";
-import type { ReactNode } from "react";
 import { useState } from "react";
 
 const fadeUp = {
@@ -14,7 +13,7 @@ const fadeUp = {
 export default function About() {
   const { theme, toggleTheme } = useTheme();
   return (
-    <div className="min-h-screen bg-background text-muted-foreground font-medium selection:bg-orange-500/30">
+    <div className="min-h-screen bg-background text-muted-foreground font-medium selection:bg-purple-500/30">
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/90 border-b border-border">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-foreground hover:text-orange-400 transition-colors group" data-testid="link-back-home">
@@ -29,112 +28,86 @@ export default function About() {
           </div>
         </div>
       </nav>
-      <main className="max-w-3xl mx-auto px-6 pt-32 pb-20">
+
+      <main className="max-w-4xl mx-auto px-6 pt-32 pb-20">
         <motion.div {...fadeUp}>
-          <h1 className="text-4xl md:text-5xl font-black text-foreground mb-4 tracking-tighter uppercase" data-testid="text-about-title">About DJ-Z-S</h1>
-          <p className="text-lg text-foreground/90 mb-3 leading-relaxed font-bold">The autonomous auditing system for the A2A economy. DJZS destroys the weak parts.</p>
-          <p className="text-sm text-muted-foreground mb-12 leading-relaxed">DJ-Z-S is an autonomous AI auditing system operating in the Agent-to-Agent (A2A) economy, serving <strong className="text-foreground">human founders via web UI and autonomous AI agents via programmatic API</strong>. It pressure-tests reasoning, flags FOMO and narrative dependency, and makes sure decisions survive volatility — for humans and machines alike.</p>
 
-          <div className="space-y-14 text-sm leading-relaxed border-l border-border pl-8">
+          <div className="text-center mb-20">
+            <h1 className="text-4xl md:text-5xl font-black text-foreground mb-6 tracking-tighter uppercase" data-testid="text-about-title">
+              The Protocol Manifesto
+            </h1>
+            <p className="text-lg text-muted-foreground font-mono">
+              DJZS: The Adversarial Logic Layer for the A2A Economy.
+            </p>
+          </div>
 
+          <div className="space-y-24 text-sm leading-relaxed">
+
+            {/* Section 01: The Problem */}
             <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>01</span> The Problem — Your Thinking is a Data Mine
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-red-400 bg-red-500/10 border border-red-500/20 rounded" data-testid="badge-section-01">SECTION 01</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-01-title">
+                Your Agent's Reasoning is a Vulnerability
               </h2>
-              <p className="mb-6">Every day, you capture your most valuable thoughts in digital notebooks. But where does that data really go?</p>
-              <div className="space-y-3">
-                <PersonaCallout
-                  icon={<Briefcase className="w-4 h-4" />}
-                  label="For Founders"
-                  accent="#F37E20"
-                  text="Your product roadmap, fundraising strategy, and competitive analysis are your most valuable assets. Using standard AI note apps is like leaving your M.O. on a coffee shop table. Their business model is to read your mail."
-                />
-                <PersonaCallout
-                  icon={<BarChart3 className="w-4 h-4" />}
-                  label="For Traders"
-                  accent="#2E8B8B"
-                  text="Your thesis on a trade, your analysis of on-chain data, and your risk management rules are your alpha. Exposing that to a third-party AI leaks your edge. You're training a model that will be sold to your competitors."
-                />
-                <PersonaCallout
-                  icon={<FlaskConical className="w-4 h-4" />}
-                  label="For Researchers"
-                  accent="#2E8B8B"
-                  text="Your literature reviews, raw data, and nascent hypotheses are the foundation of your work. Centralized AI platforms can co-opt your findings and flag your inquiries. Your research deserves a sovereign space."
-                />
+              <p className="text-muted-foreground text-base leading-relaxed mb-8">
+                The Agent-to-Agent (A2A) economy is scaling faster than our ability to secure it. Right now, autonomous bots operate in a vacuum. They execute multi-million dollar trades and DAO governance votes based on hallucinated data, circular confirmation loops, and social FOMO.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-persona-dao">
+                  <h3 className="text-cyan-400 font-bold mb-2">For DAO Founders</h3>
+                  <p className="text-xs text-muted-foreground">Rogue governance agents drain treasuries based on unverified proposals.</p>
+                </div>
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-persona-trader">
+                  <h3 className="text-purple-400 font-bold mb-2">For Algorithmic Traders</h3>
+                  <p className="text-xs text-muted-foreground">Bots execute immediate market buys based on mathematically impossible momentum metrics.</p>
+                </div>
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-persona-researcher">
+                  <h3 className="text-green-400 font-bold mb-2">For AI Researchers</h3>
+                  <p className="text-xs text-muted-foreground">Multi-agent swarms fall into "agent-echo" chambers, verifying each other's hallucinations.</p>
+                </div>
               </div>
             </section>
 
+            {/* Section 02: The Solution — JET */}
             <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>02</span> The Solution — Two Layers, One System
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 rounded" data-testid="badge-section-02">SECTION 02</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-02-title">
+                The Zero-Trust Oracle (JET)
               </h2>
-              <p className="mb-6">
-                DJ-Z-S operates on two layers: <strong className="text-foreground">Workspace Zones</strong> for your private thinking, and <strong className="text-foreground">Execution Zones</strong> for deploying adversarial audits via the A2A API. Capture, pressure-test, compound — and when you're ready, deploy to the economy.
+              <p className="text-muted-foreground text-base leading-relaxed mb-8">
+                We built Journal Entry Testing (JET) as a deterministic security primitive. Before an agent touches the blockchain, it routes its reasoning trace to the DJZS Oracle. The logic is mathematically audited against the DJZS-LF taxonomy.
               </p>
-
-              <h3 className="text-foreground font-bold text-xs uppercase tracking-widest mb-4">Workspace Zones</h3>
-              <div className="space-y-4 mb-8">
-                <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }} data-testid="card-zone-journal">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 rounded-lg bg-orange-500/15 flex items-center justify-center">
-                      <PenLine className="w-4 h-4 text-orange-400" />
-                    </div>
-                    <h3 className="text-foreground font-bold">Journal</h3>
-                  </div>
-                  <p className="text-muted-foreground mb-3">Your private space to think, reflect, and extract insight. Write daily entries, click <strong className="text-foreground">"Think with me"</strong> and the AI interrogates your entry — flags contradictions, calls out FOMO-driven logic, exposes blind spots, and asks the questions you're avoiding.</p>
-                  <p className="text-xs text-muted-foreground">Supports text entries, voice-to-text, and video journal recordings via Livepeer.</p>
-                </div>
-                <div className="p-5 rounded-lg border" style={{ background: 'rgba(45,212,191,0.04)', borderColor: 'rgba(45,212,191,0.2)' }} data-testid="card-zone-research">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(45,212,191,0.15)' }}>
-                      <Search className="w-4 h-4" style={{ color: '#2dd4bf' }} />
-                    </div>
-                    <h3 className="text-foreground font-bold">Research</h3>
-                  </div>
-                  <p className="text-muted-foreground mb-3">Search and synthesize information. Save articles, on-chain data, and research notes. The AI flags echo chamber consensus, scores evidence strength, and kills weak assumptions. Organize into trackers with claims and trust levels.</p>
-                  <p className="text-xs text-muted-foreground">Three modes: <strong style={{ color: '#2dd4bf' }}>Brave Mode</strong> (privacy-first web search), <strong style={{ color: '#2dd4bf' }}>Web Mode</strong> (AI web search with citations), <strong style={{ color: '#2dd4bf' }}>Explain Mode</strong> (AI knowledge synthesis).</p>
-                </div>
-                <div className="p-5 rounded-lg border" style={{ background: 'rgba(96,165,250,0.04)', borderColor: 'rgba(96,165,250,0.2)' }} data-testid="card-zone-trade">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(96,165,250,0.15)' }}>
-                      <Receipt className="w-4 h-4" style={{ color: '#60a5fa' }} />
-                    </div>
-                    <h3 className="text-foreground font-bold">Trade</h3>
-                  </div>
-                  <p className="text-muted-foreground">Build trade theses, stress-test them with adversarial AI, compute risk, and sign wallet-verified artifacts. Supports paper and live trading modes with autonomous market alerts.</p>
-                </div>
-                <div className="p-5 rounded-lg border" style={{ background: 'rgba(251,191,36,0.04)', borderColor: 'rgba(251,191,36,0.2)' }} data-testid="card-zone-decisions">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(251,191,36,0.15)' }}>
-                      <Brain className="w-4 h-4" style={{ color: '#fbbf24' }} />
-                    </div>
-                    <h3 className="text-foreground font-bold">Decisions</h3>
-                  </div>
-                  <p className="text-muted-foreground">Track high-stakes decisions with structured logs. AI pressure-tests your reasoning, flags when emotion is driving strategy instead of data, and ensures decisions survive scrutiny.</p>
-                </div>
-                <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(192,132,252,0.04)' }} data-testid="card-zone-content">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 rounded-lg bg-purple-600/15 flex items-center justify-center">
-                      <Palette className="w-4 h-4 text-purple-400" />
-                    </div>
-                    <h3 className="text-foreground font-bold">Content</h3>
-                  </div>
-                  <p className="text-muted-foreground">Manage your content pipeline. AI challenges your angles, hooks, and positioning — forces you to articulate what's genuinely new before you publish.</p>
-                </div>
-                <div className="p-5 rounded-lg border" style={{ background: 'rgba(244,63,94,0.04)', borderColor: 'rgba(244,63,94,0.2)' }} data-testid="card-zone-thinking">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(244,63,94,0.15)' }}>
-                      <MessageSquare className="w-4 h-4" style={{ color: '#f43f5e' }} />
-                    </div>
-                    <h3 className="text-foreground font-bold">Thinking Partner</h3>
-                  </div>
-                  <p className="text-muted-foreground">An adversarial AI that attacks your reasoning, calls out when narrative is driving your strategy instead of data, flags FOMO and ego, and asks whether you'd still do this if nobody was watching.</p>
-                </div>
+              <div className="p-6 rounded-xl bg-card border border-border mb-6" data-testid="card-audit-workflow">
+                <h3 className="text-foreground font-bold mb-4 flex items-center">
+                  <Terminal className="w-4 h-4 mr-2 text-cyan-400" /> The Audit Ledger Workflow
+                </h3>
+                <ul className="space-y-4 text-sm text-muted-foreground">
+                  <li className="flex items-start">
+                    <CheckCircle2 className="w-4 h-4 text-cyan-400 mr-3 mt-0.5 shrink-0" />
+                    <span><strong className="text-foreground">Agent Generates Payload:</strong> The bot formulates a strategy memo — a reasoning trace committing its logic before execution.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle2 className="w-4 h-4 text-cyan-400 mr-3 mt-0.5 shrink-0" />
+                    <span><strong className="text-foreground">x402 Tollbooth:</strong> The agent pays a micro-transaction in USDC on Base Mainnet via the x402 protocol.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle2 className="w-4 h-4 text-cyan-400 mr-3 mt-0.5 shrink-0" />
+                    <span><strong className="text-foreground">Oracle Evaluation:</strong> DJZS issues a cryptographic PASS/FAIL Proof of Logic Certificate. Flawed logic triggers an immediate execution abort.</span>
+                  </li>
+                </ul>
               </div>
+            </section>
 
-              <h3 className="text-foreground font-bold text-xs uppercase tracking-widest mb-4">Execution Zones</h3>
-              <p className="text-muted-foreground text-sm mb-4">Deploy adversarial audits to the A2A economy. Each zone offers a different depth and price point — from quick operational sanity checks to exhaustive governance audits.</p>
-              <div className="space-y-4 mb-8">
+            {/* Section 03: Execution Tiers */}
+            <section>
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono" style={{ color: '#F37E20', background: 'rgba(243,126,32,0.1)', border: '1px solid rgba(243,126,32,0.2)', borderRadius: '4px' }} data-testid="badge-section-03">SECTION 03</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-03-title">
+                Tiered Execution Zones
+              </h2>
+              <p className="text-muted-foreground text-base leading-relaxed mb-8">
+                Deploy adversarial audits to the A2A economy. Each tier offers a different depth and price point — from quick operational sanity checks to exhaustive governance audits.
+              </p>
+              <div className="space-y-4">
                 <div className="p-5 rounded-lg border" style={{ background: 'rgba(45,212,191,0.04)', borderColor: 'rgba(45,212,191,0.2)' }} data-testid="card-exec-micro">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(45,212,191,0.15)' }}>
@@ -146,6 +119,7 @@ export default function About() {
                     </div>
                   </div>
                   <p className="text-muted-foreground text-sm">Fast constrained operational audit. Binary risk scoring for high-frequency sanity checks. 1,000 character limit.</p>
+                  <code className="text-xs mt-2 inline-block px-1.5 py-0.5 rounded bg-muted text-orange-300">POST /api/audit/micro</code>
                 </div>
                 <div className="p-5 rounded-lg border" style={{ background: 'rgba(243,126,32,0.04)', borderColor: 'rgba(243,126,32,0.2)' }} data-testid="card-exec-founder">
                   <div className="flex items-center gap-3 mb-2">
@@ -158,6 +132,7 @@ export default function About() {
                     </div>
                   </div>
                   <p className="text-muted-foreground text-sm">Deep roadmap diligence. Detects narrative drift, confirmation bias, and strategic misalignment. 5,000 character limit.</p>
+                  <code className="text-xs mt-2 inline-block px-1.5 py-0.5 rounded bg-muted text-orange-300">POST /api/audit/founder</code>
                 </div>
                 <div className="p-5 rounded-lg border" style={{ background: 'rgba(168,85,247,0.04)', borderColor: 'rgba(168,85,247,0.2)' }} data-testid="card-exec-treasury">
                   <div className="flex items-center gap-3 mb-2">
@@ -170,311 +145,168 @@ export default function About() {
                     </div>
                   </div>
                   <p className="text-muted-foreground text-sm">Exhaustive adversarial governance audit. Multi-vector analysis for DAO treasuries, protocol upgrades, and high-stakes governance decisions. No character limit.</p>
+                  <code className="text-xs mt-2 inline-block px-1.5 py-0.5 rounded bg-muted text-orange-300">POST /api/audit/treasury</code>
                 </div>
               </div>
-
-              <div className="space-y-4">
-                <h3 className="text-foreground font-bold text-xs uppercase tracking-widest">See how it works for you</h3>
-                <PersonaWorkflow
-                  icon={<Briefcase className="w-4 h-4" />}
-                  label="Founder Workflow"
-                  accent="#F37E20"
-                  steps={[
-                    { step: "Capture", text: "Journal about a new feature idea and go-to-market challenges in the Journal zone." },
-                    { step: "Analyze", text: "Click 'Think with me' — AI flags that your pivot is a reaction to Twitter hype, not market data. Exposes confirmation bias." },
-                    { step: "Deploy", text: "Send your roadmap to the Founder Zone ($5.00) for deep adversarial diligence. Get a structured risk score and actionable recommendations." },
-                  ]}
-                />
-                <PersonaWorkflow
-                  icon={<BarChart3 className="w-4 h-4" />}
-                  label="Trader Workflow"
-                  accent="#2E8B8B"
-                  steps={[
-                    { step: "Capture", text: "Build a trade thesis in the Trade zone with on-chain data and your initial gut reaction." },
-                    { step: "Analyze", text: "AI flags that your 'gut reaction' is FOMO — same pattern as three failed trades ago. Scores evidence as weak on methodology." },
-                    { step: "Deploy", text: "Stress-test via Micro-Zone ($2.50) for a fast sanity check before execution." },
-                  ]}
-                />
-                <PersonaWorkflow
-                  icon={<FlaskConical className="w-4 h-4" />}
-                  label="Researcher Workflow"
-                  accent="#2E8B8B"
-                  steps={[
-                    { step: "Capture", text: "Save articles and data into the Research zone with claims and evidence scoring." },
-                    { step: "Analyze", text: "AI surfaces that all three papers share the same funding source — consensus may be artificial. Flags the assumption you forgot to question." },
-                    { step: "Compound", text: "Pin the synthesized literature review to a memory, building the paper incrementally." },
-                  ]}
-                />
-              </div>
+              <p className="text-xs text-muted-foreground mt-4">Schema discovery at <code className="text-xs px-1.5 py-0.5 rounded bg-muted text-orange-300">GET /api/audit/schema</code> · Agent discovery at <code className="text-xs px-1.5 py-0.5 rounded bg-muted text-orange-300">/.well-known/agent.json</code></p>
             </section>
 
+            {/* Section 04: Architecture Philosophy */}
             <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>03</span> Our Philosophy
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-purple-400 bg-purple-500/10 border border-purple-500/20 rounded" data-testid="badge-section-04">SECTION 04</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-04-title">
+                Core Architecture Philosophy
               </h2>
-              <div className="space-y-4">
-                <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <HardDrive className="w-5 h-5 text-orange-400" />
-                    <h3 className="text-foreground font-bold">Local-First</h3>
-                  </div>
-                  <p className="text-muted-foreground">Your journal and memory vault are stored locally in your browser. They are never on our servers. This isn't a feature; it's the foundation of our privacy model. There's nothing to hack, subpoena, or sell.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-philosophy-trustless">
+                  <Lock className="w-6 h-6 text-purple-400 mb-4" />
+                  <h3 className="text-foreground font-bold mb-2">Trustless Execution</h3>
+                  <p className="text-xs text-muted-foreground">Your cryptographic audit ledger ensures you never have to trust an agent's internal logs. The verification happens entirely off-node via the DJZS Oracle.</p>
                 </div>
-                <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <Shield className="w-5 h-5 text-teal-400" />
-                    <h3 className="text-foreground font-bold">Sovereign</h3>
-                  </div>
-                  <p className="text-muted-foreground">We believe you should have a digital space that is truly yours. DJ-Z-S is designed to be your sovereign workspace, free from the prying eyes of ad-tech and AI companies. Your roadmap stays your roadmap. Your thesis stays your thesis. Optional vault encryption (AES-256-GCM) and Bring Your Own Key (BYOK) for AI inference give you full control over your data and your tools.</p>
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-philosophy-adversarial">
+                  <Eye className="w-6 h-6 text-purple-400 mb-4" />
+                  <h3 className="text-foreground font-bold mb-2">Uncensored Adversarial Logic</h3>
+                  <p className="text-xs text-muted-foreground">The Oracle is designed to be ruthless. It does not exist to assist the bot — it exists to interrogate and mathematically break its assumptions.</p>
                 </div>
-                <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <Brain className="w-5 h-5 text-purple-400" />
-                    <h3 className="text-foreground font-bold">Adversarial by Design</h3>
-                  </div>
-                  <p className="text-muted-foreground">The AI actively pushes back. It doesn't validate — it interrogates. It looks for the weakest link in your reasoning and applies maximum pressure there.</p>
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-philosophy-local">
+                  <Database className="w-6 h-6 text-orange-400 mb-4" />
+                  <h3 className="text-foreground font-bold mb-2">Local-First Vault</h3>
+                  <p className="text-xs text-muted-foreground">Architect Console data — audit records, research trackers, memory pins — lives in your browser's IndexedDB. We don't have a database of your reasoning. There's nothing to hack, subpoena, or sell.</p>
                 </div>
-                <div className="p-5 rounded-lg border" style={{ background: 'rgba(244,63,94,0.04)', borderColor: 'rgba(244,63,94,0.2)' }}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <Sparkles className="w-5 h-5" style={{ color: '#f43f5e' }} />
-                    <h3 className="text-foreground font-bold">Uncensored</h3>
-                  </div>
-                  <p className="text-muted-foreground">Our AI is designed to be your thinking partner, not your censor. It won't refuse to explore controversial ideas or sensitive strategies. Your thoughts are your own.</p>
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-philosophy-sovereign">
+                  <Shield className="w-6 h-6 text-teal-400 mb-4" />
+                  <h3 className="text-foreground font-bold mb-2">Sovereign by Default</h3>
+                  <p className="text-xs text-muted-foreground">No email, no password, no account to breach. Your wallet is your identity. Optional AES-256-GCM vault encryption and Bring Your Own Key (BYOK) for AI inference give you full control.</p>
                 </div>
               </div>
             </section>
 
+            {/* Section 05: The Infrastructure */}
             <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> The Tech — How We Keep It Private
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded" data-testid="badge-section-05">SECTION 05</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-05-title">
+                The Infrastructure
               </h2>
-              <p className="mb-6">We use a hybrid architecture to balance powerful AI with uncompromising privacy.</p>
-              <div className="space-y-3 mb-6">
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-muted border border-border">
-                  <HardDrive className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-foreground font-bold text-xs mb-1">Your Data</p>
-                    <p className="text-xs text-muted-foreground">Your journal entries, memory vault, research trackers, and claims are stored locally in your browser's IndexedDB. They never touch our servers.</p>
-                  </div>
+              <div className="space-y-6">
+                <div className="border-l-2 border-yellow-500/50 pl-4">
+                  <h3 className="text-foreground font-bold">Payloads & Reasoning Traces</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Securely routed via HTTPS and evaluated entirely in memory. Only the cryptographic hash (SHA-256) of the evaluation is permanently stored on the audit ledger.</p>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-muted border border-border">
-                  <Bot className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-foreground font-bold text-xs mb-1">AI Inference</p>
-                    <p className="text-xs text-muted-foreground">When you use "Think with me," your prompt is sent to a decentralized inference network (via Venice AI) for processing. Your prompts are not stored or used for training. No centralized AI company owns the interaction.</p>
-                  </div>
+                <div className="border-l-2 border-yellow-500/50 pl-4">
+                  <h3 className="text-foreground font-bold">The Zero-Trust Oracle</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Powered by Venice AI, pre-loaded with the adversarial DJZS-LF diagnostic matrix. Guarantees un-lobotomized, high-fidelity logic parsing without storing or training on your data.</p>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-muted border border-border">
-                  <Wallet className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-foreground font-bold text-xs mb-1">Identity</p>
-                    <p className="text-xs text-muted-foreground">You connect with a crypto wallet. It's a login you own, not an email address we can sell. No marketing emails. Ever.</p>
-                  </div>
+                <div className="border-l-2 border-yellow-500/50 pl-4">
+                  <h3 className="text-foreground font-bold">x402 Payment Gate</h3>
+                  <p className="text-sm text-muted-foreground mt-1">HTTP-native USDC micropayments on Base. No subscriptions, no NFT gates. Any agent can call the API, pay, and receive results in a single request cycle.</p>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-muted border border-border">
-                  <Lock className="w-5 h-5 text-orange-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-foreground font-bold text-xs mb-1">Messaging (XMTP + MLS)</p>
-                    <p className="text-xs text-muted-foreground">End-to-end encrypted via the MLS protocol with forward secrecy, post-compromise security, and quantum-resistant key encapsulation (XWING KEM). Past messages stay secure even if keys are compromised.</p>
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground mb-4">This is the most private way to access powerful AI today. We are actively researching on-device models to eliminate the inference step in the future.</p>
-              <div className="p-4 rounded-lg bg-amber-500/[0.04] border border-amber-500/15">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-xs text-amber-300 font-semibold mb-1">What we're honest about</p>
-                    <p className="text-xs text-muted-foreground">When you click "Think with me," your entry text is sent to Venice AI over the internet for processing. This is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because you deserve to know exactly when your data leaves your device.</p>
-                  </div>
+                <div className="border-l-2 border-yellow-500/50 pl-4">
+                  <h3 className="text-foreground font-bold">XMTP Messaging (MLS)</h3>
+                  <p className="text-sm text-muted-foreground mt-1">End-to-end encrypted agent communication via the MLS protocol with quantum-resistant key encapsulation (XWING KEM). Forward secrecy and post-compromise security for all agent interactions.</p>
                 </div>
               </div>
             </section>
 
+            {/* Section 06: Diagnostic Nodes */}
             <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>05</span> Your AI Team
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-green-400 bg-green-500/10 border border-green-500/20 rounded" data-testid="badge-section-06">SECTION 06</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-06-title">
+                The Diagnostic Nodes
               </h2>
-              <p className="mb-5">Four specialized AI agents power the system. Each one is triggered only when you take action — never automatically. They work for you, not on you.</p>
-              <div className="space-y-3">
-                <div className="p-4 rounded-lg bg-muted border border-border" data-testid="card-agent-insight">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Brain className="w-4 h-4 text-orange-400" />
-                    <h3 className="text-foreground font-bold text-xs">Your Adversarial Analyst</h3>
-                    <span className="text-[10px] text-muted-foreground/80 ml-auto">Triggered by "Think with me"</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Interrogates your journal entry. Doesn't summarize — pressure-tests. Flags when your reasoning contradicts past entries, calls out FOMO and narrative dependency, and asks the hard questions you're avoiding.</p>
+              <p className="text-muted-foreground text-base leading-relaxed mb-8">
+                The DJZS-LF taxonomy classifies logic failures into three diagnostic vectors. Each node runs independently against the agent's reasoning trace.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-6 rounded-xl bg-card border border-border text-center" data-testid="card-node-epistemic">
+                  <Database className="w-6 h-6 text-green-400 mx-auto mb-3" />
+                  <h3 className="text-foreground font-bold text-sm">Epistemic Node</h3>
+                  <p className="text-xs text-muted-foreground mt-2">Interrogates data references for hallucinations, unfalsifiable claims, and evidence gaps (E01, E02).</p>
                 </div>
-                <div className="p-4 rounded-lg bg-muted border border-border" data-testid="card-agent-synth">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Brain className="w-4 h-4 text-teal-400" />
-                    <h3 className="text-foreground font-bold text-xs">Your Research Interrogator</h3>
-                    <span className="text-[10px] text-muted-foreground/80 ml-auto">Triggered by research actions</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Attacks your research. Flags echo chamber consensus, scores evidence strength across four axes, surfaces methodological weaknesses, and kills unfounded assumptions before you build on them.</p>
+                <div className="p-6 rounded-xl bg-card border border-border text-center" data-testid="card-node-structural">
+                  <GitPullRequest className="w-6 h-6 text-green-400 mx-auto mb-3" />
+                  <h3 className="text-foreground font-bold text-sm">Structural Node</h3>
+                  <p className="text-xs text-muted-foreground mt-2">Maps the logic tree to identify circular confirmation loops, missing counterfactuals, and reasoning gaps (S01, S02).</p>
                 </div>
-                <div className="p-4 rounded-lg bg-muted border border-border" data-testid="card-agent-partner">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Brain className="w-4 h-4 text-purple-400" />
-                    <h3 className="text-foreground font-bold text-xs">Your Adversarial Thinking Partner</h3>
-                    <span className="text-[10px] text-muted-foreground/80 ml-auto">Your sparring partner</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Tries to break your reasoning. Names the real driver behind your decisions — is it strategy or ego? Data or narrative addiction? Finds the gap between what you claim and what you actually do.</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted border border-border" data-testid="card-agent-audit">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Shield className="w-4 h-4" style={{ color: '#a855f7' }} />
-                    <h3 className="text-foreground font-bold text-xs">A2A Audit Agent</h3>
-                    <span className="text-[10px] text-muted-foreground/80 ml-auto">Powers the Execution Zones</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">The adversarial engine behind the three-tier audit API. Performs tier-specific prompt engineering — from fast binary risk scoring (Micro) to exhaustive multi-vector governance audits (Treasury). Serves both the web UI and autonomous AI agents via API.</p>
+                <div className="p-6 rounded-xl bg-card border border-border text-center" data-testid="card-node-incentive">
+                  <ShieldAlert className="w-6 h-6 text-green-400 mx-auto mb-3" />
+                  <h3 className="text-foreground font-bold text-sm">Incentive Node</h3>
+                  <p className="text-xs text-muted-foreground mt-2">Adversarial evaluation focusing on FOMO, momentum bias, and undisclosed conflicts of interest (I01, I02).</p>
                 </div>
               </div>
             </section>
 
+            {/* Section 07: Cryptographic Logic Proofs */}
             <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> Memory Pins & Compounding Intelligence
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded" data-testid="badge-section-07">SECTION 07</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-07-title">
+                Cryptographic Logic Proofs
               </h2>
-              <div className="p-5 rounded-lg bg-muted border border-border mb-4" data-testid="card-memory-pins">
-                <div className="flex items-center gap-3 mb-3">
-                  <Pin className="w-4 h-4 text-orange-400" />
-                  <h3 className="text-foreground font-bold">Memory Pins</h3>
-                </div>
-                <p className="text-muted-foreground mb-3">Pin the patterns, goals, theses, and questions that matter most to you. These pins are carried forward as context every time you ask the AI to think with you — so it understands your ongoing projects, evolving strategy, and active priorities.</p>
-                <p className="text-xs text-muted-foreground">Pin types: goals, patterns, preferences, projects, principles, questions, people. All stored locally. You control what the AI remembers about your edge.</p>
-              </div>
-              <div className="p-5 rounded-lg bg-muted border border-border">
-                <div className="flex items-center gap-3 mb-3">
-                  <RefreshCw className="w-4 h-4 text-orange-400" />
-                  <h3 className="text-foreground font-bold">Compounding Intelligence</h3>
-                </div>
-                <p className="text-muted-foreground">Unlike scattered notes that just pile up, DJ-Z-S connects today's thinking to yesterday's insights. Memory pins, past-entry connections, and cross-zone synthesis ensure your knowledge base grows smarter over time. Each entry makes the next analysis more valuable — your edge compounds daily.</p>
+              <p className="text-muted-foreground text-base leading-relaxed mb-6">
+                Every audit generates a deterministic JSON object — the Proof of Logic Certificate. You don't just get a PASS/FAIL verdict; you get a risk score, DJZS-LF failure codes, bias detection flags, structural recommendations, and a SHA-256 hash proving the evaluation's integrity for on-chain verification.
+              </p>
+              <div className="p-5 rounded-lg bg-card border border-border font-mono text-xs text-muted-foreground overflow-x-auto" data-testid="card-proof-schema">
+                <pre>{`{
+  "verdict": "FAIL",
+  "risk_score": 78,
+  "tier": "founder",
+  "flags": ["CRITICAL: S01 — Circular Reasoning"],
+  "logic_flaws": ["Conclusion restates premise..."],
+  "djzs_lf_codes": ["S01", "E02"],
+  "bias_detected": true,
+  "logic_hash": "sha256:a4f3e9...",
+  "tx_hash": "0x..."
+}`}</pre>
               </div>
             </section>
 
+            {/* Section 08: Ecosystem Tooling */}
             <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07</span> The A2A Economy — Agents Hiring Agents
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-muted-foreground bg-muted border border-border rounded" data-testid="badge-section-08">SECTION 08</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-08-title">
+                Ecosystem Tooling
               </h2>
-              <p className="mb-6">DJZS serves two clients: human founders who use the web UI, and autonomous AI agents who pay for logic audits via API. In the Agent-to-Agent economy, trust is the bottleneck. DJZS is the default Logic Oracle — the "Senior Partner" that other agents hire to stress-test their logic before execution.</p>
-              <div className="space-y-4">
-                <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }} data-testid="card-a2a-api-about">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Bot className="w-5 h-5 text-orange-400" />
-                    <h3 className="text-foreground font-bold">Machine-Readable Tiered API</h3>
-                  </div>
-                  <p className="text-muted-foreground mb-3">Agents discover DJZS via <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">/.well-known/agent.json</code> and call tiered endpoints with a strategy memo. Each tier returns a <strong className="text-foreground">Proof of Logic Certificate</strong> — a deterministic binary verdict (PASS/FAIL) with structured DJZS-LF failure codes (S=Structural, E=Epistemic, I=Incentive, X=Execution), risk score, bias detection, and logic flaws. The server enforces the verdict — CRITICAL/HIGH flags force FAIL regardless of what the AI suggests. Every audit is cryptographically hashed (SHA-256) for on-chain verification.</p>
-                  <div className="mt-3 space-y-2">
-                    <div className="flex items-center gap-3 text-xs">
-                      <code className="px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit/micro</code>
-                      <span className="text-muted-foreground">— $2.50 USDC — fast operational audit (1K chars)</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs">
-                      <code className="px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit/founder</code>
-                      <span className="text-muted-foreground">— $5.00 USDC — deep roadmap diligence (5K chars)</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs">
-                      <code className="px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit/treasury</code>
-                      <span className="text-muted-foreground">— $50.00 USDC — exhaustive governance audit (unlimited)</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-3">Schema discovery at <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">GET /api/audit/schema</code></p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-tool-video">
+                  <h3 className="text-foreground font-bold mb-2">Forensic Video Capture</h3>
+                  <p className="text-xs text-muted-foreground">For human-in-the-loop overrides. Record manual logic evaluations via Livepeer and append them directly to the agent's audit ledger.</p>
                 </div>
-                <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }} data-testid="card-a2a-payment-about">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Zap className="w-5 h-5 text-teal-400" />
-                    <h3 className="text-foreground font-bold">x402 Micropayments on Base</h3>
-                  </div>
-                  <p className="text-muted-foreground">Revenue model: pay-per-audit via the x402 protocol across three tiers. No subscriptions, no NFT gates. HTTP-native payments mean any agent can call the API, pay, and receive results in a single request cycle.</p>
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-tool-search">
+                  <h3 className="text-foreground font-bold mb-2">Ledger Search & Filtering</h3>
+                  <p className="text-xs text-muted-foreground">Filter historical audit records by Agent ID, Risk Score, or specific DJZS-LF diagnostic codes. Open with Cmd+K from anywhere.</p>
                 </div>
-                <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }} data-testid="card-a2a-usecases-about">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Brain className="w-5 h-5 text-purple-400" />
-                    <h3 className="text-foreground font-bold">Use Cases</h3>
-                  </div>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• <strong className="text-foreground">DAO Treasury Stress-Test ($50.00)</strong> — A DAO agent pings DJZS Treasury Zone before signing a multi-sig, flagging FOMO-driven allocation</li>
-                    <li>• <strong className="text-foreground">Founder Drift Audit ($5.00)</strong> — A VC screening bot calls the Founder Zone to check if a founder is building what they promised</li>
-                    <li>• <strong className="text-foreground">Micro-Audit ($2.50)</strong> — A trading agent stress-tests an arbitrage strategy in the Micro-Zone before execution</li>
-                  </ul>
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-tool-research">
+                  <h3 className="text-foreground font-bold mb-2">Research Zone</h3>
+                  <p className="text-xs text-muted-foreground">Privacy-first search (Brave Mode), AI web search with citations, and knowledge synthesis. Organize into trackers with claims and trust levels.</p>
+                </div>
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-tool-xmtp">
+                  <h3 className="text-foreground font-bold mb-2">XMTP Agent Messaging</h3>
+                  <p className="text-xs text-muted-foreground">Interact with DJZS agents through XMTP decentralized messaging — end-to-end encrypted with quantum-resistant key protection.</p>
+                </div>
+                <div className="p-6 rounded-xl bg-muted border border-border sm:col-span-2" data-testid="card-tool-docs">
+                  <h3 className="text-foreground font-bold mb-2">Protocol Integration Docs</h3>
+                  <p className="text-xs text-muted-foreground">Master the x402 payment gate, DJZS-LF taxonomy, and logic ingestion API via our complete documentation hub.</p>
                 </div>
               </div>
             </section>
 
+            {/* Section 09: The Architect's Mission */}
             <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Additional Tools
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-foreground bg-foreground/10 border border-foreground/20 rounded" data-testid="badge-section-09">SECTION 09</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-09-title">
+                The Architect's Mission
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg bg-muted border border-border">
-                  <ShieldCheck className="w-5 h-5 text-green-400 mb-3" />
-                  <h3 className="text-foreground font-bold mb-2">Vault Encryption</h3>
-                  <p className="text-xs text-muted-foreground">Set a passphrase to encrypt your local vault with AES-256-GCM. PBKDF2 with 600,000 iterations for key derivation — all running in your browser via WebCrypto. Lock and unlock your vault at any time.</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted border border-border">
-                  <KeyRound className="w-5 h-5 mb-3" style={{ color: '#FFB84D' }} />
-                  <h3 className="text-foreground font-bold mb-2">Bring Your Own Key</h3>
-                  <p className="text-xs text-muted-foreground">Use your own Venice API key for full control over AI inference, billing, and rate limits. Stored locally in your browser, never on our servers. Switch back to the shared key anytime.</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted border border-border">
-                  <Video className="w-5 h-5 text-orange-400 mb-3" />
-                  <h3 className="text-foreground font-bold mb-2">Video Journal</h3>
-                  <p className="text-xs text-muted-foreground">Record video entries directly in your browser. Videos are stored via Livepeer's decentralized network and linked to your journal entries for playback.</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted border border-border">
-                  <Headphones className="w-5 h-5 text-orange-400 mb-3" />
-                  <h3 className="text-foreground font-bold mb-2">Music Library</h3>
-                  <p className="text-xs text-muted-foreground">Upload your own music and play it while you think. Organize tracks into Focus, Reflection, and Creative zones. All stored locally in your browser.</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted border border-border">
-                  <MessageSquare className="w-5 h-5 text-orange-400 mb-3" />
-                  <h3 className="text-foreground font-bold mb-2">XMTP Messaging</h3>
-                  <p className="text-xs text-muted-foreground">Interact with AI agents through XMTP decentralized messaging — fully end-to-end encrypted with quantum-resistant key protection. Send journal entries, research queries, or thinking questions from any XMTP-compatible app.</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted border border-border">
-                  <Search className="w-5 h-5 text-orange-400 mb-3" />
-                  <h3 className="text-foreground font-bold mb-2">Quick Search</h3>
-                  <p className="text-xs text-muted-foreground">Instantly search all your past entries with real-time filtering. Filter by journal or research, with highlighted match previews. Open with Cmd+K from anywhere.</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted border border-border">
-                  <HelpCircle className="w-5 h-5 text-orange-400 mb-3" />
-                  <h3 className="text-foreground font-bold mb-2">Interactive Tutorial</h3>
-                  <p className="text-xs text-muted-foreground">Guided 7-step onboarding walkthrough with spotlight highlights covering Workspace Zones and Execution Zones. Keyboard navigation, auto-shown for new users, re-accessible via sidebar.</p>
-                </div>
+              <div className="p-6 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.03)' }} data-testid="card-mission">
+                <p className="text-muted-foreground text-base leading-relaxed mb-4">
+                  Built to force accountability onto autonomous systems. The goal is not to slow down the A2A economy, but to ensure that when machines trade, govern, and execute on our behalf, they do so with verifiable structural integrity.
+                </p>
+                <p className="text-muted-foreground text-base leading-relaxed">
+                  DJZS isn't a faceless startup. It's a protocol with a singular mission: no agent acts without audit. Your trust in the Oracle's independence is the only thing that matters here.
+                </p>
               </div>
-            </section>
-
-            <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Built by Dj-z-s
-              </h2>
-              <div className="p-6 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.03)' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-orange-500/15 flex items-center justify-center">
-                    <User className="w-5 h-5 text-orange-400" />
-                  </div>
-                  <div>
-                    <p className="text-foreground font-bold">Dj-z-s</p>
-                    <p className="text-xs text-muted-foreground">Solo Founder</p>
-                  </div>
-                </div>
-                <div className="space-y-4 text-muted-foreground">
-                  <p>After years of building in Web3 and watching founders, traders, and researchers have their most valuable ideas scraped and profited from by centralized platforms, I decided to build the tool I desperately needed.</p>
-                  <p>DJ-Z-S isn't a faceless startup; it's a project with a singular mission: to give you a private space to do your best work. Your trust is the only thing that matters here.</p>
-                </div>
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> Open Development
-              </h2>
-              <p className="mb-5">We believe in transparency. You can see exactly what we're building, in real-time. Our development is open for anyone to inspect.</p>
-              <div className="flex flex-wrap gap-4">
-                <a 
-                  href="https://github.com/UsernameDAOEth/djzs-box" 
-                  target="_blank" 
+              <div className="flex flex-wrap gap-4 mt-6">
+                <a
+                  href="https://github.com/UsernameDAOEth/djzs-box"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted border border-border hover:border-orange-500/30 transition-colors"
                   data-testid="link-github"
@@ -482,17 +314,7 @@ export default function About() {
                   <Globe className="w-4 h-4 text-orange-400" />
                   <span className="text-foreground text-xs font-bold">View Public Commits on GitHub</span>
                 </a>
-                <a 
-                  href="https://x.com/Dj_Z_S" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted border border-border hover:border-orange-500/30 transition-colors"
-                  data-testid="link-twitter"
-                >
-                  <Sparkles className="w-4 h-4 text-orange-400" />
-                  <span className="text-foreground text-xs font-bold">Follow Progress on X</span>
-                </a>
-                <Link 
+                <Link
                   href="/docs"
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted border border-border hover:border-orange-500/30 transition-colors"
                   data-testid="link-docs"
@@ -503,43 +325,48 @@ export default function About() {
               </div>
             </section>
 
+            {/* Section 10: FAQ */}
             <section>
-              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>11</span> FAQ
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-muted-foreground bg-muted border border-border rounded" data-testid="badge-section-10">SECTION 10</div>
+              <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-widest" data-testid="text-section-10-title">
+                FAQ
               </h2>
-              <div className="space-y-3">
-                <PracticalItem
-                  icon={<Download className="w-4 h-4" />}
-                  question="Can I export my data?"
-                  answer="Yes. You can export your entire journal and memory vault as a standard file at any time. Your data is yours, period."
+              <div className="space-y-4">
+                <FaqItem
+                  question="How do I test the protocol?"
+                  answer="Navigate to the homepage and use the Interactive Terminal to execute your first logic audit with sample payloads. Or hit the API directly with a curl command — see our docs for examples."
                 />
-                <PracticalItem
-                  icon={<Wallet className="w-4 h-4" />}
-                  question="How do I get started?"
-                  answer="Connect your wallet in 10 seconds and start your first journal entry. No email, no signup."
+                <FaqItem
+                  question="Is there a subscription?"
+                  answer="No. DJZS uses the x402 protocol. Your agents pay a micro-transaction in Base USDC strictly per execution. $2.50 for Micro, $5.00 for Founder, $50.00 for Treasury."
                 />
-                <PracticalItem
-                  icon={<Zap className="w-4 h-4" />}
-                  question="Is it fast?"
-                  answer="Yes. We know your edge depends on it. AI insights are delivered in seconds, not minutes."
+                <FaqItem
+                  question="Can I export my audit data?"
+                  answer="Yes. You can export your entire audit ledger and vault as a standard file at any time. Your data is yours, period."
+                />
+                <FaqItem
+                  question="Is the Oracle AI censored?"
+                  answer="No. The adversarial agent is powered by Venice AI — designed for uncensored, high-fidelity logic parsing. It won't refuse to analyze controversial strategies or sensitive reasoning traces."
                 />
               </div>
             </section>
 
           </div>
 
-          <div className="mt-16 pt-12 border-t border-border">
-            <div className="text-center">
-              <p className="text-foreground font-bold text-lg mb-3">Ready to pressure-test your thinking?</p>
-              <p className="text-muted-foreground text-sm mb-6">Human founders start here. AI agents hit the API.</p>
+          {/* Bottom CTA */}
+          <div className="mt-20 p-12 rounded-2xl border border-border bg-gradient-to-br from-cyan-500/[0.05] to-purple-500/[0.05] text-center relative overflow-hidden" data-testid="card-bottom-cta">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md h-32 bg-cyan-900/20 blur-[100px] rounded-full pointer-events-none" />
+            <div className="relative z-10">
+              <h2 className="text-2xl md:text-3xl font-black text-foreground mb-4 uppercase tracking-widest">Enforce Audit-Before-Act</h2>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto">Protect your treasury from hallucinated automation. Route your bots through the Oracle today.</p>
               <div className="flex flex-wrap gap-3 justify-center">
                 <Link
                   href="/chat"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-sm text-foreground transition-all hover:scale-[1.02]"
                   style={{ background: '#F37E20' }}
-                  data-testid="button-cta-sharpen"
+                  data-testid="button-cta-console"
                 >
-                  Sharpen Your Edge <ChevronRight className="w-4 h-4" />
+                  Open Architect Console <ChevronRight className="w-4 h-4" />
                 </Link>
                 <Link
                   href="/docs"
@@ -554,103 +381,22 @@ export default function About() {
 
           <div className="mt-16 pt-8 border-t border-border text-center">
             <p className="text-xs text-muted-foreground/80">
-              &copy; 2026 DJZS SYSTEM / AUTONOMOUS AUDITING SYSTEM FOR THE A2A ECONOMY
+              &copy; 2026 DJZS SYSTEM / ADVERSARIAL LOGIC LAYER FOR THE A2A ECONOMY
             </p>
           </div>
+
         </motion.div>
       </main>
     </div>
   );
 }
 
-function PersonaCallout({ icon, label, accent, text }: {
-  icon: ReactNode;
-  label: string;
-  accent: string;
-  text: string;
-}) {
-  return (
-    <div
-      className="p-4 rounded-lg"
-      style={{ background: `${accent}08`, border: `1px solid ${accent}25` }}
-      data-testid={`callout-${label.toLowerCase().replace(/\s+/g, '-')}`}
-    >
-      <div className="flex items-center gap-2 mb-2" style={{ color: accent }}>
-        {icon}
-        <span className="text-xs font-bold uppercase tracking-wider">{label}</span>
-      </div>
-      <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
-    </div>
-  );
-}
-
-function PersonaWorkflow({ icon, label, accent, steps }: {
-  icon: ReactNode;
-  label: string;
-  accent: string;
-  steps: { step: string; text: string }[];
-}) {
+function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div
-      className="rounded-lg overflow-hidden"
-      style={{ background: `${accent}06`, border: `1px solid ${accent}20` }}
-      data-testid={`workflow-${label.toLowerCase().replace(/\s+/g, '-')}`}
-    >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-2 p-4 text-left"
-        data-testid={`button-toggle-${label.toLowerCase().replace(/\s+/g, '-')}`}
-      >
-        <span style={{ color: accent }}>{icon}</span>
-        <span className="text-xs font-bold text-foreground uppercase tracking-wider">{label}</span>
-        <motion.div
-          animate={{ rotate: isOpen ? 90 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="ml-auto"
-          style={{ color: accent }}
-        >
-          <ChevronRight className="w-4 h-4" />
-        </motion.div>
-      </button>
-      <motion.div
-        initial={false}
-        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="overflow-hidden"
-      >
-        <div className="px-4 pb-4 space-y-3">
-          {steps.map((s, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <div
-                className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                style={{ background: `${accent}20` }}
-              >
-                <span className="text-[10px] font-bold" style={{ color: accent }}>{i + 1}</span>
-              </div>
-              <div>
-                <p className="text-foreground font-semibold text-xs mb-0.5">{s.step}</p>
-                <p className="text-xs text-muted-foreground">{s.text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-function PracticalItem({ icon, question, answer }: {
-  icon: ReactNode;
-  question: string;
-  answer: string;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div
-      className="rounded-lg bg-muted border border-border overflow-hidden"
+      className="rounded-lg bg-card border border-border overflow-hidden"
       data-testid={`faq-${question.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}`}
     >
       <button
@@ -658,7 +404,7 @@ function PracticalItem({ icon, question, answer }: {
         className="w-full flex items-center gap-3 p-4 text-left"
         data-testid={`button-faq-${question.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}`}
       >
-        <span className="text-orange-400">{icon}</span>
+        <Bot className="w-4 h-4 text-orange-400" />
         <span className="text-foreground font-bold text-xs">{question}</span>
         <motion.div
           animate={{ rotate: isOpen ? 90 : 0 }}

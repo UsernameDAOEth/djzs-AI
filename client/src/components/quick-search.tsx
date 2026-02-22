@@ -258,8 +258,8 @@ export function QuickSearch({ open, onClose, onSelectEntry }: QuickSearchProps) 
                       <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-3">
                         <Search className="w-6 h-6 text-orange-400/60" />
                       </div>
-                      <p className="text-sm text-muted-foreground font-medium">Search your thinking</p>
-                      <p className="text-xs text-muted-foreground/80 mt-1">Find past journal entries and research notes instantly</p>
+                      <p className="text-sm text-muted-foreground font-medium">Search your audit records</p>
+                      <p className="text-xs text-muted-foreground/80 mt-1">Find past audit records and research notes instantly</p>
                     </>
                   )}
                 </div>

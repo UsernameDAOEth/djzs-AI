@@ -168,7 +168,7 @@ export default function Docs() {
                 DJZS is the <strong className="text-foreground">Adversarial Logic Layer for the Agent-to-Agent (A2A) economy</strong> — a deterministic verification primitive that enforces an <strong className="text-foreground">"Audit-Before-Act"</strong> loop for autonomous agents. It applies <strong className="text-foreground">Journal Entry Testing (JET)</strong>, a 100-year-old financial security primitive modernized for AI reasoning traces. "Journaling" in DJZS is not a diary — it is the mandatory act of an autonomous agent committing its reasoning trace to an immutable log before executing a transaction.
               </p>
               <p>
-                The system serves two clients. <strong className="text-foreground">Human architects</strong> interact via the Architect Console — a web-based command center with six Workspace Zones (Audit Ledger, Research, Trade, Decisions, Content, Thinking Partner) for capturing reasoning, building theses, and reviewing forensic audit records locally on-device. <strong className="text-foreground">Autonomous AI agents</strong> interact programmatically via the x402-gated API, receiving machine-readable <strong className="text-foreground">Proof of Logic Certificates</strong> with deterministic <code className="text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded font-mono text-xs">DJZS-LF</code> failure codes (binary PASS/FAIL verdicts) across three tiers: Micro ($2.50), Founder ($5.00), and Treasury ($50.00 USDC on Base).
+                The system serves two clients. <strong className="text-foreground">Human architects</strong> interact via the Architect Console — a web-based command center with six zones (Audit Ledger, Research, Trade, Decisions, Content, Adversarial Oracle) for capturing reasoning, building theses, and reviewing forensic audit records locally on-device. <strong className="text-foreground">Autonomous AI agents</strong> interact programmatically via the x402-gated API, receiving machine-readable <strong className="text-foreground">Proof of Logic Certificates</strong> with deterministic <code className="text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded font-mono text-xs">DJZS-LF</code> failure codes (binary PASS/FAIL verdicts) across three tiers: Micro ($2.50), Founder ($5.00), and Treasury ($50.00 USDC on Base).
               </p>
               <p>
                 Every audit generates a cryptographic certificate. If the Oracle detects circular logic, hallucinated data, FOMO-driven reasoning, or structural contradictions, it returns a <strong className="text-red-400">FAIL</strong> verdict with specific failure codes — and well-engineered agents automatically abort execution. DJZS is the Logic Oracle for the decentralized web. It is designed to be honest, not helpful.
@@ -568,7 +568,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-foreground mb-2">Architect Console — Workspace Zones</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Architect Console</h2>
           <p className="text-muted-foreground mb-8">Free. Local-first. Six zones for capturing reasoning, building theses, and reviewing forensic audit records before deploying to the Oracle.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-6 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all">
@@ -711,7 +711,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                   <Zap className="w-6 h-6 text-red-400" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-foreground">Thinking Partner</h3>
+                  <h3 className="text-xl font-bold text-foreground">Adversarial Oracle</h3>
                   <p className="text-xs text-red-400/80">Adversarial AI reasoning attacks</p>
                 </div>
               </div>
@@ -917,7 +917,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               </div>
             </div>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Before every audit deployment, the Founder Intelligence engine scans your local vault history — past audits, journal entries, and memory pins — to surface patterns that make your current submission stronger. This context is injected into the AI agent prompt as an <strong className="text-foreground">Intelligence Brief</strong>, giving the adversarial AI historical ammunition to challenge you more precisely.
+              Before every audit deployment, the Founder Intelligence engine scans your local vault history — past audits, reasoning records, and memory pins — to surface patterns that make your current submission stronger. This context is injected into the AI agent prompt as an <strong className="text-foreground">Intelligence Brief</strong>, giving the adversarial AI historical ammunition to challenge you more precisely.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -1020,7 +1020,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Journal Linking</strong> — Connect claims to journal entries so your research and daily thinking reference each other</span>
+                    <span><strong className="text-teal-300">Audit Linking</strong> — Connect claims to audit records so your research and reasoning traces reference each other</span>
                   </li>
                 </ul>
               </div>
@@ -1145,10 +1145,10 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <div className="p-5 rounded-lg bg-teal-500/[0.06] border border-teal-500/15 mb-4" data-testid="card-thinking-partner-transition">
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="w-4 h-4 text-purple-400" />
-                <p className="text-sm font-bold text-purple-300">Seamless Thinking Partner Transition</p>
+                <p className="text-sm font-bold text-purple-300">Seamless Adversarial Oracle Transition</p>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Found something worth pressure-testing? Click the "Think deeper with Thinking Partner" button on any research result. It auto-loads your research context into the Thinking Partner so the adversarial AI can challenge your conclusions — no copy-pasting, no context loss. Research flows into interrogation in one click.
+                Found something worth pressure-testing? Click the "Think deeper with Adversarial Oracle" button on any research result. It auto-loads your research context into the Adversarial Oracle so the AI can challenge your conclusions — no copy-pasting, no context loss. Research flows into interrogation in one click.
               </p>
             </div>
 
@@ -1214,7 +1214,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 </div>
                 <h3 className="text-lg font-bold text-foreground">JournalInsight</h3>
               </div>
-              <p className="text-sm text-muted-foreground mb-4">Interrogates journal entries for contradictions, weak claims, blind spots, and emotional biases.</p>
+              <p className="text-sm text-muted-foreground mb-4">Interrogates reasoning traces for contradictions, weak claims, blind spots, and emotional biases.</p>
               <ul className="space-y-2 text-xs text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
@@ -1335,7 +1335,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-green-300">Journal entries</strong> — Your entry text is encrypted before storage</span>
+                    <span><strong className="text-green-300">Audit records</strong> — Your reasoning text is encrypted before storage</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
@@ -1387,7 +1387,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               </li>
               <li className="flex items-start gap-3">
                 <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
-                <span><strong style={{ color: '#FFB84D' }}>Automatic Injection</strong> — Once set, your key is used for all AI calls: journal insights, research, stress tests, and thinking partner</span>
+                <span><strong style={{ color: '#FFB84D' }}>Automatic Injection</strong> — Once set, your key is used for all AI calls: audit insights, research, stress tests, and adversarial oracle</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: '#FFB84D' }}></span>
@@ -1442,7 +1442,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <QuickLink 
               href="/chat"
               title="Open Workspace"
-              description="Start thinking in the Workspace Zones"
+              description="Deploy your first audit in the Architect Console"
               testId="link-start-journaling"
             />
             <QuickLink 
@@ -1503,7 +1503,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                   <Brain className="w-5 h-5 text-purple-400" />
                   <h3 className="text-sm font-bold text-foreground">Uncensored</h3>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Our AI is designed to be your thinking partner, not your censor. It won't refuse to explore controversial ideas or sensitive strategies. Your thoughts are your own.</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">The Oracle is designed to be adversarial, not censored. It won't refuse to analyze controversial strategies or sensitive reasoning traces. Your logic is your own.</p>
               </div>
             </div>
           </div>
@@ -1529,7 +1529,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
 
         <motion.footer variants={fadeUp} className="text-center py-12 border-t border-border">
           <p className="text-sm text-muted-foreground/80">
-            Built with privacy in mind. Your thinking stays yours.
+            Built with privacy in mind. Your reasoning stays yours.
           </p>
         </motion.footer>
       </motion.main>

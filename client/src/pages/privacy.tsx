@@ -59,7 +59,7 @@ export default function Privacy() {
               </h2>
               <ul className="space-y-3 list-none">
                 <li><span className="text-foreground">• Personal Information:</span> We do not collect names, emails, phone numbers, or any personally identifiable information.</li>
-                <li><span className="text-foreground">• Journal Entries:</span> Your thoughts, reflections, and journal content remain stored locally in your browser's IndexedDB.</li>
+                <li><span className="text-foreground">• Audit Records:</span> Your reasoning traces, audit results, and vault content remain stored locally in your browser's IndexedDB.</li>
                 <li><span className="text-foreground">• Research Data:</span> Your research notes and trackers are stored locally. When you run a research query, the query text is sent to AI providers for synthesis.</li>
               </ul>
             </section>
@@ -83,7 +83,7 @@ export default function Privacy() {
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>04</span> Local-First Architecture
               </h2>
               <p>
-                DJZS uses IndexedDB for persistent local storage. All vault data, journal entries, 
+                DJZS uses IndexedDB for persistent local storage. All vault data, audit records, 
                 and research notes are stored directly in your browser's IndexedDB. This data 
                 persists across sessions but never leaves your device unless you request AI analysis. Clearing browser data 
                 will permanently delete this information.
@@ -107,7 +107,7 @@ export default function Privacy() {
                 <div className="p-4 rounded-lg bg-muted border border-border">
                   <h3 className="text-foreground font-bold mb-2">Venice AI Inference — HTTPS/TLS (Not E2E)</h3>
                   <p className="text-xs leading-relaxed">
-                    When you click "Think with me" or run a research query, your selected text is sent to Venice AI over HTTPS/TLS. This means your data is encrypted in transit, but Venice must see the plaintext to compute a response. This is standard for all AI inference APIs — it is <strong className="text-foreground">not end-to-end encrypted</strong>. Venice claims no data retention and does not train on your inputs. Quantum resistance does not apply to these API calls.
+                    When you deploy an audit or run a research query, your reasoning trace is sent to Venice AI over HTTPS/TLS. This means your data is encrypted in transit, but Venice must see the plaintext to compute a response. This is standard for all AI inference APIs — it is <strong className="text-foreground">not end-to-end encrypted</strong>. Venice claims no data retention and does not train on your inputs. Quantum resistance does not apply to these API calls.
                   </p>
                 </div>
               </div>
@@ -121,7 +121,7 @@ export default function Privacy() {
                 <span className="font-mono text-xs" style={{ color: '#F37E20' }}>06</span> What We Send and When
               </h2>
               <ul className="space-y-3 list-none">
-                <li><span className="text-foreground">• User-initiated only:</span> Nothing is sent to any AI provider unless you explicitly click "Think with me" or submit a research query.</li>
+                <li><span className="text-foreground">• User-initiated only:</span> Nothing is sent to any AI provider unless you explicitly deploy an audit or submit a research query.</li>
                 <li><span className="text-foreground">• Minimal context:</span> Only your current entry text and selected memory pins are transmitted — not your entire vault history.</li>
                 <li><span className="text-foreground">• No server-side storage:</span> We do not permanently store your prompts, entries, or AI responses on any server.</li>
                 <li><span className="text-foreground">• Responses saved locally:</span> AI-generated insights are stored in your browser's IndexedDB, not on our infrastructure.</li>

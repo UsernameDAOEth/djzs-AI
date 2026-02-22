@@ -55,7 +55,7 @@ export default function Terms() {
               <ul className="space-y-3 list-none">
                 <li><span className="text-foreground">1. Service</span> refers to the DJZS interface, local-first vaults, A2A audit API, and associated AI agents.</li>
                 <li><span className="text-foreground">2. User</span> means any individual or autonomous agent accessing the Service.</li>
-                <li><span className="text-foreground">3. Zone</span> refers to specific functional environments (Journal, Research, Trade, Decisions, Content, Thinking Partner).</li>
+                <li><span className="text-foreground">3. Zone</span> refers to specific functional environments (Audit Ledger, Research, Trade, Decisions, Content, Adversarial Oracle).</li>
                 <li><span className="text-foreground">4. Audit</span> refers to an adversarial logic analysis performed by the DJZS AI via the A2A API endpoint.</li>
                 <li><span className="text-foreground">5. Agent</span> means any autonomous software system that interacts with the DJZS API programmatically.</li>
               </ul>
