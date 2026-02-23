@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  djzs-oracle:
+    image: ${DOCKERHUB_USERNAME}/djzs-ai:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DATABASE_URL=${DATABASE_URL}
+      - VENICE_API_KEY=${VENICE_API_KEY}
+      - BASE_RPC_URL=${BASE_RPC_URL}
+      - TREASURY_WALLET_ADDRESS=${TREASURY_WALLET_ADDRESS}
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+      - LIVEPEER_API_KEY=${LIVEPEER_API_KEY}
+      - PARAGRAPH_API_KEY=${PARAGRAPH_API_KEY}
+      - XMTP_ENV=${XMTP_ENV:-production}
+    restart: unless-stopped
