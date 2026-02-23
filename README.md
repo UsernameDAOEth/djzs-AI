@@ -3,7 +3,7 @@
 **Forensic Terminal & Logic-as-a-Service (LaaS) protocol for autonomous agents.**
 Enforces an "Audit-Before-Act" loop — agents commit reasoning to an immutable log before executing transactions.
 
-Repository: `github.com/UsernameDAOEth/djzs-box`
+Repository: `github.com/UsernameDAOEth/djzs-AI`
 
 ---
 
@@ -162,8 +162,8 @@ All secrets are server-side only. Never expose to frontend code.
 ### Install & Run
 
 ```bash
-git clone https://github.com/UsernameDAOEth/djzs-box.git
-cd djzs-box
+git clone https://github.com/UsernameDAOEth/djzs-AI.git
+cd djzs-AI
 npm install
 ```
 

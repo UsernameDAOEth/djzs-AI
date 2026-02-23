@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/djzs-box
+  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/djzs-ai
 
 jobs:
   build-and-push:
