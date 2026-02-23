@@ -216,9 +216,12 @@ Deploy to Phala Cloud's Trusted Execution Environment for hardware-level isolati
 2. Deploy to Phala Cloud TEE with environment variables injected at runtime
 3. Private keys never touch disk — managed entirely within the TEE enclave
 
-### GitHub Actions CI/CD (Planned)
+### GitHub Actions CI/CD
 
-A GitHub Actions workflow (`.github/workflows/docker-publish.yml`) for automated Docker builds on push to `main` is planned for addition.
+The repository includes a GitHub Actions workflow (`.github/workflows/docker-publish.yml`) for automated Docker builds on push to `main`. To enable it, add these secrets to your GitHub repository:
+
+- `DOCKERHUB_USERNAME` — your DockerHub username
+- `DOCKERHUB_TOKEN` — a DockerHub access token
 
 ---
 

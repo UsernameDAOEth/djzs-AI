@@ -4,3 +4,7 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz.env.deploy
+.env
+.env.*
+!.env.example
+!.env.deploy.example
