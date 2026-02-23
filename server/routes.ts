@@ -12,6 +12,7 @@ import { createUploadUrl, getAssetStatus, getPlaybackInfo, deleteAsset } from ".
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
 import { runLogicAuditAgent } from "./audit-agent";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
+import { verifyUsdcPayment } from "./payment-verifier";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -359,10 +360,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertStoredMessageSchema.parse(req.body);
       
-      // Extract author address from message
-      const authorAddress = 
-        'authorAddress' in validatedData.message ? validatedData.message.authorAddress :
-        'voterAddress' in validatedData.message ? validatedData.message.voterAddress : null;
+      const msg = validatedData.message as Record<string, any> | null;
+      const authorAddress = msg
+        ? (msg.authorAddress ?? msg.voterAddress ?? null)
+        : null;
       
       if (!authorAddress) {
         return res.status(400).json({ error: "Message must include author address" });
@@ -735,14 +736,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ==================== AGENT-TO-AGENT (A2A) AUDIT API ====================
   // x402 payment middleware for the audit endpoint
   // Uses @coinbase/x402 (official CDP facilitator) for USDC micropayments on Base Mainnet
-  const TREASURY_WALLET = process.env.TREASURY_WALLET_ADDRESS || "0xEc551A9e5598a030B46278fEbaDF798Ea8bA05FF";
+  const TREASURY_WALLET = process.env.TREASURY_WALLET_ADDRESS;
+  if (!TREASURY_WALLET) {
+    console.warn("TREASURY_WALLET_ADDRESS not set — payment verification will reject all transactions");
+  }
 
   const X402_NETWORK = (process.env.X402_NETWORK || "eip155:8453") as `${string}:${string}`;
   let x402Initialized = false;
 
   const hasCdpKeys = !!(process.env.CDP_API_KEY_ID && process.env.CDP_API_KEY_SECRET);
 
-  if (hasCdpKeys) {
+  if (hasCdpKeys && TREASURY_WALLET) {
     try {
       const { paymentMiddleware, x402ResourceServer } = await import("@x402/express");
       const { ExactEvmScheme } = await import("@x402/evm/exact/server");
@@ -831,6 +835,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   };
 
+  const createVerifiedPaymentGate = (tier: AuditTier) => async (req: any, res: any, next: any) => {
+    if (x402Initialized) return next();
+
+    if (!TREASURY_WALLET) {
+      return res.status(503).json({
+        error: "Payment verification not configured. TREASURY_WALLET_ADDRESS required.",
+        code: "DJZS-AUTH-CONFIG",
+      });
+    }
+
+    const txHash = req.headers['x-payment-proof'] as string | undefined;
+
+    if (!txHash) {
+      return res.status(402).json({
+        error: "Payment Required. Provide Base Mainnet TX hash in 'x-payment-proof' header.",
+        code: "DJZS-AUTH-402",
+        tier: TIER_CONFIG[tier].name,
+        price: TIER_CONFIG[tier].price,
+      });
+    }
+
+    const existing = await storage.getPaymentReceiptByTxHash(txHash);
+    if (existing) {
+      return res.status(409).json({
+        error: "Transaction hash already used for a previous audit.",
+        code: "DJZS-AUTH-REPLAY",
+      });
+    }
+
+    try {
+      const result = await verifyUsdcPayment(txHash, tier, TREASURY_WALLET);
+
+      if (!result.verified) {
+        return res.status(402).json({
+          error: result.error,
+          code: "DJZS-AUTH-INVALID",
+          tier: TIER_CONFIG[tier].name,
+          expected_price: TIER_CONFIG[tier].price,
+        });
+      }
+
+      await storage.createPaymentReceipt({
+        chainId: 8453,
+        tokenSymbol: "USDC",
+        amount: result.amount || TIER_CONFIG[tier].price,
+        fromAddress: result.from || "unknown",
+        toAddress: result.to || TREASURY_WALLET,
+        txHash,
+        roomId: null,
+        note: `${TIER_CONFIG[tier].name} audit payment`,
+      });
+
+      req.paymentProof = txHash;
+      req.paymentVerified = true;
+      next();
+    } catch (error) {
+      console.error("Payment verification error:", error);
+      return res.status(500).json({
+        error: "Payment verification failed. Please try again.",
+        code: "DJZS-AUTH-ERROR",
+      });
+    }
+  };
+
   const createTierHandler = (tier: AuditTier) => async (req: any, res: any) => {
     try {
       const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
@@ -886,10 +954,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  app.post("/api/audit/micro", x402PaymentGate, createTierHandler("micro"));
-  app.post("/api/audit/founder", x402PaymentGate, createTierHandler("founder"));
-  app.post("/api/audit/treasury", x402PaymentGate, createTierHandler("treasury"));
-  app.post("/api/audit", x402PaymentGate, createTierHandler("micro"));
+  app.post("/api/audit/micro", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
+  app.post("/api/audit/founder", createVerifiedPaymentGate("founder"), createTierHandler("founder"));
+  app.post("/api/audit/treasury", createVerifiedPaymentGate("treasury"), createTierHandler("treasury"));
+  app.post("/api/audit", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
 
   app.get("/api/audit/logs", async (req, res) => {
     try {
