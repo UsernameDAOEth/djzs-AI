@@ -1,7 +1,15 @@
-import { type Member, type InsertMember, type Room, type InsertRoom, type PaymentReceipt, type InsertPaymentReceipt, type StoredMessage, type InsertStoredMessage, type JournalEntry, type InsertJournalEntry, type PinnedMemory, type InsertPinnedMemory, type AuditLog, type InsertAuditLog, auditLogs } from "@shared/schema";
-import { randomUUID } from "crypto";
+import {
+  type Member, type InsertMember,
+  type Room, type InsertRoom,
+  type PaymentReceipt, type InsertPaymentReceipt,
+  type StoredMessage, type InsertStoredMessage,
+  type JournalEntry, type InsertJournalEntry,
+  type PinnedMemory, type InsertPinnedMemory,
+  type AuditLog, type InsertAuditLog,
+  members, rooms, paymentReceipts, storedMessages, journalEntries, pinnedMemories, auditLogs
+} from "@shared/schema";
 import { db } from "./db";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 
 export interface IStorage {
   getMember(address: string): Promise<Member | undefined>;
@@ -24,71 +32,33 @@ export interface IStorage {
   createMessage(message: InsertStoredMessage): Promise<StoredMessage>;
   getMessagesByRoom(roomId: string): Promise<StoredMessage[]>;
 
-  // Journal entries
   createJournalEntry(entry: InsertJournalEntry): Promise<JournalEntry>;
   getJournalEntry(id: string): Promise<JournalEntry | undefined>;
   getRecentJournalEntries(walletAddress: string, limit: number): Promise<JournalEntry[]>;
-  
-  // Pinned memories
+
   createPinnedMemory(memory: InsertPinnedMemory): Promise<PinnedMemory>;
   getPinnedMemories(walletAddress: string, limit: number): Promise<PinnedMemory[]>;
   deletePinnedMemory(id: string): Promise<boolean>;
 
-  // Audit logs
   createAuditLog(log: InsertAuditLog): Promise<AuditLog>;
   getAuditLogs(limit: number): Promise<AuditLog[]>;
   getAuditLogByAuditId(auditId: string): Promise<AuditLog | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private members: Map<string, Member>;
-  private rooms: Map<string, Room>;
-  private paymentReceipts: Map<string, PaymentReceipt>;
-  private messages: Map<string, StoredMessage>;
-  private journalEntries: Map<string, JournalEntry>;
-  private pinnedMemories: Map<string, PinnedMemory>;
-
-  constructor() {
-    this.members = new Map();
-    this.rooms = new Map();
-    this.paymentReceipts = new Map();
-    this.messages = new Map();
-    this.journalEntries = new Map();
-    this.pinnedMemories = new Map();
-    this.seedDefaultRooms();
-  }
-
-  private seedDefaultRooms() {
-    const defaultRooms = [
-      { name: "Journal", description: "Daily reflections with AI thinking partner", isDefault: true },
-      { name: "Research", description: "Gather claims, track evidence, surface unknowns", isDefault: true },
-    ];
-
-    defaultRooms.forEach((room) => {
-      const id = randomUUID();
-      this.rooms.set(id, {
-        id,
-        name: room.name,
-        description: room.description,
-        xmtpGroupId: null,
-        isDefault: room.isDefault,
-        createdAt: new Date(),
-      });
-    });
-  }
-
+export class DatabaseStorage implements IStorage {
   async getMember(address: string): Promise<Member | undefined> {
-    return Array.from(this.members.values()).find(
-      (m) => m.address.toLowerCase() === address.toLowerCase()
-    );
+    const [member] = await db.select().from(members)
+      .where(sql`lower(${members.address}) = lower(${address})`);
+    return member;
   }
 
   async getMemberById(id: string): Promise<Member | undefined> {
-    return this.members.get(id);
+    const [member] = await db.select().from(members).where(eq(members.id, id));
+    return member;
   }
 
   async getAllMembers(): Promise<Member[]> {
-    return Array.from(this.members.values());
+    return db.select().from(members);
   }
 
   async createMember(insertMember: InsertMember): Promise<Member> {
@@ -96,21 +66,7 @@ export class MemStorage implements IStorage {
     if (existing) {
       throw new Error("MEMBER_EXISTS");
     }
-
-    const id = randomUUID();
-    const member: Member = {
-      id,
-      address: insertMember.address,
-      ensName: insertMember.ensName ?? null,
-      xHandle: insertMember.xHandle ?? null,
-      xLinkSignature: insertMember.xLinkSignature ?? null,
-      isAdmin: insertMember.isAdmin ?? false,
-      isAllowlisted: insertMember.isAllowlisted ?? false,
-      isMuted: insertMember.isMuted ?? false,
-      hasNft: insertMember.hasNft ?? false,
-      createdAt: new Date(),
-    };
-    this.members.set(id, member);
+    const [member] = await db.insert(members).values(insertMember).returning();
     return member;
   }
 
@@ -119,147 +75,109 @@ export class MemStorage implements IStorage {
     if (!existing) return undefined;
 
     const { id: _, address: __, ...safeUpdates } = updates;
-    const updated = { ...existing, ...safeUpdates };
-    this.members.set(existing.id, updated);
+    const [updated] = await db.update(members)
+      .set(safeUpdates)
+      .where(eq(members.id, existing.id))
+      .returning();
     return updated;
   }
 
   async deleteMember(address: string): Promise<boolean> {
     const existing = await this.getMember(address);
     if (!existing) return false;
-    return this.members.delete(existing.id);
+    await db.delete(members).where(eq(members.id, existing.id));
+    return true;
   }
 
   async getAllRooms(): Promise<Room[]> {
-    return Array.from(this.rooms.values());
+    return db.select().from(rooms);
   }
 
   async getRoom(id: string): Promise<Room | undefined> {
-    return this.rooms.get(id);
+    const [room] = await db.select().from(rooms).where(eq(rooms.id, id));
+    return room;
   }
 
   async createRoom(insertRoom: InsertRoom): Promise<Room> {
-    const id = randomUUID();
-    const room: Room = {
-      id,
-      name: insertRoom.name,
-      description: insertRoom.description ?? null,
-      xmtpGroupId: insertRoom.xmtpGroupId ?? null,
-      isDefault: insertRoom.isDefault ?? false,
-      createdAt: new Date(),
-    };
-    this.rooms.set(id, room);
+    const [room] = await db.insert(rooms).values(insertRoom).returning();
     return room;
   }
 
   async updateRoom(id: string, updates: Partial<Room>): Promise<Room | undefined> {
-    const existing = this.rooms.get(id);
+    const existing = await this.getRoom(id);
     if (!existing) return undefined;
 
     const { id: _, ...safeUpdates } = updates;
-    const updated = { ...existing, ...safeUpdates };
-    this.rooms.set(id, updated);
+    const [updated] = await db.update(rooms)
+      .set(safeUpdates)
+      .where(eq(rooms.id, id))
+      .returning();
     return updated;
   }
 
   async deleteRoom(id: string): Promise<boolean> {
-    return this.rooms.delete(id);
+    const result = await db.delete(rooms).where(eq(rooms.id, id));
+    return (result.rowCount ?? 0) > 0;
   }
 
   async createPaymentReceipt(insertReceipt: InsertPaymentReceipt): Promise<PaymentReceipt> {
-    const id = randomUUID();
-    const receipt: PaymentReceipt = {
-      id,
-      chainId: insertReceipt.chainId,
-      tokenSymbol: insertReceipt.tokenSymbol,
-      amount: insertReceipt.amount,
-      fromAddress: insertReceipt.fromAddress,
-      toAddress: insertReceipt.toAddress,
-      txHash: insertReceipt.txHash,
-      roomId: insertReceipt.roomId ?? null,
-      note: insertReceipt.note ?? null,
-      verified: false,
-      createdAt: new Date(),
-    };
-    this.paymentReceipts.set(id, receipt);
+    const [receipt] = await db.insert(paymentReceipts).values(insertReceipt).returning();
     return receipt;
   }
 
   async getPaymentReceiptByTxHash(txHash: string): Promise<PaymentReceipt | undefined> {
-    return Array.from(this.paymentReceipts.values()).find(
-      (r) => r.txHash.toLowerCase() === txHash.toLowerCase()
-    );
+    const [receipt] = await db.select().from(paymentReceipts)
+      .where(sql`lower(${paymentReceipts.txHash}) = lower(${txHash})`);
+    return receipt;
   }
 
   async getPaymentReceiptsByRoom(roomId: string): Promise<PaymentReceipt[]> {
-    return Array.from(this.paymentReceipts.values()).filter(
-      (r) => r.roomId === roomId
-    );
+    return db.select().from(paymentReceipts).where(eq(paymentReceipts.roomId, roomId));
   }
 
   async createMessage(insertMessage: InsertStoredMessage): Promise<StoredMessage> {
-    const id = randomUUID();
-    const message: StoredMessage = {
-      id,
-      roomId: insertMessage.roomId,
-      message: insertMessage.message,
-    };
-    this.messages.set(id, message);
+    const [message] = await db.insert(storedMessages).values(insertMessage).returning();
     return message;
   }
 
   async getMessagesByRoom(roomId: string): Promise<StoredMessage[]> {
-    return Array.from(this.messages.values())
-      .filter((m) => m.roomId === roomId)
-      .sort((a, b) => new Date(a.message.createdAt).getTime() - new Date(b.message.createdAt).getTime());
+    return db.select().from(storedMessages)
+      .where(eq(storedMessages.roomId, roomId))
+      .orderBy(sql`(${storedMessages.message}->>'createdAt')::text ASC`);
   }
 
   async createJournalEntry(insertEntry: InsertJournalEntry): Promise<JournalEntry> {
-    const id = randomUUID();
-    const entry: JournalEntry = {
-      id,
-      walletAddress: insertEntry.walletAddress,
-      content: insertEntry.content,
-      createdAt: new Date(),
-    };
-    this.journalEntries.set(id, entry);
+    const [entry] = await db.insert(journalEntries).values(insertEntry).returning();
     return entry;
   }
 
   async getJournalEntry(id: string): Promise<JournalEntry | undefined> {
-    return this.journalEntries.get(id);
+    const [entry] = await db.select().from(journalEntries).where(eq(journalEntries.id, id));
+    return entry;
   }
 
   async getRecentJournalEntries(walletAddress: string, limit: number): Promise<JournalEntry[]> {
-    return Array.from(this.journalEntries.values())
-      .filter((e) => e.walletAddress.toLowerCase() === walletAddress.toLowerCase())
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, limit);
+    return db.select().from(journalEntries)
+      .where(sql`lower(${journalEntries.walletAddress}) = lower(${walletAddress})`)
+      .orderBy(desc(journalEntries.createdAt))
+      .limit(limit);
   }
 
   async createPinnedMemory(insertMemory: InsertPinnedMemory): Promise<PinnedMemory> {
-    const id = randomUUID();
-    const memory: PinnedMemory = {
-      id,
-      walletAddress: insertMemory.walletAddress,
-      content: insertMemory.content,
-      source: insertMemory.source ?? null,
-      sourceEntryId: insertMemory.sourceEntryId ?? null,
-      createdAt: new Date(),
-    };
-    this.pinnedMemories.set(id, memory);
+    const [memory] = await db.insert(pinnedMemories).values(insertMemory).returning();
     return memory;
   }
 
   async getPinnedMemories(walletAddress: string, limit: number): Promise<PinnedMemory[]> {
-    return Array.from(this.pinnedMemories.values())
-      .filter((m) => m.walletAddress.toLowerCase() === walletAddress.toLowerCase())
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, limit);
+    return db.select().from(pinnedMemories)
+      .where(sql`lower(${pinnedMemories.walletAddress}) = lower(${walletAddress})`)
+      .orderBy(desc(pinnedMemories.createdAt))
+      .limit(limit);
   }
 
   async deletePinnedMemory(id: string): Promise<boolean> {
-    return this.pinnedMemories.delete(id);
+    const result = await db.delete(pinnedMemories).where(eq(pinnedMemories.id, id));
+    return (result.rowCount ?? 0) > 0;
   }
 
   async createAuditLog(insertLog: InsertAuditLog): Promise<AuditLog> {
@@ -277,4 +195,14 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
+
+export async function seedDefaultRooms() {
+  const existingRooms = await db.select().from(rooms);
+  if (existingRooms.length === 0) {
+    await db.insert(rooms).values([
+      { name: "Journal", description: "Daily reflections with AI thinking partner", isDefault: true },
+      { name: "Research", description: "Gather claims, track evidence, surface unknowns", isDefault: true },
+    ]);
+  }
+}

@@ -196,16 +196,18 @@ export type NewsletterArticle = z.infer<typeof newsletterArticleSchema>;
 export type TextMessage = z.infer<typeof textMessageSchema>;
 export type ChatMessage = z.infer<typeof chatMessageSchema>;
 
-export const storedMessageSchema = z.object({
-  id: z.string(),
-  roomId: z.string(),
-  message: chatMessageSchema,
+export const storedMessages = pgTable("stored_messages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  roomId: text("room_id").notNull(),
+  message: jsonb("message").notNull(),
 });
 
-export type StoredMessage = z.infer<typeof storedMessageSchema>;
+export const insertStoredMessageSchema = createInsertSchema(storedMessages).omit({
+  id: true,
+});
 
-export const insertStoredMessageSchema = storedMessageSchema.omit({ id: true });
 export type InsertStoredMessage = z.infer<typeof insertStoredMessageSchema>;
+export type StoredMessage = typeof storedMessages.$inferSelect;
 
 // Journal entries table
 export const journalEntries = pgTable("journal_entries", {
