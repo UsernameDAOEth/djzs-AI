@@ -61,15 +61,16 @@ Preferred communication style: Simple, everyday language.
 - XMTP messaging is end-to-end encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## Phala TEE Deployment
-- **CVM ID**: 25857 (teepod 26, prod5, dstack-0.5.3)
-- **App ID**: `37d6a7e44de24de94303a8107d2c466df781420c`
-- **Live URL**: `https://37d6a7e44de24de94303a8107d2c466df781420c-5000.dstack-pha-prod5.phala.network`
-- **Docker Image**: `djzs/djzs-ai:latest` (built via GitHub Actions on push to main)
+- **CVM ID**: 25859 (teepod 26, prod5, dstack-0.5.3)
+- **App ID**: `e195c77b97fa7ae4037ba95b62501db60dbe268b`
+- **Live URL**: `https://e195c77b97fa7ae4037ba95b62501db60dbe268b-5000.dstack-pha-prod5.phala.network`
+- **Docker Image**: `djzs/djzs-ai:latest` (node:22-slim base, built via GitHub Actions on push to main)
 - **GitHub Repo**: `UsernameDAOEth/djzs-box`
-- **Deploy Script**: `/tmp/deploy-final.mjs`
+- **Deploy Script**: `/tmp/deploy-final.mjs` (use `/tmp/deploy-hardened.mjs` for name `djzs-oracle-v2`)
 - **Key Fix**: `allowed_envs` must be set in compose_file during provision AND `env_keys` in create CVM call
 - **DB Resilience**: App starts gracefully without database (server/db.ts exports nullable db, server/index.ts wraps seedDefaultRooms in try/catch)
 - **Neon DB**: Endpoint `ep-cool-fog-a6aibsm0.us-west-2.aws.neon.tech` is currently disabled; app runs without it
+- **Security Hardening**: node:22-slim base (Go CVEs), minimatch 10.2.1 override (ReDoS CVE), cross-spawn 7.0.6 (patched)
 
 ## External Dependencies
 - **Livepeer**: Decentralized video storage and playback.
