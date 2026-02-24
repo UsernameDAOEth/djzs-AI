@@ -61,16 +61,17 @@ Preferred communication style: Simple, everyday language.
 - XMTP messaging is end-to-end encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## Phala TEE Deployment
-- **CVM ID**: 25859 (teepod 26, prod5, dstack-0.5.3)
-- **App ID**: `e195c77b97fa7ae4037ba95b62501db60dbe268b`
-- **Live URL**: `https://e195c77b97fa7ae4037ba95b62501db60dbe268b-5000.dstack-pha-prod5.phala.network`
+- **CVM ID**: cvm_eOvvWBO4 (teepod 26, prod5, dstack-0.5.3)
+- **App ID**: `7c8b89e056199270025d351dde4dc1b2deb71c29`
+- **Live URL**: `https://7c8b89e056199270025d351dde4dc1b2deb71c29-5000.dstack-pha-prod5.phala.network`
 - **Docker Image**: `djzs/djzs-ai:latest` (node:22-slim base, built via GitHub Actions on push to main)
 - **GitHub Repo**: `UsernameDAOEth/djzs-box`
-- **Deploy Script**: `/tmp/deploy-final.mjs` (use `/tmp/deploy-hardened.mjs` for name `djzs-oracle-v2`)
-- **Key Fix**: `allowed_envs` must be set in compose_file during provision AND `env_keys` in create CVM call
+- **Deploy Script**: `/tmp/create-cvm2.mjs` (provision + create pattern)
+- **Key Fix**: `allowed_envs` must be set in compose_file during provision AND `env_keys` (list of "KEY=value" strings) in create CVM call
 - **DB Resilience**: App starts gracefully without database (server/db.ts exports nullable db, server/index.ts wraps seedDefaultRooms in try/catch)
 - **Neon DB**: Endpoint `ep-cool-fog-a6aibsm0.us-west-2.aws.neon.tech` is currently disabled; app runs without it
-- **Security Hardening**: node:22-slim base (Go CVEs), minimatch 10.2.1 override (ReDoS CVE), cross-spawn 7.0.6 (patched)
+- **Security Hardening**: node:22-slim base (Go CVEs), minimatch 10.2.1 override (ReDoS CVE), cross-spawn 7.0.6 (patched), undici 6.23.0 override (decompression DoS), @xmtp/proto 3.88.0 override, 10 build-only packages moved to devDependencies
+- **Audit Status**: `npm audit --omit=dev` reports 0 vulnerabilities; 2 remaining moderate (vite→esbuild dev-server) are non-exploitable in production
 
 ## External Dependencies
 - **Livepeer**: Decentralized video storage and playback.
