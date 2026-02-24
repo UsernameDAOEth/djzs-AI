@@ -1,0 +1,77 @@
+I'll help you find a solution for this failing job. Let me retrieve the logs first.Now let me check the referenced files to understand the issue better:The build is failing because of this error:
+
+Could not resolve "./intelligence-engine"  
+
+This occurs at line 14 in server/routes.ts:
+
+import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
+
+
+Solution:
+
+- Ensure that a file named intelligence-engine.ts (or .js depending on your setup) exists in the server/ directory alongside routes.ts.
+
+- If it’s missing, add or restore the file. If it was renamed, correct the import## Solution
+
+
+The build is failing because `server/routes.ts` is trying to import from `"./intelligence-engine"` (line 14), but this module doesn't exist in the `server` directory.
+
+
+**Error:**
+
+```
+
+✘ [ERROR] Could not resolve "./intelligence-engine"
+
+    server/routes.ts:14:75:
+
+      14 │ ...a, generateServerIntelligenceBrief } from "./intelligence-engine";
+
+```
+
+
+### Fix
+
+
+You need to create the missing `server/intelligence-engine.ts` file. Based on the usage in `routes.ts`, here's what it should export:
+
+
+```typescript
+
+// server/intelligence-engine.ts
+
+
+import { z } from "zod";
+
+
+// Define the schema for intelligence requests
+
+export const intelligenceRequestSchema = z.object({
+
+  strategy_memo: z.string().min( statement.
+
+- Double-check for typos in the filename or directory structure.
+
+
+Example: If the file was accidentally deleted, create server/intelligence-engine.ts with the required exports (intelligenceRequestSchema and generateServerIntelligenceBrief). If it exists under a different name, update the import accordingly.
+
+
+Once the file is correctly in place and exports the necessary modules, this build error should be resolved. // server/intelligence-engine.ts
+
+
+import { z } from "zod";
+
+
+// Define the schema for intelligence requests
+
+export const intelligenceRequestSchema = z.object({
+
+  strategy_memo: z.string().min( statement.
+
+- Double-check for typos in the filename or directory structure.
+
+
+Example: If the file was accidentally deleted, create server/intelligence-engine.ts with the required exports (intelligenceRequestSchema and generateServerIntelligenceBrief). If it exists under a different name, update the import accordingly.
+
+
+Once the file is correctly in place and exports the necessary modules, this build error should be resolved.

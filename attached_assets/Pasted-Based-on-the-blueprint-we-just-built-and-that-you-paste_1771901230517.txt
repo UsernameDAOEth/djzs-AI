@@ -1,0 +1,52 @@
+Based on the blueprint we just built and that you pasted into GitHub, your .yml file (specifically located at .github/workflows/docker-publish.yml) looks exactly like this:
+name: Deploy Protocol to DockerHub
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Authenticate with DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push TEE Container
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/djzs-oracle:latest
+
+The Conflict
+Take a look at line 23 in that code:
+password: ${{ secrets.DOCKERHUB_TOKEN }}
+The error message you got from GitHub's automated helper suggested you use DOCKERHUB_PASSWORD. That is why it failed! The code I gave you is looking for a secret named exactly DOCKERHUB_TOKEN, but GitHub's helper assumed you named it DOCKERHUB_PASSWORD.
+Machines are incredibly literal. If the .yml file says TOKEN but your GitHub settings say PASSWORD, it crashes.
+How to Fix It Right Now
+You have two choices. Pick whichever is easiest for you:
+Option A (Change the Secret in Settings):
+ * Go to your GitHub repository > Settings > Secrets and variables > Actions.
+ * Make sure your secrets are named exactly:
+   * DOCKERHUB_USERNAME
+   * DOCKERHUB_TOKEN (Paste your actual DockerHub password/token here).
+Option B (Change the code in the .yml file):
+ * Go to your repository > click the .github/workflows/docker-publish.yml file > click the pencil icon to edit.
+ * Change line 23 to: password: ${{ secrets.DOCKERHUB_PASSWORD }}
+ * Commit the change.
+ * Go to your GitHub secrets and make sure it is saved as DOCKERHUB_PASSWORD.
+Which option did you go with? Once they match perfectly, hit "Re-run all jobs" in the Actions tab and it will sail right past that login step.
