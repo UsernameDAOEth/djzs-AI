@@ -7,7 +7,14 @@ import { analyzeJournalEntry, analyzeResearchEntry, synthesizeResearch, synthesi
 import { analyzeWithAgent, agentInputSchema } from "./agent.api";
 import { searchBrave, type BraveSearchResult } from "./brave";
 import { runAgent, journalInsightPayloadSchema, researchSynthPayloadSchema, thinkingPartnerPayloadSchema, type AgentName } from "./openclaw";
-import { getUncachableGitHubClient } from "./github";
+let _cachedGitHubImport: any = null;
+async function getGitHubClient() {
+  if (!process.env.REPLIT_CONNECTORS_HOSTNAME) return null;
+  if (!_cachedGitHubImport) {
+    _cachedGitHubImport = await import("./github");
+  }
+  return _cachedGitHubImport.getUncachableGitHubClient();
+}
 import { createUploadUrl, getAssetStatus, getPlaybackInfo, deleteAsset } from "./livepeer";
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
 import { runLogicAuditAgent } from "./audit-agent";
@@ -73,10 +80,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // GitHub Integration - check connection and list repos
+  // GitHub Integration - check connection and list repos (Replit-only)
   app.get("/api/github/status", async (_req, res) => {
     try {
-      const octokit = await getUncachableGitHubClient();
+      const octokit = await getGitHubClient();
+      if (!octokit) {
+        return res.json({ connected: false, error: "GitHub integration not available in this environment" });
+      }
       const { data: user } = await octokit.users.getAuthenticated();
       res.json({
         connected: true,
@@ -95,7 +105,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/github/repos", async (_req, res) => {
     try {
-      const octokit = await getUncachableGitHubClient();
+      const octokit = await getGitHubClient();
+      if (!octokit) {
+        return res.json([]);
+      }
       const { data: repos } = await octokit.repos.listForAuthenticatedUser({
         sort: "updated",
         per_page: 20,
