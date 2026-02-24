@@ -8,8 +8,13 @@ import {
   type AuditLog, type InsertAuditLog,
   members, rooms, paymentReceipts, storedMessages, journalEntries, pinnedMemories, auditLogs
 } from "@shared/schema";
-import { db } from "./db";
+import { db, dbAvailable } from "./db";
 import { desc, eq, sql } from "drizzle-orm";
+
+function getDb() {
+  if (!db) throw new Error("Database not available");
+  return db;
+}
 
 export interface IStorage {
   getMember(address: string): Promise<Member | undefined>;
@@ -47,18 +52,18 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async getMember(address: string): Promise<Member | undefined> {
-    const [member] = await db.select().from(members)
+    const [member] = await getDb().select().from(members)
       .where(sql`lower(${members.address}) = lower(${address})`);
     return member;
   }
 
   async getMemberById(id: string): Promise<Member | undefined> {
-    const [member] = await db.select().from(members).where(eq(members.id, id));
+    const [member] = await getDb().select().from(members).where(eq(members.id, id));
     return member;
   }
 
   async getAllMembers(): Promise<Member[]> {
-    return db.select().from(members);
+    return getDb().select().from(members);
   }
 
   async createMember(insertMember: InsertMember): Promise<Member> {
@@ -66,7 +71,7 @@ export class DatabaseStorage implements IStorage {
     if (existing) {
       throw new Error("MEMBER_EXISTS");
     }
-    const [member] = await db.insert(members).values(insertMember).returning();
+    const [member] = await getDb().insert(members).values(insertMember).returning();
     return member;
   }
 
@@ -75,7 +80,7 @@ export class DatabaseStorage implements IStorage {
     if (!existing) return undefined;
 
     const { id: _, address: __, ...safeUpdates } = updates;
-    const [updated] = await db.update(members)
+    const [updated] = await getDb().update(members)
       .set(safeUpdates)
       .where(eq(members.id, existing.id))
       .returning();
@@ -85,21 +90,21 @@ export class DatabaseStorage implements IStorage {
   async deleteMember(address: string): Promise<boolean> {
     const existing = await this.getMember(address);
     if (!existing) return false;
-    await db.delete(members).where(eq(members.id, existing.id));
+    await getDb().delete(members).where(eq(members.id, existing.id));
     return true;
   }
 
   async getAllRooms(): Promise<Room[]> {
-    return db.select().from(rooms);
+    return getDb().select().from(rooms);
   }
 
   async getRoom(id: string): Promise<Room | undefined> {
-    const [room] = await db.select().from(rooms).where(eq(rooms.id, id));
+    const [room] = await getDb().select().from(rooms).where(eq(rooms.id, id));
     return room;
   }
 
   async createRoom(insertRoom: InsertRoom): Promise<Room> {
-    const [room] = await db.insert(rooms).values(insertRoom).returning();
+    const [room] = await getDb().insert(rooms).values(insertRoom).returning();
     return room;
   }
 
@@ -108,7 +113,7 @@ export class DatabaseStorage implements IStorage {
     if (!existing) return undefined;
 
     const { id: _, ...safeUpdates } = updates;
-    const [updated] = await db.update(rooms)
+    const [updated] = await getDb().update(rooms)
       .set(safeUpdates)
       .where(eq(rooms.id, id))
       .returning();
@@ -116,81 +121,81 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteRoom(id: string): Promise<boolean> {
-    const result = await db.delete(rooms).where(eq(rooms.id, id));
+    const result = await getDb().delete(rooms).where(eq(rooms.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 
   async createPaymentReceipt(insertReceipt: InsertPaymentReceipt): Promise<PaymentReceipt> {
-    const [receipt] = await db.insert(paymentReceipts).values(insertReceipt).returning();
+    const [receipt] = await getDb().insert(paymentReceipts).values(insertReceipt).returning();
     return receipt;
   }
 
   async getPaymentReceiptByTxHash(txHash: string): Promise<PaymentReceipt | undefined> {
-    const [receipt] = await db.select().from(paymentReceipts)
+    const [receipt] = await getDb().select().from(paymentReceipts)
       .where(sql`lower(${paymentReceipts.txHash}) = lower(${txHash})`);
     return receipt;
   }
 
   async getPaymentReceiptsByRoom(roomId: string): Promise<PaymentReceipt[]> {
-    return db.select().from(paymentReceipts).where(eq(paymentReceipts.roomId, roomId));
+    return getDb().select().from(paymentReceipts).where(eq(paymentReceipts.roomId, roomId));
   }
 
   async createMessage(insertMessage: InsertStoredMessage): Promise<StoredMessage> {
-    const [message] = await db.insert(storedMessages).values(insertMessage).returning();
+    const [message] = await getDb().insert(storedMessages).values(insertMessage).returning();
     return message;
   }
 
   async getMessagesByRoom(roomId: string): Promise<StoredMessage[]> {
-    return db.select().from(storedMessages)
+    return getDb().select().from(storedMessages)
       .where(eq(storedMessages.roomId, roomId))
       .orderBy(sql`(${storedMessages.message}->>'createdAt')::text ASC`);
   }
 
   async createJournalEntry(insertEntry: InsertJournalEntry): Promise<JournalEntry> {
-    const [entry] = await db.insert(journalEntries).values(insertEntry).returning();
+    const [entry] = await getDb().insert(journalEntries).values(insertEntry).returning();
     return entry;
   }
 
   async getJournalEntry(id: string): Promise<JournalEntry | undefined> {
-    const [entry] = await db.select().from(journalEntries).where(eq(journalEntries.id, id));
+    const [entry] = await getDb().select().from(journalEntries).where(eq(journalEntries.id, id));
     return entry;
   }
 
   async getRecentJournalEntries(walletAddress: string, limit: number): Promise<JournalEntry[]> {
-    return db.select().from(journalEntries)
+    return getDb().select().from(journalEntries)
       .where(sql`lower(${journalEntries.walletAddress}) = lower(${walletAddress})`)
       .orderBy(desc(journalEntries.createdAt))
       .limit(limit);
   }
 
   async createPinnedMemory(insertMemory: InsertPinnedMemory): Promise<PinnedMemory> {
-    const [memory] = await db.insert(pinnedMemories).values(insertMemory).returning();
+    const [memory] = await getDb().insert(pinnedMemories).values(insertMemory).returning();
     return memory;
   }
 
   async getPinnedMemories(walletAddress: string, limit: number): Promise<PinnedMemory[]> {
-    return db.select().from(pinnedMemories)
+    return getDb().select().from(pinnedMemories)
       .where(sql`lower(${pinnedMemories.walletAddress}) = lower(${walletAddress})`)
       .orderBy(desc(pinnedMemories.createdAt))
       .limit(limit);
   }
 
   async deletePinnedMemory(id: string): Promise<boolean> {
-    const result = await db.delete(pinnedMemories).where(eq(pinnedMemories.id, id));
+    const result = await getDb().delete(pinnedMemories).where(eq(pinnedMemories.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 
   async createAuditLog(insertLog: InsertAuditLog): Promise<AuditLog> {
-    const [log] = await db.insert(auditLogs).values(insertLog).returning();
+    const [log] = await getDb().insert(auditLogs).values(insertLog).returning();
     return log;
   }
 
   async getAuditLogs(limit: number): Promise<AuditLog[]> {
-    return db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)).limit(limit);
+    return getDb().select().from(auditLogs).orderBy(desc(auditLogs.createdAt)).limit(limit);
   }
 
   async getAuditLogByAuditId(auditId: string): Promise<AuditLog | undefined> {
-    const [log] = await db.select().from(auditLogs).where(eq(auditLogs.auditId, auditId));
+    const [log] = await getDb().select().from(auditLogs).where(eq(auditLogs.auditId, auditId));
     return log;
   }
 }
@@ -198,9 +203,13 @@ export class DatabaseStorage implements IStorage {
 export const storage = new DatabaseStorage();
 
 export async function seedDefaultRooms() {
-  const existingRooms = await db.select().from(rooms);
+  if (!dbAvailable) {
+    console.warn("[storage] Database not available - skipping room seeding");
+    return;
+  }
+  const existingRooms = await getDb().select().from(rooms);
   if (existingRooms.length === 0) {
-    await db.insert(rooms).values([
+    await getDb().insert(rooms).values([
       { name: "Journal", description: "Daily reflections with AI thinking partner", isDefault: true },
       { name: "Research", description: "Gather claims, track evidence, surface unknowns", isDefault: true },
     ]);

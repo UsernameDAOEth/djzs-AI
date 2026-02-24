@@ -60,6 +60,17 @@ Preferred communication style: Simple, everyday language.
 - Emphasizes local-first storage, user control over AI execution, and offline journaling capabilities.
 - XMTP messaging is end-to-end encrypted via MLS protocol with quantum-resistant key encapsulation.
 
+## Phala TEE Deployment
+- **CVM ID**: 25857 (teepod 26, prod5, dstack-0.5.3)
+- **App ID**: `37d6a7e44de24de94303a8107d2c466df781420c`
+- **Live URL**: `https://37d6a7e44de24de94303a8107d2c466df781420c-5000.dstack-pha-prod5.phala.network`
+- **Docker Image**: `djzs/djzs-ai:latest` (built via GitHub Actions on push to main)
+- **GitHub Repo**: `UsernameDAOEth/djzs-box`
+- **Deploy Script**: `/tmp/deploy-final.mjs`
+- **Key Fix**: `allowed_envs` must be set in compose_file during provision AND `env_keys` in create CVM call
+- **DB Resilience**: App starts gracefully without database (server/db.ts exports nullable db, server/index.ts wraps seedDefaultRooms in try/catch)
+- **Neon DB**: Endpoint `ep-cool-fog-a6aibsm0.us-west-2.aws.neon.tech` is currently disabled; app runs without it
+
 ## External Dependencies
 - **Livepeer**: Decentralized video storage and playback.
 - **Venice AI**: Privacy-first AI processing.

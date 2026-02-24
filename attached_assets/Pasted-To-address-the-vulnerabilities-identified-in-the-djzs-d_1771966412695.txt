@@ -1,0 +1,39 @@
+To address the vulnerabilities identified in the `djzs/djzs-ai:5468e78` image, you should focus on updating the base image and specific dependencies. Based on the scan results from the [Docker Hub repository](https://hub.docker.com/repository/docker/djzs/djzs-ai/tags/5468e78/sha256-f038f637d5dd7aba13e913f4dc5c29d100568c51f6622b72ef176080fa16501b), here are the recommended remediation steps:
+
+### 1. Update the Go Standard Library
+
+The critical vulnerabilities (CVE-2025-68121, CVE-2024-24790, and CVE-2025-22871) are tied to `golang` version `1.20.12`.
+
+* **Action:** Update your Dockerfile to use a more recent and supported version of Go (e.g., `1.22` or `1.23`).
+* **Impact:** This will resolve the 3 Critical and several High severity issues found in the `stdlib`.
+
+### 2. Patch NPM Dependencies
+
+Several High severity vulnerabilities are present in your application layer due to outdated packages:
+
+* **tar (6.2.1):** Affected by CVE-2026-23950, CVE-2026-24842, and CVE-2026-23745. Update to the latest version (typically `7.x` or the latest security patch in `6.x`).
+* **minimatch (10.0.1):** Affected by CVE-2026-26996. Update to a version where this is patched (check `npm audit` for the specific target version).
+* **cross-spawn (7.0.3):** Affected by CVE-2024-21538. Update to version `7.0.5` or higher.
+
+### 3. Implementation Steps
+
+To apply these fixes and verify the results:
+
+1. **Update Dockerfile:** Change the `FROM` instruction to a newer base image or update the Go installation step.
+2. **Update Packages:** Run the following commands in your local development environment:
+```bash
+npm install tar@latest minimatch@latest cross-spawn@latest
+npm audit fix
+
+```
+
+
+3. **Rebuild and Push:**
+```bash
+docker build -t djzs/djzs-ai:5468e78 .
+docker push djzs/djzs-ai:5468e78
+
+```
+
+
+4. **Verify:** Check the [Vulnerabilities tab](https://hub.docker.com/repository/docker/djzs/djzs-ai/tags/5468e78/sha256-f038f637d5dd7aba13e913f4dc5c29d100568c51f6622b72ef176080fa16501b) again to ensure the count of Critical and High issues has decreased.

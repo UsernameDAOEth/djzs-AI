@@ -62,7 +62,12 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  await seedDefaultRooms();
+  try {
+    await seedDefaultRooms();
+  } catch (e) {
+    console.warn("[startup] Database seeding failed (non-fatal):", (e as Error).message);
+    console.warn("[startup] A2A audit endpoints will still work without database");
+  }
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

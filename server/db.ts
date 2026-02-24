@@ -1,10 +1,21 @@
 import { Pool } from "pg";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "@shared/schema";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
+let pool: Pool | null = null;
+let db: NodePgDatabase<typeof schema> | null = null;
+let dbAvailable = false;
+
+if (process.env.DATABASE_URL) {
+  try {
+    pool = new Pool({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 10000 });
+    db = drizzle(pool, { schema });
+    dbAvailable = true;
+  } catch (e) {
+    console.warn("[db] Failed to initialize database pool:", (e as Error).message);
+  }
+} else {
+  console.warn("[db] DATABASE_URL not set - running without database persistence");
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle(pool, { schema });
+export { pool, db, dbAvailable };
