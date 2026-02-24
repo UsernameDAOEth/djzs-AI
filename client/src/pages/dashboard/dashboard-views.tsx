@@ -89,7 +89,28 @@ export function AuditLedgerView() {
                           {audit.verdict}
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground/60 mt-1 font-mono">{formatTimeAgo(String(audit.createdAt))} · Risk: {audit.riskScore}/100 · Hash: {audit.cryptographicHash.slice(0, 12)}...</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-xs text-muted-foreground/60 font-mono">{formatTimeAgo(String(audit.createdAt))} · Risk: {audit.riskScore}/100 · Hash: {audit.cryptographicHash.slice(0, 12)}...</p>
+                        {audit.irysTxId ? (
+                          <a
+                            href={`https://gateway.irys.xyz/${audit.irysTxId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 transition-colors"
+                            data-testid={`badge-irys-verified-${audit.auditId}`}
+                          >
+                            <ExternalLink size={10} />
+                            Irys Verified
+                          </a>
+                        ) : (
+                          <span
+                            className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-muted/30 text-muted-foreground/50"
+                            data-testid={`badge-local-only-${audit.auditId}`}
+                          >
+                            Local Only
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <span className={`text-2xl font-black ${audit.riskScore > 80 ? "text-red-400" : audit.riskScore > 50 ? "text-yellow-400" : "text-green-400"}`}>
@@ -273,6 +294,7 @@ export function APISettingsView() {
     { method: "POST", path: "/api/audit/micro", tier: "Micro", price: "$2.50 USDC", color: "#06b6d4" },
     { method: "POST", path: "/api/audit/founder", tier: "Founder", price: "$5.00 USDC", color: "#a855f7" },
     { method: "POST", path: "/api/audit/treasury", tier: "Treasury", price: "$50.00 USDC", color: "#eab308" },
+    { method: "GET", path: "/api/audit/verify/:txId", tier: "Verify", price: "Free", color: "#14b8a6" },
     { method: "GET", path: "/api/audit/logs", tier: "Console", price: "Free", color: "#22c55e" },
     { method: "GET", path: "/api/audit/schema", tier: "Discovery", price: "Free", color: "#22c55e" },
   ];

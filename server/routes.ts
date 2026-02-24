@@ -20,6 +20,7 @@ import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditT
 import { runLogicAuditAgent } from "./audit-agent";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
+import { uploadAuditToIrys } from "./irys";
 
 // Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
 const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
@@ -934,6 +935,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const audit = await runLogicAuditAgent(parsed.data, tier, userVeniceKey);
 
+      const irysResult = await uploadAuditToIrys(audit);
+
       try {
         await storage.createAuditLog({
           auditId: audit.audit_id,
@@ -948,12 +951,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           structuralRecommendations: audit.structural_recommendations,
           cryptographicHash: audit.cryptographic_hash,
           walletAddress: walletAddress || null,
+          irysTxId: irysResult.irys_tx_id,
         });
       } catch (dbError) {
         console.error("Failed to persist audit log:", dbError);
       }
 
-      res.json(audit);
+      const response: Record<string, any> = {
+        ...audit,
+        provenance_provider: "IRYS_DATACHAIN",
+        irys_tx_id: irysResult.irys_tx_id,
+        irys_url: irysResult.irys_url,
+      };
+      if (irysResult.irys_error) {
+        response.irys_error = irysResult.irys_error;
+      }
+
+      res.json(response);
     } catch (error) {
       console.error(`${TIER_CONFIG[tier].name} Audit failed:`, error);
       if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
@@ -971,6 +985,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/audit/founder", createVerifiedPaymentGate("founder"), createTierHandler("founder"));
   app.post("/api/audit/treasury", createVerifiedPaymentGate("treasury"), createTierHandler("treasury"));
   app.post("/api/audit", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
+
+  app.get("/api/audit/verify/:txId", async (req, res) => {
+    try {
+      const { txId } = req.params;
+      if (!txId || txId.length < 10) {
+        return res.status(400).json({ error: "Invalid Irys transaction ID" });
+      }
+
+      const irysResponse = await fetch(`https://gateway.irys.xyz/${txId}`);
+      if (!irysResponse.ok) {
+        return res.status(404).json({
+          error: "Certificate not found on Irys Datachain",
+          irys_tx_id: txId,
+          irys_url: `https://gateway.irys.xyz/${txId}`,
+        });
+      }
+
+      const certificate = await irysResponse.json();
+      res.json({
+        verified: true,
+        provenance_provider: "IRYS_DATACHAIN",
+        irys_tx_id: txId,
+        irys_url: `https://gateway.irys.xyz/${txId}`,
+        certificate,
+      });
+    } catch (error) {
+      console.error("Irys verification failed:", error);
+      res.status(500).json({ error: "Verification failed" });
+    }
+  });
 
   app.get("/api/audit/logs", async (req, res) => {
     try {
@@ -1033,6 +1077,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           memo_limit: "unlimited",
         },
       },
+      verification: {
+        endpoint: "GET /api/audit/verify/:txId",
+        price: "Free",
+        description: "Verify a ProofOfLogic certificate stored on the Irys Datachain. Pass the irys_tx_id from any audit response to retrieve and verify the permanent certificate.",
+      },
       intelligence: {
         endpoint: "POST /api/intelligence/brief",
         price: "Free",
@@ -1056,6 +1105,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         logic_flaws: "[{flaw_type, severity (low|medium|critical), explanation}]",
         structural_recommendations: "string[] - concrete steps to fix the logic",
         cryptographic_hash: "SHA-256 hash of the input memo (for ERC-8004 verification)",
+        provenance_provider: "IRYS_DATACHAIN - permanent storage provider",
+        irys_tx_id: "string | null - Irys Datachain transaction ID for permanent certificate",
+        irys_url: "string | null - Direct gateway link to the permanent ProofOfLogic certificate",
       },
     });
   });

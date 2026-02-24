@@ -27,7 +27,9 @@ Preferred communication style: Simple, everyday language.
 - **Schema Discovery**: `GET /api/audit/schema` for API details, pricing, and integration.
 - **Payment**: x402 protocol for USDC micropayments on Base.
 - **Audit Types**: Supports `treasury`, `founder_drift`, `strategy`, and `general` logic audits.
-- **Output Schema**: Structured JSON output validated by Zod, including tier, risk score, bias detection, logic flaws, and recommendations.
+- **Output Schema**: Structured JSON output validated by Zod, including tier, risk score, bias detection, logic flaws, recommendations, and Irys Datachain provenance fields.
+- **Irys Datachain Integration**: Every audit uploads its ProofOfLogic certificate to permanent storage via `@irys/upload` + `@irys/upload-ethereum` (Base Mainnet RPC). Responses include `provenance_provider: "IRYS_DATACHAIN"`, `irys_tx_id`, and `irys_url`. Verification endpoint: `GET /api/audit/verify/:txId`.
+- **Irys Service**: `server/irys.ts` — `uploadAuditToIrys(auditData)` function. Requires `IRYS_PRIVATE_KEY` env secret (Ethereum wallet private key with ETH on Base for upload fees).
 - **Adversarial Agent**: Utilizes Venice AI with tier-specific prompt engineering for scalable depth and rigor.
 
 ### Local-First Vault

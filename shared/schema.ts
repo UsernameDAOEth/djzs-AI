@@ -258,6 +258,7 @@ export const auditLogs = pgTable("audit_logs", {
   structuralRecommendations: jsonb("structural_recommendations").notNull().default([]),
   cryptographicHash: text("cryptographic_hash").notNull(),
   walletAddress: text("wallet_address"),
+  irysTxId: text("irys_tx_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
