@@ -1,0 +1,22 @@
+The following is a summary of the critical and high-severity vulnerabilities identified in the `djzs/djzs-ai:5468e78` image, along with their potential impact on your protocol:
+
+### **Critical Vulnerabilities (Go Standard Library)**
+
+These issues stem from the use of **Go v1.20.12**, which is outdated and contains several severe security flaws:
+
+* **[CVE-2025-68121](https://nvd.nist.gov/vuln/detail/cve-2025-68121) (Severity 10.0):** A critical flaw in `crypto/tls` where session resumption can succeed even if security configurations (like `RootCAs`) have changed. This could allow an agent to resume a connection with a server it should no longer trust.
+* **[CVE-2024-24790](https://www.wiz.io/vulnerability-database/cve/cve-2024-24790) (Severity 9.8):** A validation error in `net/netip` where IPv4-mapped IPv6 addresses are incorrectly identified. This can bypass IP-based security filters, potentially leading to unauthorized network access.
+* **[CVE-2025-22871](https://www.wiz.io/vulnerability-database/cve/cve-2025-22871) (Severity 9.1):** A request smuggling vulnerability in `net/http` caused by improper handling of line terminators. If your API sits behind a proxy, an attacker could "smuggle" unauthorized commands into the request stream.
+
+### **High Severity Vulnerabilities (NPM Packages)**
+
+These vulnerabilities affect the application layer of your image:
+
+* **[CVE-2026-23950](https://nvd.nist.gov/vuln/detail/CVE-2026-23950) (Severity 8.8 - `tar`):** A race condition in the `node-tar` library related to Unicode path collisions. On certain filesystems, this could allow an attacker to overwrite arbitrary files via "Symlink Poisoning" when extracting a malicious archive.
+* **[CVE-2026-26996](https://nvd.nist.gov/vuln/detail/CVE-2026-26996) (Severity 8.7 - `minimatch`):** A Regular Expression Denial of Service (ReDoS) vulnerability. By providing a specifically crafted glob pattern, an attacker can cause the application to hang or crash due to exponential backtracking in the regex engine.
+* **[CVE-2024-21538](https://nvd.nist.gov/vuln/detail/CVE-2024-21538) (Severity 7.7 - `cross-spawn`):** Another ReDoS vulnerability. Improper input sanitization allows an attacker to spike CPU usage and crash the program by sending a large, malformed string.
+
+### **Audit Verdict & Risk Impact**
+
+* **Protocol Risk:** The presence of these vulnerabilities contradicts the "mathematically un-hackable" and "deterministic verification" goals of the DJZS Protocol.
+* **Recommendation:** To maintain the integrity of your **Proof-of-Logic Certificates**, you must update the Go runtime to **v1.23.8+** and update your npm dependencies (specifically `cross-spawn` to **v7.0.5+** and `minimatch` to **v10.2.1+**) immediately.
