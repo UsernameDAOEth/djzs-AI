@@ -1211,15 +1211,15 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               </div>
             </div>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>After years of building in Web3 and watching founders, traders, and researchers have their most valuable ideas scraped and profited from by centralized platforms, I decided to build the tool I desperately needed.</p>
-              <p>DJZS.AI isn't a faceless startup; it's a project with a singular mission: to give you a private space to do your best work. Your trust is the only thing that matters here.</p>
+              <p>After years of building in Web3 and watching autonomous agents execute millions in transactions based on unverified reasoning — circular logic, hallucinated data, FOMO-driven momentum — I built the verification layer that should have existed from the start.</p>
+              <p>DJZS is not a startup. It's a single-purpose protocol: force every agent to commit its reasoning to an immutable log before it touches capital. If the logic is flawed, the transaction dies. That's the only rule that matters.</p>
             </div>
           </div>
         </motion.section>
 
         <motion.footer variants={fadeUp} className="text-center py-12 border-t border-border">
           <p className="text-sm text-muted-foreground/80">
-            Built with privacy in mind. Your reasoning stays yours.
+            Honest, not helpful. The Logic Oracle for the decentralized web.
           </p>
         </motion.footer>
       </motion.main>
