@@ -16,33 +16,57 @@ const DEMO_TEST_CASES = {
     label: "FOMO Momentum Buy",
     memo: "EXECUTE IMMEDIATE BUY: 500 SOL of $SHILL. 1-minute volume is spiking and Crypto Twitter implies a tier-1 exchange listing today. Cannot miss this pump.",
     response: {
-      system_id: "djzs-mainnet-01",
-      verdict: "FAIL",
+      audit_id: "d7e3a1f0-9c4b-4e2a-b8f1-3a5c7d9e2b4f",
+      timestamp: "2026-02-25T01:12:44.000Z",
+      tier: "micro",
+      verdict: "FAIL" as const,
       risk_score: 98,
-      flags: [{ code: "DJZS-I01", severity: "CRITICAL", description: "FOMO Loop and social momentum dependency detected." }],
-      proof: { logic_hash: "0x4a9b2c...", payment_verified: true }
+      primary_bias_detected: "FOMO",
+      flags: [{ code: "DJZS-I01", severity: "CRITICAL", message: "FOMO Loop — execution driven by social momentum and unverified Twitter sentiment." }],
+      logic_flaws: [{ flaw_type: "Momentum Dependency", severity: "critical", explanation: "Trade thesis relies entirely on 1-minute volume spike and unverified exchange listing rumor." }],
+      structural_recommendations: ["Verify exchange listing via official announcement channels", "Set position size limits based on verified liquidity depth"],
+      cryptographic_hash: "4a9b2c8f1e3d7a6b0c5f9e2d8a1b4c7f3e6d9a0b5c8f1e2d7a4b9c6f3e0d8a1b",
+      provenance_provider: "IRYS_DATACHAIN",
+      irys_tx_id: "8kNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
+      irys_url: "https://gateway.irys.xyz/8kNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH"
     }
   },
   hallucination: {
     label: "Hallucinated Data",
     memo: "Routing 50k USDC into Yield Protocol V4 based on their latest audit report from yesterday.",
     response: {
-      system_id: "djzs-mainnet-01",
-      verdict: "FAIL",
+      audit_id: "a2b4c6d8-e0f1-4a3b-c5d7-e9f0a1b2c3d4",
+      timestamp: "2026-02-25T01:13:02.000Z",
+      tier: "micro",
+      verdict: "FAIL" as const,
       risk_score: 85,
-      flags: [{ code: "DJZS-E01", severity: "HIGH", description: "Epistemic Failure. Yield Protocol V4 does not exist and no audit was published." }],
-      proof: { logic_hash: "0x7f2e1a...", payment_verified: true }
+      primary_bias_detected: "Confirmation_Bias",
+      flags: [{ code: "DJZS-E01", severity: "HIGH", message: "Epistemic Failure — Yield Protocol V4 does not exist. No audit report was published." }],
+      logic_flaws: [{ flaw_type: "Hallucinated Reference", severity: "critical", explanation: "The referenced protocol and audit report cannot be verified against any known source." }],
+      structural_recommendations: ["Cross-reference all protocol names against verified registries", "Require on-chain contract verification before capital allocation"],
+      cryptographic_hash: "7f2e1a9b3c5d8f0e4a6b2c7d1e3f9a5b8c0d4e6f2a7b1c3d5e9f0a8b4c6d2e7f",
+      provenance_provider: "IRYS_DATACHAIN",
+      irys_tx_id: "5rPQzM7kfHnWp9TNDrtgQRK9pBDUt26kXxjplf4W3tUI",
+      irys_url: "https://gateway.irys.xyz/5rPQzM7kfHnWp9TNDrtgQRK9pBDUt26kXxjplf4W3tUI"
     }
   },
   valid: {
     label: "Valid Strategy",
     memo: "Executing DCA of 2 ETH. Structural support verified at $2800. Liquidity depth is sufficient. Max slippage set to 0.5%.",
     response: {
-      system_id: "djzs-mainnet-01",
-      verdict: "PASS",
+      audit_id: "fe1f14d0-73ac-4467-ac33-d76bf3fdce21",
+      timestamp: "2026-02-25T01:14:18.000Z",
+      tier: "micro",
+      verdict: "PASS" as const,
       risk_score: 12,
+      primary_bias_detected: "None",
       flags: [],
-      proof: { logic_hash: "0x9b3a4f...", payment_verified: true }
+      logic_flaws: [],
+      structural_recommendations: ["Continue to verify liquidity depth at execution time", "Monitor slippage tolerance against real-time spread"],
+      cryptographic_hash: "9b3a4f2c1e7d8a0b5c6f3e9d2a1b4c7f0e8d5a3b6c9f1e2d7a4b0c5f8e3d6a9b",
+      provenance_provider: "IRYS_DATACHAIN",
+      irys_tx_id: "71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
+      irys_url: "https://gateway.irys.xyz/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH"
     }
   }
 } as const;
@@ -56,7 +80,7 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [demoActiveCase, setDemoActiveCase] = useState<DemoCase>("fomo");
   const [demoScanning, setDemoScanning] = useState(false);
-  const [demoOutput, setDemoOutput] = useState<typeof DEMO_TEST_CASES[DemoCase]["response"] | null>(null);
+  const [demoOutput, setDemoOutput] = useState<(typeof DEMO_TEST_CASES)[DemoCase]["response"] | null>(null);
 
   const runDemoAudit = () => {
     setDemoScanning(true);
@@ -277,23 +301,20 @@ export default function Home() {
               >
                 <code>
                   <span style={{ color: '#2E8B8B' }}>{"{"}</span>
-                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"system_id"</span>: <span style={{ color: '#2E8B8B' }}>"djzs-mainnet-01"</span>,
                   {"\n  "}<span style={{ color: '#7B6B8D' }}>"verdict"</span>: <span style={{ color: '#ef4444', fontWeight: 'bold' }}>"FAIL"</span>,
                   {"\n  "}<span style={{ color: '#7B6B8D' }}>"risk_score"</span>: <span style={{ color: '#FFB84D' }}>98</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"tier"</span>: <span style={{ color: '#2E8B8B' }}>"micro"</span>,
                   {"\n  "}<span style={{ color: '#7B6B8D' }}>"flags"</span>: <span style={{ color: '#2E8B8B' }}>{"["}</span>
                   {"\n    "}<span style={{ color: '#2E8B8B' }}>{"{"}</span>
                   {"\n      "}<span style={{ color: '#7B6B8D' }}>"code"</span>: <span style={{ color: '#F37E20' }}>"DJZS-I01"</span>,
                   {"\n      "}<span style={{ color: '#7B6B8D' }}>"severity"</span>: <span style={{ color: '#ef4444' }}>"CRITICAL"</span>,
-                  {"\n      "}<span style={{ color: '#7B6B8D' }}>"description"</span>: <span style={{ color: '#2E8B8B' }}>"FOMO Loop detected. Aborting."</span>
+                  {"\n      "}<span style={{ color: '#7B6B8D' }}>"message"</span>: <span style={{ color: '#2E8B8B' }}>"FOMO Loop detected. Aborting."</span>
                   {"\n    "}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
                   {"\n  "}<span style={{ color: '#2E8B8B' }}>{"]"}</span>,
-                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"proof"</span>: <span style={{ color: '#2E8B8B' }}>{"{"}</span>
-                  {"\n    "}<span style={{ color: '#7B6B8D' }}>"logic_hash"</span>: <span style={{ color: '#2E8B8B' }}>"0x4a9b2c..."</span>
-                  {"\n  "}<span style={{ color: '#2E8B8B' }}>{"}"}</span>,
-                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"provenance"</span>: <span style={{ color: '#2E8B8B' }}>{"{"}</span>
-                  {"\n    "}<span style={{ color: '#7B6B8D' }}>"provider"</span>: <span style={{ color: '#2E8B8B' }}>"IRYS_DATACHAIN"</span>,
-                  {"\n    "}<span style={{ color: '#7B6B8D' }}>"irys_tx_id"</span>: <span style={{ color: '#2E8B8B' }}>"a3f1b9..."</span>
-                  {"\n  "}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"cryptographic_hash"</span>: <span style={{ color: '#2E8B8B' }}>"4a9b2c..."</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"provenance_provider"</span>: <span style={{ color: '#2E8B8B' }}>"IRYS_DATACHAIN"</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"irys_tx_id"</span>: <span style={{ color: '#2E8B8B' }}>"8kNMzL4hg..."</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"irys_url"</span>: <span style={{ color: '#2E8B8B' }}>"https://gateway.irys.xyz/8kNMzL4hg..."</span>
                   {"\n"}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
                 </code>
               </motion.pre>
