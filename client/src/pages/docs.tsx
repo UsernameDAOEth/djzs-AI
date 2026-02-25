@@ -40,17 +40,29 @@ const stagger = {
   show: { transition: { staggerChildren: 0.1 } }
 };
 
+const colorMap = {
+  orange: { gradient: "from-orange-500/[0.08]", border: "border-orange-500/20 hover:border-orange-500/30", bg: "bg-orange-600/20", text: "text-orange-400", dot: "bg-orange-400" },
+  teal: { gradient: "from-teal-500/[0.08]", border: "border-teal-500/20 hover:border-teal-500/30", bg: "bg-teal-600/20", text: "text-teal-400", dot: "bg-teal-400" },
+  purple: { gradient: "from-purple-500/[0.08]", border: "border-purple-500/20 hover:border-purple-500/30", bg: "bg-purple-600/20", text: "text-purple-400", dot: "bg-purple-400" },
+  blue: { gradient: "from-blue-500/[0.08]", border: "border-blue-500/20 hover:border-blue-500/30", bg: "bg-blue-600/20", text: "text-blue-400", dot: "bg-blue-400" },
+  green: { gradient: "from-green-500/[0.08]", border: "border-green-500/20 hover:border-green-500/30", bg: "bg-green-600/20", text: "text-green-400", dot: "bg-green-400" },
+  amber: { gradient: "from-amber-500/[0.08]", border: "border-amber-500/20 hover:border-amber-500/30", bg: "bg-amber-600/20", text: "text-amber-400", dot: "bg-amber-400" },
+  red: { gradient: "from-red-500/[0.08]", border: "border-red-500/20 hover:border-red-500/30", bg: "bg-red-600/20", text: "text-red-400", dot: "bg-red-400" },
+};
+
 interface FeatureCardProps {
   icon: typeof Shield;
   title: string;
   description: string;
+  color?: "orange" | "teal" | "purple" | "blue" | "green" | "amber" | "red";
 }
 
-function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
+function FeatureCard({ icon: Icon, title, description, color = "orange" }: FeatureCardProps) {
+  const c = colorMap[color];
   return (
-    <div className="p-6 rounded-lg bg-muted border border-border hover:border-orange-500/20 transition-all group">
-      <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center mb-4 group-hover:bg-orange-500/20 transition-colors">
-        <Icon className="w-5 h-5 text-orange-400" />
+    <div className={`p-6 rounded-lg bg-gradient-to-br ${c.gradient} to-transparent border ${c.border} transition-all`}>
+      <div className={`w-10 h-10 rounded-lg ${c.bg} flex items-center justify-center mb-4`}>
+        <Icon className={`w-5 h-5 ${c.text}`} />
       </div>
       <h3 className="text-lg font-bold text-foreground mb-2">{title}</h3>
       <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
@@ -93,16 +105,6 @@ interface TechStackItemProps {
   items: string[];
   color: "orange" | "teal" | "purple" | "blue" | "green" | "amber" | "red";
 }
-
-const colorMap = {
-  orange: { gradient: "from-orange-500/[0.08]", border: "border-orange-500/20 hover:border-orange-500/30", bg: "bg-orange-600/20", text: "text-orange-400", dot: "bg-orange-400" },
-  teal: { gradient: "from-teal-500/[0.08]", border: "border-teal-500/20 hover:border-teal-500/30", bg: "bg-teal-600/20", text: "text-teal-400", dot: "bg-teal-400" },
-  purple: { gradient: "from-purple-500/[0.08]", border: "border-purple-500/20 hover:border-purple-500/30", bg: "bg-purple-600/20", text: "text-purple-400", dot: "bg-purple-400" },
-  blue: { gradient: "from-blue-500/[0.08]", border: "border-blue-500/20 hover:border-blue-500/30", bg: "bg-blue-600/20", text: "text-blue-400", dot: "bg-blue-400" },
-  green: { gradient: "from-green-500/[0.08]", border: "border-green-500/20 hover:border-green-500/30", bg: "bg-green-600/20", text: "text-green-400", dot: "bg-green-400" },
-  amber: { gradient: "from-amber-500/[0.08]", border: "border-amber-500/20 hover:border-amber-500/30", bg: "bg-amber-600/20", text: "text-amber-400", dot: "bg-amber-400" },
-  red: { gradient: "from-red-500/[0.08]", border: "border-red-500/20 hover:border-red-500/30", bg: "bg-red-600/20", text: "text-red-400", dot: "bg-red-400" },
-};
 
 function TechStackItem({ icon: Icon, category, items, color }: TechStackItemProps) {
   const c = colorMap[color];
@@ -565,35 +567,42 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Core Principles</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Core Principles</h2>
+          <p className="text-muted-foreground mb-8">The non-negotiable rules that govern every Oracle interaction.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard 
               icon={HardDrive}
+              color="orange"
               title="Audit-Before-Act"
               description="Every reasoning trace must pass through the Oracle before execution. No audit, no action. This is the core enforcement loop for the A2A economy."
             />
             <FeatureCard 
               icon={Shield}
+              color="teal"
               title="Deterministic Verdicts"
               description="Binary PASS/FAIL. The server enforces the verdict deterministically — the LLM detects, the server decides. No probabilistic hedging."
             />
             <FeatureCard 
               icon={Bot}
+              color="red"
               title="Adversarial Oracle"
               description="The AI is adversarial by design. It exposes circular logic, hallucinated data, FOMO bias, and narrative dependency. Honest, not helpful."
             />
             <FeatureCard 
               icon={Lock}
+              color="green"
               title="Local-First Privacy"
               description="Workspace data lives on your device. No server-side storage of your reasoning. No feeds, no tracking, no centralized memory."
             />
             <FeatureCard 
               icon={Zap}
+              color="amber"
               title="DJZS-LF Taxonomy"
               description="7 deterministic failure codes across Structural, Epistemic, Incentive, and Execution categories. Machine-readable error handling for autonomous agents."
             />
             <FeatureCard 
               icon={Key}
+              color="purple"
               title="x402 Pay-to-Verify"
               description="No API keys or subscriptions. Access gated by on-chain USDC micropayments on Base. Your wallet is your identity."
             />
