@@ -829,6 +829,60 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               </div>
             </div>
 
+            <h4 className="text-sm font-bold text-foreground mb-4" data-testid="text-risk-score-scale-title">Risk Score Scale</h4>
+            <p className="text-xs text-muted-foreground mb-4">Every audit returns a numeric risk score from 0 to 100. The score determines the visual severity classification and influences the binary verdict.</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              <div className="p-3 rounded-lg bg-gradient-to-br from-green-500/[0.08] to-transparent border border-green-500/20 text-center" data-testid="card-risk-low">
+                <span className="text-lg font-black font-mono text-green-400 block">LOW</span>
+                <span className="text-[10px] font-mono text-muted-foreground block mb-1.5">0–24</span>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">No structural failures. Logic is sound for execution.</p>
+              </div>
+              <div className="p-3 rounded-lg bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20 text-center" data-testid="card-risk-moderate">
+                <span className="text-lg font-black font-mono text-teal-400 block">MODERATE</span>
+                <span className="text-[10px] font-mono text-muted-foreground block mb-1.5">25–49</span>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">Minor concerns identified. Review flagged items before proceeding.</p>
+              </div>
+              <div className="p-3 rounded-lg bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/20 text-center" data-testid="card-risk-elevated">
+                <span className="text-lg font-black font-mono text-amber-400 block">ELEVATED</span>
+                <span className="text-[10px] font-mono text-muted-foreground block mb-1.5">50–74</span>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">Significant logic flaws detected. Execution carries material risk.</p>
+              </div>
+              <div className="p-3 rounded-lg bg-gradient-to-br from-red-500/[0.08] to-transparent border border-red-500/20 text-center" data-testid="card-risk-critical">
+                <span className="text-lg font-black font-mono text-red-400 block">CRITICAL</span>
+                <span className="text-[10px] font-mono text-muted-foreground block mb-1.5">75–100</span>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">Severe reasoning failures. Automatic FAIL verdict enforced.</p>
+              </div>
+            </div>
+
+            <h4 className="text-sm font-bold text-foreground mb-4" data-testid="text-audit-contents-title">Audit Report Contents</h4>
+            <p className="text-xs text-muted-foreground mb-3">Every ProofOfLogic certificate includes a structured breakdown of the adversarial analysis:</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-8">
+              <div className="p-2.5 rounded-lg bg-muted border border-border" data-testid="card-audit-risk-score">
+                <p className="text-[11px] font-bold text-foreground">Risk Score</p>
+                <p className="text-[10px] text-muted-foreground">0–100 numeric severity</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-muted border border-border" data-testid="card-audit-verdict">
+                <p className="text-[11px] font-bold text-foreground">PASS / FAIL Verdict</p>
+                <p className="text-[10px] text-muted-foreground">Deterministic binary output</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-muted border border-border" data-testid="card-audit-primary-bias">
+                <p className="text-[11px] font-bold text-foreground">Primary Bias</p>
+                <p className="text-[10px] text-muted-foreground">Dominant cognitive bias detected</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-muted border border-border" data-testid="card-audit-logic-flaws">
+                <p className="text-[11px] font-bold text-foreground">Logic Flaws</p>
+                <p className="text-[10px] text-muted-foreground">Individual flaws with severity</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-muted border border-border" data-testid="card-audit-failure-codes">
+                <p className="text-[11px] font-bold text-foreground">DJZS-LF Codes</p>
+                <p className="text-[10px] text-muted-foreground">Failure taxonomy flags</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-muted border border-border" data-testid="card-audit-recommendations">
+                <p className="text-[11px] font-bold text-foreground">Recommendations</p>
+                <p className="text-[10px] text-muted-foreground">Structural action items</p>
+              </div>
+            </div>
+
             <h4 className="text-sm font-bold text-foreground mb-4">DJZS-LF Taxonomy — 7 Logic Failure Codes</h4>
             <p className="text-xs text-muted-foreground mb-4">Each code maps to a specific class of reasoning failure. Four severity levels: CRITICAL, HIGH, MEDIUM, LOW.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
