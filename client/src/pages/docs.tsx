@@ -1086,7 +1086,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             />
             <TechStackItem 
               category="AI & Agents"
-              items={["Venice AI", "OpenClaw Runner", "Reasoning Models", "Structured JSON"]}
+              items={["Venice AI", "OpenClaw Runner", "XMTP Agent SDK", "Evasion Defense Pipeline"]}
             />
             <TechStackItem 
               category="Storage & Security"
@@ -1097,12 +1097,16 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               items={["x402 Protocol", "@x402/express", "USDC on Base", "SHA-256 Hashing", "Three-tier pricing"]}
             />
             <TechStackItem 
-              category="Provenance & Storage"
-              items={["Irys Datachain", "Permanent Certificates", "Gateway Verification", "Immutable Provenance"]}
+              category="A2A Messaging"
+              items={["XMTP (MLS Protocol)", "E2E Encrypted DMs", "Quantum-Resistant KEM", "Agent-to-Agent Routing"]}
+            />
+            <TechStackItem 
+              category="Provenance"
+              items={["Irys Datachain", "Permanent Certificates", "Gateway Verification", "GraphQL Discovery"]}
             />
             <TechStackItem 
               category="Secure Execution"
-              items={["Phala Cloud TEE", "Hardware Enclave", "Isolated Key Management"]}
+              items={["Phala Cloud TEE", "Hardware Enclave", "Dual-Process Boot", "concurrently"]}
             />
           </div>
         </motion.section>
