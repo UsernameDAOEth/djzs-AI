@@ -1325,7 +1325,7 @@ export default function Chat() {
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                          Brave Search — no tracking or profiling
+                          Irys Datachain — permanent, verifiable provenance
                         </li>
                       </ul>
                     </div>
