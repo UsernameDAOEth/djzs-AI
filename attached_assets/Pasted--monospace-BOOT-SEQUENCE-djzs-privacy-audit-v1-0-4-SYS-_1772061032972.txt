@@ -1,0 +1,62 @@
+```monospace
+// BOOT_SEQUENCE: djzs-privacy-audit-v1.0.4
+// SYS_ID: DJZS-MAINNET-01
+// LOGIC_TAXONOMY: PRIVACY_STACK_OPTIMIZATION
+// STATUS: ENFORCING_DETERMINISM
+
+```
+
+The current Privacy Architecture area functions as a disclosure layer, but it lacks the deterministic authority of the rest of the Protocol. To align this section with the **Architect Console**'s adversarial identity, the following structural and logic-based upgrades are required:
+
+### 1. Visual Synchronicity (The Gradient Shift)
+
+The Privacy Architecture modal currently uses a flat, high-contrast dark theme. To match the recent `docs.tsx` updates, transition the cards to the **Orange-Gradient Pattern**:
+
+* **Implementation:** Apply `bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20`.
+* **Logic:** This visually signals that privacy is not a "passive feature" but an active, energy-intensive protocol requirement.
+
+### 2. The "Ephemeral vs. Permanent" Logic Gate
+
+The distinction between the **Adversarial Oracle (Venice AI)** and the **Audit Ledger (Irys)** must be framed as a logic gate. Users need to understand where data is purged and where it is etched:
+
+* **Add "Computation Horizon" Card:** Explicitly state that Venice AI provides "Zero-Retention Compute." The logic trace exists only during the audit and is destroyed upon the issuance of the **Proof-of-Logic Certificate**.
+* **Add "Immutable Provenance" Card:** Frame Irys not just as "storage," but as the "Permanent Evidence Layer." Ensure the copy clarifies that only the *anonymized* logic hash and verdict are committed to the datachain, never the raw strategy.
+
+### 3. Client-Side Cryptographic Sovereignty
+
+Incorporate the identity of the **x402 payment middleware** and **XMTP**.
+
+* **Logic Failure Prevention:** Add a technical note regarding "Private Key Isolation." State that the Protocol never requests or stores the Architect’s private keys; all transactions are signed via the local node (IndexedDB) or the connected Web3 wallet. This prevents `DJZS-X01 (KEY_EXPOSURE)` risk.
+
+### 4. Deterministic Language Purge
+
+Remove any lingering Web2 terminology.
+
+* **Change:** "Your entries, insights, and memories" → "**Reasoning Traces, Logic Payloads, and Forensic Logs**."
+* **Change:** "Writing and browsing" → "**Strategic Formulation and Adversarial Review**."
+
+### 5. Integration of the Evasion Defense Pipeline
+
+The Privacy Stack should mention the **Evasion Defense Pipeline**. This frames privacy not just as "hiding data," but as "defending the agent's logic" from external manipulation or surveillance.
+
+```json
+{
+  "audit_verdict": "OPTIMIZATION_REQUIRED",
+  "risk_score": 34,
+  "logic_hash": "0x8d2f...e91a",
+  "flags": [
+    {
+      "code": "DJZS-P01",
+      "status": "AESTHETIC_DEVIATION",
+      "severity": "LOW"
+    },
+    {
+      "code": "DJZS-P02",
+      "status": "TERMINOLOGY_DRIFT",
+      "severity": "MEDIUM"
+    }
+  ],
+  "certificate_authority": "DJZS-LOGIC-ORACLE-V1"
+}
+
+```
