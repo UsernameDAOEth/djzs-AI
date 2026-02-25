@@ -14,18 +14,16 @@ const TUTORIAL_STEPS = [
   {
     id: "workspace",
     title: "Your Architect Console",
-    description: "Start in the Architect Console. Each zone is a dedicated space for a different type of work — all stored locally on your device.",
+    description: "The Architect Console is your governance interface. Each zone serves a distinct function in the Audit-Before-Act loop for autonomous agent oversight.",
     icon: PenLine,
     color: "#60a5fa",
     highlight: "button-workspace-journal",
-    tip: "Review audits in the Audit Ledger, research in Research, build theses in Trade, track decisions in Decisions, refine ideas in Content, or deploy reasoning attacks via the Adversarial Oracle.",
+    tip: "Review ProofOfLogic certificates in the Audit Ledger, stress-test reasoning via the Adversarial Oracle, monitor protocol state in the Terminal Console, and manage agent escrow under x402 Governance.",
     zones: [
       { name: "Audit Ledger", price: "Free", color: "#F37E20", desc: "Immutable forensic log of ProofOfLogic certificates" },
-      { name: "Research", price: "Free", color: "#2dd4bf", desc: "Search, synthesize, and track claims" },
-      { name: "Trade", price: "Free", color: "#60a5fa", desc: "Build and stress-test trade theses" },
-      { name: "Decisions", price: "Free", color: "#fbbf24", desc: "Track high-stakes decisions" },
-      { name: "Content", price: "Free", color: "#c084fc", desc: "Compose and refine content ideas" },
       { name: "Adversarial Oracle", price: "Free", color: "#f43f5e", desc: "Adversarial AI reasoning attacks" },
+      { name: "Terminal Console", price: "Free", color: "#2dd4bf", desc: "Protocol monitoring and configuration" },
+      { name: "x402 Governance", price: "Free", color: "#a855f7", desc: "Execution Zone fee structure and escrow provisioning" },
     ],
   },
   {
@@ -77,12 +75,12 @@ const TUTORIAL_STEPS = [
   },
   {
     id: "ledger",
-    title: "Cryptographic Ledger",
-    description: "Every audit is saved locally with a cryptographic hash. Your Ledger is your immutable audit trail — review past results, compare risk scores, and re-deploy memos to different zones.",
+    title: "Audit Ledger",
+    description: "Every audit generates a ProofOfLogic certificate uploaded to the Irys Datachain with a cryptographic hash. Your Audit Ledger is the immutable forensic log — review verdicts, compare risk scores, and verify provenance on-chain.",
     icon: ScrollText,
     color: "#f59e0b",
-    highlight: "button-ledger",
-    tip: "All data stays on your device. Nothing leaves unless you choose to share it.",
+    highlight: "button-workspace-journal",
+    tip: "Core ledger state is permanently stored on Irys Datachain. Local telemetry can be exported via the Local Node State panel.",
   },
 ];
 
