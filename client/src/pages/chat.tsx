@@ -25,7 +25,6 @@ import {
   Pin,
   Download,
   FileText,
-  Sparkles,
   Bell,
   X,
   Info,
@@ -51,7 +50,6 @@ import {
   Check,
   AlertCircle,
   HelpCircle,
-  Plus,
   Video,
   Mic,
   MicOff,
@@ -68,8 +66,6 @@ import {
 import { SiX, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -80,7 +76,7 @@ import { useWeb3Profile, getPrimaryProfile, getAllLinks, getTotalFollowers } fro
 import { MessageCard } from "@/components/chat/message-cards";
 import { apiRequest, queryClient, getVeniceApiKey, setVeniceApiKey } from "@/lib/queryClient";
 import { isVaultEncryptionSetUp, isVaultLocked, lockVault, setupVaultPassphrase, unlockVault, removeVaultEncryption } from "@/lib/vault-crypto";
-import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry, PinnedMemory } from "@shared/schema";
+import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry } from "@shared/schema";
 import { TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
 import type { DJZSLogicAudit } from "@shared/audit-schema";
 import { format } from "date-fns";
@@ -92,10 +88,6 @@ import { ProvisionAgentAllowance } from "@/components/provision-agent-allowance"
 import { AuditTutorial, useTutorial } from "@/components/audit-tutorial";
 import {
   exportVaultAsZip,
-  importVaultFromZip,
-  importVaultFromJson,
-  requestPersistentStorage,
-  checkPersistentStorage,
   getLastBackupDate,
 } from "@/lib/vault-backup";
 import { generateIntelligenceBrief, buildIntelligenceContext, type IntelligenceBrief } from "@/lib/founder-intelligence";
@@ -108,7 +100,6 @@ import {
   getActiveMemories, 
   getMemoriesForAgent, 
   pinMemory as pinLocalMemory, 
-  forgetMemory,
   getEntryStats,
   getRecentEntriesForContext,
   createDossier,
@@ -307,7 +298,7 @@ export default function Chat() {
   const { showTutorial, openTutorial, closeTutorial } = useTutorial();
   const [messageInput, setMessageInput] = useState("");
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
-  const [memoryDrawerOpen, setMemoryDrawerOpen] = useState(false);
+
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
@@ -325,11 +316,8 @@ export default function Chat() {
   const [webModeEnabled, setWebModeEnabled] = useState(true);
   const [braveSearchEnabled, setBraveSearchEnabled] = useState(false);
   const [braveSearchAvailable, setBraveSearchAvailable] = useState(false);
-  const [storagePersisted, setStoragePersisted] = useState<boolean | null>(null);
   const [lastBackupDate, setLastBackupDateState] = useState<string | null>(getLastBackupDate());
   const [isExporting, setIsExporting] = useState(false);
-  const [isImporting, setIsImporting] = useState(false);
-  const importFileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -470,10 +458,6 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    checkPersistentStorage().then(setStoragePersisted);
-  }, []);
-
-  useEffect(() => {
     fetch('/api/health')
       .then(res => res.json())
       .then(data => {
@@ -498,8 +482,6 @@ export default function Chat() {
   const [pendingVideoAssetId, setPendingVideoAssetId] = useState<string | null>(null);
   const [pendingVideoPlaybackId, setPendingVideoPlaybackId] = useState<string | null>(null);
 
-  // Local-first: Query memories from IndexedDB
-  const localMemories = useLiveQuery(() => getActiveMemories(10), []);
   
   // Local-first: Query dossiers from IndexedDB
   const dossiers = useLiveQuery(() => getActiveDossiers(), []);
@@ -575,18 +557,6 @@ export default function Chat() {
     return () => window.removeEventListener("keydown", handleCmdK);
   }, []);
 
-  // Lock body scroll when memory drawer is open on mobile
-  useEffect(() => {
-    if (memoryDrawerOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [memoryDrawerOpen]);
-
   const { data: member, isLoading: memberLoading } = useQuery<Member | null>({
     queryKey: ["/api/members", address],
     queryFn: async () => {
@@ -648,17 +618,6 @@ export default function Chat() {
       return res.json();
     },
     enabled: !!address && selectedZone === "journal",
-  });
-
-  // Fetch pinned memories
-  const { data: pinnedMemories = [] } = useQuery<PinnedMemory[]>({
-    queryKey: ["/api/memories", address],
-    queryFn: async () => {
-      const res = await fetch(`/api/memories/${address}`);
-      if (!res.ok) throw new Error("Failed to fetch memories");
-      return res.json();
-    },
-    enabled: !!address,
   });
 
   const sendMessage = useMutation({
@@ -944,22 +903,6 @@ export default function Chat() {
     if (score >= 50) return 'ELEVATED';
     if (score >= 25) return 'MODERATE';
     return 'LOW';
-  };
-
-  const handleForgetMemory = async (id: number) => {
-    try {
-      await forgetMemory(id);
-      toast({
-        title: "Memory forgotten",
-        description: "This will no longer be used for context.",
-      });
-    } catch (err) {
-      toast({
-        title: "Could not forget memory",
-        description: "Something went wrong. Try again.",
-        variant: "destructive",
-      });
-    }
   };
 
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
@@ -1693,14 +1636,6 @@ export default function Chat() {
               >
                 {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
-              <button 
-                onClick={() => setMemoryDrawerOpen(!memoryDrawerOpen)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all touch-target ${memoryDrawerOpen ? 'bg-orange-600/15 text-orange-400' : 'text-muted-foreground hover:text-foreground hover:bg-muted bg-muted/50'}`}
-                data-testid="button-toggle-memory"
-              >
-                <Zap className="w-4 h-4" />
-                <span className="text-xs font-medium sm:hidden">Memory</span>
-              </button>
             </div>
           </header>
 
@@ -1839,6 +1774,45 @@ export default function Chat() {
                         })}
                       </div>
                     )}
+
+                    <div className="mt-8 pt-6 border-t border-zinc-800/50">
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-3 flex items-center gap-2">
+                        <Terminal className="w-3.5 h-3.5" />
+                        Local Node State
+                      </h3>
+                      <p className="text-[10px] text-zinc-600 mb-3 font-mono">
+                        Last export: {lastBackupDate ? format(new Date(lastBackupDate), "MMM d, yyyy 'at' h:mm a") : 'never'}
+                      </p>
+                      <Button
+                        variant="outline"
+                        className="w-full border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800/50 text-zinc-400 hover:text-emerald-400 h-9 rounded-lg font-mono text-xs transition-all"
+                        disabled={isExporting}
+                        onClick={async () => {
+                          setIsExporting(true);
+                          try {
+                            const blob = await exportVaultAsZip();
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `djzs-logic-logs-${new Date().toISOString().split('T')[0]}.zip`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                            setLastBackupDateState(getLastBackupDate());
+                            toast({ title: "Logic logs exported", description: "ZIP archive downloaded" });
+                          } catch (err) {
+                            toast({ title: "Export failed", description: "Could not export logic logs", variant: "destructive" });
+                          } finally {
+                            setIsExporting(false);
+                          }
+                        }}
+                        data-testid="button-export-logic-logs"
+                      >
+                        {isExporting ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <Download className="w-3.5 h-3.5 mr-2" />}
+                        {isExporting ? 'Exporting...' : 'Export Logic Logs (.zip)'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ) : selectedZone === "thinking" ? (
@@ -2153,215 +2127,6 @@ export default function Chat() {
           </div>
         </main>
 
-        {/* Right Sidebar - Insight & Memory Drawer */}
-        {memoryDrawerOpen && (
-          <>
-            {/* Mobile overlay backdrop */}
-            <div 
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden" 
-              onClick={() => setMemoryDrawerOpen(false)}
-            />
-            <aside className="fixed md:relative right-0 top-0 bottom-0 md:inset-auto z-50 md:z-auto w-[85%] max-w-sm md:w-80 border-l border-border flex flex-col bg-card backdrop-blur-xl animate-in slide-in-from-right duration-300">
-              <Tabs defaultValue="memories" className="flex-1 flex flex-col">
-                <div className="px-5 pt-5 pb-4 border-b border-border">
-                  <div className="flex items-center justify-between mb-4 md:hidden">
-                    <h3 className="text-lg font-bold text-foreground">Memory & Insights</h3>
-                    <button 
-                      onClick={() => setMemoryDrawerOpen(false)}
-                      className="p-2.5 rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-muted transition-colors touch-target"
-                      data-testid="button-close-memory"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <TabsList className="w-full bg-muted/50 p-1 rounded-lg h-11">
-                    <TabsTrigger value="memories" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-orange-600/20 data-[state=active]:text-orange-300">
-                      <Pin className="w-3.5 h-3.5 mr-2" />
-                      Memories
-                    </TabsTrigger>
-                    <TabsTrigger value="insights" className="flex-1 h-9 text-xs font-medium rounded-lg data-[state=active]:bg-orange-600/20 data-[state=active]:text-orange-300">
-                      <Sparkles className="w-3.5 h-3.5 mr-2" />
-                      Insights
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-
-              <TabsContent value="memories" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
-                <div className="px-5 py-3 border-b border-border">
-                  <p className="text-xs text-muted-foreground font-medium">{localMemories?.length || 0} patterns saved</p>
-                </div>
-                <ScrollArea className="flex-1">
-                  <div className="p-4 space-y-3">
-                    {!localMemories || localMemories.length === 0 ? (
-                      <div className="text-center py-12 px-4">
-                        <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                          <Pin className="w-6 h-6 text-muted-foreground/80" />
-                        </div>
-                        <p className="text-sm text-muted-foreground font-medium">No patterns pinned yet</p>
-                        <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">Pin patterns worth remembering from your entries</p>
-                      </div>
-                    ) : (
-                      localMemories.map((memory) => (
-                        <div key={memory.id} className="p-4 rounded-lg bg-muted border border-border entry-card">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline" className="text-[9px] font-medium border-orange-500/30 text-orange-400/70 px-2 py-0.5">
-                              {memory.kind}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                            {memory.content}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground/80">
-                              {format(new Date(memory.createdAt), "MMM d, yyyy")}
-                            </span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => memory.id && handleForgetMemory(memory.id)}
-                              className="text-muted-foreground hover:text-red-400 hover:bg-red-500/10 h-8 px-3 text-xs touch-target"
-                              data-testid={`button-forget-memory-${memory.id}`}
-                            >
-                              Forget
-                            </Button>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </ScrollArea>
-                <div className="p-4 border-t border-border space-y-3">
-                  <div className="flex items-center justify-between px-1">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${storagePersisted ? 'bg-green-400' : 'bg-yellow-400'}`} />
-                      <span className="text-[10px] text-muted-foreground" data-testid="text-storage-status">
-                        {storagePersisted === null ? 'Checking...' : storagePersisted ? 'Persistent storage: On' : 'Persistent storage: Off'}
-                      </span>
-                    </div>
-                    {storagePersisted === false && (
-                      <button
-                        className="text-[10px] text-orange-400 hover:text-orange-300 font-medium"
-                        onClick={async () => {
-                          const granted = await requestPersistentStorage();
-                          setStoragePersisted(granted);
-                          toast({ title: granted ? "Persistent storage enabled" : "Browser denied persistent storage", description: granted ? "Your data is now protected from automatic cleanup" : "Your browser may clear data under storage pressure. Back up regularly." });
-                        }}
-                        data-testid="button-enable-persist"
-                      >
-                        Enable
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-[10px] text-muted-foreground/80 px-1" data-testid="text-last-backup">
-                    Last backup: {lastBackupDate ? format(new Date(lastBackupDate), "MMM d, yyyy 'at' h:mm a") : 'never'}
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    className="w-full border-border bg-muted hover:bg-muted text-muted-foreground hover:text-foreground h-11 rounded-lg font-medium text-xs transition-all touch-target"
-                    disabled={isExporting}
-                    onClick={async () => {
-                      setIsExporting(true);
-                      try {
-                        const blob = await exportVaultAsZip();
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `djzs-vault-${new Date().toISOString().split('T')[0]}.zip`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                        setLastBackupDateState(getLastBackupDate());
-                        toast({ title: "Vault exported", description: "ZIP archive downloaded (JSON + Markdown)" });
-                      } catch (err) {
-                        toast({ title: "Export failed", description: "Could not export vault data", variant: "destructive" });
-                      } finally {
-                        setIsExporting(false);
-                      }
-                    }}
-                    data-testid="button-export-vault"
-                  >
-                    {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-                    {isExporting ? 'Exporting...' : 'Export Vault (.zip)'}
-                  </Button>
-                  <input
-                    ref={importFileRef}
-                    type="file"
-                    accept=".zip,.json"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      setIsImporting(true);
-                      try {
-                        const result = file.name.endsWith('.zip')
-                          ? await importVaultFromZip(file)
-                          : await importVaultFromJson(file);
-                        const totalAdded = result.entriesAdded + result.insightsAdded + result.pinsAdded + result.dossiersAdded + result.queriesAdded + result.claimsAdded + result.musicTracksAdded;
-                        const totalSkipped = result.entriesSkipped + result.insightsSkipped + result.pinsSkipped + result.dossiersSkipped + result.queriesSkipped + result.claimsSkipped + result.musicTracksSkipped;
-                        toast({
-                          title: "Import complete",
-                          description: `Added ${totalAdded} items, skipped ${totalSkipped} duplicates`,
-                        });
-                      } catch (err: any) {
-                        toast({ title: "Import failed", description: err.message || "Could not import vault data", variant: "destructive" });
-                      } finally {
-                        setIsImporting(false);
-                        if (importFileRef.current) importFileRef.current.value = '';
-                      }
-                    }}
-                    data-testid="input-import-file"
-                  />
-                  <Button
-                    variant="outline"
-                    className="w-full border-border bg-muted hover:bg-muted text-muted-foreground hover:text-foreground h-11 rounded-lg font-medium text-xs transition-all touch-target"
-                    disabled={isImporting}
-                    onClick={() => importFileRef.current?.click()}
-                    data-testid="button-import-vault"
-                  >
-                    {isImporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-                    {isImporting ? 'Importing...' : 'Import Backup (.zip / .json)'}
-                  </Button>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="insights" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
-                <div className="px-5 py-3 border-b border-border">
-                  <p className="text-xs text-muted-foreground font-medium">Latest thinking</p>
-                </div>
-                <ScrollArea className="flex-1">
-                  <div className="p-4 space-y-3">
-                    {agentResponse ? (
-                      <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Bot className="w-4 h-4 text-orange-400" />
-                          <span className="text-xs font-medium text-orange-400">
-                            Adversarial Oracle
-                          </span>
-                        </div>
-                        <div className="space-y-3">
-                          <p className="text-sm text-foreground/90 leading-relaxed">{agentResponse.said}</p>
-                          <p className="text-xs text-muted-foreground leading-relaxed">{agentResponse.matters}</p>
-                          <p className="text-sm text-orange-300 italic leading-relaxed">{agentResponse.question}</p>
-                        </div>
-                        <p className="text-xs text-muted-foreground/80 mt-4">Just now</p>
-                      </div>
-                    ) : (
-                      <div className="text-center py-12 px-4">
-                        <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                          <Bot className="w-6 h-6 text-muted-foreground/80" />
-                        </div>
-                        <p className="text-sm text-muted-foreground font-medium">No thinking yet</p>
-                        <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">Write your reasoning and deploy an audit</p>
-                      </div>
-                    )}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
-              </Tabs>
-            </aside>
-          </>
-        )}
       </div>
     </TooltipProvider>
 

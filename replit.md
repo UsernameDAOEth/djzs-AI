@@ -47,6 +47,7 @@ Preferred communication style: Simple, everyday language.
 - **Terminal Console**: Dashboard for protocol monitoring and configuration.
 - **x402 Fee Structure**: Read-only display of Execution Zone pricing (Micro $2.50, Founder $5.00, Treasury $50.00 USDC).
 - **ProvisionAgentAllowance**: Governance component for provisioning USDC escrow to execution agents. Reads live USDC balance via wagmi `useReadContract` (balanceOf on Base Mainnet USDC contract). Displays Available Velocity and Pending Logic Traces metrics. Detects wrong network (shows SWITCH_NETWORK), disconnected state, and defaults to 50.00 USDC input.
+- **Local Node State**: Export-only telemetry section at the bottom of the Audit Ledger view. "Export Logic Logs (.zip)" downloads local IndexedDB state. No import functionality (core state is on Irys Datachain).
 - **Onboarding**: An interactive tutorial ("Protocol Specs") with spotlight highlights, keyboard navigation, and localStorage persistence.
 - **Music Library**: Local upload and playback of audio files, categorized by Focus, Reflection, and Creative zones.
 - **Offline Support**: Enables offline writing and browsing via local-first storage and service worker caching.
