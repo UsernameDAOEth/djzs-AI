@@ -1,6 +1,5 @@
 import { Link } from "wouter";
 import { 
-  Home, 
   Shield, 
   HardDrive, 
   Bot, 
@@ -10,18 +9,14 @@ import {
   ArrowRight,
   Key,
   ExternalLink,
-  Building2,
   Users,
   Database,
-  Fingerprint,
-  Globe,
   Brain,
   Sparkles,
   FileSearch,
   KeyRound,
   ShieldCheck,
   DollarSign,
-  FileCode,
   CheckCircle,
   Code2,
   AlertTriangle,
@@ -507,80 +502,44 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Your Reasoning is a Data Mine</h2>
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20 mb-8" data-testid="card-why-privacy-docs">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-orange-400" />
+          <h2 className="text-2xl font-bold text-foreground mb-2">Data Transparency</h2>
+          <p className="text-muted-foreground mb-8">Where your data goes — and where it doesn't. No fine print.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6" data-testid="card-why-privacy-docs">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/20 hover:border-amber-500/30 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-lg bg-amber-600/20 flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">Not E2E Encrypted</h3>
+                  <p className="text-xs text-amber-400/80">Venice AI audit channel</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-foreground">Agent reasoning traces and founder strategies are the most valuable data in the A2A economy. Where does yours go?</h3>
-              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">When you deploy an audit, your reasoning trace is sent to Venice AI over the internet for adversarial analysis. This channel is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because you deserve to know exactly when your data leaves your device.</p>
             </div>
-            <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>
-                Your trade thesis. Your treasury proposal. Your agent's execution plan. Your unpublished research. These reasoning traces are the raw material of the A2A economy — and they shouldn't feed centralized AI models. Most platforms say "we value your privacy" while training on your logic.
-              </p>
-              <p>
-                DJZS is designed differently from the ground up. Your local vault data stays private on-device. However, audit certificates generated via the A2A API are permanently uploaded to <strong className="text-foreground">Irys Datachain</strong> for immutable, publicly verifiable provenance — this is by design, so any agent or human can independently verify a ProofOfLogic certificate.
-              </p>
+            <div className="p-6 rounded-lg bg-gradient-to-br from-green-500/[0.08] to-transparent border border-green-500/20 hover:border-green-500/30 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-lg bg-green-600/20 flex items-center justify-center">
+                  <ShieldCheck className="w-6 h-6 text-green-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">E2E Encrypted</h3>
+                  <p className="text-xs text-green-400/80">XMTP agent channel</p>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">XMTP messaging is fully end-to-end encrypted using the MLS protocol with quantum-resistant key encapsulation (XWING KEM). Forward secrecy, post-compromise security, and quantum resistance — the same standard as Signal. See the <a href="https://docs.xmtp.org/protocol/security" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 underline underline-offset-2">XMTP Security Documentation</a> for details.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 mb-6">
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <HardDrive className="w-5 h-5 text-orange-400 mb-2" />
-                <h4 className="text-sm font-bold text-foreground mb-1">Local-First Storage</h4>
-                <p className="text-xs text-muted-foreground">Local audit state — audit records and logic logs — lives in your browser's IndexedDB. We don't have a database of your reasoning. There's nothing to hack, subpoena, or sell.</p>
+            <div className="p-6 rounded-lg bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20 hover:border-teal-500/30 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-lg bg-teal-600/20 flex items-center justify-center">
+                  <Database className="w-6 h-6 text-teal-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">Permanently On-Chain</h3>
+                  <p className="text-xs text-teal-400/80">Irys Datachain provenance</p>
+                </div>
               </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <ShieldCheck className="w-5 h-5 text-green-400 mb-2" />
-                <h4 className="text-sm font-bold text-foreground mb-1">Vault Encryption</h4>
-                <p className="text-xs text-muted-foreground">Set a passphrase to encrypt your vault with AES-256-GCM. Audit records and AI insights are encrypted at rest. Even with device access, your reasoning stays locked.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <Bot className="w-5 h-5 text-orange-400 mb-2" />
-                <h4 className="text-sm font-bold text-foreground mb-1">User-Controlled AI</h4>
-                <p className="text-xs text-muted-foreground">Your reasoning trace is only sent to the Oracle when you explicitly deploy an audit. Venice AI processes it without storing or training on your data. Nothing happens in the background.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <KeyRound className="w-5 h-5 text-orange-400 mb-2" style={{ color: '#FFB84D' }} />
-                <h4 className="text-sm font-bold text-foreground mb-1">Bring Your Own Key</h4>
-                <p className="text-xs text-muted-foreground">Use your own Venice API key for full control over AI usage and billing. Your key stays in your browser's local storage, never on our servers.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <Lock className="w-5 h-5 text-orange-400 mb-2" />
-                <h4 className="text-sm font-bold text-foreground mb-1">Wallet-Based Identity</h4>
-                <p className="text-xs text-muted-foreground">No email, no password, no account to breach. Your wallet is your identity. No personal information is required or stored.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <Database className="w-5 h-5 text-teal-400 mb-2" />
-                <h4 className="text-sm font-bold text-foreground mb-1">Irys Datachain — Permanent Provenance</h4>
-                <p className="text-xs text-muted-foreground">Every audit certificate generated via the A2A API is permanently uploaded to Irys Datachain — an immutable, publicly verifiable storage layer. Each ProofOfLogic certificate receives an Irys transaction ID and gateway URL, enabling independent verification by any agent or human. Certificates cannot be altered or deleted after upload.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <Fingerprint className="w-5 h-5 text-purple-400 mb-2" />
-                <h4 className="text-sm font-bold text-foreground mb-1">Phala TEE — Hardware-Isolated Execution</h4>
-                <p className="text-xs text-muted-foreground">The DJZS Oracle runs inside a Phala Cloud Trusted Execution Environment (TEE) — a hardware-secure enclave where private keys (Venice API, Irys wallet, payment verification) never touch disk and are isolated from the host operating system. This ensures that secrets remain protected even if the server infrastructure is compromised.</p>
-              </div>
-            </div>
-            <div className="p-4 rounded-lg bg-amber-500/[0.04] border border-amber-500/15">
-              <p className="text-xs text-amber-300 font-semibold mb-1">What we're honest about</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">When you deploy an audit, your reasoning trace is sent to Venice AI over the internet for adversarial analysis. This is not end-to-end encrypted. Venice AI claims no data retention, but we can't independently verify that claim. We're transparent about this because you deserve to know exactly when your data leaves your device.</p>
-            </div>
-            <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15 mt-4">
-              <p className="text-xs text-green-300 font-semibold mb-1">What IS encrypted at rest</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">When you set a vault passphrase, your audit records and AI insights are encrypted locally using AES-256-GCM with PBKDF2 key derivation (600k iterations). Your passphrase never leaves your device. Even if someone copies your browser data, they cannot read your reasoning without your passphrase.</p>
-            </div>
-            <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15 mt-4">
-              <p className="text-xs text-green-300 font-semibold mb-1">What IS end-to-end encrypted</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">XMTP messaging is fully end-to-end encrypted using the MLS protocol with quantum-resistant key encapsulation (XWING KEM). When you interact with DJZS agents via XMTP, your messages are protected with forward secrecy, post-compromise security, and quantum resistance — the same level of protection as Signal and WhatsApp, using a newer standard. See the <a href="https://docs.xmtp.org/protocol/security" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 underline underline-offset-2">XMTP Security Documentation</a> for full details.</p>
-            </div>
-            <div className="p-4 rounded-lg bg-teal-500/[0.04] border border-teal-500/15 mt-4">
-              <p className="text-xs text-teal-300 font-semibold mb-1">What IS permanently stored on-chain</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">Audit certificates generated via the A2A API — including the strategy memo, verdict, risk score, failure codes, and proof object — are permanently uploaded to Irys Datachain. These records are public, immutable, and independently verifiable via gateway URL. Users should be aware that any reasoning trace submitted through the A2A API becomes a permanent, publicly accessible record on Irys. Local vault data (Architect Console) is never uploaded.</p>
-            </div>
-            <div className="p-4 rounded-lg bg-purple-500/[0.04] border border-purple-500/15 mt-4">
-              <p className="text-xs text-purple-300 font-semibold mb-1">What IS hardware-isolated</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">The DJZS Oracle runs inside a Phala Cloud TEE (Trusted Execution Environment). All private keys — Venice API credentials, Irys wallet keys, and payment verification secrets — are managed inside a hardware-secure enclave. Keys never touch disk and are isolated from the host OS, ensuring cryptographic operations remain protected even in adversarial hosting environments.</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">Audit certificates generated via the A2A API — including the strategy memo, verdict, risk score, and failure codes — are permanently uploaded to Irys Datachain. Any reasoning trace submitted through the API becomes a permanent, publicly accessible record. Local vault data is never uploaded.</p>
             </div>
           </div>
         </motion.section>
