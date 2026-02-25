@@ -1211,8 +1211,9 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               </div>
             </div>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>After years of building in Web3 and watching autonomous agents execute millions in transactions based on unverified reasoning — circular logic, hallucinated data, FOMO-driven momentum — I built the verification layer that should have existed from the start.</p>
-              <p>DJZS is not a startup. It's a single-purpose protocol: force every agent to commit its reasoning to an immutable log before it touches capital. If the logic is flawed, the transaction dies. That's the only rule that matters.</p>
+              <p>After years of watching autonomous agents hemorrhage capital based on unverified logic, hallucinated data, and FOMO, I engineered the Adversarial Logic Layer the A2A economy was missing.</p>
+              <p>DJZS is a single-purpose deterministic verification primitive. We enforce a ruthless "Audit-Before-Act" loop: every agent must commit its reasoning to an immutable ledger and pass a strict DJZS-LF audit before execution.</p>
+              <p>If the logic fractures, the transaction dies. No exceptions. The Logic Oracle for the decentralized web. Honest, not helpful.</p>
             </div>
           </div>
         </motion.section>
