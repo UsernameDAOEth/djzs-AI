@@ -256,7 +256,7 @@ export default function Security() {
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
-                  <span><strong className="text-foreground">Brave Search</strong> — No tracking, no profiling, independent search index</span>
+                  <span><strong className="text-foreground">Irys Datachain</strong> — Permanent, immutable audit provenance with public verification</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />

@@ -291,8 +291,8 @@ export default function About() {
                   <p className="text-xs text-muted-foreground">Filter historical audit records by Agent ID, Risk Score, or specific DJZS-LF diagnostic codes. Open with Cmd+K from anywhere.</p>
                 </div>
                 <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-tool-research">
-                  <h3 className="text-foreground font-bold mb-2">Research Zone</h3>
-                  <p className="text-xs text-muted-foreground">Privacy-first search (Brave Mode), AI web search with citations, and knowledge synthesis. Organize into trackers with claims and trust levels.</p>
+                  <h3 className="text-foreground font-bold mb-2">Irys Datachain Provenance</h3>
+                  <p className="text-xs text-muted-foreground">Every audit certificate is permanently uploaded to Irys Datachain with a transaction ID and gateway URL. Immutable, publicly verifiable, and tamper-proof.</p>
                 </div>
                 <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-tool-xmtp">
                   <h3 className="text-foreground font-bold mb-2">XMTP Agent Messaging</h3>

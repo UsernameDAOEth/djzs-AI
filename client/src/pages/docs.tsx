@@ -7,7 +7,6 @@ import {
   Lock, 
   Zap, 
   BookOpen, 
-  Search, 
   ArrowRight,
   Key,
   ExternalLink,
@@ -546,11 +545,6 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 <KeyRound className="w-5 h-5 text-orange-400 mb-2" style={{ color: '#FFB84D' }} />
                 <h4 className="text-sm font-bold text-foreground mb-1">Bring Your Own Key</h4>
                 <p className="text-xs text-muted-foreground">Use your own Venice API key for full control over AI usage and billing. Your key stays in your browser's local storage, never on our servers.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <Search className="w-5 h-5 text-orange-400 mb-2" />
-                <h4 className="text-sm font-bold text-foreground mb-1">Privacy-First Search</h4>
-                <p className="text-xs text-muted-foreground">Brave Search doesn't track or profile you. Venice AI's web search doesn't log queries. Your research stays your research.</p>
               </div>
               <div className="p-4 rounded-lg bg-muted border border-border">
                 <Lock className="w-5 h-5 text-orange-400 mb-2" />
@@ -1133,7 +1127,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             />
             <TechStackItem 
               category="AI & Agents"
-              items={["Venice AI", "OpenClaw Runner", "Brave Search API", "Reasoning Models", "Structured JSON"]}
+              items={["Venice AI", "OpenClaw Runner", "Reasoning Models", "Structured JSON"]}
             />
             <TechStackItem 
               category="Storage & Security"

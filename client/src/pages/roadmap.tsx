@@ -23,7 +23,7 @@ const roadmapPhases = [
     quarter: "Q1 2026",
     items: [
       { text: "Adversarial Oracle: pressure-tests reasoning traces, synthesizes cross-zone intelligence", done: true },
-      { text: "Research Zone: Brave Mode privacy-first search + Web Mode + Explain Mode", done: true },
+      { text: "Adversarial audit pipeline: STRIP/INVERT/TRACE/CLASSIFY evasion defense", done: true },
       { text: "Research tracker management & claim tracking with trust levels", done: true },
       { text: "Cross-zone linking (claims ↔ audit records)", done: true },
       { text: "Vault export & data portability", done: true },

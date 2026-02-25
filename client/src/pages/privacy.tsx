@@ -112,7 +112,7 @@ export default function Privacy() {
                 </div>
               </div>
               <p className="text-xs" style={{ color: '#9a9bb0' }}>
-                Brave Search queries (in Research mode) are also sent over HTTPS/TLS. Brave claims no tracking or profiling. AI-generated insights are saved locally on your device in IndexedDB.
+                AI-generated insights are saved locally on your device in IndexedDB. Audit certificates are permanently stored on Irys Datachain for verifiable provenance.
               </p>
             </section>
 
