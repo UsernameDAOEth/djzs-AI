@@ -31,7 +31,7 @@ export default function Privacy() {
           <h1 className="text-4xl md:text-5xl font-black text-foreground mb-4 tracking-tighter uppercase">
             Privacy Policy
           </h1>
-          <p className="text-sm text-muted-foreground mb-12 font-mono">Last updated: January 23, 2026</p>
+          <p className="text-sm text-muted-foreground mb-12 font-mono">Last updated: February 25, 2026</p>
 
           {/* Security Commitment Banner */}
           <div className="p-6 rounded-lg bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 mb-12">
@@ -136,11 +136,22 @@ export default function Privacy() {
                 DJZS operates an Agent-to-Agent (A2A) audit API at <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">POST /api/audit</code>. When autonomous agents submit strategy memos for logic audits:
               </p>
               <ul className="space-y-3 list-none">
-                <li><span className="text-foreground">• No storage:</span> Submitted strategy memos are processed in real-time and not stored on any server after the response is returned.</li>
                 <li><span className="text-foreground">• AI processing:</span> The memo text is sent to Venice AI for adversarial analysis. Venice claims no data retention.</li>
-                <li><span className="text-foreground">• Cryptographic hash:</span> A SHA-256 hash of the input memo is included in the audit response for verification purposes. The hash is computed server-side and returned to the caller — the original memo is not retained.</li>
+                <li><span className="text-foreground">• Cryptographic hash:</span> A SHA-256 hash of the input memo is included in the audit response for verification purposes. The hash is computed server-side and returned to the caller.</li>
                 <li><span className="text-foreground">• Payment data:</span> x402 payment verification is handled by the x402 protocol facilitator. DJZS receives USDC to the treasury wallet but does not store payment metadata beyond what is recorded on-chain.</li>
               </ul>
+              <div className="mt-6 p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                <h3 className="text-foreground font-bold mb-2">Irys Datachain — Permanent Public Storage</h3>
+                <p className="text-xs leading-relaxed mb-3">
+                  After an audit is processed, the resulting ProofOfLogic certificate is permanently uploaded to <strong className="text-foreground">Irys Datachain</strong>. This is a public, immutable data layer — once uploaded, the certificate cannot be modified or deleted by anyone, including DJZS.
+                </p>
+                <p className="text-xs leading-relaxed mb-3">
+                  The permanent certificate includes: the audit verdict, risk score, adversarial analysis, SHA-256 input hash, and the <strong className="text-foreground">strategy memo text submitted by the calling agent</strong>. Users and agents should be aware that any content submitted via the A2A API becomes a permanently verifiable public record on Irys Datachain.
+                </p>
+                <p className="text-xs leading-relaxed">
+                  Each certificate is assigned an Irys transaction ID and a gateway URL (e.g., <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">https://gateway.irys.xyz/:txId</code>) for independent verification via <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">GET /api/audit/verify/:txId</code>.
+                </p>
+              </div>
             </section>
 
             <section>

@@ -214,7 +214,7 @@ export default function Home() {
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-              Stop your autonomous agents from trading on FOMO and hallucinated data. Route your reasoning traces through the DJZS Zero-Trust Oracle before execution.
+              Stop your autonomous agents from trading on FOMO and hallucinated data. Route your reasoning traces through the DJZS Zero-Trust Oracle before execution. Every audit produces a permanent ProofOfLogic certificate on Irys Datachain.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
@@ -235,6 +235,21 @@ export default function Home() {
             <p className="text-xs text-muted-foreground pt-2" data-testid="text-cta-microcopy">
               $2.50 / $5.00 / $50.00 USDC per audit. Instant settlement on Base Mainnet. No subscriptions.
             </p>
+
+            <div className="flex flex-wrap gap-3 pt-1" data-testid="trust-badges">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border border-border bg-muted/50 text-muted-foreground" data-testid="badge-phala-tee">
+                <ShieldCheck size={12} className="text-green-500" />
+                Phala TEE
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border border-border bg-muted/50 text-muted-foreground" data-testid="badge-irys-datachain">
+                <ShieldCheck size={12} className="text-purple-500" />
+                Irys Datachain
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border border-border bg-muted/50 text-muted-foreground" data-testid="badge-base-mainnet">
+                <Coins size={12} className="text-cyan-500" />
+                Base Mainnet
+              </span>
+            </div>
           </motion.div>
 
           <motion.div
@@ -274,6 +289,10 @@ export default function Home() {
                   {"\n  "}<span style={{ color: '#2E8B8B' }}>{"]"}</span>,
                   {"\n  "}<span style={{ color: '#7B6B8D' }}>"proof"</span>: <span style={{ color: '#2E8B8B' }}>{"{"}</span>
                   {"\n    "}<span style={{ color: '#7B6B8D' }}>"logic_hash"</span>: <span style={{ color: '#2E8B8B' }}>"0x4a9b2c..."</span>
+                  {"\n  "}<span style={{ color: '#2E8B8B' }}>{"}"}</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"provenance"</span>: <span style={{ color: '#2E8B8B' }}>{"{"}</span>
+                  {"\n    "}<span style={{ color: '#7B6B8D' }}>"provider"</span>: <span style={{ color: '#2E8B8B' }}>"IRYS_DATACHAIN"</span>,
+                  {"\n    "}<span style={{ color: '#7B6B8D' }}>"irys_tx_id"</span>: <span style={{ color: '#2E8B8B' }}>"a3f1b9..."</span>
                   {"\n  "}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
                   {"\n"}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
                 </code>
@@ -366,7 +385,7 @@ export default function Home() {
                   <div className="text-sm font-mono text-muted-foreground mb-2" data-testid="text-phase-03">PHASE 03</div>
                   <h3 className="text-xl font-bold text-foreground mb-3">The Zero-Trust Oracle</h3>
                   <p className="text-muted-foreground leading-relaxed max-w-xs">
-                    DJZS mathematically evaluates the logic against the DJZS-LF taxonomy and returns a deterministic PASS/FAIL certificate.
+                    DJZS evaluates the logic against the DJZS-LF taxonomy inside a Phala TEE enclave and returns a deterministic PASS/FAIL certificate permanently stored on Irys Datachain.
                   </p>
                 </motion.div>
               </div>

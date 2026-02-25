@@ -41,6 +41,9 @@ const roadmapPhases = [
       { text: "Adversarial audit agent — Venice AI with structured JSON output (risk_score, bias, logic_flaws, recommendations)", done: true },
       { text: "SHA-256 cryptographic hashing of input memos for on-chain verification", done: true },
       { text: "Audit types: treasury, founder_drift, strategy, general", done: true },
+      { text: "Irys Datachain integration — permanent ProofOfLogic certificate storage with gateway verification", done: true },
+      { text: "GET /api/audit/verify/:txId — on-demand certificate verification endpoint", done: true },
+      { text: "Phala Cloud TEE deployment — hardware-isolated secret management (API keys never touch disk)", done: true },
     ],
   },
   {

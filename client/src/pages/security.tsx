@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ArrowLeft, Shield, HardDrive, Lock, Fingerprint, Eye, Server, Smartphone, CheckCircle, MessageSquareLock, Cpu, AlertTriangle, Sun, Moon } from "lucide-react";
+import { ArrowLeft, Shield, HardDrive, Lock, Fingerprint, Eye, Server, Smartphone, CheckCircle, MessageSquareLock, Cpu, AlertTriangle, Sun, Moon, Database, ShieldCheck } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 
 export default function Security() {
@@ -297,12 +297,88 @@ export default function Security() {
                   <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
                   <span><strong className="text-foreground">Structured Output</strong> — Audit responses are machine-readable JSON with typed fields (risk_score, primary_bias_detected, logic_flaws, structural_recommendations), preventing injection or ambiguous output.</span>
                 </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <span><strong className="text-foreground">Phala TEE Hardware Enclave</strong> — The Oracle runs inside a Phala Cloud Trusted Execution Environment (CVM). Private keys for Venice AI, Irys wallet, and x402 payment verification are isolated in hardware and never touch disk. Even the host operator cannot access secrets at runtime.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <span><strong className="text-foreground">Irys Datachain Provenance</strong> — Every completed audit certificate is permanently uploaded to Irys Datachain. Certificates are tamper-proof, publicly verifiable via gateway URL, and include a unique <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">irys_tx_id</code> for independent verification at <code className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-orange-300">GET /api/audit/verify/:txId</code>.</span>
+                </li>
               </ul>
             </section>
 
             <section>
               <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>08</span> Security Best Practices
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>07b</span> Trusted Execution Environment (TEE)
+              </h2>
+              <p className="mb-4">
+                The DJZS Oracle is deployed inside a <strong className="text-foreground">Phala Cloud Confidential Virtual Machine (CVM)</strong> — a hardware-isolated enclave that provides cryptographic guarantees about secret management:
+              </p>
+
+              <div className="grid gap-4 mb-6">
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(46,139,139,0.08)', borderColor: 'rgba(46,139,139,0.25)' }}>
+                  <div className="flex items-start gap-4">
+                    <ShieldCheck className="w-6 h-6 shrink-0" style={{ color: '#2E8B8B' }} />
+                    <div>
+                      <h3 className="text-foreground font-bold mb-2">Hardware-Isolated Secret Management</h3>
+                      <ul className="space-y-2 text-xs">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span><strong className="text-foreground">Venice AI API key</strong> — Stored inside the TEE, never exposed to the host</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span><strong className="text-foreground">Irys wallet private key</strong> — Used to sign and upload certificates, isolated in hardware</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span><strong className="text-foreground">x402 payment verification keys</strong> — Payment gate secrets never touch disk</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span><strong className="text-foreground">Remote attestation</strong> — The CVM produces a cryptographic attestation proving the code running inside the enclave has not been tampered with</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-5 rounded-lg border" style={{ background: 'rgba(243,126,32,0.06)', borderColor: 'rgba(243,126,32,0.2)' }}>
+                  <div className="flex items-start gap-4">
+                    <Database className="w-6 h-6 text-orange-400 shrink-0" />
+                    <div>
+                      <h3 className="text-foreground font-bold mb-2">Irys Datachain: Immutable Certificate Storage</h3>
+                      <p className="text-xs mb-3">After the Oracle completes an audit, the ProofOfLogic certificate is permanently uploaded to Irys Datachain.</p>
+                      <ul className="space-y-2 text-xs">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span><strong className="text-foreground">Permanent storage</strong> — Certificates cannot be deleted or modified after upload</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span><strong className="text-foreground">Public verification</strong> — Anyone can verify a certificate via the Irys gateway URL or the <code className="text-xs px-1 py-0.5 rounded bg-white/5 text-orange-300">GET /api/audit/verify/:txId</code> endpoint</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                          <span><strong className="text-foreground">Provenance chain</strong> — Each certificate includes <code className="text-xs px-1 py-0.5 rounded bg-white/5 text-orange-300">irys_tx_id</code>, <code className="text-xs px-1 py-0.5 rounded bg-white/5 text-orange-300">irys_url</code>, input hash, and timestamp for complete audit trail</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-lg bg-muted border border-border">
+                <p className="text-xs leading-relaxed">
+                  <strong className="text-foreground">Security guarantee:</strong> The TEE ensures that even the DJZS operator cannot extract private keys or tamper with the audit pipeline. Combined with Irys immutability, this creates a verifiable trust chain from audit request → AI inference → permanent certificate.
+                </p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Security Best Practices
               </h2>
               <p className="mb-4">
                 To maximize your security while using DJ-Z-S.box:
@@ -318,7 +394,7 @@ export default function Security() {
 
             <section>
               <h2 className="text-foreground font-black uppercase tracking-widest mb-4 flex items-center gap-3">
-                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>09</span> Report a Vulnerability
+                <span className="font-mono text-xs" style={{ color: '#F37E20' }}>10</span> Report a Vulnerability
               </h2>
               <p>
                 If you discover a security vulnerability, please report it responsibly through our 

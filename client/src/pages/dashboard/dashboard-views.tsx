@@ -308,6 +308,22 @@ export function APISettingsView() {
     "audit_type": "general"
   }'`;
 
+  const exampleResponse = `{
+  "audit_id": "djzs-audit-a1b2c3d4",
+  "verdict": "FAIL",
+  "risk_score": 72,
+  "primary_bias_detected": "MOMENTUM_BIAS",
+  "flags": [
+    { "code": "DJZS-LF-002", "severity": "HIGH", "message": "No stop-loss defined" }
+  ],
+  "cryptographic_hash": "0x9f86d081884c...",
+  "provenance_provider": "IRYS_DATACHAIN",
+  "irys_tx_id": "aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890abcd",
+  "irys_url": "https://gateway.irys.xyz/aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890abcd",
+  "tier": "micro",
+  "timestamp": "2026-02-25T12:00:00.000Z"
+}`;
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
@@ -411,7 +427,52 @@ export function APISettingsView() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="rounded-xl border border-border overflow-hidden"
+        style={{ background: 'hsl(var(--card))' }}
+      >
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between" style={{ background: 'hsl(var(--muted))' }}>
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] font-mono">Example Response</h3>
+          <button
+            onClick={() => copyToClipboard(exampleResponse, "response")}
+            className="text-[10px] font-mono text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1"
+            data-testid="button-copy-response"
+          >
+            {copied === "response" ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
+          </button>
+        </div>
+        <pre className="px-6 py-4 text-sm font-mono text-foreground/80 overflow-x-auto whitespace-pre">
+          {exampleResponse}
+        </pre>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
+        className="rounded-xl border border-teal-500/20 p-5"
+        style={{ background: 'rgba(20,184,166,0.04)' }}
+        data-testid="card-irys-provenance-note"
+      >
+        <div className="flex items-start gap-3">
+          <ExternalLink size={16} className="text-teal-400 mt-0.5 shrink-0" />
+          <div>
+            <h4 className="text-sm font-bold text-teal-400 mb-1">Irys Datachain Provenance</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Every ProofOfLogic certificate is permanently uploaded to the Irys Datachain after audit execution. The response includes{" "}
+              <code className="text-[11px] px-1 py-0.5 rounded bg-muted font-mono">irys_tx_id</code> and{" "}
+              <code className="text-[11px] px-1 py-0.5 rounded bg-muted font-mono">irys_url</code>{" "}
+              fields for on-chain verification. Certificates are immutable, publicly verifiable, and queryable via{" "}
+              <code className="text-[11px] px-1 py-0.5 rounded bg-muted font-mono">GET /api/audit/verify/:txId</code>.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35 }}
         className="flex gap-3"
       >
         <a

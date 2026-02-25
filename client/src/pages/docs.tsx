@@ -171,7 +171,7 @@ export default function Docs() {
                 The system serves two clients. <strong className="text-foreground">Human architects</strong> interact via the Architect Console — a web-based command center with six zones (Audit Ledger, Research, Trade, Decisions, Content, Adversarial Oracle) for capturing reasoning, building theses, and reviewing forensic audit records locally on-device. <strong className="text-foreground">Autonomous AI agents</strong> interact programmatically via the x402-gated API, receiving machine-readable <strong className="text-foreground">Proof of Logic Certificates</strong> with deterministic <code className="text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded font-mono text-xs">DJZS-LF</code> failure codes (binary PASS/FAIL verdicts) across three tiers: Micro ($2.50), Founder ($5.00), and Treasury ($50.00 USDC on Base).
               </p>
               <p>
-                Every audit generates a cryptographic certificate. If the Oracle detects circular logic, hallucinated data, FOMO-driven reasoning, or structural contradictions, it returns a <strong className="text-red-400">FAIL</strong> verdict with specific failure codes — and well-engineered agents automatically abort execution. DJZS is the Logic Oracle for the decentralized web. It is designed to be honest, not helpful.
+                Every audit generates a cryptographic certificate that is permanently uploaded to <strong className="text-foreground">Irys Datachain</strong> — an immutable, publicly verifiable provenance layer. If the Oracle detects circular logic, hallucinated data, FOMO-driven reasoning, or structural contradictions, it returns a <strong className="text-red-400">FAIL</strong> verdict with specific failure codes — and well-engineered agents automatically abort execution. Each ProofOfLogic certificate includes an Irys transaction ID and gateway URL for independent verification. DJZS is the Logic Oracle for the decentralized web. It is designed to be honest, not helpful.
               </p>
             </div>
           </div>
@@ -279,13 +279,59 @@ export default function Docs() {
 
             <div className="mb-12">
               <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <FileSearch className="w-5 h-5 text-blue-400" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">Endpoint: Verify Certificate</h3>
+              </div>
+              <code className="inline-block text-sm text-blue-300 bg-blue-500/10 px-4 py-2 rounded font-mono font-bold mb-4" data-testid="code-endpoint-verify">GET /api/audit/verify/:txId</code>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                Verify an existing ProofOfLogic certificate by its Irys Datachain transaction ID. This endpoint fetches the certificate from Irys gateway and returns the full audit record, allowing independent verification of any previously issued certificate.
+              </p>
+              <h4 className="text-sm font-bold text-foreground mb-3">Path Parameters</h4>
+              <div className="overflow-x-auto mb-6">
+                <table className="w-full text-sm" data-testid="table-verify-params">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-3 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Parameter</th>
+                      <th className="text-left py-3 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Type</th>
+                      <th className="text-left py-3 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-border/50">
+                      <td className="py-3 px-4"><code className="text-blue-400 font-mono text-xs">txId</code></td>
+                      <td className="py-3 px-4 text-xs text-muted-foreground font-mono">string</td>
+                      <td className="py-3 px-4 text-xs text-muted-foreground">The Irys Datachain transaction ID from a previously issued ProofOfLogic certificate.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <h4 className="text-sm font-bold text-foreground mb-3">Example cURL</h4>
+              <div className="relative mb-8" data-testid="code-curl-verify">
+                <div className="absolute top-0 left-0 right-0 h-8 bg-[#1a1d23] rounded-t-lg flex items-center px-4">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">bash</span>
+                </div>
+                <pre className="bg-[#1a1d23] rounded-lg pt-10 pb-5 px-5 overflow-x-auto border border-border/50">
+                  <code className="text-xs font-mono leading-relaxed text-muted-foreground">
+{`curl https://djzs.ai/api/audit/verify/`}<span className="text-blue-400">abc123xyz</span>
+                  </code>
+                </pre>
+              </div>
+              <div className="p-4 rounded-lg bg-blue-500/[0.04] border border-blue-500/15">
+                <p className="text-xs text-muted-foreground leading-relaxed">This endpoint is <strong className="text-foreground">public and free</strong> — no x402 payment required. Anyone with an Irys transaction ID can independently verify any ProofOfLogic certificate.</p>
+              </div>
+            </div>
+
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-purple-400" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground">Response Schema (JSON)</h3>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                The Oracle returns a fully assembled <code className="text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded font-mono text-xs">ProofOfLogic</code> object. If the <code className="text-red-400 font-mono text-xs">verdict</code> evaluates to <code className="text-red-400 font-mono text-xs">FAIL</code>, developers are expected to program their agents to automatically abort the execution sequence to prevent capital destruction.
+                The Oracle returns a fully assembled <code className="text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded font-mono text-xs">ProofOfLogic</code> object. If the <code className="text-red-400 font-mono text-xs">verdict</code> evaluates to <code className="text-red-400 font-mono text-xs">FAIL</code>, developers are expected to program their agents to automatically abort the execution sequence to prevent capital destruction. The response includes <code className="text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded font-mono text-xs">provenance_provider</code>, <code className="text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded font-mono text-xs">irys_tx_id</code>, and <code className="text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded font-mono text-xs">irys_url</code> fields for permanent certificate verification via Irys Datachain.
               </p>
               <div className="relative mb-4" data-testid="code-response-schema">
                 <div className="absolute top-0 left-0 right-0 h-8 bg-[#1a1d23] rounded-t-lg flex items-center px-4">
@@ -309,7 +355,10 @@ export default function Docs() {
     "timestamp": "2026-02-21T11:45:00Z",
     "payment_verified": true,
     "payment_proof": "0x_your_base_mainnet_tx_hash"
-  }
+  },
+  "`}<span className="text-blue-400">provenance_provider</span>{`": "IRYS_DATACHAIN",
+  "`}<span className="text-blue-400">irys_tx_id</span>{`": "abc123xyz...",
+  "`}<span className="text-blue-400">irys_url</span>{`": "https://gateway.irys.xyz/abc123xyz..."
 }`}
                   </code>
                 </pre>
@@ -481,7 +530,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 Your trade thesis. Your treasury proposal. Your agent's execution plan. Your unpublished research. These reasoning traces are the raw material of the A2A economy — and they shouldn't feed centralized AI models. Most platforms say "we value your privacy" while training on your logic.
               </p>
               <p>
-                DJZS is designed differently from the ground up:
+                DJZS is designed differently from the ground up. Your local vault data stays private on-device. However, audit certificates generated via the A2A API are permanently uploaded to <strong className="text-foreground">Irys Datachain</strong> for immutable, publicly verifiable provenance — this is by design, so any agent or human can independently verify a ProofOfLogic certificate.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 mb-6">
@@ -515,6 +564,16 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 <h4 className="text-sm font-bold text-foreground mb-1">Wallet-Based Identity</h4>
                 <p className="text-xs text-muted-foreground">No email, no password, no account to breach. Your wallet is your identity. No personal information is required or stored.</p>
               </div>
+              <div className="p-4 rounded-lg bg-muted border border-border">
+                <Database className="w-5 h-5 text-teal-400 mb-2" />
+                <h4 className="text-sm font-bold text-foreground mb-1">Irys Datachain — Permanent Provenance</h4>
+                <p className="text-xs text-muted-foreground">Every audit certificate generated via the A2A API is permanently uploaded to Irys Datachain — an immutable, publicly verifiable storage layer. Each ProofOfLogic certificate receives an Irys transaction ID and gateway URL, enabling independent verification by any agent or human. Certificates cannot be altered or deleted after upload.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-muted border border-border">
+                <Fingerprint className="w-5 h-5 text-purple-400 mb-2" />
+                <h4 className="text-sm font-bold text-foreground mb-1">Phala TEE — Hardware-Isolated Execution</h4>
+                <p className="text-xs text-muted-foreground">The DJZS Oracle runs inside a Phala Cloud Trusted Execution Environment (TEE) — a hardware-secure enclave where private keys (Venice API, Irys wallet, payment verification) never touch disk and are isolated from the host operating system. This ensures that secrets remain protected even if the server infrastructure is compromised.</p>
+              </div>
             </div>
             <div className="p-4 rounded-lg bg-amber-500/[0.04] border border-amber-500/15">
               <p className="text-xs text-amber-300 font-semibold mb-1">What we're honest about</p>
@@ -527,6 +586,14 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15 mt-4">
               <p className="text-xs text-green-300 font-semibold mb-1">What IS end-to-end encrypted</p>
               <p className="text-xs text-muted-foreground leading-relaxed">XMTP messaging is fully end-to-end encrypted using the MLS protocol with quantum-resistant key encapsulation (XWING KEM). When you interact with DJZS agents via XMTP, your messages are protected with forward secrecy, post-compromise security, and quantum resistance — the same level of protection as Signal and WhatsApp, using a newer standard. See the <a href="https://docs.xmtp.org/protocol/security" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 underline underline-offset-2">XMTP Security Documentation</a> for full details.</p>
+            </div>
+            <div className="p-4 rounded-lg bg-teal-500/[0.04] border border-teal-500/15 mt-4">
+              <p className="text-xs text-teal-300 font-semibold mb-1">What IS permanently stored on-chain</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">Audit certificates generated via the A2A API — including the strategy memo, verdict, risk score, failure codes, and proof object — are permanently uploaded to Irys Datachain. These records are public, immutable, and independently verifiable via gateway URL. Users should be aware that any reasoning trace submitted through the A2A API becomes a permanent, publicly accessible record on Irys. Local vault data (Architect Console) is never uploaded.</p>
+            </div>
+            <div className="p-4 rounded-lg bg-purple-500/[0.04] border border-purple-500/15 mt-4">
+              <p className="text-xs text-purple-300 font-semibold mb-1">What IS hardware-isolated</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">The DJZS Oracle runs inside a Phala Cloud TEE (Trusted Execution Environment). All private keys — Venice API credentials, Irys wallet keys, and payment verification secrets — are managed inside a hardware-secure enclave. Keys never touch disk and are isolated from the host OS, ensuring cryptographic operations remain protected even in adversarial hosting environments.</p>
             </div>
           </div>
         </motion.section>
@@ -1432,6 +1499,14 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <TechStackItem 
               category="A2A Payments"
               items={["x402 Protocol", "@x402/express", "USDC on Base", "SHA-256 Hashing", "Three-tier pricing"]}
+            />
+            <TechStackItem 
+              category="Provenance & Storage"
+              items={["Irys Datachain", "Permanent Certificates", "Gateway Verification", "Immutable Provenance"]}
+            />
+            <TechStackItem 
+              category="Secure Execution"
+              items={["Phala Cloud TEE", "Hardware Enclave", "Isolated Key Management"]}
             />
           </div>
         </motion.section>

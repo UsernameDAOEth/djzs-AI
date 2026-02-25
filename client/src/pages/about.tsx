@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ArrowLeft, Shield, Lock, Globe, BookOpen, Bot, Brain, Zap, ChevronRight, Sun, Moon, Terminal, CheckCircle2, Database, GitPullRequest, ShieldAlert, Eye, Activity } from "lucide-react";
+import { ArrowLeft, Shield, Lock, Globe, BookOpen, Bot, Brain, Zap, ChevronRight, Sun, Moon, Terminal, CheckCircle2, Database, GitPullRequest, ShieldAlert, Eye, Activity, HardDrive, FileCheck } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { useState } from "react";
 
@@ -178,6 +178,11 @@ export default function About() {
                   <h3 className="text-foreground font-bold mb-2">Sovereign by Default</h3>
                   <p className="text-xs text-muted-foreground">No email, no password, no account to breach. Your wallet is your identity. Optional AES-256-GCM vault encryption and Bring Your Own Key (BYOK) for AI inference give you full control.</p>
                 </div>
+                <div className="p-6 rounded-xl bg-muted border border-border" data-testid="card-philosophy-provenance">
+                  <FileCheck className="w-6 h-6 text-blue-400 mb-4" />
+                  <h3 className="text-foreground font-bold mb-2">Permanent Provenance</h3>
+                  <p className="text-xs text-muted-foreground">Every ProofOfLogic certificate is permanently uploaded to Irys Datachain — immutable, publicly verifiable, and independently retrievable via gateway URL. Audit history can never be altered or deleted.</p>
+                </div>
               </div>
             </section>
 
@@ -203,6 +208,14 @@ export default function About() {
                 <div className="border-l-2 border-yellow-500/50 pl-4">
                   <h3 className="text-foreground font-bold">XMTP Messaging (MLS)</h3>
                   <p className="text-sm text-muted-foreground mt-1">End-to-end encrypted agent communication via the MLS protocol with quantum-resistant key encapsulation (XWING KEM). Forward secrecy and post-compromise security for all agent interactions.</p>
+                </div>
+                <div className="border-l-2 border-yellow-500/50 pl-4">
+                  <h3 className="text-foreground font-bold">Irys Datachain</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Permanent ProofOfLogic certificate storage. Every audit result is uploaded to Irys Datachain — immutable, publicly verifiable, and retrievable via gateway URL. Certificates include provenance fields: <code className="text-xs px-1 py-0.5 rounded bg-muted text-orange-300">irys_tx_id</code>, <code className="text-xs px-1 py-0.5 rounded bg-muted text-orange-300">irys_url</code>, and verification via <code className="text-xs px-1 py-0.5 rounded bg-muted text-orange-300">GET /api/audit/verify/:txId</code>.</p>
+                </div>
+                <div className="border-l-2 border-yellow-500/50 pl-4">
+                  <h3 className="text-foreground font-bold">Phala TEE (Trusted Execution Environment)</h3>
+                  <p className="text-sm text-muted-foreground mt-1">The Oracle runs inside a hardware-secure enclave on Phala Cloud. Private keys (Venice API, Irys wallet, signing keys) are managed inside a Trusted Execution Environment — they never touch disk and are inaccessible even to the host operator.</p>
                 </div>
               </div>
             </section>
@@ -242,7 +255,7 @@ export default function About() {
                 Cryptographic Logic Proofs
               </h2>
               <p className="text-muted-foreground text-base leading-relaxed mb-6">
-                Every audit generates a deterministic JSON object — the Proof of Logic Certificate. You don't just get a PASS/FAIL verdict; you get a risk score, DJZS-LF failure codes, bias detection flags, structural recommendations, and a SHA-256 hash proving the evaluation's integrity for on-chain verification.
+                Every audit generates a deterministic JSON object — the Proof of Logic Certificate. You don't just get a PASS/FAIL verdict; you get a risk score, DJZS-LF failure codes, bias detection flags, structural recommendations, a SHA-256 hash proving the evaluation's integrity, and Irys Datachain provenance fields (<code className="text-orange-300">irys_tx_id</code>, <code className="text-orange-300">irys_url</code>) linking to the permanently stored certificate on the Irys gateway.
               </p>
               <div className="p-5 rounded-lg bg-card border border-border font-mono text-xs text-muted-foreground overflow-x-auto" data-testid="card-proof-schema">
                 <pre>{`{
@@ -254,7 +267,10 @@ export default function About() {
   "djzs_lf_codes": ["S01", "E02"],
   "bias_detected": true,
   "logic_hash": "sha256:a4f3e9...",
-  "tx_hash": "0x..."
+  "tx_hash": "0x...",
+  "provenance_provider": "IRYS_DATACHAIN",
+  "irys_tx_id": "abc123...",
+  "irys_url": "https://gateway.irys.xyz/abc123..."
 }`}</pre>
               </div>
             </section>
