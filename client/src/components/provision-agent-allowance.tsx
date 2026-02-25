@@ -1,8 +1,41 @@
 import { useState } from "react";
 import { AlertCircle } from "lucide-react";
+import { useAccount, useReadContract } from "wagmi";
+import { formatUnits } from "viem";
+import { base, baseSepolia } from "wagmi/chains";
+import { USDC_ADDRESS, ERC20_ABI } from "@/lib/wagmi-config";
+
+const SUPPORTED_CHAINS = [base.id, baseSepolia.id] as const;
 
 export function ProvisionAgentAllowance() {
-  const [usdcAmount, setUsdcAmount] = useState<string>("");
+  const [usdcAmount, setUsdcAmount] = useState<string>("50.00");
+  const { address, chainId, isConnected } = useAccount();
+
+  const isWrongNetwork = isConnected && chainId != null && !SUPPORTED_CHAINS.includes(chainId as typeof SUPPORTED_CHAINS[number]);
+  const activeChainId = chainId && SUPPORTED_CHAINS.includes(chainId as typeof SUPPORTED_CHAINS[number]) ? chainId : base.id;
+  const usdcAddress = USDC_ADDRESS[activeChainId];
+
+  const { data: rawBalance } = useReadContract({
+    address: usdcAddress,
+    abi: ERC20_ABI,
+    functionName: "balanceOf",
+    args: address ? [address] : undefined,
+    query: { enabled: isConnected && !isWrongNetwork && !!address },
+  });
+
+  const formattedBalance = rawBalance != null ? formatUnits(rawBalance, 6) : null;
+  const displayBalance = !isConnected ? "—" : isWrongNetwork ? "—" : formattedBalance ?? "0.00";
+
+  const networkLabel = !isConnected
+    ? "DISCONNECTED"
+    : isWrongNetwork
+      ? "WRONG NETWORK"
+      : chainId === baseSepolia.id
+        ? "Base Sepolia"
+        : "Base Mainnet";
+
+  const buttonDisabled = isWrongNetwork || !isConnected;
+  const buttonLabel = isWrongNetwork ? "SWITCH_NETWORK" : "AUTHORIZE AGENT ESCROW";
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-3xl" data-testid="panel-provision-agent-allowance">
@@ -27,13 +60,19 @@ export function ProvisionAgentAllowance() {
             Available Velocity (USDC)
           </p>
           <p className="text-2xl font-black font-mono text-green-500" data-testid="text-escrow-balance">
-            0.00
+            {displayBalance}
           </p>
           <span
-            className="inline-block mt-1 text-[9px] font-mono font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-700"
+            className={`inline-block mt-1 text-[9px] font-mono font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded border ${
+              isWrongNetwork
+                ? "bg-red-950 text-red-400 border-red-800"
+                : !isConnected
+                  ? "bg-zinc-900 text-zinc-500 border-zinc-700"
+                  : "bg-zinc-900 text-zinc-400 border-zinc-700"
+            }`}
             data-testid="badge-network"
           >
-            Base Mainnet
+            {networkLabel}
           </span>
         </div>
         <div>
@@ -58,10 +97,15 @@ export function ProvisionAgentAllowance() {
           data-testid="input-usdc-amount"
         />
         <button
-          className="w-full bg-zinc-900 text-white border border-zinc-700 hover:border-green-500 p-2 font-mono mt-4 transition-colors"
+          disabled={buttonDisabled}
+          className={`w-full p-2 font-mono mt-4 transition-colors border ${
+            buttonDisabled
+              ? "bg-zinc-950 text-zinc-600 border-zinc-800 cursor-not-allowed"
+              : "bg-zinc-900 text-white border-zinc-700 hover:border-green-500"
+          }`}
           data-testid="button-authorize-escrow"
         >
-          AUTHORIZE AGENT ESCROW
+          {buttonLabel}
         </button>
         <div className="flex items-center gap-2 mt-3">
           <AlertCircle className="w-3.5 h-3.5 text-zinc-500 shrink-0" />

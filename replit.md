@@ -46,9 +46,8 @@ Preferred communication style: Simple, everyday language.
 - **Adversarial Oracle**: Manual adversarial reasoning — expose contradictions, attack assumptions, pressure-test logic.
 - **Terminal Console**: Dashboard for protocol monitoring and configuration.
 - **x402 Fee Structure**: Read-only display of Execution Zone pricing (Micro $2.50, Founder $5.00, Treasury $50.00 USDC).
-- **ProvisionAgentAllowance**: Governance component for provisioning USDC escrow to execution agents, displaying Available Velocity and Pending Logic Traces metrics.
-- **Cryptographic Ledger**: Expandable audit record cards with full provenance data.
-- **Onboarding**: An interactive tutorial with spotlight highlights, keyboard navigation, and localStorage persistence.
+- **ProvisionAgentAllowance**: Governance component for provisioning USDC escrow to execution agents. Reads live USDC balance via wagmi `useReadContract` (balanceOf on Base Mainnet USDC contract). Displays Available Velocity and Pending Logic Traces metrics. Detects wrong network (shows SWITCH_NETWORK), disconnected state, and defaults to 50.00 USDC input.
+- **Onboarding**: An interactive tutorial ("Protocol Specs") with spotlight highlights, keyboard navigation, and localStorage persistence.
 - **Music Library**: Local upload and playback of audio files, categorized by Focus, Reflection, and Creative zones.
 - **Offline Support**: Enables offline writing and browsing via local-first storage and service worker caching.
 

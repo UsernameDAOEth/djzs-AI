@@ -299,7 +299,6 @@ export default function Chat() {
   const [auditResult, setAuditResult] = useState<DJZSLogicAudit | null>(null);
   const [intelligenceBrief, setIntelligenceBrief] = useState<IntelligenceBrief | null>(null);
   const [briefExpanded, setBriefExpanded] = useState(true);
-  const [showLedger, setShowLedger] = useState(false);
   const [isDeploying, setIsDeploying] = useState(false);
   const [expandedAuditId, setExpandedAuditId] = useState<number | null>(null);
 
@@ -994,7 +993,7 @@ export default function Chat() {
   const handleSendText = async () => {
     if (!messageInput.trim() || !address || sendMessage.isPending) return;
     
-    if (selectedZone === 'journal' || selectedZone === 'research') {
+    if (selectedZone === 'journal') {
       await saveEntry(selectedZone as EntryType, messageInput, [], pendingVideoAssetId || undefined, pendingVideoPlaybackId || undefined);
     }
     
@@ -1277,14 +1276,13 @@ export default function Chat() {
             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 px-4 mb-2 mt-2">Governance</p>
             {V1_ZONES.map((zone) => {
               const Icon = zone.icon;
-              const isActive = activeView === "workspace" && !showLedger && selectedZone === zone.id;
+              const isActive = activeView === "workspace" && selectedZone === zone.id;
               return (
                 <button
                   key={zone.id}
                   onClick={() => {
                     setSelectedZone(zone.id);
                     setActiveView("workspace");
-                    setShowLedger(false);
                     setMobileSidebarOpen(false);
                   }}
                   className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group ${
@@ -1335,25 +1333,6 @@ export default function Chat() {
             })}
 
             <div className="my-3 border-t border-border" />
-            
-            <button
-              onClick={() => {
-                setShowLedger(true);
-                setMobileSidebarOpen(false);
-              }}
-              className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all group ${
-                showLedger 
-                  ? "bg-muted/50 text-foreground" 
-                  : "text-muted-foreground hover:text-muted-foreground hover:bg-muted/30"
-              }`}
-              data-testid="button-ledger"
-            >
-              <ScrollText className={`w-5 h-5 transition-colors ${showLedger ? "text-amber-400" : "text-muted-foreground/80 group-hover:text-muted-foreground"}`} />
-              <span className="text-sm font-bold tracking-tight">Cryptographic Ledger</span>
-              {auditRecords && auditRecords.length > 0 && (
-                <span className="ml-auto text-[10px] font-mono text-muted-foreground/80">{auditRecords.length}</span>
-              )}
-            </button>
 
             <button
               onClick={openTutorial}
@@ -1361,7 +1340,7 @@ export default function Chat() {
               data-testid="button-tutorial"
             >
               <HelpCircle className="w-5 h-5 text-muted-foreground/80 group-hover:text-muted-foreground transition-colors" />
-              <span className="text-sm font-bold tracking-tight">How It Works</span>
+              <span className="text-sm font-bold tracking-tight">Protocol Specs</span>
             </button>
           </nav>
 
@@ -1625,10 +1604,10 @@ export default function Chat() {
               </button>
               <div className="flex flex-col">
                 <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground">
-                  {showLedger ? "Cryptographic Ledger" : activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.name || "Audit Ledger") : currentZoneConfig.name}
+                  {activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.name || "Audit Ledger") : currentZoneConfig.name}
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5 hidden sm:block">
-                  {showLedger ? "Immutable audit trail — all zone deployments recorded locally." : activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.purpose || "") : currentZoneConfig.purpose}
+                  {activeView === "workspace" ? (V1_ZONES.find(z => z.id === selectedZone)?.purpose || "") : currentZoneConfig.purpose}
                 </p>
               </div>
             </div>
@@ -1727,127 +1706,7 @@ export default function Chat() {
 
           {/* Main Content Area - scrollable */}
           <div className="flex-1 overflow-y-auto scroll-smooth">
-            {showLedger ? (
-            <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-10">
-              <div className="space-y-4">
-                {(!auditRecords || auditRecords.length === 0) ? (
-                  <div className="py-10">
-                    <ProvisionAgentAllowance />
-                  </div>
-                ) : (
-                  auditRecords.map((record) => {
-                    const tierConfig = ZONE_CONFIGS.find(z => z.id === record.zone_tier);
-                    const isExpanded = expandedAuditId === record.id;
-                    return (
-                      <div
-                        key={record.id}
-                        className="rounded-lg overflow-hidden transition-all"
-                        style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}
-                        data-testid={`audit-record-${record.id}`}
-                      >
-                        <button
-                          onClick={() => setExpandedAuditId(isExpanded ? null : (record.id ?? null))}
-                          className="w-full text-left p-4 sm:p-5 flex items-center gap-4 hover:bg-muted/30 transition-colors"
-                        >
-                          <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ background: tierConfig?.bgColor, border: `1px solid ${tierConfig?.borderColor}` }}>
-                            <span className="text-lg font-black font-mono" style={{ color: tierConfig?.color }}>{record.risk_score}</span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded" style={{ background: tierConfig?.bgColor, color: tierConfig?.color }}>
-                                {record.zone_tier}
-                              </span>
-                              <span className="text-[10px] font-mono text-muted-foreground/80">
-                                {format(new Date(record.timestamp), "MMM d, yyyy HH:mm")}
-                              </span>
-                            </div>
-                            <p className="text-sm text-muted-foreground truncate">{record.original_payload.length > 80 ? `${record.original_payload.slice(0, 80)}...` : record.original_payload}</p>
-                          </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            {record.verdict && (
-                              <span className="text-[10px] font-black uppercase px-2 py-1 rounded" style={{
-                                background: record.verdict === 'PASS' ? 'rgba(52,211,153,0.15)' : 'rgba(239,68,68,0.15)',
-                                color: record.verdict === 'PASS' ? '#34d399' : '#ef4444',
-                                border: `1px solid ${record.verdict === 'PASS' ? 'rgba(52,211,153,0.3)' : 'rgba(239,68,68,0.3)'}`,
-                              }}>
-                                {record.verdict}
-                              </span>
-                            )}
-                            <span className="text-[10px] font-black uppercase px-2 py-1 rounded" style={{ background: `${getRiskColor(record.risk_score)}15`, color: getRiskColor(record.risk_score) }}>
-                              {getRiskLabel(record.risk_score)}
-                            </span>
-                            <ChevronDown className={`w-4 h-4 text-muted-foreground/80 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                          </div>
-                        </button>
-                        {isExpanded && (
-                          <div className="px-5 pb-5 space-y-4 border-t border-border pt-4">
-                            <div>
-                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Primary Bias Detected</p>
-                              <span className="px-3 py-1.5 rounded-lg text-xs font-bold" style={{ background: record.primary_bias_detected !== 'None' ? 'rgba(239,68,68,0.1)' : 'rgba(52,211,153,0.1)', color: record.primary_bias_detected !== 'None' ? '#ef4444' : '#34d399' }}>
-                                {record.primary_bias_detected.replace(/_/g, ' ')}
-                              </span>
-                            </div>
-                            {record.flags && record.flags.length > 0 && (
-                              <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Logic Failure Codes ({record.flags.length})</p>
-                                <div className="space-y-2">
-                                  {record.flags.map((flag, idx) => {
-                                    const sevColor = flag.severity === 'CRITICAL' ? '#ef4444' : flag.severity === 'HIGH' ? '#f97316' : flag.severity === 'MEDIUM' ? '#f59e0b' : '#6b7280';
-                                    return (
-                                      <div key={idx} className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: `1px solid ${sevColor}20` }}>
-                                        <div className="flex items-center gap-2 mb-1">
-                                          <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded" style={{ background: `${sevColor}15`, color: sevColor }}>{flag.code}</span>
-                                          <span className="text-[9px] font-black uppercase tracking-[0.15em]" style={{ color: sevColor }}>{flag.severity}</span>
-                                        </div>
-                                        <p className="text-xs text-muted-foreground leading-relaxed">{flag.message}</p>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            )}
-                            {record.logic_flaws.length > 0 && (
-                              <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Logic Flaws ({record.logic_flaws.length})</p>
-                                <div className="space-y-2">
-                                  {record.logic_flaws.map((flaw, idx) => (
-                                    <div key={idx} className="p-3 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }}>
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-[10px] font-bold uppercase" style={{ color: flaw.severity === 'critical' ? '#ef4444' : flaw.severity === 'medium' ? '#f59e0b' : '#6b7280' }}>{flaw.severity}</span>
-                                        <span className="text-xs font-bold text-foreground">{flaw.flaw_type}</span>
-                                      </div>
-                                      <p className="text-xs text-muted-foreground leading-relaxed">{flaw.explanation}</p>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                            {record.structural_recommendations.length > 0 && (
-                              <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-2">Recommendations</p>
-                                <ul className="space-y-1.5">
-                                  {record.structural_recommendations.map((rec, idx) => (
-                                    <li key={idx} className="flex items-start gap-2">
-                                      <span className="w-1 h-1 rounded-full mt-2 shrink-0" style={{ background: tierConfig?.color }}></span>
-                                      <p className="text-sm text-muted-foreground leading-relaxed">{rec}</p>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            <div className="pt-3 border-t border-border">
-                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-1">Cryptographic Hash</p>
-                              <p className="text-[11px] font-mono text-muted-foreground break-all">{record.cryptographic_hash}</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-            ) : activeView === "workspace" ? (
+            {activeView === "workspace" ? (
             <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 sm:px-8">
               {selectedZone === "journal" ? (
                 <div className="flex-1 flex flex-col py-6 sm:py-10">
