@@ -1280,58 +1280,76 @@ export default function Chat() {
                     </div>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="border-border max-w-lg p-8 rounded-lg shadow-2xl" style={{ background: 'hsl(var(--card))' }}>
+                <DialogContent className="border-border max-w-xl p-8 rounded-lg shadow-2xl" style={{ background: 'hsl(var(--card))' }}>
                   <DialogHeader>
                     <DialogTitle className="text-xl font-black text-foreground uppercase tracking-tight flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-md bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-md bg-gradient-to-br from-green-500/[0.15] to-transparent border border-green-500/20 flex items-center justify-center">
                         <Lock className="w-5 h-5 text-green-400" />
                       </div>
                       Privacy Architecture
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-6 py-4">
+                  <div className="space-y-4 py-4">
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Your audit records are stored locally on your device using IndexedDB. AI only sees what you explicitly share by deploying an audit.
+                      Reasoning traces, logic payloads, and forensic logs are stored locally on your device via IndexedDB. The Oracle only processes what you explicitly deploy.
                     </p>
                     
-                    <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
-                      <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Local-First Storage</p>
+                    <div className="p-4 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20">
+                      <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Local-First Sovereign Storage</p>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        All entries, insights, and memories are stored in your browser's IndexedDB. This data stays on your device and works offline for writing and browsing.
+                        All reasoning traces, logic payloads, and forensic logs are stored in your browser's IndexedDB. This data stays on your device and works offline for strategic formulation and adversarial review.
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">
-                      <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Privacy-Focused AI</p>
+                    <div className="p-4 rounded-lg bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/20">
+                      <p className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Computation Horizon</p>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        The Adversarial Oracle is powered by Venice AI — privacy-first AI infrastructure with no data retention. Your prompts are never stored or used to train models.
+                        Venice AI provides zero-retention compute. Your logic trace exists only during the audit cycle and is destroyed upon issuance of the Proof-of-Logic Certificate. No data persists on Venice infrastructure.
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-lg bg-muted border border-border">
-                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Privacy Stack</p>
+                    <div className="p-4 rounded-lg bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20">
+                      <p className="text-xs font-bold text-teal-400 uppercase tracking-wider mb-2">Immutable Provenance</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Irys Datachain serves as the Permanent Evidence Layer. Only the anonymized logic hash, verdict, risk score, and DJZS-LF failure codes are committed to the datachain — never the raw strategy memo.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-lg bg-gradient-to-br from-green-500/[0.08] to-transparent border border-green-500/20">
+                      <p className="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Cryptographic Sovereignty</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        The Protocol never requests or stores the Architect's private keys. All x402 payments are signed via the connected Web3 wallet. XMTP messaging uses MLS with quantum-resistant key encapsulation. Local vault encryption uses client-side PBKDF2 + AES-GCM-256.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-lg bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20">
+                      <p className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-3">Privacy Stack</p>
                       <ul className="space-y-2 text-sm text-muted-foreground">
                         <li className="flex items-start gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                          Local-first storage (IndexedDB on your device)
+                          Local-first sovereign storage (IndexedDB)
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                          User-controlled AI (only sends when you ask)
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
+                          Zero-retention AI compute (Venice AI)
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                          Venice AI — no data retention
+                          <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
+                          Immutable provenance layer (Irys Datachain)
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                          Irys Datachain — permanent, verifiable provenance
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                          E2E encrypted messaging (XMTP MLS)
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
+                          Evasion Defense Pipeline (STRIP/INVERT/TRACE/CLASSIFY)
                         </li>
                       </ul>
                     </div>
 
-                    <p className="text-[10px] text-muted-foreground/80 text-center uppercase tracking-wider">
-                      Built on XMTP + Venice AI for complete privacy
+                    <p className="text-[10px] text-muted-foreground/80 text-center uppercase tracking-wider font-mono">
+                      Evasion Defense Pipeline active. STRIP → INVERT → TRACE → CLASSIFY
                     </p>
                   </div>
                 </DialogContent>
