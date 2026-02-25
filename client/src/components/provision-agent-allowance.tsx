@@ -26,6 +26,8 @@ export function ProvisionAgentAllowance() {
   const formattedBalance = rawBalance != null ? formatUnits(rawBalance, 6) : null;
   const displayBalance = !isConnected ? "—" : isWrongNetwork ? "—" : formattedBalance ?? "0.00";
 
+  const hasBalance = formattedBalance != null && parseFloat(formattedBalance) > 0;
+
   const networkLabel = !isConnected
     ? "DISCONNECTED"
     : isWrongNetwork
@@ -41,25 +43,31 @@ export function ProvisionAgentAllowance() {
     <div className="flex flex-col gap-6 w-full max-w-3xl" data-testid="panel-provision-agent-allowance">
       <div>
         <h2
-          className="text-lg font-black tracking-[0.15em] uppercase text-green-500 font-mono"
+          className="text-lg font-black tracking-[0.15em] uppercase text-zinc-300 font-mono"
           data-testid="text-allowance-title"
         >
-          PROTOCOL OVERSEER: X402 ALLOWANCE
+          &gt; PROTOCOL OVERSEER: X402 ALLOWANCE
         </h2>
-        <p className="text-sm text-zinc-400 mt-2 leading-relaxed font-mono" data-testid="text-allowance-subtitle">
-          Provision capital to execution agents. Autonomous tasks will deduct from this escrow per Logic Trace.
+        <p className="text-sm text-zinc-500 mt-2 leading-relaxed font-mono" data-testid="text-allowance-subtitle">
+          // Provision capital to execution agents. Autonomous tasks will deduct from this escrow per Logic Trace.
         </p>
       </div>
 
       <div
-        className="grid grid-cols-2 gap-4 border border-zinc-800 bg-black p-4"
+        className="grid grid-cols-2 gap-4 border border-zinc-800 bg-black p-4 relative"
         data-testid="panel-metrics"
       >
+        <span className="absolute top-2 right-3 text-[8px] font-mono text-zinc-700 tracking-wider">
+          SYS_ID: djzs-mainnet-01
+        </span>
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-1">
             Available Velocity (USDC)
           </p>
-          <p className="text-2xl font-black font-mono text-green-500" data-testid="text-escrow-balance">
+          <p
+            className={`text-2xl font-black font-mono ${hasBalance ? "text-green-500" : "text-zinc-600"}`}
+            data-testid="text-escrow-balance"
+          >
             {displayBalance}
           </p>
           <span
@@ -67,8 +75,8 @@ export function ProvisionAgentAllowance() {
               isWrongNetwork
                 ? "bg-red-950 text-red-400 border-red-800"
                 : !isConnected
-                  ? "bg-zinc-900 text-zinc-500 border-zinc-700"
-                  : "bg-zinc-900 text-zinc-400 border-zinc-700"
+                  ? "bg-zinc-900 text-zinc-600 border-zinc-800"
+                  : "bg-zinc-900 text-green-500 border-green-900"
             }`}
             data-testid="badge-network"
           >
@@ -79,26 +87,32 @@ export function ProvisionAgentAllowance() {
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-1">
             Pending Logic Traces
           </p>
-          <p className="text-2xl font-black font-mono text-zinc-300" data-testid="text-pending-traces">
+          <p className="text-2xl font-black font-mono text-zinc-600" data-testid="text-pending-traces">
             0
           </p>
         </div>
       </div>
 
       <div>
-        <input
-          type="number"
-          value={usdcAmount}
-          onChange={(e) => setUsdcAmount(e.target.value)}
-          placeholder="USDC Amount to Provision"
-          className="w-full bg-black border border-zinc-800 text-green-500 font-mono p-2 focus:outline-none focus:border-green-400 placeholder:text-zinc-600"
-          min="0"
-          step="0.01"
-          data-testid="input-usdc-amount"
-        />
+        <p className="text-[10px] font-mono text-zinc-600 mb-1.5 tracking-wider">
+          // ESCROW_TARGET [USDC]
+        </p>
+        <div className="flex items-center bg-black border border-zinc-800 focus-within:border-green-900 transition-colors">
+          <span className="pl-3 pr-1 text-zinc-600 font-mono text-sm select-none">&gt;</span>
+          <input
+            type="number"
+            value={usdcAmount}
+            onChange={(e) => setUsdcAmount(e.target.value)}
+            placeholder="0.00"
+            className="w-full bg-transparent text-green-500 font-mono p-2 focus:outline-none placeholder:text-zinc-700"
+            min="0"
+            step="0.01"
+            data-testid="input-usdc-amount"
+          />
+        </div>
         <button
           disabled={buttonDisabled}
-          className={`w-full p-2 font-mono mt-4 transition-colors border ${
+          className={`w-full p-2 font-mono mt-4 transition-colors border text-xs tracking-wider ${
             buttonDisabled
               ? "bg-zinc-950 text-zinc-600 border-zinc-800 cursor-not-allowed"
               : "bg-zinc-900 text-white border-zinc-700 hover:border-green-500"
@@ -108,9 +122,9 @@ export function ProvisionAgentAllowance() {
           {buttonLabel}
         </button>
         <div className="flex items-center gap-2 mt-3">
-          <AlertCircle className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
-          <p className="text-[11px] font-mono text-zinc-500" data-testid="text-minimum-warning">
-            A minimum of $5.00 USDC is required to initialize the high-frequency API tollbooth.
+          <AlertCircle className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
+          <p className="text-[11px] font-mono text-zinc-600" data-testid="text-minimum-warning">
+            // MIN_THRESHOLD: $5.00 USDC required to initialize x402 tollbooth
           </p>
         </div>
       </div>
