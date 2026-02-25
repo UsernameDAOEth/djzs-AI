@@ -986,6 +986,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/audit/treasury", createVerifiedPaymentGate("treasury"), createTierHandler("treasury"));
   app.post("/api/audit", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
 
+
   app.get("/api/audit/verify/:txId", async (req, res) => {
     try {
       const { txId } = req.params;
