@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { Agent } from "@xmtp/agent-sdk";
 import {
   runAgent,
