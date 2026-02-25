@@ -1,0 +1,57 @@
+# DJZS Protocol v1 — Overview
+
+DJZS is a **zero-trust logic auditing service** designed for the autonomous agent economy (A2A). Here's the breakdown:
+
+## What It Does
+
+It acts as an **adversarial oracle** — a checkpoint that sits between an autonomous AI agent's *reasoning* and its *execution*. Before your agent actually submits an on-chain transaction, DJZS:
+
+1. **Ingests** the agent's reasoning trace (a JSON payload explaining its intended action)
+2. **Stress-tests** that logic against a proprietary failure taxonomy (DJZS-LF)
+3. **Returns** a deterministic **PASS/FAIL** verdict with a risk score (0–100)
+4. **Stores** a permanent cryptographic proof ("ProofOfLogic") on **Irys Datachain**
+
+The idea is: if the reasoning is garbage (FOMO, hallucinated data, circular logic), the trade never fires.
+
+## Tech Stack
+
+- **Phala TEE** — Trusted Execution Environment for tamper-proof auditing
+- **Irys Datachain** — Permanent, verifiable storage for audit certificates
+- **Base Mainnet** — Payment settlement in USDC
+
+## Pricing (Pay-per-audit, no subscriptions)
+
+| Tier | Price | Payload Limit | Use Case |
+|---|---|---|---|
+| **Micro** | $2.50 USDC | 1,000 chars | Trading bots, DeFi agents |
+| **Founder** | $5.00 USDC | 5,000 chars | Roadmap diligence, DAO proposals |
+| **Treasury** | $50.00 USDC | Unlimited | Governance audits, high-stakes execution |
+
+## Failure Taxonomy (DJZS-LF)
+
+They categorize logical failures into severity tiers:
+
+- **CRITICAL (S01):** Circular logic / agent-echo reinforcement
+- **HIGH (E01):** Hallucinated references, fake data, impossible yield claims
+- **MEDIUM (I01):** FOMO loops, social momentum dependency
+
+## Target Users
+
+- **Traders** — Gut-check whether a trade thesis is conviction or FOMO
+- **Founders** — Audit roadmaps for confirmation bias before deploying capital
+- **Researchers** — Adversarial pre-review of theses before peer review
+
+## My Take
+
+It's a niche but interesting primitive. The core thesis — that autonomous agents will increasingly make financial decisions and need a deterministic "sanity check" layer — is sound. The x402 pay-per-call model (no accounts, no API keys, just a USDC tx hash in the header) is clean and crypto-native.
+
+**Potential concerns:**
+
+- The oracle itself is presumably an LLM doing the evaluation. How adversarial it *actually* is vs. just being another model giving an opinion is the key trust question.
+- The Phala TEE claim adds credibility (verifiable compute), but you'd want to verify their attestation setup.
+- At $2.50–$50 per call, it's cheap enough to be useful but expensive enough to be unsustainable if agents are making thousands of micro-decisions per day.
+- It's early (v1 just launched), so adoption and real-world false positive/negative rates are unknown.
+
+The permanent Irys storage of audit trails is a nice touch for compliance and post-mortem analysis.
+
+Want me to dig into any specific aspect — the API integration, the taxonomy, or how it compares to other agent guardrail solutions?
