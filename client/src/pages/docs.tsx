@@ -22,11 +22,7 @@ import {
   TrendingUp,
   KeyRound,
   ShieldCheck,
-  Palette,
   BarChart3,
-  Eye,
-  Layers,
-  ArrowRightLeft,
   DollarSign,
   FileCode,
   CheckCircle,
@@ -168,7 +164,7 @@ export default function Docs() {
                 DJZS is the <strong className="text-foreground">Adversarial Logic Layer for the Agent-to-Agent (A2A) economy</strong> — a deterministic verification primitive that enforces an <strong className="text-foreground">"Audit-Before-Act"</strong> loop for autonomous agents. It applies <strong className="text-foreground">Journal Entry Testing (JET)</strong>, a 100-year-old financial security primitive modernized for AI reasoning traces. "Journaling" in DJZS is not a diary — it is the mandatory act of an autonomous agent committing its reasoning trace to an immutable log before executing a transaction.
               </p>
               <p>
-                The system serves two clients. <strong className="text-foreground">Human architects</strong> interact via the Architect Console — a web-based command center with six zones (Audit Ledger, Research, Trade, Decisions, Content, Adversarial Oracle) for capturing reasoning, building theses, and reviewing forensic audit records locally on-device. <strong className="text-foreground">Autonomous AI agents</strong> interact programmatically via the x402-gated API, receiving machine-readable <strong className="text-foreground">Proof of Logic Certificates</strong> with deterministic <code className="text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded font-mono text-xs">DJZS-LF</code> failure codes (binary PASS/FAIL verdicts) across three tiers: Micro ($2.50), Founder ($5.00), and Treasury ($50.00 USDC on Base).
+                The system serves two clients. The <strong className="text-foreground">Sovereign Principal</strong> (human architect) oversees operations via the Architect Console — a governance interface with four zones (Audit Ledger, Adversarial Oracle, Terminal Console, x402 Governance) for reviewing forensic audit records, stress-testing reasoning, and managing protocol configuration. <strong className="text-foreground">Autonomous AI agents</strong> interact programmatically via the x402-gated API, receiving machine-readable <strong className="text-foreground">Proof of Logic Certificates</strong> with deterministic <code className="text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded font-mono text-xs">DJZS-LF</code> failure codes (binary PASS/FAIL verdicts) across three tiers: Micro ($2.50), Founder ($5.00), and Treasury ($50.00 USDC on Base).
               </p>
               <p>
                 Every audit generates a cryptographic certificate that is permanently uploaded to <strong className="text-foreground">Irys Datachain</strong> — an immutable, publicly verifiable provenance layer. If the Oracle detects circular logic, hallucinated data, FOMO-driven reasoning, or structural contradictions, it returns a <strong className="text-red-400">FAIL</strong> verdict with specific failure codes — and well-engineered agents automatically abort execution. Each ProofOfLogic certificate includes an Irys transaction ID and gateway URL for independent verification. DJZS is the Logic Oracle for the decentralized web. It is designed to be honest, not helpful.
@@ -537,12 +533,12 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               <div className="p-4 rounded-lg bg-muted border border-border">
                 <HardDrive className="w-5 h-5 text-orange-400 mb-2" />
                 <h4 className="text-sm font-bold text-foreground mb-1">Local-First Storage</h4>
-                <p className="text-xs text-muted-foreground">Workspace data — audit records, research trackers, trade theses, memory pins, and claims — lives in your browser's IndexedDB. We don't have a database of your reasoning. There's nothing to hack, subpoena, or sell.</p>
+                <p className="text-xs text-muted-foreground">Local audit state — audit records and logic logs — lives in your browser's IndexedDB. We don't have a database of your reasoning. There's nothing to hack, subpoena, or sell.</p>
               </div>
               <div className="p-4 rounded-lg bg-muted border border-border">
                 <ShieldCheck className="w-5 h-5 text-green-400 mb-2" />
                 <h4 className="text-sm font-bold text-foreground mb-1">Vault Encryption</h4>
-                <p className="text-xs text-muted-foreground">Set a passphrase to encrypt your vault with AES-256-GCM. Audit records, AI insights, and memory pins are encrypted at rest. Even with device access, your reasoning stays locked.</p>
+                <p className="text-xs text-muted-foreground">Set a passphrase to encrypt your vault with AES-256-GCM. Audit records and AI insights are encrypted at rest. Even with device access, your reasoning stays locked.</p>
               </div>
               <div className="p-4 rounded-lg bg-muted border border-border">
                 <Bot className="w-5 h-5 text-orange-400 mb-2" />
@@ -581,7 +577,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             </div>
             <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15 mt-4">
               <p className="text-xs text-green-300 font-semibold mb-1">What IS encrypted at rest</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">When you set a vault passphrase, your audit records, AI insights, and memory pins are encrypted locally using AES-256-GCM with PBKDF2 key derivation (600k iterations). Your passphrase never leaves your device. Even if someone copies your browser data, they cannot read your reasoning without your passphrase.</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">When you set a vault passphrase, your audit records and AI insights are encrypted locally using AES-256-GCM with PBKDF2 key derivation (600k iterations). Your passphrase never leaves your device. Even if someone copies your browser data, they cannot read your reasoning without your passphrase.</p>
             </div>
             <div className="p-4 rounded-lg bg-green-500/[0.04] border border-green-500/15 mt-4">
               <p className="text-xs text-green-300 font-semibold mb-1">What IS end-to-end encrypted</p>
@@ -636,7 +632,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
 
         <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-foreground mb-2">Architect Console</h2>
-          <p className="text-muted-foreground mb-8">Free. Local-first. Six zones for capturing reasoning, building theses, and reviewing forensic audit records before deploying to the Oracle.</p>
+          <p className="text-muted-foreground mb-8">Four governance zones for the Sovereign Principal: forensic audit review, adversarial reasoning, protocol monitoring, and x402 fee governance.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-6 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
@@ -667,53 +663,26 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <div className="p-6 rounded-lg bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20 hover:border-teal-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-lg bg-teal-600/20 flex items-center justify-center">
-                  <Search className="w-6 h-6 text-teal-400" />
+                  <Activity className="w-6 h-6 text-teal-400" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-foreground">Research</h3>
-                  <p className="text-xs text-teal-400/80">Search, synthesize, and track claims</p>
+                  <h3 className="text-xl font-bold text-foreground">Terminal Console</h3>
+                  <p className="text-xs text-teal-400/80">Protocol monitoring and configuration</p>
                 </div>
               </div>
-              <p className="text-muted-foreground mb-5 leading-relaxed">Search the web, interrogate information, expose contradictions, and track claims with evidence scoring.</p>
+              <p className="text-muted-foreground mb-5 leading-relaxed">Dashboard for protocol health, system status, and configuration management. Monitor Oracle uptime and review operational metrics.</p>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Brave / Web / Explain Modes</strong> - Privacy-first web search, Venice AI search, or AI knowledge synthesis</span>
+                  <span><strong className="text-teal-300">System Status</strong> - Monitor Oracle uptime, TEE health, and API availability</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Research Trackers & Claims</strong> - Organize findings into named folders with trust levels and status</span>
+                  <span><strong className="text-teal-300">Configuration</strong> - Manage protocol settings and BYOK preferences</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-teal-300">Evidence Scoring</strong> - 4-axis strength scoring (Sources, Consensus, Recency, Method)</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="p-6 rounded-lg bg-gradient-to-br from-blue-500/[0.08] to-transparent border border-blue-500/20 hover:border-blue-500/30 transition-all">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-lg bg-blue-600/20 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-foreground">Trade</h3>
-                  <p className="text-xs text-blue-400/80">Build and stress-test trade theses</p>
-                </div>
-              </div>
-              <p className="text-muted-foreground mb-5 leading-relaxed">Build trade theses, stress test with AI, compute risk, and wallet-sign artifacts. Deploy to Execution Zone for full adversarial audit.</p>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-blue-300">Compose Thesis</strong> - Asset, side, timeframe, conviction, entry/exit strategy</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-blue-300">AI Stress Test</strong> - Adversarial AI pressure-tests your thesis, calls out FOMO and weak logic</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-blue-300">Deploy to Zone</strong> - Send thesis directly to an Execution Zone for paid adversarial audit</span>
+                  <span><strong className="text-teal-300">Operational Metrics</strong> - Review audit throughput and system performance</span>
                 </li>
               </ul>
             </div>
@@ -721,53 +690,26 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <div className="p-6 rounded-lg bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/20 hover:border-amber-500/30 transition-all">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-lg bg-amber-600/20 flex items-center justify-center">
-                  <Brain className="w-6 h-6 text-amber-400" />
+                  <DollarSign className="w-6 h-6 text-amber-400" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-foreground">Decisions</h3>
-                  <p className="text-xs text-amber-400/80">Track high-stakes decisions</p>
+                  <h3 className="text-xl font-bold text-foreground">x402 Governance</h3>
+                  <p className="text-xs text-amber-400/80">Fee structure and escrow provisioning</p>
                 </div>
               </div>
-              <p className="text-muted-foreground mb-5 leading-relaxed">Track high-stakes decisions with structured context, options, and reasoning. Deploy to Execution Zone for adversarial pressure-testing.</p>
+              <p className="text-muted-foreground mb-5 leading-relaxed">Execution Zone fee structure display and USDC escrow provisioning for execution agents. Manage agent allowances on Base Mainnet.</p>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-amber-300">Structured Compose</strong> - Title, context, options, reasoning, and stakes level</span>
+                  <span><strong className="text-amber-300">Fee Structure</strong> - Read-only display of Execution Zone pricing (Micro $2.50, Founder $5.00, Treasury $50.00 USDC)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-amber-300">AI Review</strong> - AI pressure-tests reasoning and exposes blind spots</span>
+                  <span><strong className="text-amber-300">ProvisionAgentAllowance</strong> - Provision USDC escrow to execution agents with live balance reads</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-amber-300">Deploy to Zone</strong> - Send decisions directly to an Execution Zone for paid audit</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="p-6 rounded-lg bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20 hover:border-purple-500/30 transition-all">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-lg bg-purple-600/20 flex items-center justify-center">
-                  <Palette className="w-6 h-6 text-purple-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-foreground">Content</h3>
-                  <p className="text-xs text-purple-400/80">Compose and refine content ideas</p>
-                </div>
-              </div>
-              <p className="text-muted-foreground mb-5 leading-relaxed">Manage content ideas from spark to published. AI challenges your hook and angle before you ship.</p>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Pipeline Tracking</strong> - Move ideas through stages: idea, drafting, review, ready, published</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">AI Refine</strong> - AI challenges your hook, pressure-tests your angle, and flags weaknesses</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-purple-300">Deploy to Zone</strong> - Send content directly to an Execution Zone for paid audit</span>
+                  <span><strong className="text-amber-300">Network Detection</strong> - Automatic wrong-network and disconnected state handling</span>
                 </li>
               </ul>
             </div>
@@ -871,7 +813,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
           </div>
           <div className="mt-6 p-4 rounded-lg bg-orange-500/[0.06] border border-orange-500/15">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              All Execution Zone audits are saved locally in your <strong className="text-foreground">Cryptographic Ledger</strong> with SHA-256 hashes, verdict badges, and DJZS-LF failure codes. Review past results, compare risk scores across zones, and re-deploy memos at any time.
+              All Execution Zone audits are saved locally in your <strong className="text-foreground">Audit Ledger</strong> with SHA-256 hashes, verdict badges, and DJZS-LF failure codes. Review past results, compare risk scores across zones, and re-deploy memos at any time.
             </p>
           </div>
         </motion.section>
@@ -984,7 +926,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               </div>
             </div>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Before every audit deployment, the Founder Intelligence engine scans your local vault history — past audits, reasoning records, and memory pins — to surface patterns that make your current submission stronger. This context is injected into the AI agent prompt as an <strong className="text-foreground">Intelligence Brief</strong>, giving the adversarial AI historical ammunition to challenge you more precisely.
+              Before every audit deployment, the Founder Intelligence engine scans your local vault history — past audits and reasoning records — to surface patterns that make your current submission stronger. This context is injected into the AI agent prompt as an <strong className="text-foreground">Intelligence Brief</strong>, giving the adversarial AI historical ammunition to challenge you more precisely.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -1033,199 +975,6 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
           </div>
         </motion.section>
 
-        <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Research Trackers & Claims</h2>
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20 mb-8">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-lg bg-teal-600/20 flex items-center justify-center">
-                <FileSearch className="w-6 h-6 text-teal-400" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-foreground">Organize Research into Trackers</h3>
-                <p className="text-xs text-teal-400/80">Named folders for structured knowledge building</p>
-              </div>
-            </div>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              Research trackers are folders that let you organize findings by topic. Each tracker holds claims — key takeaways from your research — with trust levels and status tracking. Think of them as structured evidence files for any topic you're investigating.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="space-y-4">
-                <h4 className="text-sm font-bold text-teal-300">How Trackers Work</h4>
-                <ul className="space-y-3 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Quick Search</strong> — Use Quick search for standalone research queries that don't need to be organized</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Create a Tracker</strong> — Click the folder icon, then "New tracker" to create a named research folder (e.g., "AI Agents", "DeFi Yields")</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Select a Tracker</strong> — Pick an existing tracker from the dropdown before searching. All claims you save will go into that folder</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Delete a Tracker</strong> — Hover over a tracker name in the dropdown and click the trash icon to remove it</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="space-y-4">
-                <h4 className="text-sm font-bold text-teal-300">Claims & Trust Levels</h4>
-                <ul className="space-y-3 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Save Claims</strong> — After a research result, click the + button next to any key takeaway to save it as a claim in your active tracker</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Trust Levels</strong> — Rate each claim's reliability: verified, likely, speculative, or contested</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Status Tracking</strong> — Mark claims as active, archived, or refuted as your research evolves</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-teal-300">Audit Linking</strong> — Connect claims to audit records so your research and reasoning traces reference each other</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="p-4 rounded-lg bg-teal-500/[0.06] border border-teal-500/15">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                All trackers and claims are stored locally in your browser's IndexedDB. Nothing is sent to a server. Your research stays private and portable.
-              </p>
-            </div>
-          </div>
-        </motion.section>
-
-        <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-foreground mb-8">AI-Forward Research Intelligence</h2>
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20 mb-8">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-lg bg-teal-600/20 flex items-center justify-center">
-                <BarChart3 className="w-6 h-6 text-teal-400" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-foreground">Algorithmic Analysis, Not Guesswork</h3>
-                <p className="text-xs text-teal-400/80">Evidence scoring, structured contradictions, and adaptive depth</p>
-              </div>
-            </div>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              Every research result in DJZS is more than a summary. The AI breaks down its analysis into structured, scorable dimensions so you can see exactly how strong the evidence is — and where the gaps are. No hand-waving, no "it depends." Algorithmic transparency for sovereign thinkers.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="p-5 rounded-lg bg-muted border border-border" data-testid="card-evidence-scoring">
-                <div className="flex items-center gap-2 mb-3">
-                  <BarChart3 className="w-5 h-5 text-teal-400" />
-                  <h4 className="text-sm font-bold text-foreground">Evidence Strength Scoring</h4>
-                </div>
-                <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                  Each research result gets a 4-axis score from 0 to 100, visualized as progress bars with color-coded thresholds:
-                </p>
-                <ul className="space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#2E8B8B' }}></span>
-                    <span><strong className="text-teal-300">Sources</strong> — Number and diversity of references backing the synthesis</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#2E8B8B' }}></span>
-                    <span><strong className="text-teal-300">Consensus</strong> — Degree of agreement across sources</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#2E8B8B' }}></span>
-                    <span><strong className="text-teal-300">Recency</strong> — How current the information is</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#2E8B8B' }}></span>
-                    <span><strong className="text-teal-300">Method</strong> — Rigor of the underlying methodology</span>
-                  </li>
-                </ul>
-                <p className="text-xs text-muted-foreground/80 mt-3">Scores above 70 show green, 40-70 amber, below 40 red — instant signal quality at a glance.</p>
-              </div>
-
-              <div className="p-5 rounded-lg bg-muted border border-border" data-testid="card-ai-observing">
-                <div className="flex items-center gap-2 mb-3">
-                  <Eye className="w-5 h-5 text-teal-400" />
-                  <h4 className="text-sm font-bold text-foreground">AI Observing Panel</h4>
-                </div>
-                <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                  A dedicated panel where the AI shares what it noticed while analyzing your query — meta-observations about patterns, information gaps, or surprising connections that don't fit neatly into the main synthesis.
-                </p>
-                <p className="text-xs text-muted-foreground/80 leading-relaxed">
-                  Think of it as the AI's margin notes: "I noticed the strongest sources agree on X but diverge sharply on Y" or "There's a gap in recent data that older sources filled differently." These observations help you calibrate how much to trust the synthesis.
-                </p>
-              </div>
-
-              <div className="p-5 rounded-lg bg-muted border border-border" data-testid="card-structured-analysis">
-                <div className="flex items-center gap-2 mb-3">
-                  <Layers className="w-5 h-5 text-teal-400" />
-                  <h4 className="text-sm font-bold text-foreground">Structured Analysis</h4>
-                </div>
-                <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                  Research results are broken into three clearly labeled sections:
-                </p>
-                <ul className="space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-green-300">Consensus Points</strong> — Where multiple sources agree. The foundation you can likely trust.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-amber-300">Contradictions</strong> — Where sources disagree. The fault lines worth investigating.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0"></span>
-                    <span><strong className="text-red-300">Weak Assumptions</strong> — Claims that lack strong evidence. The risks in your research.</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="p-5 rounded-lg bg-muted border border-border" data-testid="card-nuanced-mode">
-                <div className="flex items-center gap-2 mb-3">
-                  <ArrowRightLeft className="w-5 h-5 text-teal-400" />
-                  <h4 className="text-sm font-bold text-foreground">Adaptive Depth: "More Nuanced" Mode</h4>
-                </div>
-                <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                  After getting an initial synthesis, click "More nuanced" to re-run the query with a depth modifier. The AI shifts its approach:
-                </p>
-                <ul className="space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                    <span>Prioritizes edge-case evidence and minority viewpoints</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                    <span>Surfaces contradictions more aggressively</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                    <span>Highlights counter-arguments the initial pass may have glossed over</span>
-                  </li>
-                </ul>
-                <p className="text-xs text-muted-foreground/80 mt-3">This isn't just "search again." The AI modifies its internal prompt to actively seek dissenting evidence.</p>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-lg bg-teal-500/[0.06] border border-teal-500/15 mb-4" data-testid="card-thinking-partner-transition">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-purple-400" />
-                <p className="text-sm font-bold text-purple-300">Seamless Adversarial Oracle Transition</p>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Found something worth pressure-testing? Click the "Think deeper with Adversarial Oracle" button on any research result. It auto-loads your research context into the Adversarial Oracle so the AI can challenge your conclusions — no copy-pasting, no context loss. Research flows into interrogation in one click.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-lg bg-teal-500/[0.04] border border-teal-500/10">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                All AI analysis features are powered by Venice AI with no data retention. Evidence scores are algorithmically determined by the AI based on the quality of available information — they are not editable by users. Results with staggered fade-in animations reveal each section sequentially for focused reading.
-              </p>
-            </div>
-          </div>
-        </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-foreground mb-8">OpenClaw Agent Runner</h2>
@@ -1251,20 +1000,8 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                   <span>The <strong className="text-orange-300">Audit Ledger</strong> displays all ProofOfLogic certificates from your deployed audits — binary PASS/FAIL verdicts, risk scores, DJZS-LF failure codes, and cryptographic hashes. Each record links back to the original payload for re-deployment.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span>When you search in the <strong className="text-teal-300">Research Zone</strong> and click <strong className="text-foreground">"Research"</strong>, the ResearchSynth agent interrogates information from web results or AI knowledge, exposes contradictions across sources, flags weak assumptions, and calls out what you haven't investigated yet.</span>
-                </li>
-                <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span>The <strong className="text-purple-300">ThinkingPartner</strong> agent works behind the scenes to challenge your ideas, expose tensions in your reasoning, and flag narrative dependency — acting as an adversarial pressure-tester, not a chatbot.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span>In the <strong className="text-amber-300">Decisions Zone</strong>, AI interrogates your decision reasoning, pressure-tests your options, and calls out blind spots before you commit to high-stakes choices.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2 shrink-0"></span>
-                  <span>In the <strong className="text-cyan-300">Content Zone</strong>, AI challenges your content hook, pressure-tests your angle, and flags weaknesses before your ideas reach your audience.</span>
+                  <span>The <strong className="text-purple-300">ThinkingPartner</strong> agent powers the Adversarial Oracle — challenging your ideas, exposing tensions in your reasoning, and flagging narrative dependency. It acts as an adversarial pressure-tester, not a chatbot.</span>
                 </li>
               </ul>
             </div>
@@ -1410,7 +1147,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
-                    <span><strong className="text-green-300">Memory pins</strong> — Pinned memory content is encrypted at rest</span>
+                    <span><strong className="text-green-300">Logic logs</strong> — Local logic state is encrypted at rest</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
@@ -1564,7 +1301,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                   <HardDrive className="w-5 h-5 text-orange-400" />
                   <h3 className="text-sm font-bold text-foreground">Local-First</h3>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Your journal and memory vault are stored locally in your browser. They are never on our servers. This isn't a feature; it's the foundation of our privacy model.</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">Your local audit state is stored in your browser. It is never on our servers. This isn't a feature; it's the foundation of our privacy model.</p>
               </div>
               <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }}>
                 <div className="flex items-center gap-3 mb-3">
