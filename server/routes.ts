@@ -1,12 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertMemberSchema, insertRoomSchema, insertStoredMessageSchema, insertJournalEntrySchema, insertPinnedMemorySchema } from "@shared/schema";
+import { insertMemberSchema, insertRoomSchema, insertStoredMessageSchema, insertJournalEntrySchema } from "@shared/schema";
 import { z } from "zod";
-import { analyzeJournalEntry, analyzeResearchEntry, synthesizeResearch, synthesizeWithBraveResults, type ResearchSynthesis } from "./venice";
+import { analyzeJournalEntry } from "./venice";
 import { analyzeWithAgent, agentInputSchema } from "./agent.api";
 import { searchBrave, type BraveSearchResult } from "./brave";
-import { runAgent, journalInsightPayloadSchema, researchSynthPayloadSchema, thinkingPartnerPayloadSchema, type AgentName } from "./openclaw";
+import { runAgent, journalInsightPayloadSchema, thinkingPartnerPayloadSchema, type AgentName } from "./openclaw";
 let _cachedGitHubImport: any = null;
 async function getGitHubClient() {
   if (!process.env.REPLIT_CONNECTORS_HOSTNAME) return null;
@@ -139,7 +139,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing 'agent' and 'payload' fields" });
       }
 
-      const validAgents: AgentName[] = ["JournalInsight", "ResearchSynth", "ThinkingPartner"];
+      const validAgents: AgentName[] = ["JournalInsight", "ThinkingPartner"];
       if (!validAgents.includes(agentName)) {
         return res.status(400).json({ error: `Unknown agent: ${agentName}. Valid: ${validAgents.join(", ")}` });
       }
@@ -147,8 +147,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let validatedPayload;
       if (agentName === "JournalInsight") {
         validatedPayload = journalInsightPayloadSchema.parse(payload);
-      } else if (agentName === "ResearchSynth") {
-        validatedPayload = researchSynthPayloadSchema.parse(payload);
       } else {
         validatedPayload = thinkingPartnerPayloadSchema.parse(payload);
       }
@@ -163,71 +161,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         error: error instanceof Error ? error.message : "Agent processing failed",
       });
-    }
-  });
-
-  // ==================== RESEARCH ZONE ====================
-  // Research synthesis endpoint - provides AI-powered explanations
-  // In "Explain" mode (no web search), uses Venice AI for knowledge synthesis
-  // In "Web" mode, uses Venice AI with enable_web_search for real-time data
-  const researchCache = new Map<string, { result: ResearchSynthesis; timestamp: number }>();
-  const RESEARCH_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-  
-  app.get("/api/research/search", async (req, res) => {
-    try {
-      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
-      const query = String(req.query.q ?? "").trim();
-      const webMode = req.query.web !== "false"; // Default web mode on, but fallback to explain
-      const useBrave = req.query.brave === "true"; // Use Brave Search for privacy-first web search
-      const depth = String(req.query.depth ?? "standard") as "standard" | "nuanced";
-      
-      if (!query || query.length < 3) {
-        return res.status(400).json({ error: "Query must be at least 3 characters" });
-      }
-      
-      // Check cache first (include depth in cache key)
-      const cacheKey = `${query}:${webMode}:${useBrave}:${depth}`;
-      const cached = researchCache.get(cacheKey);
-      if (cached && Date.now() - cached.timestamp < RESEARCH_CACHE_TTL) {
-        return res.json({ ...cached.result, cached: true });
-      }
-      
-      let synthesisResult;
-      
-      // If Brave mode is enabled and we have an API key, use Brave Search
-      if (useBrave && webMode && process.env.BRAVE_API_KEY) {
-        try {
-          const braveResults = await searchBrave(query, { count: 8, extra_snippets: true });
-          if (braveResults.length > 0) {
-            synthesisResult = await synthesizeWithBraveResults(query, braveResults, userVeniceKey, depth);
-          } else {
-            synthesisResult = await synthesizeResearch(query, true, userVeniceKey, depth);
-          }
-        } catch (braveError) {
-          console.error("Brave Search error, falling back to Venice:", braveError);
-          synthesisResult = await synthesizeResearch(query, webMode, userVeniceKey, depth);
-        }
-      } else {
-        synthesisResult = await synthesizeResearch(query, webMode, userVeniceKey, depth);
-      }
-      
-      // Cache the result
-      researchCache.set(cacheKey, { result: synthesisResult, timestamp: Date.now() });
-      
-      // Clean old cache entries periodically
-      if (researchCache.size > 500) {
-        const now = Date.now();
-        for (const [key, value] of researchCache.entries()) {
-          if (now - value.timestamp > RESEARCH_CACHE_TTL) {
-            researchCache.delete(key);
-          }
-        }
-      }
-      
-      res.json(synthesisResult);
-    } catch (error) {
-      console.error("Research search error:", error);
-      res.status(500).json({ error: error instanceof Error ? error.message : "Research failed" });
     }
   });
 
@@ -474,20 +407,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 1. Save the entry
       const entry = await storage.createJournalEntry({ content, walletAddress });
       
-      // 2. Retrieve context (3 recent entries + 3 pinned memories)
+      // 2. Retrieve context (3 recent entries)
       const recentEntries = await storage.getRecentJournalEntries(walletAddress, 3);
-      const pinnedMemories = await storage.getPinnedMemories(walletAddress, 3);
       
       // Filter out the current entry from recent entries
       const contextEntries = recentEntries.filter(e => e.id !== entry.id);
       
-      // 3. Call Venice AI with zone-specific analysis
-      let analysis;
-      if (zone === "research") {
-        analysis = await analyzeResearchEntry(content, contextEntries, pinnedMemories, userVeniceKey);
-      } else {
-        analysis = await analyzeJournalEntry(content, contextEntries, pinnedMemories, userVeniceKey);
-      }
+      // 3. Call Venice AI with journal analysis
+      const analysis = await analyzeJournalEntry(content, contextEntries, userVeniceKey);
       
       // 4. Return entry + analysis + zone
       res.json({
@@ -512,48 +439,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching journal entries:", error);
       res.status(500).json({ error: "Failed to fetch entries" });
-    }
-  });
-
-  // ==================== MEMORY API ====================
-  
-  // Pin a memory
-  app.post("/api/memories/pin", async (req, res) => {
-    try {
-      const validatedData = insertPinnedMemorySchema.parse(req.body);
-      const memory = await storage.createPinnedMemory(validatedData);
-      res.status(201).json(memory);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid memory data", details: error.errors });
-      }
-      console.error("Error pinning memory:", error);
-      res.status(500).json({ error: "Failed to pin memory" });
-    }
-  });
-
-  // Get pinned memories for a wallet
-  app.get("/api/memories/:walletAddress", async (req, res) => {
-    try {
-      const memories = await storage.getPinnedMemories(req.params.walletAddress, 50);
-      res.json(memories);
-    } catch (error) {
-      console.error("Error fetching memories:", error);
-      res.status(500).json({ error: "Failed to fetch memories" });
-    }
-  });
-
-  // Delete a pinned memory
-  app.delete("/api/memories/:id", async (req, res) => {
-    try {
-      const deleted = await storage.deletePinnedMemory(req.params.id);
-      if (!deleted) {
-        return res.status(404).json({ error: "Memory not found" });
-      }
-      res.status(204).send();
-    } catch (error) {
-      console.error("Error deleting memory:", error);
-      res.status(500).json({ error: "Failed to delete memory" });
     }
   });
 

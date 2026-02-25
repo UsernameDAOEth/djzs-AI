@@ -225,24 +225,6 @@ export const insertJournalEntrySchema = createInsertSchema(journalEntries).omit(
 export type InsertJournalEntry = z.infer<typeof insertJournalEntrySchema>;
 export type JournalEntry = typeof journalEntries.$inferSelect;
 
-// Pinned memories table
-export const pinnedMemories = pgTable("pinned_memories", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  walletAddress: text("wallet_address").notNull(),
-  content: text("content").notNull(),
-  source: text("source"), // "user_pinned" | "recurring_theme"
-  sourceEntryId: text("source_entry_id"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
-export const insertPinnedMemorySchema = createInsertSchema(pinnedMemories).omit({
-  id: true,
-  createdAt: true,
-});
-
-export type InsertPinnedMemory = z.infer<typeof insertPinnedMemorySchema>;
-export type PinnedMemory = typeof pinnedMemories.$inferSelect;
-
 // Audit logs table — persistent record of every ProofOfLogic certificate
 export const auditLogs = pgTable("audit_logs", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -275,24 +257,9 @@ export const journalAnalysisSchema = z.object({
   summary: z.string().min(10).max(600),
   insight: z.string().min(10).max(500),
   question: z.string().min(10).max(500),
-  memoryCandidates: z.array(z.string().min(6).max(300)).max(2),
 });
 
 export type JournalAnalysis = z.infer<typeof journalAnalysisSchema>;
-
-export const researchAnalysisSchema = z.object({
-  keyClaims: z.array(z.string().min(10).max(400)).min(1).max(5),
-  evidence: z.array(z.string().min(10).max(400)).max(4),
-  unknowns: z.array(z.string().min(10).max(400)).max(3),
-  nextQuestion: z.string().min(10).max(500),
-});
-
-export type ResearchAnalysis = z.infer<typeof researchAnalysisSchema>;
-
-// Combined analysis result type
-export type ZoneAnalysis = 
-  | { zone: "journal"; analysis: JournalAnalysis }
-  | { zone: "research"; analysis: ResearchAnalysis };
 
 // Journal insight card for chat display
 export const journalInsightCardSchema = z.object({
@@ -302,7 +269,6 @@ export const journalInsightCardSchema = z.object({
   summary: z.string(),
   insight: z.string(),
   question: z.string(),
-  memoryCandidates: z.array(z.string()),
   createdAt: z.string(),
   authorAddress: z.string(),
 });

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { analyzeJournalEntry, analyzeResearchEntry } from "./venice";
+import { analyzeJournalEntry } from "./venice";
 import { analyzeWithAgent, type AgentInput, type AgentOutput } from "./agent.api";
-import type { JournalEntry, PinnedMemory } from "@shared/schema";
+import type { JournalEntry } from "@shared/schema";
 
 const contextEntrySchema = z.object({
   content: z.string(),
@@ -22,19 +22,6 @@ export const journalInsightPayloadSchema = z.object({
   pinnedMemories: z.array(contextMemorySchema).default([]),
 });
 
-export const researchSynthPayloadSchema = z.object({
-  type: z.literal("research_synthesis"),
-  user_id: z.string(),
-  batch: z.array(z.object({
-    id: z.string(),
-    content: z.string(),
-    source_url: z.string().optional(),
-    notes: z.string().optional(),
-  })).min(1),
-  recentEntries: z.array(contextEntrySchema).default([]),
-  pinnedMemories: z.array(contextMemorySchema).default([]),
-});
-
 export const thinkingPartnerPayloadSchema = z.object({
   type: z.literal("thinking_partner"),
   user_id: z.string(),
@@ -46,7 +33,6 @@ export const thinkingPartnerPayloadSchema = z.object({
 });
 
 export type JournalInsightPayload = z.infer<typeof journalInsightPayloadSchema>;
-export type ResearchSynthPayload = z.infer<typeof researchSynthPayloadSchema>;
 export type ThinkingPartnerPayload = z.infer<typeof thinkingPartnerPayloadSchema>;
 
 export interface JournalInsightOutput {
@@ -55,22 +41,15 @@ export interface JournalInsightOutput {
   emotion_trend: string;
 }
 
-export interface ResearchSynthOutput {
-  thesis: string;
-  agreements: string[];
-  contradictions: string[];
-  open_questions: string[];
-}
-
 export interface ThinkingPartnerOutput {
   clarifying_questions: string[];
   core_tension: string;
   recommendation_frame: string;
 }
 
-export type AgentName = "JournalInsight" | "ResearchSynth" | "ThinkingPartner";
-export type AgentPayload = JournalInsightPayload | ResearchSynthPayload | ThinkingPartnerPayload;
-export type AgentResult = JournalInsightOutput | ResearchSynthOutput | ThinkingPartnerOutput;
+export type AgentName = "JournalInsight" | "ThinkingPartner";
+export type AgentPayload = JournalInsightPayload | ThinkingPartnerPayload;
+export type AgentResult = JournalInsightOutput | ThinkingPartnerOutput;
 
 interface AgentRunner {
   validate(payload: unknown): boolean;
@@ -91,16 +70,8 @@ class JournalInsightAgent implements AgentRunner {
       content: e.content,
       createdAt: e.timestamp ? new Date(e.timestamp) : new Date(),
     })) as JournalEntry[];
-    const pinnedMemories = (data.pinnedMemories || []).map((m, i) => ({
-      id: String(i),
-      walletAddress: "",
-      content: m.content,
-      source: m.kind || null,
-      sourceEntryId: null,
-      createdAt: new Date(),
-    })) as PinnedMemory[];
 
-    const result = await analyzeJournalEntry(data.content, recentEntries, pinnedMemories, apiKeyOverride);
+    const result = await analyzeJournalEntry(data.content, recentEntries, apiKeyOverride);
 
     return {
       summary: result.summary,
@@ -132,49 +103,6 @@ class JournalInsightAgent implements AgentRunner {
     }
 
     return best;
-  }
-}
-
-class ResearchSynthAgent implements AgentRunner {
-  validate(payload: unknown): boolean {
-    return researchSynthPayloadSchema.safeParse(payload).success;
-  }
-
-  async process(payload: AgentPayload, apiKeyOverride?: string): Promise<ResearchSynthOutput> {
-    const data = payload as ResearchSynthPayload;
-
-    const combinedContent = data.batch.map(item => {
-      let text = item.content;
-      if (item.source_url) text += `\nSource: ${item.source_url}`;
-      if (item.notes) text += `\nNotes: ${item.notes}`;
-      return text;
-    }).join("\n\n---\n\n");
-
-    const recentEntries = (data.recentEntries || []).map((e, i) => ({
-      id: String(i),
-      walletAddress: "",
-      content: e.content,
-      createdAt: e.timestamp ? new Date(e.timestamp) : new Date(),
-    })) as JournalEntry[];
-    const pinnedMemories = (data.pinnedMemories || []).map((m, i) => ({
-      id: String(i),
-      walletAddress: "",
-      content: m.content,
-      source: m.kind || null,
-      sourceEntryId: null,
-      createdAt: new Date(),
-    })) as PinnedMemory[];
-
-    const result = await analyzeResearchEntry(combinedContent, recentEntries, pinnedMemories, apiKeyOverride);
-
-    return {
-      thesis: result.keyClaims.length > 0
-        ? `Based on ${data.batch.length} sources: ${result.keyClaims[0]}`
-        : "Insufficient data for thesis formation",
-      agreements: result.evidence,
-      contradictions: result.unknowns,
-      open_questions: [result.nextQuestion],
-    };
   }
 }
 
@@ -215,7 +143,6 @@ class ThinkingPartnerAgent implements AgentRunner {
 
 const agents: Record<AgentName, AgentRunner> = {
   JournalInsight: new JournalInsightAgent(),
-  ResearchSynth: new ResearchSynthAgent(),
   ThinkingPartner: new ThinkingPartnerAgent(),
 };
 
@@ -236,24 +163,6 @@ export function formatJournalReply(data: JournalInsightOutput): string {
   return `**Summary:** ${data.summary}\n\n**Insight:** ${data.insight}\n\n**Emotional Signal:** ${data.emotion_trend}`;
 }
 
-export function formatResearchReply(data: ResearchSynthOutput): string {
-  let reply = `**Thesis:** ${data.thesis}\n\n`;
-
-  if (data.agreements.length > 0) {
-    reply += `**Supporting Evidence:**\n${data.agreements.map(a => `- ${a}`).join("\n")}\n\n`;
-  }
-
-  if (data.contradictions.length > 0) {
-    reply += `**Unknowns & Contradictions:**\n${data.contradictions.map(c => `- ${c}`).join("\n")}\n\n`;
-  }
-
-  if (data.open_questions.length > 0) {
-    reply += `**Open Questions:**\n${data.open_questions.map(q => `- ${q}`).join("\n")}`;
-  }
-
-  return reply;
-}
-
 export function formatThinkingReply(data: ThinkingPartnerOutput): string {
   let reply = `**Core Tension:** ${data.core_tension}\n\n`;
 
@@ -270,7 +179,6 @@ export function detectIntent(text: string): AgentName | null {
   const t = text.trim().toLowerCase();
 
   if (t.startsWith("journal:") || t.startsWith("/journal")) return "JournalInsight";
-  if (t.startsWith("research:") || t.startsWith("/research")) return "ResearchSynth";
   if (t.startsWith("thinking:") || t.startsWith("/think") || t.startsWith("think:")) return "ThinkingPartner";
 
   return null;
@@ -280,7 +188,6 @@ export function extractContent(text: string, intent: AgentName): string {
   const t = text.trim();
   const prefixes: Record<AgentName, RegExp> = {
     JournalInsight: /^(?:journal:|\/journal)\s*/i,
-    ResearchSynth: /^(?:research:|\/research)\s*/i,
     ThinkingPartner: /^(?:thinking:|think:|\/think)\s*/i,
   };
 

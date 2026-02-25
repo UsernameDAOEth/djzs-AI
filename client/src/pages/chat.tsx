@@ -44,8 +44,6 @@ import {
   RefreshCw,
   Compass,
   ArrowUpRight,
-  FolderOpen,
-  FolderPlus,
   Trash2,
   Check,
   AlertCircle,
@@ -76,7 +74,7 @@ import { useWeb3Profile, getPrimaryProfile, getAllLinks, getTotalFollowers } fro
 import { MessageCard } from "@/components/chat/message-cards";
 import { apiRequest, queryClient, getVeniceApiKey, setVeniceApiKey } from "@/lib/queryClient";
 import { isVaultEncryptionSetUp, isVaultLocked, lockVault, setupVaultPassphrase, unlockVault, removeVaultEncryption } from "@/lib/vault-crypto";
-import type { Member, ChatMessage, StoredMessage, JournalAnalysis, ResearchAnalysis, JournalEntry } from "@shared/schema";
+import type { Member, ChatMessage, StoredMessage, JournalAnalysis, JournalEntry } from "@shared/schema";
 import { TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
 import type { DJZSLogicAudit } from "@shared/audit-schema";
 import { format } from "date-fns";
@@ -102,18 +100,6 @@ import {
   pinMemory as pinLocalMemory, 
   getEntryStats,
   getRecentEntriesForContext,
-  createDossier,
-  updateDossier,
-  deleteDossier,
-  getActiveDossiers,
-  getDossier,
-  addResearchQuery,
-  getQueriesForDossier,
-  addClaim,
-  updateClaim,
-  deleteClaim,
-  getClaimsForDossier,
-  searchJournalEntriesForTopic,
   exportVault,
   saveAuditRecord,
   getAuditRecords,
@@ -121,11 +107,6 @@ import {
   type MusicTrack,
   type EntryType,
   type EntryStats,
-  type ResearchDossier,
-  type ResearchQuery,
-  type ResearchClaim,
-  type ClaimStatus,
-  type TrustLevel,
   type AuditRecord,
   type AuditZoneTier
 } from "@/lib/vault";
@@ -136,13 +117,7 @@ interface JournalAnalysisResult {
   zone: "journal";
 }
 
-interface ResearchAnalysisResult {
-  entry: JournalEntry;
-  analysis: ResearchAnalysis;
-  zone: "research";
-}
-
-type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
+type AnalysisResult = JournalAnalysisResult;
 
 const V1_ZONES = [
   { id: "journal", name: "Audit Ledger", icon: ScrollText, description: "Forensic logic trail", purpose: "Immutable log of all ProofOfLogic certificates — verdicts, risk scores, and DJZS-LF failure codes.", color: "#F37E20" },
@@ -202,17 +177,6 @@ const JOURNAL_PROMPTS = [
   "What pattern do you keep noticing?",
 ];
 
-const RESEARCH_PROMPTS = [
-  "What are you trying to figure out?",
-  "What evidence would change your mind?",
-  "What's the gap in your understanding?",
-  "What assumption haven't you tested?",
-  "What would disprove your current view?",
-  "What's the question behind the question?",
-  "What would an expert challenge here?",
-  "What's missing from the picture?",
-];
-
 const TRADE_PROMPTS = [
   "swap 100 USDC to ETH",
   "what's my portfolio?",
@@ -233,32 +197,6 @@ interface AgentResponse {
     content: string;
     kind: string;
   };
-}
-
-interface ResearchResult {
-  query: string;
-  mode: "web" | "explain" | "brave";
-  keyTakeaways: string[];
-  whatToCheckNext: string[];
-  sources?: { title: string; url: string; snippet: string }[];
-  confidence: string;
-  synthesisMarkdown: string;
-  cached?: boolean;
-  aiObserving?: string;
-  evidenceStrength?: {
-    score: number;
-    label: string;
-    breakdown: {
-      sourceQuality: number;
-      consensus: number;
-      recency: number;
-      methodology: number;
-    };
-    summary: string;
-  };
-  contradictions?: string[];
-  weakAssumptions?: string[];
-  consensusPoints?: string[];
 }
 
 export default function Chat() {
@@ -310,12 +248,6 @@ export default function Chat() {
   const [expandedEntryId, setExpandedEntryId] = useState<number | null>(null);
   const [quickSearchModalOpen, setQuickSearchModalOpen] = useState(false);
   const [lastEntryId, setLastEntryId] = useState<number | null>(null);
-  const [researchResult, setResearchResult] = useState<ResearchResult | null>(null);
-  const [researchDepth, setResearchDepth] = useState<'standard' | 'nuanced'>('standard');
-  const [depthConfirmation, setDepthConfirmation] = useState<string | null>(null);
-  const [webModeEnabled, setWebModeEnabled] = useState(true);
-  const [braveSearchEnabled, setBraveSearchEnabled] = useState(false);
-  const [braveSearchAvailable, setBraveSearchAvailable] = useState(false);
   const [lastBackupDate, setLastBackupDateState] = useState<string | null>(getLastBackupDate());
   const [isExporting, setIsExporting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -457,46 +389,11 @@ export default function Chat() {
     };
   }, []);
 
-  useEffect(() => {
-    fetch('/api/health')
-      .then(res => res.json())
-      .then(data => {
-        if (data.capabilities?.braveSearch) {
-          setBraveSearchAvailable(true);
-        }
-      })
-      .catch(() => {});
-  }, []);
-  
-  // Dossier state for Research zone
-  const [activeDossierId, setActiveDossierId] = useState<number | null>(null);
-  const [dossierName, setDossierName] = useState("");
-  const [showNewDossierInput, setShowNewDossierInput] = useState(false);
-  const [dossierDropdownOpen, setDossierDropdownOpen] = useState(false);
-  const [editingClaimId, setEditingClaimId] = useState<number | null>(null);
-  const [claimSourceNote, setClaimSourceNote] = useState("");
-  const [claimTrustLevel, setClaimTrustLevel] = useState<TrustLevel>("unknown");
-  const [relatedJournalEntries, setRelatedJournalEntries] = useState<Array<{ id?: number; text: string; createdAt: Date }>>([]);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const [showMusicPanel, setShowMusicPanel] = useState(false);
   const [pendingVideoAssetId, setPendingVideoAssetId] = useState<string | null>(null);
   const [pendingVideoPlaybackId, setPendingVideoPlaybackId] = useState<string | null>(null);
 
-  
-  // Local-first: Query dossiers from IndexedDB
-  const dossiers = useLiveQuery(() => getActiveDossiers(), []);
-  
-  // Local-first: Query claims for active dossier
-  const dossierClaims = useLiveQuery(
-    () => activeDossierId ? getClaimsForDossier(activeDossierId) : Promise.resolve([]),
-    [activeDossierId]
-  );
-  
-  // Local-first: Query queries for active dossier
-  const dossierQueries = useLiveQuery(
-    () => activeDossierId ? getQueriesForDossier(activeDossierId) : Promise.resolve([]),
-    [activeDossierId]
-  );
   
   // Local-first: Query recent entries from IndexedDB (newest first)
   const localEntries = useLiveQuery(
@@ -540,7 +437,6 @@ export default function Chat() {
   useEffect(() => {
     setCurrentPromptIndex(0);
     setAgentResponse(null);
-    setResearchResult(null);
     setMessageInput("");
     setFrozenHeight(null);
   }, [selectedZone]);
@@ -707,64 +603,6 @@ export default function Chat() {
       toast({
         title: "Thinking failed",
         description: error instanceof Error ? error.message : "Could not process entry",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Research Zone search mutation
-  const searchResearch = useMutation({
-    mutationFn: async (query: string) => {
-      const params = new URLSearchParams({
-        q: query,
-        web: String(webModeEnabled),
-        brave: String(braveSearchEnabled),
-        depth: researchDepth,
-      });
-      const fetchHeaders: Record<string, string> = {};
-      const veniceKey = getVeniceApiKey();
-      if (veniceKey) fetchHeaders["x-venice-api-key"] = veniceKey;
-      const res = await fetch(`/api/research/search?${params}`, { headers: fetchHeaders });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Research failed");
-      }
-      return res.json() as Promise<ResearchResult>;
-    },
-    onSuccess: async (data) => {
-      setResearchResult(data);
-      setIsAnalyzing(false);
-      
-      // Persist query to active dossier if one is selected
-      if (activeDossierId) {
-        try {
-          await addResearchQuery(
-            activeDossierId,
-            data.query,
-            data.synthesisMarkdown,
-            data.keyTakeaways,
-            data.whatToCheckNext,
-            data.mode === 'web'
-          );
-        } catch (err) {
-          console.error("Failed to save research query to dossier:", err);
-        }
-      }
-      
-      // Search for related journal entries based on key words from the query
-      const queryWords = data.query.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-      if (queryWords.length > 0) {
-        const related = await searchJournalEntriesForTopic(queryWords, 3);
-        setRelatedJournalEntries(related);
-      } else {
-        setRelatedJournalEntries([]);
-      }
-    },
-    onError: (error) => {
-      setIsAnalyzing(false);
-      toast({
-        title: "Research failed",
-        description: error instanceof Error ? error.message : "Could not complete search",
         variant: "destructive",
       });
     },
@@ -956,137 +794,26 @@ export default function Chat() {
   const handleAnalyze = () => {
     if (!messageInput.trim()) return;
     
-    if (selectedZone === 'research') {
-      // Research zone: use search API (separate from journal mutation state)
-      if (searchResearch.isPending) return;
-      setIsAnalyzing(true);
-      setAgentResponse(null);
-      setResearchResult(null);
-      searchResearch.mutate(messageInput);
-    } else {
-      // Journal zone: use thinking partner
-      if (thinkWithMe.isPending) return;
-      setIsAnalyzing(true);
-      setAgentResponse(null);
-      setResearchResult(null);
-      if (textareaRef.current) {
-        setFrozenHeight(textareaRef.current.scrollHeight);
-      }
-      thinkWithMe.mutate({ content: messageInput, mode: selectedZone as EntryType });
+    if (thinkWithMe.isPending) return;
+    setIsAnalyzing(true);
+    setAgentResponse(null);
+    if (textareaRef.current) {
+      setFrozenHeight(textareaRef.current.scrollHeight);
     }
+    thinkWithMe.mutate({ content: messageInput, mode: selectedZone as EntryType });
   };
 
   const clearAndReset = () => {
     setMessageInput("");
     setAgentResponse(null);
-    setResearchResult(null);
     setLatestAnalysis(null);
     setFrozenHeight(null);
-    setRelatedJournalEntries([]);
     setShowVideoUpload(false);
     setPendingVideoAssetId(null);
     setPendingVideoPlaybackId(null);
     textareaRef.current?.focus();
   };
   
-  // Dossier management handlers
-  const handleCreateDossier = async () => {
-    if (!dossierName.trim()) return;
-    try {
-      const id = await createDossier(dossierName.trim());
-      setActiveDossierId(id);
-      setDossierName("");
-      setShowNewDossierInput(false);
-      toast({ title: "Tracker created", description: `"${dossierName.trim()}" is now active` });
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to create tracker", variant: "destructive" });
-    }
-  };
-  
-  const handleDeleteDossier = async (id: number) => {
-    try {
-      await deleteDossier(id);
-      if (activeDossierId === id) {
-        setActiveDossierId(null);
-      }
-      toast({ title: "Tracker deleted" });
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to delete tracker", variant: "destructive" });
-    }
-  };
-  
-  const handleSelectDossier = (id: number | null) => {
-    setActiveDossierId(id);
-    setDossierDropdownOpen(false);
-  };
-  
-  const handleSaveClaimToDossier = async (claim: string, queryId?: number, openForEditing: boolean = false) => {
-    if (!activeDossierId) {
-      toast({ title: "Select a tracker first", description: "Create or select a tracker to save claims", variant: "destructive" });
-      return;
-    }
-    try {
-      const newClaimId = await addClaim(activeDossierId, claim, 'to_check', 'unknown', queryId);
-      toast({ title: "Claim saved", description: "Added to your tracker" });
-      
-      // Optionally open the claim for editing to allow linking
-      if (openForEditing) {
-        setEditingClaimId(newClaimId);
-        setClaimSourceNote("");
-        setClaimTrustLevel("unknown");
-      }
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to save claim", variant: "destructive" });
-    }
-  };
-  
-  const handleUpdateClaimStatus = async (claimId: number, status: ClaimStatus) => {
-    try {
-      await updateClaim(claimId, { status });
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to update claim", variant: "destructive" });
-    }
-  };
-  
-  const handleDeleteClaim = async (claimId: number) => {
-    try {
-      await deleteClaim(claimId);
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to delete claim", variant: "destructive" });
-    }
-  };
-  
-  const handleStartEditClaim = (claim: ResearchClaim) => {
-    setEditingClaimId(claim.id!);
-    setClaimSourceNote(claim.sourceNote || "");
-    setClaimTrustLevel(claim.trustLevel || "unknown");
-  };
-  
-  const handleSaveClaimEdit = async () => {
-    if (!editingClaimId) return;
-    try {
-      await updateClaim(editingClaimId, { 
-        sourceNote: claimSourceNote || undefined,
-        trustLevel: claimTrustLevel
-      });
-      setEditingClaimId(null);
-      setClaimSourceNote("");
-      setClaimTrustLevel("unknown");
-      toast({ title: "Claim updated" });
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to update claim", variant: "destructive" });
-    }
-  };
-  
-  const handleLinkClaimToJournalEntry = async (claimId: number, journalEntryId: number) => {
-    try {
-      await updateClaim(claimId, { linkedJournalEntryId: journalEntryId });
-      toast({ title: "Linked!", description: "Claim connected to your audit record" });
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to link", variant: "destructive" });
-    }
-  };
-
   // Handle keyboard shortcuts
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
@@ -1582,7 +1309,7 @@ export default function Chat() {
                   </DialogHeader>
                   <div className="space-y-6 py-4">
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Your audit records and research data are stored locally on your device using IndexedDB. AI only sees what you explicitly share by deploying an audit or running a research query.
+                      Your audit records are stored locally on your device using IndexedDB. AI only sees what you explicitly share by deploying an audit.
                     </p>
                     
                     <div className="p-4 rounded-lg bg-orange-500/[0.05] border border-orange-500/20">

@@ -4,9 +4,8 @@ import {
   type PaymentReceipt, type InsertPaymentReceipt,
   type StoredMessage, type InsertStoredMessage,
   type JournalEntry, type InsertJournalEntry,
-  type PinnedMemory, type InsertPinnedMemory,
   type AuditLog, type InsertAuditLog,
-  members, rooms, paymentReceipts, storedMessages, journalEntries, pinnedMemories, auditLogs
+  members, rooms, paymentReceipts, storedMessages, journalEntries, auditLogs
 } from "@shared/schema";
 import { db, dbAvailable } from "./db";
 import { desc, eq, sql } from "drizzle-orm";
@@ -40,10 +39,6 @@ export interface IStorage {
   createJournalEntry(entry: InsertJournalEntry): Promise<JournalEntry>;
   getJournalEntry(id: string): Promise<JournalEntry | undefined>;
   getRecentJournalEntries(walletAddress: string, limit: number): Promise<JournalEntry[]>;
-
-  createPinnedMemory(memory: InsertPinnedMemory): Promise<PinnedMemory>;
-  getPinnedMemories(walletAddress: string, limit: number): Promise<PinnedMemory[]>;
-  deletePinnedMemory(id: string): Promise<boolean>;
 
   createAuditLog(log: InsertAuditLog): Promise<AuditLog>;
   getAuditLogs(limit: number): Promise<AuditLog[]>;
@@ -168,23 +163,6 @@ export class DatabaseStorage implements IStorage {
       .limit(limit);
   }
 
-  async createPinnedMemory(insertMemory: InsertPinnedMemory): Promise<PinnedMemory> {
-    const [memory] = await getDb().insert(pinnedMemories).values(insertMemory).returning();
-    return memory;
-  }
-
-  async getPinnedMemories(walletAddress: string, limit: number): Promise<PinnedMemory[]> {
-    return getDb().select().from(pinnedMemories)
-      .where(sql`lower(${pinnedMemories.walletAddress}) = lower(${walletAddress})`)
-      .orderBy(desc(pinnedMemories.createdAt))
-      .limit(limit);
-  }
-
-  async deletePinnedMemory(id: string): Promise<boolean> {
-    const result = await getDb().delete(pinnedMemories).where(eq(pinnedMemories.id, id));
-    return (result.rowCount ?? 0) > 0;
-  }
-
   async createAuditLog(insertLog: InsertAuditLog): Promise<AuditLog> {
     const [log] = await getDb().insert(auditLogs).values(insertLog).returning();
     return log;
@@ -211,7 +189,6 @@ export async function seedDefaultRooms() {
   if (existingRooms.length === 0) {
     await getDb().insert(rooms).values([
       { name: "Journal", description: "Daily reflections with AI thinking partner", isDefault: true },
-      { name: "Research", description: "Gather claims, track evidence, surface unknowns", isDefault: true },
     ]);
   }
 }

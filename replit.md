@@ -18,8 +18,8 @@ Preferred communication style: Simple, everyday language.
 
 ### Backend
 - **Framework**: Express.js with TypeScript.
-- **API**: RESTful endpoints for A2A audit, journaling, research, and agent interactions.
-- **OpenClaw Agent Runner**: A unified dispatcher (`runAgent(agentName, payload)`) that manages various AI agents (JournalInsight, ResearchSynth, ThinkingPartner), centralizing intelligence within agent classes.
+- **API**: RESTful endpoints for A2A audit, journaling, and agent interactions.
+- **OpenClaw Agent Runner**: A unified dispatcher (`runAgent(agentName, payload)`) that manages two AI agents (JournalInsight, ThinkingPartner), centralizing intelligence within agent classes.
 
 ### A2A Audit API (Tiered Zone Architecture)
 - **Agent Discovery**: `/.well-known/agent.json` manifest for machine-readable service discovery.
@@ -30,10 +30,10 @@ Preferred communication style: Simple, everyday language.
 - **Output Schema**: Structured JSON output validated by Zod, including tier, risk score, bias detection, logic flaws, recommendations, and Irys Datachain provenance fields.
 - **Irys Datachain Integration**: Every audit uploads its ProofOfLogic certificate to permanent storage via `@irys/upload` + `@irys/upload-ethereum` (Base Mainnet RPC). Responses include `provenance_provider: "IRYS_DATACHAIN"`, `irys_tx_id`, and `irys_url`. Verification endpoint: `GET /api/audit/verify/:txId`.
 - **Irys Service**: `server/irys.ts` — `uploadAuditToIrys(auditData)` function. Requires `IRYS_PRIVATE_KEY` env secret (Ethereum wallet private key with ETH on Base for upload fees).
-- **Adversarial Agent**: Utilizes Venice AI with tier-specific prompt engineering for scalable depth and rigor.
+- **Adversarial Agent**: Utilizes Venice AI with tier-specific prompt engineering for scalable depth and rigor. All agents implement the Evasion Defense Execution Pipeline (STRIP/INVERT/TRACE/CLASSIFY) from `server/ai-identity.ts`.
 
 ### Local-First Vault
-- **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI insights, memory pins, research dossiers, claims, decision logs, and content pipeline items.
+- **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI insights, memory pins, music tracks, trade artifacts, market alerts, and audit records.
 - **Encryption**: WebCrypto PBKDF2 + AES-GCM-256 provides transparent encryption/decryption of sensitive fields using a user-managed passphrase.
 
 ### Web3 Integration

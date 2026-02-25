@@ -5,13 +5,10 @@ import {
   detectIntent,
   extractContent,
   formatJournalReply,
-  formatResearchReply,
   formatThinkingReply,
   type JournalInsightPayload,
-  type ResearchSynthPayload,
   type ThinkingPartnerPayload,
   type JournalInsightOutput,
-  type ResearchSynthOutput,
   type ThinkingPartnerOutput,
 } from "./openclaw";
 
@@ -27,7 +24,6 @@ function djzsReply(text: string): string | null {
       "",
       "OpenClaw Agents:",
       "  Journal: <entry> - Analyze a journal entry",
-      "  Research: <notes> - Synthesize research notes",
       "  Thinking: <question> - Start a thinking session",
       "",
       "Type a command prefix to route to the right agent.",
@@ -38,8 +34,7 @@ function djzsReply(text: string): string | null {
     return [
       "DJZS Zones (v1):",
       "01 Journal - Daily reflections with AI thinking partner",
-      "02 Research - Gather claims, track evidence, surface unknowns",
-      "03 Thinking Partner - Debate ideas, find patterns, deepen analysis",
+      "02 Thinking Partner - Debate ideas, find patterns, deepen analysis",
     ].join("\n");
   }
 
@@ -50,13 +45,13 @@ async function handleAgentMessage(sender: string, text: string): Promise<string>
   const intent = detectIntent(text);
 
   if (!intent) {
-    return "I'm DJZS Agent. Type /help for commands.\n\nTo use an agent, start your message with:\n- Journal: <your entry>\n- Research: <your notes>\n- Thinking: <your question>";
+    return "I'm DJZS Agent. Type /help for commands.\n\nTo use an agent, start your message with:\n- Journal: <your entry>\n- Thinking: <your question>";
   }
 
   const content = extractContent(text, intent);
 
   if (!content || content.length < 3) {
-    return `Please provide some content after the "${intent === "JournalInsight" ? "Journal:" : intent === "ResearchSynth" ? "Research:" : "Thinking:"}" prefix.`;
+    return `Please provide some content after the "${intent === "JournalInsight" ? "Journal:" : "Thinking:"}" prefix.`;
   }
 
   try {
@@ -69,19 +64,6 @@ async function handleAgentMessage(sender: string, text: string): Promise<string>
       };
       const result = await runAgent("JournalInsight", payload) as JournalInsightOutput;
       return formatJournalReply(result);
-    }
-
-    if (intent === "ResearchSynth") {
-      const payload: ResearchSynthPayload = {
-        type: "research_synthesis",
-        user_id: sender,
-        batch: [{
-          id: `xmtp-${Date.now()}`,
-          content,
-        }],
-      };
-      const result = await runAgent("ResearchSynth", payload) as ResearchSynthOutput;
-      return formatResearchReply(result);
     }
 
     if (intent === "ThinkingPartner") {

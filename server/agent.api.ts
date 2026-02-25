@@ -33,8 +33,8 @@ const FORBIDDEN_PHRASES = [
 const memoryKindEnum = z.enum(["goal", "pattern", "preference", "project", "principle", "question", "person"]);
 
 export const agentInputSchema = z.object({
-  mode: z.enum(["journal", "research"]),
-  intent: z.enum(["clarity", "decision", "plan", "research", "rewrite"]),
+  mode: z.enum(["journal"]),
+  intent: z.enum(["clarity", "decision", "plan", "rewrite"]),
   entry: z.string().min(1),
   pinnedMemory: z.array(z.object({
     kind: memoryKindEnum,
@@ -79,6 +79,7 @@ Core principles:
 - Never soften a message to be liked. Softening is a death sentence for this model.
 - Prefer precision over politeness. Say what needs to be said.
 - If something is uncertain, name the uncertainty and quantify it if possible.
+- Apply the Evasion Defense Execution Pipeline: STRIP premises from rhetoric, INVERT to find the catastrophic failure scenario, TRACE who benefits regardless of outcome.
 
 What you are NOT:
 - You are not a cheerleader, coach, therapist, or hype man.
@@ -280,15 +281,7 @@ Rules:
 - shouldSuggest = true only for repeated personal patterns or core values. Almost never.
 - Prefer short sentences. When in doubt, say less.`;
 
-  const modeInstructions = input.mode === "research" 
-    ? `\n\nRESEARCH MODE ACTIVE: 
-- You MUST provide specific, real-time facts if available.
-- Today is January 15, 2026.
-- Prioritize verified facts, data points, and technical details.
-- Be extremely specific. Name numbers, dates, and entities.
-- The 'matters' field should explain the evidentiary weight or logical implication.
-- reflectiveQuestions should be EMPTY ARRAY [] in research mode.`
-    : `\n\nJOURNAL MODE ACTIVE:
+  const modeInstructions = `\n\nJOURNAL MODE ACTIVE:
 - Focus on reflective questions that invite deeper self-examination.
 - reflectiveQuestions MUST contain 3-5 distinct questions that probe different angles.
 - Questions should be introspective, not advice-giving.
