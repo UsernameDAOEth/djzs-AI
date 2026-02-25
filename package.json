@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "concurrently \"npm run start:api\" \"npm run start:xmtp\"",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "start:api": "NODE_ENV=production node dist/index.js",
+    "start:xmtp": "NODE_ENV=production tsx server/agent.ts"
   },
   "dependencies": {
     "@coinbase/x402": "^2.1.0",
@@ -66,6 +68,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "concurrently": "^9.2.1",
     "connect-pg-simple": "^10.0.0",
     "date-fns": "^3.6.0",
     "dexie": "^4.2.1",

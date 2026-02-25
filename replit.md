@@ -74,6 +74,7 @@ Preferred communication style: Simple, everyday language.
 - **CVM ID**: cvm_A6e0M7ZX (ID: 25877, prod5, dstack-0.5.3)
 - **App ID**: `d7255cce710465c7e67fd27a4688e9d9f5296179`
 - **Live URL**: `https://d7255cce710465c7e67fd27a4688e9d9f5296179-5000.dstack-pha-prod5.phala.network`
+- **Dual-Process Entry Point**: `npm start` uses `concurrently` to boot both `start:api` (Express REST API) and `start:xmtp` (XMTP Agent listener) simultaneously from a single command — required for Phala CVM single-entrypoint constraint
 - **Docker Image**: `djzs/djzs-ai:latest` (node:22-slim base, built via GitHub Actions on push to main)
 - **GitHub Repo**: `UsernameDAOEth/djzs-box`
 - **Deploy Script**: `/tmp/create-cvm2.mjs` (provision + create pattern)
@@ -96,3 +97,4 @@ Preferred communication style: Simple, everyday language.
 - **TanStack Query**: Server state management.
 - **Wouter**: Client-side routing.
 - **@xmtp/agent-sdk**: XMTP agent SDK.
+- **concurrently**: Runs multiple npm scripts in parallel (used for dual-process production boot).
