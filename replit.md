@@ -31,6 +31,19 @@ Preferred communication style: Simple, everyday language.
 - **Irys Datachain Integration**: Every audit uploads its ProofOfLogic certificate to permanent storage via `@irys/upload` + `@irys/upload-ethereum` (Base Mainnet RPC). Responses include `provenance_provider: "IRYS_DATACHAIN"`, `irys_tx_id`, and `irys_url`. Verification endpoint: `GET /api/audit/verify/:txId`.
 - **Irys Service**: `server/irys.ts` — `uploadAuditToIrys(auditData)` function. Requires `IRYS_PRIVATE_KEY` env secret (Ethereum wallet private key with ETH on Base for upload fees).
 - **Adversarial Agent**: Utilizes Venice AI with tier-specific prompt engineering for scalable depth and rigor. All agents implement the Evasion Defense Execution Pipeline (STRIP/INVERT/TRACE/CLASSIFY) from `server/ai-identity.ts`.
+- **Evasion Defense Pipeline**: Four-stage adversarial analysis baked into every audit:
+  - **STRIP**: Extract raw premises, ignore rhetoric and persuasion techniques.
+  - **INVERT**: Model catastrophic failure scenario; if thesis doesn't hedge against it, flag as fatal flaw.
+  - **TRACE**: Identify who benefits financially/strategically from the proposed action.
+  - **CLASSIFY**: Evaluate against 7 DJZS-LF failure codes; output risk_score (0-100) + flags array; diagnosis only, no fix advice.
+- **DJZS-LF Failure Codes** (defined in `shared/audit-schema.ts`):
+  - `DJZS-S01` CIRCULAR_LOGIC — Conclusion used as premise; self-referencing reasoning without external validation.
+  - `DJZS-S02` MISSING_FALSIFIABILITY — No failure condition defined; thesis cannot be disproven.
+  - `DJZS-E01` CONFIRMATION_TUNNEL — Asymmetric evidence selection; only confirming data cited.
+  - `DJZS-E02` AUTHORITY_SUBSTITUTION — Argument depends on reputation/authority rather than structural evidence.
+  - `DJZS-I01` MISALIGNED_INCENTIVE — Proposed action benefits proposer disproportionately vs stated stakeholders.
+  - `DJZS-I02` NARRATIVE_DEPENDENCY — Strategy survival depends on a specific narrative remaining true; no hedge.
+  - `DJZS-X01` UNHEDGED_EXECUTION — No fallback plan; single point of failure with no abort conditions.
 
 ### Local-First Vault
 - **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI insights, memory pins, music tracks, trade artifacts, market alerts, and audit records.
@@ -57,9 +70,9 @@ Preferred communication style: Simple, everyday language.
 - XMTP messaging is end-to-end encrypted via MLS protocol with quantum-resistant key encapsulation.
 
 ## Phala TEE Deployment
-- **CVM ID**: cvm_eOvvWBO4 (teepod 26, prod5, dstack-0.5.3)
-- **App ID**: `7c8b89e056199270025d351dde4dc1b2deb71c29`
-- **Live URL**: `https://7c8b89e056199270025d351dde4dc1b2deb71c29-5000.dstack-pha-prod5.phala.network`
+- **CVM ID**: cvm_A6e0M7ZX (ID: 25877, prod5, dstack-0.5.3)
+- **App ID**: `d7255cce710465c7e67fd27a4688e9d9f5296179`
+- **Live URL**: `https://d7255cce710465c7e67fd27a4688e9d9f5296179-5000.dstack-pha-prod5.phala.network`
 - **Docker Image**: `djzs/djzs-ai:latest` (node:22-slim base, built via GitHub Actions on push to main)
 - **GitHub Repo**: `UsernameDAOEth/djzs-box`
 - **Deploy Script**: `/tmp/create-cvm2.mjs` (provision + create pattern)
