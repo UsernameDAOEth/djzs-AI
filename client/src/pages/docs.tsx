@@ -1200,35 +1200,6 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <div className="p-8 rounded-3xl bg-muted border border-border">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Our Philosophy</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-5 rounded-lg border border-orange-500/20" style={{ background: 'rgba(243,126,32,0.04)' }}>
-                <div className="flex items-center gap-3 mb-3">
-                  <HardDrive className="w-5 h-5 text-orange-400" />
-                  <h3 className="text-sm font-bold text-foreground">Local-First</h3>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Your local audit state is stored in your browser. It is never on our servers. This isn't a feature; it's the foundation of our privacy model.</p>
-              </div>
-              <div className="p-5 rounded-lg border border-teal-500/20" style={{ background: 'rgba(46,139,139,0.04)' }}>
-                <div className="flex items-center gap-3 mb-3">
-                  <Shield className="w-5 h-5 text-teal-400" />
-                  <h3 className="text-sm font-bold text-foreground">Sovereign</h3>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">We believe you should have a digital space that is truly yours. DJ-Z-S is your sovereign workspace, free from the prying eyes of ad-tech and AI companies.</p>
-              </div>
-              <div className="p-5 rounded-lg border border-purple-500/20" style={{ background: 'rgba(123,107,141,0.04)' }}>
-                <div className="flex items-center gap-3 mb-3">
-                  <Brain className="w-5 h-5 text-purple-400" />
-                  <h3 className="text-sm font-bold text-foreground">Uncensored</h3>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">The Oracle is designed to be adversarial, not censored. It won't refuse to analyze controversial strategies or sensitive reasoning traces. Your logic is your own.</p>
-              </div>
-            </div>
-          </div>
-        </motion.section>
-
-        <motion.section variants={fadeUp} className="mb-20">
           <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
