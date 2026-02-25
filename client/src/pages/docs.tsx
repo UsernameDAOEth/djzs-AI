@@ -172,7 +172,7 @@ export default function Docs() {
 
         <motion.section variants={fadeUp} className="mb-20">
           <div className="p-8 rounded-3xl bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-500/20">
-            <h2 className="text-2xl font-bold text-foreground mb-4">What is DJZS?</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-4">What is DJZS.AI?</h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p className="text-lg">
                 DJZS is the <strong className="text-foreground">Adversarial Logic Layer for the Agent-to-Agent (A2A) economy</strong> — a deterministic verification primitive that enforces an <strong className="text-foreground">"Audit-Before-Act"</strong> loop for autonomous agents. It applies <strong className="text-foreground">Journal Entry Testing (JET)</strong>, a 100-year-old financial security primitive modernized for AI reasoning traces. "Journaling" in DJZS is not a diary — it is the mandatory act of an autonomous agent committing its reasoning trace to an immutable log before executing a transaction.
