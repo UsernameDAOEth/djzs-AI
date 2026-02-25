@@ -19,17 +19,14 @@ import {
   Brain,
   Sparkles,
   FileSearch,
-  TrendingUp,
   KeyRound,
   ShieldCheck,
-  BarChart3,
   DollarSign,
   FileCode,
   CheckCircle,
   Code2,
   AlertTriangle,
   Activity,
-  Scan,
   Sun,
   Moon
 } from "lucide-react";
@@ -912,70 +909,6 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
           </div>
         </motion.section>
 
-        <motion.section variants={fadeUp} className="mb-20" data-testid="section-founder-intelligence">
-          <h2 className="text-2xl font-bold text-foreground mb-2">Founder Intelligence Engine</h2>
-          <p className="text-muted-foreground mb-8">Pre-flight vault analysis before every audit deployment</p>
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 mb-8">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-lg bg-amber-600/20 flex items-center justify-center">
-                <Scan className="w-6 h-6 text-amber-400" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-foreground">5 Pattern Analyzers</h3>
-                <p className="text-xs text-amber-400/80">Your vault history becomes pre-flight intelligence for every audit</p>
-              </div>
-            </div>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              Before every audit deployment, the Founder Intelligence engine scans your local vault history — past audits and reasoning records — to surface patterns that make your current submission stronger. This context is injected into the AI agent prompt as an <strong className="text-foreground">Intelligence Brief</strong>, giving the adversarial AI historical ammunition to challenge you more precisely.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <Activity className="w-4 h-4 text-amber-400" />
-                  <h4 className="text-sm font-bold text-foreground">Bias Pattern Memory</h4>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Scans past audit results for recurring bias types. If you keep triggering FOMO or confirmation bias, the AI knows before you submit.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-amber-400" />
-                  <h4 className="text-sm font-bold text-foreground">Narrative Drift Detection</h4>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Compares your current submission against past entries to detect when your story has shifted without acknowledgment.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-400" />
-                  <h4 className="text-sm font-bold text-foreground">Assumption Kill Switch</h4>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Identifies assumptions in your submission that were previously flagged as weak or refuted in past audits.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <BarChart3 className="w-4 h-4 text-amber-400" />
-                  <h4 className="text-sm font-bold text-foreground">Volatility Simulation</h4>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Checks if your risk tolerance has changed between submissions — flags when you're suddenly more aggressive without justification.</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted border border-border md:col-span-2">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                  <h4 className="text-sm font-bold text-foreground">Emotional Spike Flag</h4>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">Detects urgency language, FOMO markers, and emotional escalation patterns in your submission text that correlate with poor decision-making.</p>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-lg bg-amber-500/[0.04] border border-amber-500/15">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                The Intelligence Brief is displayed as a collapsible panel alongside your audit results. All analysis runs locally against your vault — no data leaves your device for intelligence gathering. The brief is also injected into the AI prompt so the adversarial agent can reference your history when challenging your submission.
-              </p>
-            </div>
-          </div>
-        </motion.section>
-
-
         <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-foreground mb-8">OpenClaw Agent Runner</h2>
           <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 mb-8">
@@ -985,11 +918,11 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground">Unified AI Agent System</h3>
-                <p className="text-xs text-purple-400/80">Three structured agents, one dispatcher</p>
+                <p className="text-xs text-purple-400/80">Two structured agents, one dispatcher</p>
               </div>
             </div>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              OpenClaw is DJZS's agent runner — a clean dispatcher that routes requests to three specialized AI agents. Each agent wraps Venice AI calls and returns strictly typed, structured JSON. No thinking happens in the dispatcher; all intelligence lives in the agent classes.
+              OpenClaw is DJZS's agent runner — a clean dispatcher that routes requests to two specialized AI agents. Each agent wraps Venice AI calls and returns strictly typed, structured JSON. No thinking happens in the dispatcher; all intelligence lives in the agent classes.
             </p>
 
             <div className="p-5 rounded-lg bg-purple-500/[0.06] border border-purple-500/15 mb-6">
@@ -1007,10 +940,10 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             </div>
 
             <p className="text-xs text-muted-foreground mb-6 font-mono" data-testid="text-openclaw-api">
-              API: POST /api/openclaw/run {'{'} agent: "JournalInsight" | "ResearchSynth" | "ThinkingPartner", payload: {'{'} ... {'}'} {'}'}
+              API: POST /api/openclaw/run {'{'} agent: "JournalInsight" | "ThinkingPartner", payload: {'{'} ... {'}'} {'}'}
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-6 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20" data-testid="card-agent-journal">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
@@ -1035,33 +968,6 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 <li className="flex items-start gap-2">
                   <span className="w-1 h-1 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
                   <span>Generates adversarial questions that pressure-test your logic</span>
-                </li>
-              </ul>
-            </div>
-            <div className="p-6 rounded-lg bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20" data-testid="card-agent-research">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-teal-600/20 flex items-center justify-center">
-                  <Search className="w-5 h-5 text-teal-400" />
-                </div>
-                <h3 className="text-lg font-bold text-foreground">ResearchSynth</h3>
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">Interrogates batches of research entries, exposes contradictions across sources, and flags weak assumptions.</p>
-              <ul className="space-y-2 text-xs text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                  <span>Pressure-tests claims across sources</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                  <span>Exposes where sources contradict each other</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                  <span>Flags weak assumptions and narrative dependency</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 shrink-0"></span>
-                  <span>Calls out what you haven't investigated yet</span>
                 </li>
               </ul>
             </div>
