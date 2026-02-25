@@ -270,7 +270,8 @@ Four governance zones for autonomous agent oversight:
 | Audit Engine | `server/audit-agent.ts` | Venice AI adversarial logic analysis with DJZS-LF taxonomy |
 | Irys Service | `server/irys.ts` | Permanent certificate upload to Irys Datachain with metadata tags |
 | Payment Verifier | `server/payment-verifier.ts` | On-chain USDC payment verification via viem on Base Mainnet |
-| OpenClaw Runner | `server/openclaw.ts` | Unified AI agent dispatcher (JournalInsight, ResearchSynth, ThinkingPartner) |
+| OpenClaw Runner | `server/openclaw.ts` | Unified AI agent dispatcher (JournalInsight, AdversarialOracle) |
+| XMTP Agent | `server/agent.ts` | A2A encrypted listener — routes `Thinking:` to AdversarialOracle, `Journal:` to JournalInsight via XMTP MLS |
 | Venice AI Client | `server/venice.ts` | Privacy-first AI processing via Venice API |
 | Storage Layer | `server/storage.ts` | PostgreSQL persistence via Drizzle ORM |
 | Audit Schema | `shared/audit-schema.ts` | Tier config, DJZS-LF failure codes, Zod validation |
@@ -310,10 +311,10 @@ All secrets are server-side only and managed inside the TEE enclave.
 |---|---|
 | `CDP_API_KEY_ID` | Coinbase Developer Platform API key ID (enables x402 protocol) |
 | `CDP_API_KEY_SECRET` | Coinbase Developer Platform API secret |
-| `BRAVE_API_KEY` | Brave Search API key for privacy-first web search |
 | `X402_NETWORK` | Network identifier for x402 (default: `eip155:8453`) |
 | `VENICE_MODEL` | Venice AI model (default: `llama-3.3-70b`) |
 | `VENICE_BASE_URL` | Venice API base URL (default: `https://api.venice.ai/api/v1`) |
+| `XMTP_WALLET_KEY` | 0x-prefixed hex private key for XMTP Oracle agent identity |
 | `XMTP_ENV` | XMTP messaging environment: `dev` or `production` |
 
 ---
@@ -333,7 +334,6 @@ All secrets are server-side only and managed inside the TEE enclave.
 | Local Storage | Dexie (IndexedDB), AES-GCM-256 encryption |
 | Routing | Wouter (client), Express (server) |
 | State | TanStack Query (server state), React hooks (local) |
-| Search | Brave Search API |
 | Validation | Zod |
 | Messaging | XMTP (MLS protocol, quantum-resistant) |
 
@@ -360,7 +360,8 @@ Set environment variables (see tables above), then:
 
 ```bash
 npm run db:push        # Push schema to database
-npm run dev            # Start development server
+npm run dev            # Start development server (API only)
+npm start              # Production: boots API + XMTP Agent via concurrently
 ```
 
 ---
@@ -380,7 +381,8 @@ Deploy to Phala Cloud's Trusted Execution Environment for hardware-level isolati
 
 1. Build Docker image and push to DockerHub: `djzs/djzs-ai:latest`
 2. Provision a CVM on Phala Cloud with environment variables injected at runtime
-3. All private keys (Venice API, Irys wallet, x402 keys) are managed inside the SGX enclave — they never touch disk and are inaccessible to the host operator
+3. `npm start` boots both the Express REST API and the XMTP Agent listener simultaneously via `concurrently` — required for Phala CVM's single-entrypoint constraint
+4. All private keys (Venice API, Irys wallet, XMTP wallet, x402 keys) are managed inside the SGX enclave — they never touch disk and are inaccessible to the host operator
 
 Current deployment: `dstack-pha-prod5.phala.network`
 
