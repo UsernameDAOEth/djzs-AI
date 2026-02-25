@@ -102,11 +102,11 @@ export async function exportVaultAsZip(): Promise<Blob> {
 
   zip.file('manifest.json', JSON.stringify(manifest, null, 2));
 
-  const entriesFolder = zip.folder('entries');
+  const jetLogsFolder = zip.folder('JET_Logs');
   entries.forEach((entry, i) => {
     const id = entry.id ?? i;
-    entriesFolder!.file(`${id}.json`, JSON.stringify(entry, null, 2));
-    entriesFolder!.file(`${id}.md`, entryToMarkdown(entry));
+    jetLogsFolder!.file(`${id}.json`, JSON.stringify(entry, null, 2));
+    jetLogsFolder!.file(`${id}.md`, entryToMarkdown(entry));
   });
 
   zip.file('insights.json', JSON.stringify(insights, null, 2));
@@ -161,7 +161,7 @@ export async function importVaultFromZip(file: File): Promise<ImportResult> {
     entries: {},
   };
 
-  const entryFiles = zip.folder('entries');
+  const entryFiles = zip.folder('JET_Logs');
   if (entryFiles) {
     const jsonFiles: string[] = [];
     entryFiles.forEach((relativePath, file) => {
