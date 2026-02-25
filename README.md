@@ -312,8 +312,6 @@ All secrets are server-side only and managed inside the TEE enclave.
 | `CDP_API_KEY_ID` | Coinbase Developer Platform API key ID (enables x402 protocol) |
 | `CDP_API_KEY_SECRET` | Coinbase Developer Platform API secret |
 | `BRAVE_API_KEY` | Brave Search API key for privacy-first web search |
-| `LIVEPEER_API_KEY` | Livepeer API key for decentralized video storage |
-| `PARAGRAPH_API_KEY` | Paragraph API key for newsletter integration |
 | `X402_NETWORK` | Network identifier for x402 (default: `eip155:8453`) |
 | `VENICE_MODEL` | Venice AI model (default: `llama-3.3-70b`) |
 | `VENICE_BASE_URL` | Venice API base URL (default: `https://api.venice.ai/api/v1`) |
