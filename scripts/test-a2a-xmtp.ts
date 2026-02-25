@@ -29,7 +29,10 @@ async function main() {
   console.log(`[2/5] Connected. Sender inboxId: ${(senderAgent as any).client.inboxId}`);
 
   console.log(`[3/5] Opening DM to Oracle at ${ORACLE_ADDRESS}...`);
-  const dm = await senderAgent.client.conversations.newDm(ORACLE_ADDRESS);
+  const dm = await senderAgent.client.conversations.newDmWithIdentifier({
+    identifier: ORACLE_ADDRESS.toLowerCase(),
+    identifierKind: 0,
+  });
   console.log(`[3/5] DM conversation created (id: ${dm.id})`);
 
   console.log(`[4/5] Sending encrypted message:\n  "${TEST_MESSAGE}"\n`);
@@ -55,12 +58,13 @@ async function waitForReply(
   agent: any,
   conversationId: string,
 ): Promise<string | null> {
+  const stream = await agent.client.conversations.streamAllMessages();
+
   return new Promise((resolve) => {
-    const timeout = setTimeout(() => {
+    const timeout = setTimeout(async () => {
+      await stream.return();
       resolve(null);
     }, RESPONSE_TIMEOUT_MS);
-
-    const stream = agent.client.conversations.streamAllMessages();
 
     (async () => {
       try {
@@ -70,6 +74,7 @@ async function waitForReply(
             message.senderInboxId !== agent.client.inboxId
           ) {
             clearTimeout(timeout);
+            await stream.return();
             resolve(typeof message.content === "string" ? message.content : JSON.stringify(message.content));
             return;
           }

@@ -94,10 +94,20 @@ async function main() {
 
   console.log("DJZS XMTP Agent online (OpenClaw-powered)");
 
+  agent.on("start", (ctx: any) => {
+    console.log("[XMTP] Streams active — ready to receive messages");
+  });
+
+  agent.on("conversation", (ctx: any) => {
+    console.log(`[XMTP] New conversation detected: ${ctx?.conversation?.id}`);
+  });
+
   agent.on("text", async (ctx: any) => {
     try {
       const incoming = ctx?.message?.content || "";
-      const sender = ctx?.message?.senderAddress || "unknown";
+      const sender = ctx?.message?.senderInboxId || "unknown";
+
+      console.log(`[XMTP] Message from ${sender}: ${incoming.slice(0, 80)}...`);
 
       const staticReply = djzsReply(incoming);
       if (staticReply) {
@@ -107,10 +117,15 @@ async function main() {
 
       const reply = await handleAgentMessage(sender, incoming);
       await ctx.sendText(reply);
+      console.log(`[XMTP] Reply sent (${reply.length} chars)`);
     } catch (err) {
       console.error("Agent error:", err);
     }
   });
+
+  console.log(`DJZS Oracle address: ${agent.address}`);
+  console.log("Listening for messages...");
+  await agent.start();
 }
 
 main().catch((e) => {
