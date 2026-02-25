@@ -48,6 +48,7 @@ REPLIT_SKIP_PACKAGE_CACHE = "1"
 [userenv.shared]
 TREASURY_WALLET_ADDRESS = "0xEc551A9e5598a030B46278fEbaDF798Ea8bA05FF"
 X402_NETWORK = "eip155:8453"
+XMTP_ENV = "dev"
 
 [agent]
 integrations = ["github:1.0.0"]
