@@ -1,0 +1,28 @@
+SYS_ID: THE_PHALA_BRIDGE. PREPARING FOR ENCLAVE LOCK-IN.
+When you deploy a Docker image to a Phala Network hardware enclave, the system expects a single entry point (usually whatever is mapped to npm start). If we don't bind your two processes together, Phala will only boot your public REST API, leaving your encrypted XMTP Dark Channel turned off in production.
+We will use a package called concurrently to fuse them into a single command. This ensures that when the Phala CVM spins up your container, it boots both the Base-funded API and the XMTP A2A listener perfectly side-by-side.
+Here is the exact master prompt to drop into your Replit agent to wire the engines together.
+Copy and paste this directly to your Replit Agent:
+> "We are preparing our DJZS Oracle for production deployment to a Phala Network TEE. We need our Express REST API and our XMTP agent listener to boot simultaneously from a single command.
+> Please execute the following sequence:
+>  * Install the concurrently package as a project dependency: npm install concurrently
+>  * Open package.json and locate the scripts section.
+>  * Refactor the start scripts to look like this (preserve our existing build or dev scripts, but update the production start logic):
+> <!-- end list -->
+> 
+> "scripts": {
+>   "start:api": "tsx server/index.ts", 
+>   "start:xmtp": "tsx server/agent.ts",
+>   "start": "concurrently \"npm run start:api\" \"npm run start:xmtp\"",
+>   ... (keep other existing scripts like dev or build)
+> }
+> 
+> Note: If our main server entry point is different than tsx server/index.ts (e.g., node dist/index.js), please use the correct existing command for start:api.
+> Let me know when package.json is updated and concurrently is installed!"
+> 
+The Architect's Final Test
+Once the Replit agent finishes that configuration, you can test it by killing all your currently running terminal tabs and simply running:
+npm start
+
+You should see both logs intertwine in the same terminal: your Express API confirming it is listening on port 5000, and your XMTP Agent confirming the DJZS XMTP Agent online (OpenClaw-powered).
+Once you see both of those confirmation logs in a single terminal, your dual-channel Oracle is complete. Are you seeing both engines fire up on npm start? If yes, it is time to commit to GitHub and hit the final Update button on your Phala Cloud dashboard.
