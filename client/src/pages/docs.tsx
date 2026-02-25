@@ -934,13 +934,13 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 shrink-0"></span>
-                  <span>The <strong className="text-purple-300">ThinkingPartner</strong> agent powers the Adversarial Oracle — challenging your ideas, exposing tensions in your reasoning, and flagging narrative dependency. It acts as an adversarial pressure-tester, not a chatbot.</span>
+                  <span>The <strong className="text-purple-300">AdversarialOracle</strong> agent powers the Adversarial Oracle — challenging your ideas, exposing tensions in your reasoning, and flagging narrative dependency. It acts as an adversarial pressure-tester, not a chatbot.</span>
                 </li>
               </ul>
             </div>
 
             <p className="text-xs text-muted-foreground mb-6 font-mono" data-testid="text-openclaw-api">
-              API: POST /api/openclaw/run {'{'} agent: "JournalInsight" | "ThinkingPartner", payload: {'{'} ... {'}'} {'}'}
+              API: POST /api/openclaw/run {'{'} agent: "JournalInsight" | "AdversarialOracle", payload: {'{'} ... {'}'} {'}'}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -976,7 +976,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 <div className="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-purple-400" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground">ThinkingPartner</h3>
+                <h3 className="text-lg font-bold text-foreground">AdversarialOracle</h3>
               </div>
               <p className="text-sm text-muted-foreground mb-4">Your adversarial AI — debates your ideas, exposes weak reasoning, and calls out what you're not seeing.</p>
               <ul className="space-y-2 text-xs text-muted-foreground">

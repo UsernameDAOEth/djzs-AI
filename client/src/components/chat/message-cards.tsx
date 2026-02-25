@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import { TrendingUp, TrendingDown, Target, AlertCircle, Calendar, DollarSign, Megaphone, ThumbsUp, ThumbsDown, CheckCircle, XCircle, Newspaper, ExternalLink, FileText, Receipt, BarChart3 } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, AlertCircle, Calendar, DollarSign, Megaphone, ThumbsUp, ThumbsDown, CheckCircle, XCircle, ExternalLink, FileText, Receipt, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -9,7 +9,6 @@ import type {
   EventCard, 
   PaymentReceiptCard, 
   AnnouncementCard,
-  NewsletterArticle,
   TextMessage,
   ChatMessage 
 } from "@shared/schema";
@@ -81,8 +80,6 @@ export function MessageCard({ message, ensNames }: MessageCardProps) {
       return <ReceiptCard message={message} ensNames={ensNames} />;
     case "announcement":
       return <AnnouncementCardComponent message={message} ensNames={ensNames} />;
-    case "newsletter":
-      return <ArticleCard message={message} ensNames={ensNames} />;
     default:
       return null;
   }
@@ -354,68 +351,4 @@ function AnnouncementCardComponent({ message, ensNames }: { message: Announcemen
   );
 }
 
-function ArticleCard({ message, ensNames }: { message: NewsletterArticle; ensNames?: Record<string, string> }) {
-  const pubSlug = message.publicationSlug.startsWith('@') ? message.publicationSlug : `@${message.publicationSlug}`;
-  const articleUrl = `https://paragraph.com/${pubSlug}/${message.slug}`;
-  
-  return (
-    <div className="bg-card/80 rounded-xl border border-indigo-600/30 p-4 my-2 overflow-hidden" data-testid={`card-article-${message.id}`}>
-      <CardHeader 
-        type="article"
-        typeLabel="Article"
-        typeColor="bg-indigo-600 text-white"
-        authorAddress={message.authorAddress}
-        ensName={ensNames?.[message.authorAddress]}
-        timestamp={message.createdAt}
-        icon={Newspaper}
-      />
-      
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-full bg-indigo-600/20 flex items-center justify-center">
-          <Newspaper className="w-4 h-4 text-indigo-400" />
-        </div>
-        <p className="text-sm text-indigo-400 font-medium">{message.publicationSlug}</p>
-      </div>
-      
-      {message.imageUrl && (
-        <div className="relative w-full h-40 mb-3 rounded-lg overflow-hidden">
-          <img 
-            src={message.imageUrl} 
-            alt={message.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
-      
-      <h3 className="text-foreground font-bold text-lg mb-2 line-clamp-2">{message.title}</h3>
-      
-      {message.subtitle && !message.excerpt && (
-        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{message.subtitle}</p>
-      )}
-      
-      {message.excerpt && (
-        <p className="text-muted-foreground text-sm mb-3 line-clamp-3">{message.excerpt}</p>
-      )}
-      
-      <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
-        <a 
-          href={articleUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
-          data-testid={`link-article-${message.id}`}
-        >
-          <ExternalLink className="w-4 h-4" />
-          Read Article
-        </a>
-        {message.publishedAt && (
-          <span className="text-xs text-muted-foreground">
-            Published {formatDistanceToNow(new Date(message.publishedAt), { addSuffix: true })}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export { NoteCard, SignalCard, PredictionCardComponent, EventCardComponent, ReceiptCard, AnnouncementCardComponent, ArticleCard };
+export { NoteCard, SignalCard, PredictionCardComponent, EventCardComponent, ReceiptCard, AnnouncementCardComponent };

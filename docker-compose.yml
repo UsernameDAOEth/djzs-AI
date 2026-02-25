@@ -12,6 +12,5 @@ services:
       - VENICE_API_KEY=${VENICE_API_KEY:-}
       - BASE_RPC_URL=${BASE_RPC_URL:-https://mainnet.base.org}
       - TREASURY_WALLET_ADDRESS=${TREASURY_WALLET_ADDRESS:-}
-      - BRAVE_API_KEY=${BRAVE_API_KEY:-}
       - XMTP_ENV=${XMTP_ENV:-production}
     restart: unless-stopped

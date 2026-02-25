@@ -320,7 +320,7 @@ input, textarea, [contenteditable] {
     text-transform: uppercase;
   }
 
-  /* Thinking partner card styles */
+  /* Adversarial oracle card styles */
   .thinking-card {
     background: linear-gradient(135deg, 
       rgba(243, 126, 32, 0.08) 0%,

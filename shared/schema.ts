@@ -149,21 +149,6 @@ export const announcementCardSchema = z.object({
   authorAddress: z.string(),
 });
 
-export const newsletterArticleSchema = z.object({
-  type: z.literal("newsletter"),
-  id: z.string(),
-  postId: z.string(),
-  title: z.string(),
-  subtitle: z.string().optional(),
-  imageUrl: z.string().optional(),
-  publishedAt: z.string().optional(),
-  slug: z.string(),
-  publicationSlug: z.string(),
-  excerpt: z.string().optional(),
-  createdAt: z.string(),
-  authorAddress: z.string(),
-});
-
 export const textMessageSchema = z.object({
   type: z.literal("text"),
   content: z.string(),
@@ -181,7 +166,6 @@ export const chatMessageSchema = z.discriminatedUnion("type", [
   eventRsvpSchema,
   paymentReceiptCardSchema,
   announcementCardSchema,
-  newsletterArticleSchema,
 ]);
 
 export type TradeSignalCard = z.infer<typeof tradeSignalCardSchema>;
@@ -192,7 +176,6 @@ export type EventCard = z.infer<typeof eventCardSchema>;
 export type EventRsvp = z.infer<typeof eventRsvpSchema>;
 export type PaymentReceiptCard = z.infer<typeof paymentReceiptCardSchema>;
 export type AnnouncementCard = z.infer<typeof announcementCardSchema>;
-export type NewsletterArticle = z.infer<typeof newsletterArticleSchema>;
 export type TextMessage = z.infer<typeof textMessageSchema>;
 export type ChatMessage = z.infer<typeof chatMessageSchema>;
 

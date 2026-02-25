@@ -18,7 +18,6 @@ import {
   Volume2,
   UserX,
   Crown,
-  Newspaper,
   Home,
   Lock,
   Bot,
@@ -48,10 +47,8 @@ import {
   Check,
   AlertCircle,
   HelpCircle,
-  Video,
   Mic,
   MicOff,
-  Headphones,
   Brain,
   Terminal,
   ScrollText,
@@ -79,8 +76,6 @@ import { TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
 import type { DJZSLogicAudit } from "@shared/audit-schema";
 import { format } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
-import { VideoUpload, VideoPlayer } from "@/components/video-diary";
-import { MusicPanel } from "@/components/music-panel";
 import { QuickSearch } from "@/components/quick-search";
 import { ProvisionAgentAllowance } from "@/components/provision-agent-allowance";
 import { AuditTutorial, useTutorial } from "@/components/audit-tutorial";
@@ -94,7 +89,6 @@ import {
   vault, 
   saveEntry, 
   saveInsight, 
-  updateEntryVideo,
   getActiveMemories, 
   getMemoriesForAgent, 
   pinMemory as pinLocalMemory, 
@@ -104,7 +98,6 @@ import {
   saveAuditRecord,
   getAuditRecords,
   type MemoryPin,
-  type MusicTrack,
   type EntryType,
   type EntryStats,
   type AuditRecord,
@@ -389,12 +382,7 @@ export default function Chat() {
     };
   }, []);
 
-  const [showVideoUpload, setShowVideoUpload] = useState(false);
-  const [showMusicPanel, setShowMusicPanel] = useState(false);
-  const [pendingVideoAssetId, setPendingVideoAssetId] = useState<string | null>(null);
-  const [pendingVideoPlaybackId, setPendingVideoPlaybackId] = useState<string | null>(null);
 
-  
   // Local-first: Query recent entries from IndexedDB (newest first)
   const localEntries = useLiveQuery(
     () => vault.entries
@@ -567,8 +555,8 @@ export default function Chat() {
       // 2. Get pinned memories for context
       const memories = await getMemoriesForAgent();
       
-      // 3. Save entry locally (with optional video)
-      const entryId = await saveEntry(mode, content, [], pendingVideoAssetId || undefined, pendingVideoPlaybackId || undefined);
+      // 3. Save entry locally
+      const entryId = await saveEntry(mode, content, []);
       setLastEntryId(entryId);
       
       // 4. Call agent API with prior entries (excludes current entry)
@@ -775,7 +763,7 @@ export default function Chat() {
     if (!messageInput.trim() || !address || sendMessage.isPending) return;
     
     if (selectedZone === 'journal') {
-      await saveEntry(selectedZone as EntryType, messageInput, [], pendingVideoAssetId || undefined, pendingVideoPlaybackId || undefined);
+      await saveEntry(selectedZone as EntryType, messageInput, []);
     }
     
     const message: ChatMessage = {
@@ -786,9 +774,6 @@ export default function Chat() {
     };
     sendMessage.mutate(message);
     setMessageInput("");
-    setPendingVideoAssetId(null);
-    setPendingVideoPlaybackId(null);
-    setShowVideoUpload(false);
   };
 
   const handleAnalyze = () => {
@@ -808,9 +793,6 @@ export default function Chat() {
     setAgentResponse(null);
     setLatestAnalysis(null);
     setFrozenHeight(null);
-    setShowVideoUpload(false);
-    setPendingVideoAssetId(null);
-    setPendingVideoPlaybackId(null);
     textareaRef.current?.focus();
   };
   
@@ -1857,7 +1839,6 @@ export default function Chat() {
       </div>
     </TooltipProvider>
 
-    <MusicPanel isOpen={showMusicPanel} onClose={() => setShowMusicPanel(false)} />
     <QuickSearch
       open={quickSearchModalOpen}
       onClose={() => setQuickSearchModalOpen(false)}

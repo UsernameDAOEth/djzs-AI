@@ -19,7 +19,7 @@ Preferred communication style: Simple, everyday language.
 ### Backend
 - **Framework**: Express.js with TypeScript.
 - **API**: RESTful endpoints for A2A audit, journaling, and agent interactions.
-- **OpenClaw Agent Runner**: A unified dispatcher (`runAgent(agentName, payload)`) that manages two AI agents (JournalInsight, ThinkingPartner), centralizing intelligence within agent classes.
+- **OpenClaw Agent Runner**: A unified dispatcher (`runAgent(agentName, payload)`) that manages two AI agents (JournalInsight, AdversarialOracle), centralizing intelligence within agent classes.
 
 ### A2A Audit API (Tiered Zone Architecture)
 - **Agent Discovery**: `/.well-known/agent.json` manifest for machine-readable service discovery.
@@ -46,7 +46,7 @@ Preferred communication style: Simple, everyday language.
   - `DJZS-X01` UNHEDGED_EXECUTION — No fallback plan; single point of failure with no abort conditions.
 
 ### Local-First Vault
-- **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI insights, memory pins, music tracks, trade artifacts, market alerts, and audit records.
+- **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI insights, memory pins, trade artifacts, market alerts, and audit records.
 - **Encryption**: WebCrypto PBKDF2 + AES-GCM-256 provides transparent encryption/decryption of sensitive fields using a user-managed passphrase.
 
 ### Web3 Integration
@@ -62,7 +62,6 @@ Preferred communication style: Simple, everyday language.
 - **ProvisionAgentAllowance**: Governance component for provisioning USDC escrow to execution agents. Reads live USDC balance via wagmi `useReadContract` (balanceOf on Base Mainnet USDC contract). Displays Available Velocity and Pending Logic Traces metrics. Detects wrong network (shows SWITCH_NETWORK), disconnected state, and defaults to 50.00 USDC input.
 - **Local Node State**: Export-only telemetry section at the bottom of the Audit Ledger view. "Export Logic Logs (.zip)" downloads local IndexedDB state. No import functionality (core state is on Irys Datachain).
 - **Onboarding**: An interactive tutorial ("Protocol Specs") with spotlight highlights, keyboard navigation, and localStorage persistence.
-- **Music Library**: Local upload and playback of audio files, categorized by Focus, Reflection, and Creative zones.
 - **Offline Support**: Enables offline writing and browsing via local-first storage and service worker caching.
 
 ### Privacy Design
@@ -83,9 +82,7 @@ Preferred communication style: Simple, everyday language.
 - **Audit Status**: `npm audit --omit=dev` reports 0 vulnerabilities; 2 remaining moderate (vite→esbuild dev-server) are non-exploitable in production
 
 ## External Dependencies
-- **Livepeer**: Decentralized video storage and playback.
 - **Venice AI**: Privacy-first AI processing.
-- **Brave Search API**: Privacy-first web search.
 - **RainbowKit**: Wallet connection UI.
 - **wagmi/viem**: Blockchain interactions.
 - **Dexie**: IndexedDB wrapper.
@@ -97,4 +94,3 @@ Preferred communication style: Simple, everyday language.
 - **TanStack Query**: Server state management.
 - **Wouter**: Client-side routing.
 - **@xmtp/agent-sdk**: XMTP agent SDK.
-- **@paragraph-com/sdk**: Paragraph newsletter integration.

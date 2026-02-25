@@ -22,8 +22,8 @@ export const journalInsightPayloadSchema = z.object({
   pinnedMemories: z.array(contextMemorySchema).default([]),
 });
 
-export const thinkingPartnerPayloadSchema = z.object({
-  type: z.literal("thinking_partner"),
+export const adversarialOraclePayloadSchema = z.object({
+  type: z.literal("adversarial_oracle"),
   user_id: z.string(),
   question: z.string().min(1),
   relevant_memory: z.array(z.object({
@@ -33,7 +33,7 @@ export const thinkingPartnerPayloadSchema = z.object({
 });
 
 export type JournalInsightPayload = z.infer<typeof journalInsightPayloadSchema>;
-export type ThinkingPartnerPayload = z.infer<typeof thinkingPartnerPayloadSchema>;
+export type AdversarialOraclePayload = z.infer<typeof adversarialOraclePayloadSchema>;
 
 export interface JournalInsightOutput {
   summary: string;
@@ -41,15 +41,15 @@ export interface JournalInsightOutput {
   emotion_trend: string;
 }
 
-export interface ThinkingPartnerOutput {
+export interface AdversarialOracleOutput {
   clarifying_questions: string[];
   core_tension: string;
   recommendation_frame: string;
 }
 
-export type AgentName = "JournalInsight" | "ThinkingPartner";
-export type AgentPayload = JournalInsightPayload | ThinkingPartnerPayload;
-export type AgentResult = JournalInsightOutput | ThinkingPartnerOutput;
+export type AgentName = "JournalInsight" | "AdversarialOracle";
+export type AgentPayload = JournalInsightPayload | AdversarialOraclePayload;
+export type AgentResult = JournalInsightOutput | AdversarialOracleOutput;
 
 interface AgentRunner {
   validate(payload: unknown): boolean;
@@ -106,13 +106,13 @@ class JournalInsightAgent implements AgentRunner {
   }
 }
 
-class ThinkingPartnerAgent implements AgentRunner {
+class AdversarialOracleAgent implements AgentRunner {
   validate(payload: unknown): boolean {
-    return thinkingPartnerPayloadSchema.safeParse(payload).success;
+    return adversarialOraclePayloadSchema.safeParse(payload).success;
   }
 
-  async process(payload: AgentPayload, apiKeyOverride?: string): Promise<ThinkingPartnerOutput> {
-    const data = payload as ThinkingPartnerPayload;
+  async process(payload: AgentPayload, apiKeyOverride?: string): Promise<AdversarialOracleOutput> {
+    const data = payload as AdversarialOraclePayload;
 
     const agentInput: AgentInput = {
       mode: "journal",
@@ -143,7 +143,7 @@ class ThinkingPartnerAgent implements AgentRunner {
 
 const agents: Record<AgentName, AgentRunner> = {
   JournalInsight: new JournalInsightAgent(),
-  ThinkingPartner: new ThinkingPartnerAgent(),
+  AdversarialOracle: new AdversarialOracleAgent(),
 };
 
 export async function runAgent(agentName: AgentName, payload: AgentPayload, apiKeyOverride?: string): Promise<AgentResult> {
@@ -163,7 +163,7 @@ export function formatJournalReply(data: JournalInsightOutput): string {
   return `**Summary:** ${data.summary}\n\n**Insight:** ${data.insight}\n\n**Emotional Signal:** ${data.emotion_trend}`;
 }
 
-export function formatThinkingReply(data: ThinkingPartnerOutput): string {
+export function formatAdversarialReply(data: AdversarialOracleOutput): string {
   let reply = `**Core Tension:** ${data.core_tension}\n\n`;
 
   if (data.clarifying_questions.length > 0) {
@@ -179,7 +179,7 @@ export function detectIntent(text: string): AgentName | null {
   const t = text.trim().toLowerCase();
 
   if (t.startsWith("journal:") || t.startsWith("/journal")) return "JournalInsight";
-  if (t.startsWith("thinking:") || t.startsWith("/think") || t.startsWith("think:")) return "ThinkingPartner";
+  if (t.startsWith("thinking:") || t.startsWith("/think") || t.startsWith("think:")) return "AdversarialOracle";
 
   return null;
 }
@@ -188,7 +188,7 @@ export function extractContent(text: string, intent: AgentName): string {
   const t = text.trim();
   const prefixes: Record<AgentName, RegExp> = {
     JournalInsight: /^(?:journal:|\/journal)\s*/i,
-    ThinkingPartner: /^(?:thinking:|think:|\/think)\s*/i,
+    AdversarialOracle: /^(?:thinking:|think:|\/think)\s*/i,
   };
 
   return t.replace(prefixes[intent], "").trim();

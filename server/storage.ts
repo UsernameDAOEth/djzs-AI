@@ -188,7 +188,7 @@ export async function seedDefaultRooms() {
   const existingRooms = await getDb().select().from(rooms);
   if (existingRooms.length === 0) {
     await getDb().insert(rooms).values([
-      { name: "Journal", description: "Daily reflections with AI thinking partner", isDefault: true },
+      { name: "Journal", description: "Daily reflections with AI adversarial oracle", isDefault: true },
     ]);
   }
 }

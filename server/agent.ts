@@ -5,11 +5,11 @@ import {
   detectIntent,
   extractContent,
   formatJournalReply,
-  formatThinkingReply,
+  formatAdversarialReply,
   type JournalInsightPayload,
-  type ThinkingPartnerPayload,
+  type AdversarialOraclePayload,
   type JournalInsightOutput,
-  type ThinkingPartnerOutput,
+  type AdversarialOracleOutput,
 } from "./openclaw";
 
 function djzsReply(text: string): string | null {
@@ -33,8 +33,8 @@ function djzsReply(text: string): string | null {
   if (t.startsWith("/zones")) {
     return [
       "DJZS Zones (v1):",
-      "01 Journal - Daily reflections with AI thinking partner",
-      "02 Thinking Partner - Debate ideas, find patterns, deepen analysis",
+      "01 Journal - Daily reflections with AI adversarial oracle",
+      "02 Adversarial Oracle - Debate ideas, find patterns, deepen analysis",
     ].join("\n");
   }
 
@@ -66,15 +66,15 @@ async function handleAgentMessage(sender: string, text: string): Promise<string>
       return formatJournalReply(result);
     }
 
-    if (intent === "ThinkingPartner") {
-      const payload: ThinkingPartnerPayload = {
-        type: "thinking_partner",
+    if (intent === "AdversarialOracle") {
+      const payload: AdversarialOraclePayload = {
+        type: "adversarial_oracle",
         user_id: sender,
         question: content,
         relevant_memory: [],
       };
-      const result = await runAgent("ThinkingPartner", payload) as ThinkingPartnerOutput;
-      return formatThinkingReply(result);
+      const result = await runAgent("AdversarialOracle", payload) as AdversarialOracleOutput;
+      return formatAdversarialReply(result);
     }
 
     return "Unknown agent intent.";

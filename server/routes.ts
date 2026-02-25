@@ -5,8 +5,7 @@ import { insertMemberSchema, insertRoomSchema, insertStoredMessageSchema, insert
 import { z } from "zod";
 import { analyzeJournalEntry } from "./venice";
 import { analyzeWithAgent, agentInputSchema } from "./agent.api";
-import { searchBrave, type BraveSearchResult } from "./brave";
-import { runAgent, journalInsightPayloadSchema, thinkingPartnerPayloadSchema, type AgentName } from "./openclaw";
+import { runAgent, journalInsightPayloadSchema, adversarialOraclePayloadSchema, type AgentName } from "./openclaw";
 let _cachedGitHubImport: any = null;
 async function getGitHubClient() {
   if (!process.env.REPLIT_CONNECTORS_HOSTNAME) return null;
@@ -15,29 +14,12 @@ async function getGitHubClient() {
   }
   return _cachedGitHubImport.getUncachableGitHubClient();
 }
-import { createUploadUrl, getAssetStatus, getPlaybackInfo, deleteAsset } from "./livepeer";
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
 import { runLogicAuditAgent } from "./audit-agent";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
 import { uploadAuditToIrys } from "./irys";
 
-// Paragraph API helper - direct fetch instead of SDK to avoid broken dependencies
-const PARAGRAPH_API_BASE = "https://api.paragraph.xyz/api/blogs";
-
-async function paragraphFetch(endpoint: string) {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-  if (process.env.PARAGRAPH_API_KEY) {
-    headers["Authorization"] = `Bearer ${process.env.PARAGRAPH_API_KEY}`;
-  }
-  const response = await fetch(`${PARAGRAPH_API_BASE}${endpoint}`, { headers });
-  if (!response.ok) {
-    throw new Error(`Paragraph API error: ${response.status}`);
-  }
-  return response.json();
-}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/sitemap.xml", (_req, res) => {
@@ -71,10 +53,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       timestamp: Date.now(), 
       service: "DJZS - Decentralized Journaling Zone System",
       capabilities: {
-        braveSearch: !!process.env.BRAVE_API_KEY,
         redpillAI: !!process.env.REDPILL_API_KEY,
         veniceAI: !!process.env.VENICE_API_KEY,
-        livepeerVideo: !!process.env.LIVEPEER_API_KEY,
         x402Payments: true,
         a2aAuditApi: true,
       }
@@ -139,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing 'agent' and 'payload' fields" });
       }
 
-      const validAgents: AgentName[] = ["JournalInsight", "ThinkingPartner"];
+      const validAgents: AgentName[] = ["JournalInsight", "AdversarialOracle"];
       if (!validAgents.includes(agentName)) {
         return res.status(400).json({ error: `Unknown agent: ${agentName}. Valid: ${validAgents.join(", ")}` });
       }
@@ -148,7 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (agentName === "JournalInsight") {
         validatedPayload = journalInsightPayloadSchema.parse(payload);
       } else {
-        validatedPayload = thinkingPartnerPayloadSchema.parse(payload);
+        validatedPayload = adversarialOraclePayloadSchema.parse(payload);
       }
 
       const result = await runAgent(agentName, validatedPayload, userVeniceKey);
@@ -339,55 +319,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get publication info by slug (using direct fetch)
-  app.get("/api/paragraph/publications/:slug", async (req, res) => {
-    try {
-      const slug = req.params.slug.replace('@', '');
-      const publication = await paragraphFetch(`/@${slug}`);
-      res.json(publication);
-    } catch (error) {
-      console.error("Error fetching publication:", error);
-      res.status(500).json({ error: "Failed to fetch publication" });
-    }
-  });
-
-  // Get posts from a publication
-  app.get("/api/paragraph/publications/:slug/posts", async (req, res) => {
-    try {
-      const slug = req.params.slug.replace('@', '');
-      let publication;
-      try {
-        publication = await paragraphFetch(`/@${slug}`);
-      } catch {
-        return res.status(404).json({ error: "Publication not found" });
-      }
-      
-      const cursor = req.query.cursor as string | undefined;
-      const cursorParam = cursor ? `?cursor=${cursor}` : '';
-      const posts = await paragraphFetch(`/@${slug}/posts${cursorParam}`);
-      
-      res.json({ posts: posts.posts || posts, pagination: posts.pagination, publication });
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-      res.status(500).json({ error: "Failed to fetch posts" });
-    }
-  });
-
-  // Get a single post by publication slug and post slug
-  app.get("/api/paragraph/publications/:pubSlug/posts/:postSlug", async (req, res) => {
-    try {
-      const pubSlug = req.params.pubSlug.replace('@', '');
-      const postSlug = req.params.postSlug;
-      
-      const post = await paragraphFetch(`/@${pubSlug}/posts/${postSlug}`);
-      
-      res.json(post);
-    } catch (error) {
-      console.error("Error fetching post:", error);
-      res.status(500).json({ error: "Failed to fetch post" });
-    }
-  });
-
   // ==================== JOURNAL API ====================
   
   // Create a journal entry and analyze it with Venice AI
@@ -442,9 +373,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ==================== AGENT API (v1 Thinking Partner) ====================
+  // ==================== AGENT API (v1 Adversarial Oracle) ====================
   
-  // Analyze entry with the Thinking Partner agent
+  // Analyze entry with the Adversarial Oracle agent
   app.post("/api/agent/analyze", async (req, res) => {
     try {
       const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
@@ -460,59 +391,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(503).json({ error: "AI service not configured" });
       }
       res.status(500).json({ error: "Failed to analyze entry" });
-    }
-  });
-
-  // ==================== LIVEPEER VIDEO API ====================
-
-  app.post("/api/video/upload", async (req, res) => {
-    try {
-      const { name } = req.body;
-      if (!name || typeof name !== "string") {
-        return res.status(400).json({ error: "Video name is required" });
-      }
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Livepeer API timeout")), 15000));
-      const result = await Promise.race([createUploadUrl(name), timeoutPromise]);
-      res.json(result);
-    } catch (error) {
-      console.error("Error creating video upload URL:", error);
-      if (error instanceof Error && error.message.includes("LIVEPEER_API_KEY")) {
-        return res.status(503).json({ error: "Video service not configured" });
-      }
-      if (error instanceof Error && error.message.includes("timeout")) {
-        return res.status(504).json({ error: "Video service timed out. Please try again." });
-      }
-      res.status(500).json({ error: "Failed to create upload URL" });
-    }
-  });
-
-  app.get("/api/video/asset/:assetId", async (req, res) => {
-    try {
-      const result = await getAssetStatus(req.params.assetId);
-      res.json(result);
-    } catch (error) {
-      console.error("Error fetching asset status:", error);
-      res.status(500).json({ error: "Failed to fetch asset status" });
-    }
-  });
-
-  app.get("/api/video/playback/:playbackId", async (req, res) => {
-    try {
-      const result = await getPlaybackInfo(req.params.playbackId);
-      res.json(result);
-    } catch (error) {
-      console.error("Error fetching playback info:", error);
-      res.status(500).json({ error: "Failed to fetch playback info" });
-    }
-  });
-
-  app.delete("/api/video/asset/:assetId", async (req, res) => {
-    try {
-      await deleteAsset(req.params.assetId);
-      res.status(204).send();
-    } catch (error) {
-      console.error("Error deleting video asset:", error);
-      res.status(500).json({ error: "Failed to delete video" });
     }
   });
 

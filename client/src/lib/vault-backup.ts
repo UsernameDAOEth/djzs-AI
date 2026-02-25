@@ -4,7 +4,6 @@ import {
   type VaultEntry,
   type VaultInsight,
   type MemoryPin,
-  type MusicTrack,
 } from './vault';
 
 const BACKUP_VERSION = 1;
@@ -18,7 +17,6 @@ export interface BackupManifest {
     entries: number;
     insights: number;
     memoryPins: number;
-    musicTracks: number;
   };
   checksum: string;
 }
@@ -30,8 +28,6 @@ export interface ImportResult {
   insightsSkipped: number;
   pinsAdded: number;
   pinsSkipped: number;
-  musicTracksAdded: number;
-  musicTracksSkipped: number;
 }
 
 export async function requestPersistentStorage(): Promise<boolean> {
@@ -69,8 +65,6 @@ function entryToMarkdown(entry: VaultEntry): string {
   const tags = entry.tags?.length ? entry.tags.join(', ') : '';
   let md = `---\ntype: ${entry.type}\ncreatedAt: ${date}\n`;
   if (tags) md += `tags: [${tags}]\n`;
-  if (entry.videoAssetId) md += `videoAssetId: ${entry.videoAssetId}\n`;
-  if (entry.videoPlaybackId) md += `videoPlaybackId: ${entry.videoPlaybackId}\n`;
   md += `---\n\n${entry.text}\n`;
   return md;
 }
@@ -91,8 +85,6 @@ export async function exportVaultAsZip(): Promise<Blob> {
   const entries = await vault.entries.toArray();
   const insights = await vault.insights.toArray();
   const pins = await vault.memoryPins.toArray();
-  const musicTracks = await vault.musicTracks.toArray();
-
   const allData = JSON.stringify({ entries, insights, pins });
   const checksum = simpleHash(allData);
 
@@ -104,7 +96,6 @@ export async function exportVaultAsZip(): Promise<Blob> {
       entries: entries.length,
       insights: insights.length,
       memoryPins: pins.length,
-      musicTracks: musicTracks.length,
     },
     checksum,
   };
@@ -120,16 +111,6 @@ export async function exportVaultAsZip(): Promise<Blob> {
 
   zip.file('insights.json', JSON.stringify(insights, null, 2));
   zip.file('pins.json', JSON.stringify(pins, null, 2));
-
-  if (musicTracks.length > 0) {
-    const musicMeta = musicTracks.map(({ blob, ...rest }) => rest);
-    zip.file('music/tracks.json', JSON.stringify(musicMeta, null, 2));
-    musicTracks.forEach((track, i) => {
-      const id = track.id ?? i;
-      const ext = track.type?.split('/')[1] || 'bin';
-      zip.file(`music/${id}.${ext}`, track.blob);
-    });
-  }
 
   const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
   setLastBackupDate();
@@ -163,7 +144,6 @@ export async function importVaultFromZip(file: File): Promise<ImportResult> {
     entriesAdded: 0, entriesSkipped: 0,
     insightsAdded: 0, insightsSkipped: 0,
     pinsAdded: 0, pinsSkipped: 0,
-    musicTracksAdded: 0, musicTracksSkipped: 0,
   };
 
   const manifestFile = zip.file('manifest.json');
@@ -248,29 +228,6 @@ export async function importVaultFromZip(file: File): Promise<ImportResult> {
     }
   }
 
-  const musicMetaFile = zip.file('music/tracks.json');
-  if (musicMetaFile) {
-    const tracksMeta = JSON.parse(await musicMetaFile.async('string'));
-    const existingTracks = await vault.musicTracks.toArray();
-    for (const meta of tracksMeta) {
-      const isDup = existingTracks.some(t => t.name === meta.name && t.size === meta.size);
-      if (isDup) {
-        result.musicTracksSkipped++;
-      } else {
-        const ext = meta.type?.split('/')[1] || 'bin';
-        const blobFile = zip.file(`music/${meta.id}.${ext}`);
-        if (blobFile) {
-          const blob = await blobFile.async('arraybuffer');
-          const { id, ...rest } = meta;
-          rest.blob = blob;
-          rest.uploadedAt = new Date(rest.uploadedAt);
-          await vault.musicTracks.add(rest as MusicTrack);
-          result.musicTracksAdded++;
-        }
-      }
-    }
-  }
-
   return result;
 }
 
@@ -282,7 +239,6 @@ export async function importVaultFromJson(file: File): Promise<ImportResult> {
     entriesAdded: 0, entriesSkipped: 0,
     insightsAdded: 0, insightsSkipped: 0,
     pinsAdded: 0, pinsSkipped: 0,
-    musicTracksAdded: 0, musicTracksSkipped: 0,
   };
 
   const existingEntries = await vault.entries.toArray();
