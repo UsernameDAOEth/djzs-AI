@@ -1,4 +1,4 @@
-import { vault, type AuditRecord, type VaultEntry, type DecisionLog, type MemoryPin } from './vault';
+import { vault, type AuditRecord, type VaultEntry, type MemoryPin } from './vault';
 import { getSessionKey, isVaultEncryptionSetUp } from './vault-crypto';
 
 const ENC_PREFIX = "🔒";
@@ -258,8 +258,7 @@ async function analyzeBiasPattern(audits: AuditRecord[]): Promise<BiasPatternSig
 async function analyzeNarrativeDrift(
   currentMemo: string,
   entries: VaultEntry[],
-  pins: MemoryPin[],
-  decisions: DecisionLog[]
+  pins: MemoryPin[]
 ): Promise<NarrativeDriftSignal> {
   const currentThemes = extractKeyThemes(currentMemo);
 
@@ -269,9 +268,6 @@ async function analyzeNarrativeDrift(
   }
   for (const p of pins) {
     historicalTexts.push(p.content);
-  }
-  for (const d of decisions.slice(0, 10)) {
-    historicalTexts.push(d.context + ' ' + d.reasoning);
   }
 
   const combined = historicalTexts.join(' ');
@@ -398,11 +394,10 @@ async function analyzeEmotionalSpikes(
 }
 
 export async function generateIntelligenceBrief(currentMemo: string): Promise<IntelligenceBrief> {
-  const [audits, entries, pins, decisions] = await Promise.all([
+  const [audits, entries, pins] = await Promise.all([
     vault.auditRecords.orderBy('timestamp').reverse().limit(50).toArray(),
     vault.entries.orderBy('createdAt').reverse().limit(20).toArray(),
     vault.memoryPins.where('isActive').equals(1).toArray(),
-    vault.decisionLogs.orderBy('createdAt').reverse().limit(10).toArray(),
   ]);
 
   for (const p of pins) {
@@ -411,7 +406,7 @@ export async function generateIntelligenceBrief(currentMemo: string): Promise<In
 
   const [biasPattern, narrativeDrift, emotionalSpike] = await Promise.all([
     analyzeBiasPattern(audits),
-    analyzeNarrativeDrift(currentMemo, entries, pins, decisions),
+    analyzeNarrativeDrift(currentMemo, entries, pins),
     analyzeEmotionalSpikes(currentMemo, entries),
   ]);
 

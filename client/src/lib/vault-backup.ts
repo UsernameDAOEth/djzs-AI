@@ -4,9 +4,6 @@ import {
   type VaultEntry,
   type VaultInsight,
   type MemoryPin,
-  type ResearchDossier,
-  type ResearchQuery,
-  type ResearchClaim,
   type MusicTrack,
 } from './vault';
 
@@ -21,9 +18,6 @@ export interface BackupManifest {
     entries: number;
     insights: number;
     memoryPins: number;
-    researchDossiers: number;
-    researchQueries: number;
-    researchClaims: number;
     musicTracks: number;
   };
   checksum: string;
@@ -36,12 +30,6 @@ export interface ImportResult {
   insightsSkipped: number;
   pinsAdded: number;
   pinsSkipped: number;
-  dossiersAdded: number;
-  dossiersSkipped: number;
-  queriesAdded: number;
-  queriesSkipped: number;
-  claimsAdded: number;
-  claimsSkipped: number;
   musicTracksAdded: number;
   musicTracksSkipped: number;
 }
@@ -103,12 +91,9 @@ export async function exportVaultAsZip(): Promise<Blob> {
   const entries = await vault.entries.toArray();
   const insights = await vault.insights.toArray();
   const pins = await vault.memoryPins.toArray();
-  const dossiers = await vault.researchDossiers.toArray();
-  const queries = await vault.researchQueries.toArray();
-  const claims = await vault.researchClaims.toArray();
   const musicTracks = await vault.musicTracks.toArray();
 
-  const allData = JSON.stringify({ entries, insights, pins, dossiers, queries, claims });
+  const allData = JSON.stringify({ entries, insights, pins });
   const checksum = simpleHash(allData);
 
   const manifest: BackupManifest = {
@@ -119,9 +104,6 @@ export async function exportVaultAsZip(): Promise<Blob> {
       entries: entries.length,
       insights: insights.length,
       memoryPins: pins.length,
-      researchDossiers: dossiers.length,
-      researchQueries: queries.length,
-      researchClaims: claims.length,
       musicTracks: musicTracks.length,
     },
     checksum,
@@ -138,11 +120,6 @@ export async function exportVaultAsZip(): Promise<Blob> {
 
   zip.file('insights.json', JSON.stringify(insights, null, 2));
   zip.file('pins.json', JSON.stringify(pins, null, 2));
-
-  const researchFolder = zip.folder('research');
-  researchFolder!.file('dossiers.json', JSON.stringify(dossiers, null, 2));
-  researchFolder!.file('queries.json', JSON.stringify(queries, null, 2));
-  researchFolder!.file('claims.json', JSON.stringify(claims, null, 2));
 
   if (musicTracks.length > 0) {
     const musicMeta = musicTracks.map(({ blob, ...rest }) => rest);
@@ -163,11 +140,8 @@ export async function exportVaultAsJson(): Promise<Blob> {
   const entries = await vault.entries.toArray();
   const insights = await vault.insights.toArray();
   const pins = await vault.memoryPins.toArray();
-  const dossiers = await vault.researchDossiers.toArray();
-  const queries = await vault.researchQueries.toArray();
-  const claims = await vault.researchClaims.toArray();
 
-  const data = { entries, insights, memories: pins, researchDossiers: dossiers, researchQueries: queries, researchClaims: claims };
+  const data = { entries, insights, memories: pins };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   setLastBackupDate();
   return blob;
@@ -183,19 +157,12 @@ function pinsMatch(a: MemoryPin, b: MemoryPin): boolean {
   return a.content === b.content && a.kind === b.kind;
 }
 
-function dossiersMatch(a: ResearchDossier, b: ResearchDossier): boolean {
-  return a.name === b.name;
-}
-
 export async function importVaultFromZip(file: File): Promise<ImportResult> {
   const zip = await JSZip.loadAsync(file);
   const result: ImportResult = {
     entriesAdded: 0, entriesSkipped: 0,
     insightsAdded: 0, insightsSkipped: 0,
     pinsAdded: 0, pinsSkipped: 0,
-    dossiersAdded: 0, dossiersSkipped: 0,
-    queriesAdded: 0, queriesSkipped: 0,
-    claimsAdded: 0, claimsSkipped: 0,
     musicTracksAdded: 0, musicTracksSkipped: 0,
   };
 
@@ -208,15 +175,10 @@ export async function importVaultFromZip(file: File): Promise<ImportResult> {
 
   const existingEntries = await vault.entries.toArray();
   const existingPins = await vault.memoryPins.toArray();
-  const existingDossiers = await vault.researchDossiers.toArray();
   const existingInsights = await vault.insights.toArray();
-  const existingQueries = await vault.researchQueries.toArray();
-  const existingClaims = await vault.researchClaims.toArray();
 
   const idMap: Record<string, Record<number, number>> = {
     entries: {},
-    dossiers: {},
-    queries: {},
   };
 
   const entryFiles = zip.folder('entries');
@@ -286,76 +248,6 @@ export async function importVaultFromZip(file: File): Promise<ImportResult> {
     }
   }
 
-  const dossiersFile = zip.file('research/dossiers.json');
-  if (dossiersFile) {
-    const dossiers: ResearchDossier[] = JSON.parse(await dossiersFile.async('string'));
-    for (const dossier of dossiers) {
-      const oldId = dossier.id;
-      const isDup = existingDossiers.some(d => dossiersMatch(d, dossier));
-      if (isDup) {
-        result.dossiersSkipped++;
-        const match = existingDossiers.find(d => dossiersMatch(d, dossier));
-        if (match?.id !== undefined && oldId !== undefined) idMap.dossiers[oldId] = match.id;
-      } else {
-        const { id, ...rest } = dossier;
-        rest.createdAt = new Date(rest.createdAt);
-        rest.updatedAt = rest.updatedAt ? new Date(rest.updatedAt) : rest.createdAt;
-        const newId = await vault.researchDossiers.add(rest as ResearchDossier);
-        if (oldId !== undefined) idMap.dossiers[oldId] = newId as number;
-        existingDossiers.push({ ...rest, id: newId as number } as ResearchDossier);
-        result.dossiersAdded++;
-      }
-    }
-  }
-
-  const queriesFile = zip.file('research/queries.json');
-  if (queriesFile) {
-    const rQueries: ResearchQuery[] = JSON.parse(await queriesFile.async('string'));
-    for (const q of rQueries) {
-      const oldId = q.id;
-      const mappedDossierId = q.dossierId ? (idMap.dossiers[q.dossierId] ?? q.dossierId) : q.dossierId;
-      const isDup = existingQueries.some(eq => eq.dossierId === mappedDossierId && eq.query === q.query);
-      if (isDup) {
-        result.queriesSkipped++;
-        const match = existingQueries.find(eq => eq.dossierId === mappedDossierId && eq.query === q.query);
-        if (match?.id !== undefined && oldId !== undefined) idMap.queries[oldId] = match.id;
-      } else {
-        const { id, ...rest } = q;
-        rest.dossierId = mappedDossierId;
-        rest.createdAt = new Date(rest.createdAt);
-        const newId = await vault.researchQueries.add(rest as ResearchQuery);
-        if (oldId !== undefined) idMap.queries[oldId] = newId as number;
-        existingQueries.push({ ...rest, id: newId as number } as ResearchQuery);
-        result.queriesAdded++;
-      }
-    }
-  }
-
-  const claimsFile = zip.file('research/claims.json');
-  if (claimsFile) {
-    const rClaims: ResearchClaim[] = JSON.parse(await claimsFile.async('string'));
-    for (const c of rClaims) {
-      const mappedDossierId = c.dossierId ? (idMap.dossiers[c.dossierId] ?? c.dossierId) : c.dossierId;
-      const mappedQueryId = c.queryId ? (idMap.queries[c.queryId] ?? c.queryId) : c.queryId;
-      const isDup = existingClaims.some(ec => ec.dossierId === mappedDossierId && ec.claim === c.claim);
-      if (isDup) {
-        result.claimsSkipped++;
-      } else {
-        const { id, ...rest } = c;
-        rest.dossierId = mappedDossierId;
-        rest.queryId = mappedQueryId;
-        rest.createdAt = new Date(rest.createdAt);
-        rest.updatedAt = rest.updatedAt ? new Date(rest.updatedAt) : rest.createdAt;
-        if (rest.linkedJournalEntryId) {
-          rest.linkedJournalEntryId = idMap.entries[rest.linkedJournalEntryId] ?? rest.linkedJournalEntryId;
-        }
-        await vault.researchClaims.add(rest as ResearchClaim);
-        existingClaims.push({ ...rest, id: 0 } as ResearchClaim);
-        result.claimsAdded++;
-      }
-    }
-  }
-
   const musicMetaFile = zip.file('music/tracks.json');
   if (musicMetaFile) {
     const tracksMeta = JSON.parse(await musicMetaFile.async('string'));
@@ -390,20 +282,14 @@ export async function importVaultFromJson(file: File): Promise<ImportResult> {
     entriesAdded: 0, entriesSkipped: 0,
     insightsAdded: 0, insightsSkipped: 0,
     pinsAdded: 0, pinsSkipped: 0,
-    dossiersAdded: 0, dossiersSkipped: 0,
-    queriesAdded: 0, queriesSkipped: 0,
-    claimsAdded: 0, claimsSkipped: 0,
     musicTracksAdded: 0, musicTracksSkipped: 0,
   };
 
   const existingEntries = await vault.entries.toArray();
   const existingPins = await vault.memoryPins.toArray();
   const existingInsights = await vault.insights.toArray();
-  const existingDossiers = await vault.researchDossiers.toArray();
-  const existingQueries = await vault.researchQueries.toArray();
-  const existingClaims = await vault.researchClaims.toArray();
 
-  const idMap: Record<string, Record<number, number>> = { entries: {}, dossiers: {}, queries: {} };
+  const idMap: Record<string, Record<number, number>> = { entries: {} };
 
   if (data.entries) {
     for (const entry of data.entries) {
@@ -454,68 +340,6 @@ export async function importVaultFromJson(file: File): Promise<ImportResult> {
         await vault.memoryPins.add(rest);
         existingPins.push({ ...rest, id: 0 } as MemoryPin);
         result.pinsAdded++;
-      }
-    }
-  }
-
-  if (data.researchDossiers) {
-    for (const dossier of data.researchDossiers) {
-      const oldId = dossier.id;
-      const isDup = existingDossiers.some((d: ResearchDossier) => dossiersMatch(d, dossier));
-      if (isDup) {
-        result.dossiersSkipped++;
-        const match = existingDossiers.find((d: ResearchDossier) => dossiersMatch(d, dossier));
-        if (match?.id !== undefined && oldId !== undefined) idMap.dossiers[oldId] = match.id;
-      } else {
-        const { id, ...rest } = dossier;
-        rest.createdAt = new Date(rest.createdAt);
-        rest.updatedAt = rest.updatedAt ? new Date(rest.updatedAt) : rest.createdAt;
-        const newId = await vault.researchDossiers.add(rest);
-        if (oldId !== undefined) idMap.dossiers[oldId] = newId as number;
-        existingDossiers.push({ ...rest, id: newId as number } as ResearchDossier);
-        result.dossiersAdded++;
-      }
-    }
-  }
-
-  if (data.researchQueries) {
-    for (const q of data.researchQueries) {
-      const oldId = q.id;
-      const mappedDossierId = q.dossierId ? (idMap.dossiers[q.dossierId] ?? q.dossierId) : q.dossierId;
-      const isDup = existingQueries.some((eq: ResearchQuery) => eq.dossierId === mappedDossierId && eq.query === q.query);
-      if (isDup) {
-        result.queriesSkipped++;
-        const match = existingQueries.find((eq: ResearchQuery) => eq.dossierId === mappedDossierId && eq.query === q.query);
-        if (match?.id !== undefined && oldId !== undefined) idMap.queries[oldId] = match.id;
-      } else {
-        const { id, ...rest } = q;
-        rest.dossierId = mappedDossierId;
-        rest.createdAt = new Date(rest.createdAt);
-        const newId = await vault.researchQueries.add(rest);
-        if (oldId !== undefined) idMap.queries[oldId] = newId as number;
-        existingQueries.push({ ...rest, id: newId as number } as ResearchQuery);
-        result.queriesAdded++;
-      }
-    }
-  }
-
-  if (data.researchClaims) {
-    for (const c of data.researchClaims) {
-      const mappedDossierId = c.dossierId ? (idMap.dossiers[c.dossierId] ?? c.dossierId) : c.dossierId;
-      const isDup = existingClaims.some((ec: ResearchClaim) => ec.dossierId === mappedDossierId && ec.claim === c.claim);
-      if (isDup) { result.claimsSkipped++; }
-      else {
-        const { id, ...rest } = c;
-        rest.dossierId = mappedDossierId;
-        if (rest.queryId) rest.queryId = idMap.queries[rest.queryId] ?? rest.queryId;
-        rest.createdAt = new Date(rest.createdAt);
-        rest.updatedAt = rest.updatedAt ? new Date(rest.updatedAt) : rest.createdAt;
-        if (rest.linkedJournalEntryId) {
-          rest.linkedJournalEntryId = idMap.entries[rest.linkedJournalEntryId] ?? rest.linkedJournalEntryId;
-        }
-        await vault.researchClaims.add(rest);
-        existingClaims.push({ ...rest, id: 0 } as ResearchClaim);
-        result.claimsAdded++;
       }
     }
   }
