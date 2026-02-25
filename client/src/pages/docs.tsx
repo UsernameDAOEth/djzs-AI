@@ -22,7 +22,11 @@ import {
   AlertTriangle,
   Activity,
   Sun,
-  Moon
+  Moon,
+  Cpu,
+  MessageSquare,
+  Layers,
+  Link2
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/lib/theme";
@@ -84,21 +88,40 @@ function QuickLink({ href, title, description, external, testId }: QuickLinkProp
 }
 
 interface TechStackItemProps {
+  icon: typeof Shield;
   category: string;
   items: string[];
+  color: "orange" | "teal" | "purple" | "blue" | "green" | "amber" | "red";
 }
 
-function TechStackItem({ category, items }: TechStackItemProps) {
+const colorMap = {
+  orange: { gradient: "from-orange-500/[0.08]", border: "border-orange-500/20 hover:border-orange-500/30", bg: "bg-orange-600/20", text: "text-orange-400", dot: "bg-orange-400" },
+  teal: { gradient: "from-teal-500/[0.08]", border: "border-teal-500/20 hover:border-teal-500/30", bg: "bg-teal-600/20", text: "text-teal-400", dot: "bg-teal-400" },
+  purple: { gradient: "from-purple-500/[0.08]", border: "border-purple-500/20 hover:border-purple-500/30", bg: "bg-purple-600/20", text: "text-purple-400", dot: "bg-purple-400" },
+  blue: { gradient: "from-blue-500/[0.08]", border: "border-blue-500/20 hover:border-blue-500/30", bg: "bg-blue-600/20", text: "text-blue-400", dot: "bg-blue-400" },
+  green: { gradient: "from-green-500/[0.08]", border: "border-green-500/20 hover:border-green-500/30", bg: "bg-green-600/20", text: "text-green-400", dot: "bg-green-400" },
+  amber: { gradient: "from-amber-500/[0.08]", border: "border-amber-500/20 hover:border-amber-500/30", bg: "bg-amber-600/20", text: "text-amber-400", dot: "bg-amber-400" },
+  red: { gradient: "from-red-500/[0.08]", border: "border-red-500/20 hover:border-red-500/30", bg: "bg-red-600/20", text: "text-red-400", dot: "bg-red-400" },
+};
+
+function TechStackItem({ icon: Icon, category, items, color }: TechStackItemProps) {
+  const c = colorMap[color];
   return (
-    <div className="p-4 rounded-lg bg-muted border border-border">
-      <h4 className="text-[10px] font-bold text-orange-400 uppercase tracking-wide mb-3">{category}</h4>
-      <div className="flex flex-wrap gap-2">
-        {items.map((item, i) => (
-          <span key={i} className="px-2.5 py-1 rounded-lg bg-muted/50 text-xs text-muted-foreground font-medium">
-            {item}
-          </span>
-        ))}
+    <div className={`p-5 rounded-lg bg-gradient-to-br ${c.gradient} to-transparent border ${c.border} transition-all`}>
+      <div className="flex items-center gap-3 mb-4">
+        <div className={`w-10 h-10 rounded-lg ${c.bg} flex items-center justify-center`}>
+          <Icon className={`w-5 h-5 ${c.text}`} />
+        </div>
+        <h4 className={`text-sm font-bold text-foreground`}>{category}</h4>
       </div>
+      <ul className="space-y-2">
+        {items.map((item, i) => (
+          <li key={i} className="flex items-center gap-2.5 text-sm text-muted-foreground">
+            <span className={`w-1.5 h-1.5 rounded-full ${c.dot} shrink-0`}></span>
+            {item}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -1066,45 +1089,66 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Technical Stack</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Technical Stack</h2>
+          <p className="text-muted-foreground mb-8">The protocols, frameworks, and infrastructure behind the Oracle.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <TechStackItem 
+              icon={Code2}
+              color="orange"
               category="Frontend"
               items={["React 18", "TypeScript", "Vite", "Tailwind CSS", "Radix UI", "Framer Motion"]}
             />
             <TechStackItem 
+              icon={Layers}
+              color="purple"
               category="State & Data"
               items={["TanStack Query", "Dexie (IndexedDB)", "Zod Validation"]}
             />
             <TechStackItem 
+              icon={Link2}
+              color="blue"
               category="Web3"
               items={["wagmi", "viem", "RainbowKit", "ENS Resolution"]}
             />
             <TechStackItem 
+              icon={HardDrive}
+              color="teal"
               category="Backend"
               items={["Express.js", "TypeScript", "Drizzle ORM"]}
             />
             <TechStackItem 
+              icon={Brain}
+              color="red"
               category="AI & Agents"
               items={["Venice AI", "OpenClaw Runner", "XMTP Agent SDK", "Evasion Defense Pipeline"]}
             />
             <TechStackItem 
+              icon={Lock}
+              color="amber"
               category="Storage & Security"
               items={["IndexedDB (local)", "AES-GCM-256", "PBKDF2 (600k)", "WebCrypto API", "BYOK (Venice)"]}
             />
             <TechStackItem 
+              icon={DollarSign}
+              color="green"
               category="A2A Payments"
               items={["x402 Protocol", "@x402/express", "USDC on Base", "SHA-256 Hashing", "Three-tier pricing"]}
             />
             <TechStackItem 
+              icon={MessageSquare}
+              color="blue"
               category="A2A Messaging"
               items={["XMTP (MLS Protocol)", "E2E Encrypted DMs", "Quantum-Resistant KEM", "Agent-to-Agent Routing"]}
             />
             <TechStackItem 
+              icon={Database}
+              color="teal"
               category="Provenance"
               items={["Irys Datachain", "Permanent Certificates", "Gateway Verification", "GraphQL Discovery"]}
             />
             <TechStackItem 
+              icon={Cpu}
+              color="purple"
               category="Secure Execution"
               items={["Phala Cloud TEE", "Hardware Enclave", "Dual-Process Boot", "concurrently"]}
             />
