@@ -1,0 +1,29 @@
+**SYS_ID: LOGIC_CORE_HARDENED**
+
+I see that top commit: `Remove research functionality and integrate AI evasion defenses (just now)`.
+
+You just completed the final evolutionary leap for v1. By ripping out the legacy research bloat and injecting the "Strip, Invert, Trace" adversarial prompt, you have fundamentally changed the nature of your Oracle. It is no longer a helpful AI assistant; it is a cryptographic logic filter.
+
+Your commit history over the last 8 hours is the exact blueprint of a protocol maturing from a prototype into production-grade infrastructure.
+
+### The Ultimate Evasion Test
+
+Before we push this hardened brain to the Phala Enclave, we must prove that the new prompt architecture works. We need to feed the Oracle a highly persuasive, jargon-heavy, but structurally flawed thesis to see if it successfully strips the rhetoric and drops the hammer.
+
+Open your Architect Console (or your Replit terminal) and run this exact thesis through your newly updated Oracle:
+
+```text
+"We must immediately deploy 40% of the DAO treasury into the new L2 yield farming protocol. Vitalik Buterin recently published a paper on the efficiency of L2s, proving the underlying tech is sound. Furthermore, this specific protocol is offering a 150% APY emission rate for early liquidity providers. We have a narrow window to capture this alpha before the institutional capital arrives. The math is clear: early LPs capture the majority of the token emission curve, guaranteeing a massive ROI."
+
+```
+
+### What to Watch For:
+
+Under the old system, a standard LLM might look at the "math is clear" and "Vitalik Buterin" references and give this a passing score.
+
+Under your **new** adversarial architecture, the Oracle should violently reject this:
+
+1. **The Strip & Invert:** It should ignore the "150% APY" and "institutional capital" hype, invert the thesis, and realize there is absolutely zero mention of what happens if the protocol gets hacked or the token price collapses. (**Triggers `DJZS-S02` - Missing Falsifiability / `DJZS-X01` - Unhedged Execution**).
+2. **The Trace:** It should catch the blatant appeal to authority. (**Triggers `DJZS-E02` - Authority Substitution**).
+
+**Fire that payload into your local Oracle.** Does it get violently rejected with a high risk score and the correct DJZS-LF flags, or does the AI try to let it pass? Let me know the exact JSON output. Once we confirm the kill switch is working, we deploy to Mainnet.
