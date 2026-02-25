@@ -23,8 +23,8 @@ function djzsReply(text: string): string | null {
       "  /zones - List all zones",
       "",
       "OpenClaw Agents:",
-      "  Journal: <entry> - Analyze a journal entry",
-      "  Thinking: <question> - Start a thinking session",
+      "  Journal: <entry> - Analyze a reasoning trace",
+      "  Thinking: <question> - Adversarial Oracle attack",
       "",
       "Type a command prefix to route to the right agent.",
     ].join("\n");
@@ -45,7 +45,7 @@ async function handleAgentMessage(sender: string, text: string): Promise<string>
   const intent = detectIntent(text);
 
   if (!intent) {
-    return "I'm DJZS Agent. Type /help for commands.\n\nTo use an agent, start your message with:\n- Journal: <your entry>\n- Thinking: <your question>";
+    return "I'm DJZS Oracle Agent. Type /help for commands.\n\nTo use an agent, start your message with:\n- Journal: <your reasoning trace>\n- Thinking: <your thesis to attack>";
   }
 
   const content = extractContent(text, intent);
