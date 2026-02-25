@@ -68,7 +68,7 @@ interface QuickLinkProps {
 
 function QuickLink({ href, title, description, external, testId }: QuickLinkProps) {
   const content = (
-    <div className="p-5 rounded-lg bg-muted border border-border hover:border-orange-500/30 hover:bg-orange-500/[0.03] transition-all group cursor-pointer" data-testid={testId}>
+    <div className="p-5 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all group cursor-pointer" data-testid={testId}>
       <div className="flex items-center justify-between mb-2">
         <h4 className="font-bold text-foreground group-hover:text-orange-300 transition-colors">{title}</h4>
         {external ? (
@@ -1153,43 +1153,44 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
         </motion.section>
 
         <motion.section variants={fadeUp} className="mb-20">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Quick Links</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Quick Links</h2>
+          <p className="text-muted-foreground mb-8">Jump to the tools, docs, and endpoints you need.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <QuickLink 
               href="/chat"
-              title="Open Workspace"
-              description="Deploy your first audit in the Architect Console"
-              testId="link-start-journaling"
+              title="Architect Console"
+              description="Governance interface for the Sovereign Principal — audit ledger, Oracle, terminal, and x402 controls"
+              testId="link-architect-console"
             />
             <QuickLink 
               href="/chat?zone=audit"
               title="Deploy Audit"
-              description="Deploy a payload to the Execution Zones"
+              description="Route a reasoning trace through the x402 Execution Zones for paid adversarial analysis"
               testId="link-deploy-audit"
             />
             <QuickLink 
               href="/privacy"
               title="Privacy & Security"
-              description="How your data stays private"
+              description="Data transparency, encryption boundaries, and local-first architecture"
               testId="link-privacy"
             />
             <QuickLink 
               href="/terms"
               title="Terms of Service"
-              description="Legal terms and risk disclosures"
+              description="Legal terms, risk disclosures, and protocol limitations"
               testId="link-terms"
             />
             <QuickLink 
               href="https://github.com/UsernameDAOEth/djzs-box"
               title="GitHub Repository"
-              description="View source code on GitHub"
+              description="Open-source protocol code, Docker image, and deployment scripts"
               external
               testId="link-github-repo"
             />
             <QuickLink 
               href="/api/audit/schema"
               title="Audit API Schema"
-              description="Machine-readable API docs for agent integration"
+              description="Machine-readable schema discovery for autonomous agent integration"
               external
               testId="link-audit-api"
             />
