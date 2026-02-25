@@ -242,24 +242,23 @@ query {
 
 ---
 
-## Architect Console (Human Interface)
+## Architect Console (Sovereign Principal Interface)
 
-Six workspace zones for structured thinking:
+Four governance zones for autonomous agent oversight:
 
 | Zone | Purpose |
 |---|---|
-| Audit Ledger | Immutable forensic log of ProofOfLogic certificates |
-| Research | Article/link saving, AI interrogation, evidence scoring, claim tracking |
-| Trade | Trade thesis building, AI stress-testing, risk computation |
-| Decisions | Structured tracking and AI pressure-testing of high-stakes decisions |
-| Content | Content pipeline management, AI-powered angle and hook analysis |
-| Thinking Partner | Adversarial AI for reasoning attack and contradiction exposure |
+| Audit Ledger | Immutable forensic log of ProofOfLogic certificates with Irys Datachain provenance |
+| Adversarial Oracle | Adversarial AI reasoning attack — expose contradictions, challenge assumptions, pressure-test logic |
+| Terminal Console | Protocol monitoring and configuration dashboard |
+| x402 Governance | Execution Zone fee structure display and USDC escrow provisioning via ProvisionAgentAllowance |
 
-### Local-First Vault
+### Local Node State
 
-- **Storage:** Dexie (IndexedDB) for on-device storage
+- **Storage:** Dexie (IndexedDB) for local telemetry and audit record caching
+- **Export:** "Export Logic Logs (.zip)" downloads local IndexedDB state for offline analysis
+- **Core Provenance:** All ProofOfLogic certificates are permanently stored on Irys Datachain — local state is supplementary
 - **Encryption:** WebCrypto PBKDF2 + AES-GCM-256 with user-managed passphrase
-- **Offline Support:** Write and browse without internet (AI features require connection)
 - **BYOK:** Bring Your Own Venice API Key for full control over AI usage and billing
 
 ---

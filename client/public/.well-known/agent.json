@@ -2,7 +2,7 @@
   "protocol_version": "1.0",
   "system_identity": {
     "name": "DJZS Autonomous System",
-    "description": "Adversarial logic auditing and cryptographic journaling enclave.",
+    "description": "Adversarial Logic Layer for the A2A economy. Machine-to-machine audit oracle with deterministic ProofOfLogic certificates.",
     "network": "eip155:8453",
     "treasury_address": "0xEc551A9e5598a030B46278fEbaDF798Ea8bA05FF"
   },
@@ -55,9 +55,7 @@
         "current_memo": "string (required, min 20 chars) — the strategy memo to analyze",
         "history": {
           "audits": "[{risk_score: number, primary_bias_detected: string, timestamp: string}] (optional, max 50)",
-          "entries": "[{text: string, created_at?: string}] (optional, max 20)",
-          "memory_pins": "[{content: string, is_active?: boolean}] (optional, max 20)",
-          "decisions": "[{context: string, reasoning: string}] (optional, max 10)"
+          "entries": "[{text: string, created_at?: string}] (optional, max 20)"
         }
       }
     }
