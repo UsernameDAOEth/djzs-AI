@@ -24,10 +24,8 @@ import {
   Bot,
   Pin,
   Download,
-  Search,
   FileText,
   Sparkles,
-  Receipt,
   Bell,
   X,
   Info,
@@ -59,7 +57,6 @@ import {
   MicOff,
   Headphones,
   Brain,
-  Palette,
   Terminal,
   ScrollText,
   Hash,
@@ -91,9 +88,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { VideoUpload, VideoPlayer } from "@/components/video-diary";
 import { MusicPanel } from "@/components/music-panel";
 import { QuickSearch } from "@/components/quick-search";
-import { TradeArtifactZone } from "@/components/trade-artifact-composer";
-import { DecisionLogZone } from "@/components/decision-log-zone";
-import { ContentPipelineZone } from "@/components/content-pipeline-zone";
+import { ProvisionAgentAllowance } from "@/components/provision-agent-allowance";
 import { AuditTutorial, useTutorial } from "@/components/audit-tutorial";
 import {
   exportVaultAsZip,
@@ -160,10 +155,6 @@ type AnalysisResult = JournalAnalysisResult | ResearchAnalysisResult;
 
 const V1_ZONES = [
   { id: "journal", name: "Audit Ledger", icon: ScrollText, description: "Forensic logic trail", purpose: "Immutable log of all ProofOfLogic certificates — verdicts, risk scores, and DJZS-LF failure codes.", color: "#F37E20" },
-  { id: "research", name: "Research", icon: Search, description: "Quick research", purpose: "Search and synthesize information related to your reasoning.", color: "#2dd4bf" },
-  { id: "trade", name: "Trade", icon: Receipt, description: "Trade artifacts", purpose: "Build thesis, stress test, sign & track trade artifacts.", color: "#60a5fa" },
-  { id: "decisions", name: "Decisions", icon: Brain, description: "Decision log", purpose: "Track high-stakes decisions, stress test reasoning with AI.", color: "#fbbf24" },
-  { id: "content", name: "Content", icon: Palette, description: "Content pipeline", purpose: "Compose, refine, and track content ideas with AI.", color: "#c084fc" },
   { id: "thinking", name: "Adversarial Oracle", icon: MessageSquare, description: "Adversarial AI", purpose: "Adversarial reasoning — expose contradictions, attack assumptions.", color: "#f43f5e" },
 ];
 
@@ -297,7 +288,7 @@ export default function Chat() {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const zoneParam = params.get("zone");
-      if (zoneParam === "research") return "research";
+      if (zoneParam === "thinking") return "thinking";
       return "journal";
     }
     return "journal";
@@ -539,7 +530,7 @@ export default function Chat() {
   // Local-first: Entry stats (streak, last entry, total count)
   const [entryStats, setEntryStats] = useState<EntryStats | null>(null);
   useEffect(() => {
-    if (selectedZone === "journal" || selectedZone === "research") {
+    if (selectedZone === "journal") {
       getEntryStats(selectedZone as EntryType).then(setEntryStats);
     }
   }, [selectedZone, localEntries]);
@@ -556,9 +547,7 @@ export default function Chat() {
     autoResize();
   }, [messageInput, autoResize]);
 
-  const currentPrompts = selectedZone === "research" 
-    ? RESEARCH_PROMPTS 
-    : JOURNAL_PROMPTS;
+  const currentPrompts = JOURNAL_PROMPTS;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1285,7 +1274,7 @@ export default function Chat() {
           </div>
 
           <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 px-4 mb-2 mt-2">Workspace</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 px-4 mb-2 mt-2">Governance</p>
             {V1_ZONES.map((zone) => {
               const Icon = zone.icon;
               const isActive = activeView === "workspace" && !showLedger && selectedZone === zone.id;
@@ -1327,34 +1316,21 @@ export default function Chat() {
 
             <div className="my-3 border-t border-border" />
 
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 px-4 mb-2" data-testid="sidebar-zones">Execution Zones</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 px-4 mb-2" data-testid="sidebar-zones">x402 Fee Structure</p>
             {ZONE_CONFIGS.map((zone) => {
               const Icon = zone.icon;
-              const isActive = activeView === "execution" && !showLedger && activeZoneTier === zone.id;
               return (
-                <button
+                <div
                   key={zone.id}
-                  onClick={() => {
-                    setActiveZoneTier(zone.id);
-                    setActiveView("execution");
-                    setShowLedger(false);
-                    setMobileSidebarOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group ${
-                    isActive 
-                      ? "bg-muted/50 text-foreground" 
-                      : "text-muted-foreground hover:text-muted-foreground hover:bg-muted/30"
-                  }`}
-                  aria-current={isActive ? "page" : undefined}
-                  data-testid={`button-zone-${zone.id}`}
+                  className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg text-muted-foreground/60"
+                  data-testid={`display-zone-${zone.id}`}
                 >
-                  <Icon className="w-4 h-4 transition-colors" style={{ color: isActive ? zone.color : undefined }} />
+                  <Icon className="w-4 h-4" style={{ color: zone.color }} />
                   <div className="flex-1 text-left">
                     <span className="text-sm font-bold tracking-tight block">{zone.name}</span>
-                    <span className="text-[10px] font-mono" style={{ color: isActive ? zone.color : 'rgba(156,163,175,0.5)' }}>{zone.price} USDC</span>
+                    <span className="text-[10px] font-mono" style={{ color: 'rgba(156,163,175,0.5)' }}>{zone.price} USDC</span>
                   </div>
-                  {isActive && <div className="w-1 h-1 rounded-full" style={{ background: zone.color, boxShadow: `0 0 8px ${zone.color}` }}></div>}
-                </button>
+                </div>
               );
             })}
 
@@ -1755,18 +1731,8 @@ export default function Chat() {
             <div className="max-w-3xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-10">
               <div className="space-y-4">
                 {(!auditRecords || auditRecords.length === 0) ? (
-                  <div className="text-center py-20">
-                    <ScrollText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/80" />
-                    <p className="text-lg font-bold text-muted-foreground mb-2">No audit records yet</p>
-                    <p className="text-sm text-muted-foreground/80">Deploy your first strategy memo to a Zone to create an immutable record.</p>
-                    <button
-                      onClick={() => { setShowLedger(false); setActiveView("execution"); setActiveZoneTier('micro'); }}
-                      className="mt-6 px-6 py-3 rounded-lg text-sm font-bold transition-all"
-                      style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
-                      data-testid="button-first-deployment"
-                    >
-                      Deploy to Micro-Zone ($2.50)
-                    </button>
+                  <div className="py-10">
+                    <ProvisionAgentAllowance />
                   </div>
                 ) : (
                   auditRecords.map((record) => {
@@ -1873,14 +1839,6 @@ export default function Chat() {
                               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-1">Cryptographic Hash</p>
                               <p className="text-[11px] font-mono text-muted-foreground break-all">{record.cryptographic_hash}</p>
                             </div>
-                            <button
-                              onClick={() => { setShowLedger(false); setActiveView("execution"); setActiveZoneTier(record.zone_tier as AuditTier); setAuditPayload(record.original_payload); }}
-                              className="text-xs font-bold transition-colors px-4 py-2 rounded-lg"
-                              style={{ color: tierConfig?.color, background: tierConfig?.bgColor, border: `1px solid ${tierConfig?.borderColor}` }}
-                              data-testid={`button-redeploy-${record.id}`}
-                            >
-                              Re-deploy to {tierConfig?.name}
-                            </button>
                           </div>
                         )}
                       </div>
@@ -1900,18 +1858,8 @@ export default function Chat() {
                     </h2>
 
                     {(!auditRecords || auditRecords.length === 0) ? (
-                      <div className="text-center py-20">
-                        <ScrollText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/80" />
-                        <p className="text-lg font-bold text-muted-foreground mb-2">No logic traces committed to the ledger.</p>
-                        <p className="text-sm text-muted-foreground/80">Deploy your first strategy memo to a Zone to create an immutable record.</p>
-                        <button
-                          onClick={() => { setActiveView("execution"); setActiveZoneTier('micro'); }}
-                          className="mt-6 px-6 py-3 rounded-lg text-sm font-bold transition-all"
-                          style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
-                          data-testid="button-first-deployment"
-                        >
-                          Deploy to Micro-Zone ($2.50)
-                        </button>
+                      <div className="py-10">
+                        <ProvisionAgentAllowance />
                       </div>
                     ) : (
                       <div className="space-y-4">
@@ -2025,14 +1973,6 @@ export default function Chat() {
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-1">Cryptographic Hash</p>
                                     <p className="text-[11px] font-mono text-muted-foreground break-all">{record.cryptographic_hash}</p>
                                   </div>
-                                  <button
-                                    onClick={() => { setActiveView("execution"); setActiveZoneTier(record.zone_tier as AuditTier); setAuditPayload(record.original_payload); }}
-                                    className="text-xs font-bold transition-colors px-4 py-2 rounded-lg"
-                                    style={{ color: tierConfig?.color, background: tierConfig?.bgColor, border: `1px solid ${tierConfig?.borderColor}` }}
-                                    data-testid={`button-redeploy-${record.id}`}
-                                  >
-                                    Re-deploy to {tierConfig?.name}
-                                  </button>
                                 </div>
                               )}
                             </div>
@@ -2040,175 +1980,6 @@ export default function Chat() {
                         })}
                       </div>
                     )}
-                  </div>
-                </div>
-              ) : selectedZone === "research" ? (
-                <div className="flex-1 flex flex-col py-6 sm:py-10">
-                  <div className="mb-6 p-4 sm:p-5 rounded-lg" style={{ background: 'hsl(var(--muted) / 0.3)', border: '1px solid hsl(var(--border))' }}>
-                    <div className="flex items-center gap-3 mb-2">
-                      {(() => { const zoneInfo = V1_ZONES.find(z => z.id === selectedZone); const Icon = zoneInfo?.icon || Search; return <Icon className="w-5 h-5" style={{ color: zoneInfo?.color }} />; })()}
-                      <h3 className="text-base font-black text-foreground">{V1_ZONES.find(z => z.id === selectedZone)?.name}</h3>
-                    </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{V1_ZONES.find(z => z.id === selectedZone)?.purpose}</p>
-                  </div>
-
-                  {agentResponse ? (
-                    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="p-5 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 mb-3">
-                          Research Analysis
-                        </p>
-                        <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{agentResponse.said}{agentResponse.matters ? `\n\n${agentResponse.matters}` : ""}{agentResponse.nextMove ? `\n\n${agentResponse.nextMove}` : ""}</div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button onClick={clearAndReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-muted/50" data-testid="button-clear-analysis">
-                          New Entry
-                        </button>
-                        <button
-                          onClick={() => {
-                            setAuditPayload(messageInput);
-                            setActiveView("execution");
-                            setActiveZoneTier("micro");
-                          }}
-                          className="text-xs font-bold px-4 py-2 rounded-lg transition-all"
-                          style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
-                          data-testid="button-deploy-from-workspace"
-                        >
-                          Deploy to Execution Zone
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="relative">
-                        <textarea
-                          ref={textareaRef}
-                          value={messageInput}
-                          onChange={(e) => setMessageInput(e.target.value)}
-                          onFocus={() => setIsFocused(true)}
-                          onBlur={() => setIsFocused(false)}
-                          placeholder={currentPrompts[currentPromptIndex]}
-                          className="w-full min-h-[200px] sm:min-h-[280px] p-4 sm:p-6 rounded-lg text-sm text-foreground leading-relaxed resize-none focus:outline-none transition-all placeholder:text-muted-foreground/60"
-                          style={{ background: 'hsl(var(--muted))', border: `1px solid ${messageInput.length > 0 ? 'rgba(243,126,32,0.25)' : 'hsl(var(--border))'}` }}
-                          data-testid="textarea-workspace-input"
-                        />
-                      </div>
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={handleSendText}
-                            disabled={!messageInput.trim() || sendMessage.isPending}
-                            className="px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30"
-                            style={{ background: 'rgba(243,126,32,0.1)', color: '#F37E20', border: '1px solid rgba(243,126,32,0.2)' }}
-                            data-testid="button-save-entry"
-                          >
-                            {sendMessage.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Save Entry"}
-                          </button>
-                          <button
-                            onClick={handleAnalyze}
-                            disabled={!messageInput.trim() || isAnalyzing}
-                            className="px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30"
-                            style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.2)' }}
-                            data-testid="button-think-with-me"
-                          >
-                            {isAnalyzing ? <Loader2 className="w-3 h-3 animate-spin" /> : "Research"}
-                          </button>
-                        </div>
-                        <button
-                          onClick={() => {
-                            if (messageInput.trim()) {
-                              setAuditPayload(messageInput);
-                              setActiveView("execution");
-                              setActiveZoneTier("micro");
-                            }
-                          }}
-                          disabled={!messageInput.trim()}
-                          className="px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30"
-                          style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
-                          data-testid="button-send-to-audit"
-                        >
-                          Deploy to Zone
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {localEntries && localEntries.length > 0 && (
-                    <div className="mt-8">
-                      <button
-                        onClick={() => setShowHistory(!showHistory)}
-                        className="flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors mb-4"
-                        data-testid="button-toggle-history"
-                      >
-                        <Clock className="w-3 h-3" />
-                        <span>{showHistory ? "Hide" : "Show"} History ({localEntries.length})</span>
-                        <ChevronDown className={`w-3 h-3 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
-                      </button>
-                      {showHistory && (
-                        <div className="space-y-3">
-                          {localEntries.slice(0, 20).map((entry) => (
-                            <div key={entry.id} className="p-4 rounded-lg" style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
-                              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{entry.text}</p>
-                              <p className="text-[10px] text-muted-foreground/80 mt-2 font-mono">{format(new Date(entry.createdAt), "MMM d, yyyy HH:mm")}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ) : selectedZone === "trade" ? (
-                <div className="py-6 sm:py-10">
-                  <TradeArtifactZone />
-                  <div className="mt-6 p-4 rounded-lg flex items-center justify-between" style={{ background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)' }}>
-                    <div>
-                      <p className="text-xs font-bold text-purple-300">Stress-test your thesis</p>
-                      <p className="text-[10px] text-muted-foreground">Send your trade thesis to an Execution Zone for adversarial audit.</p>
-                    </div>
-                    <button
-                      onClick={() => { setActiveView("execution"); setActiveZoneTier("micro"); }}
-                      className="px-4 py-2 rounded-lg text-xs font-bold transition-all"
-                      style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
-                      data-testid="button-trade-to-audit"
-                    >
-                      Deploy to Zone
-                    </button>
-                  </div>
-                </div>
-              ) : selectedZone === "decisions" ? (
-                <div className="py-6 sm:py-10">
-                  <DecisionLogZone />
-                  <div className="mt-6 p-4 rounded-lg flex items-center justify-between" style={{ background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)' }}>
-                    <div>
-                      <p className="text-xs font-bold text-purple-300">Pressure-test your decision</p>
-                      <p className="text-[10px] text-muted-foreground">Submit your reasoning to an Execution Zone for adversarial review.</p>
-                    </div>
-                    <button
-                      onClick={() => { setActiveView("execution"); setActiveZoneTier("founder"); }}
-                      className="px-4 py-2 rounded-lg text-xs font-bold transition-all"
-                      style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
-                      data-testid="button-decisions-to-audit"
-                    >
-                      Deploy to Zone
-                    </button>
-                  </div>
-                </div>
-              ) : selectedZone === "content" ? (
-                <div className="py-6 sm:py-10">
-                  <ContentPipelineZone />
-                  <div className="mt-6 p-4 rounded-lg flex items-center justify-between" style={{ background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)' }}>
-                    <div>
-                      <p className="text-xs font-bold text-purple-300">Challenge your content angle</p>
-                      <p className="text-[10px] text-muted-foreground">Run your content strategy through an Execution Zone audit.</p>
-                    </div>
-                    <button
-                      onClick={() => { setActiveView("execution"); setActiveZoneTier("micro"); }}
-                      className="px-4 py-2 rounded-lg text-xs font-bold transition-all"
-                      style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
-                      data-testid="button-content-to-audit"
-                    >
-                      Deploy to Zone
-                    </button>
                   </div>
                 </div>
               ) : selectedZone === "thinking" ? (
@@ -2230,18 +2001,6 @@ export default function Chat() {
                       <div className="flex items-center gap-3">
                         <button onClick={clearAndReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-muted/50" data-testid="button-clear-thinking">
                           New Session
-                        </button>
-                        <button
-                          onClick={() => {
-                            setAuditPayload(messageInput);
-                            setActiveView("execution");
-                            setActiveZoneTier("micro");
-                          }}
-                          className="text-xs font-bold px-4 py-2 rounded-lg transition-all"
-                          style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
-                          data-testid="button-thinking-to-audit"
-                        >
-                          Deploy to Execution Zone
                         </button>
                       </div>
                     </div>
@@ -2272,21 +2031,6 @@ export default function Chat() {
                           data-testid="button-attack-reasoning"
                         >
                           {isAnalyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Attack My Reasoning"}
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (messageInput.trim()) {
-                              setAuditPayload(messageInput);
-                              setActiveView("execution");
-                              setActiveZoneTier("micro");
-                            }
-                          }}
-                          disabled={!messageInput.trim()}
-                          className="px-4 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30"
-                          style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}
-                          data-testid="button-thinking-deploy"
-                        >
-                          Deploy to Zone
                         </button>
                       </div>
                     </div>

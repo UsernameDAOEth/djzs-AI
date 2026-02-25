@@ -3,7 +3,7 @@
 ## Overview
 DJZS is a Forensic Terminal and Logic-as-a-Service (LaaS) protocol designed for the Agent-to-Agent (A2A) economy. It acts as a "Logic Oracle for the decentralized web," enforcing an "Audit-Before-Act" loop for autonomous agents through deterministic verification. The system modernizes Journal Entry Testing (JET) for AI reasoning traces, requiring agents to commit their reasoning to an immutable log before executing transactions.
 
-The protocol provides machine-readable adversarial audits via a tiered x402-gated API (Micro, Founder, Treasury tiers based on USDC payments on Base). It also features a human-facing Architect Console with six specialized workspace zones: Audit Ledger, Research, Trade, Decisions, Content, and Thinking Partner. Each audit generates a Proof of Logic Certificate, including deterministic DJZS-LF failure codes for autonomous agent error handling. The project aims to provide a robust, auditable framework for autonomous agent interactions within the A2A economy.
+The protocol provides machine-readable adversarial audits via a tiered x402-gated API (Micro, Founder, Treasury tiers based on USDC payments on Base). The Architect Console is a governance-focused interface for the Sovereign Principal, featuring the Audit Ledger (immutable ProofOfLogic certificate review), Adversarial Oracle (manual reasoning stress-testing), Terminal Console, and x402 Governance layer (ProvisionAgentAllowance for escrow provisioning). Each audit generates a Proof of Logic Certificate, including deterministic DJZS-LF failure codes for autonomous agent error handling. The project aims to provide a robust, auditable framework for autonomous agent interactions within the A2A economy.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -41,20 +41,14 @@ Preferred communication style: Simple, everyday language.
 - **ENS Resolution**: Custom hook for resolving ENS names.
 - **Wallet Identity**: Optional wallet-based authentication.
 
-### Audit Deployment Terminal
-- **UI**: A terminal-style interface for deploying audits, featuring monospace payload input and zone-specific pricing.
-- **Cryptographic Ledger**: Displays expandable audit record cards with risk scoring visualization, tier badges, and re-deployment functionality.
-- **Onboarding**: An interactive 6-step tutorial with spotlight highlights, keyboard navigation, and localStorage persistence, auto-shown to first-time users.
-
-### Key Features
-- **Six Workspace Zones**:
-    - **Audit Ledger**: Immutable forensic log of ProofOfLogic certificates.
-    - **Research**: Article/link saving, AI interrogation, evidence scoring, claim tracking.
-    - **Trade**: Trade thesis building, AI stress-testing, risk computation, paper/live trading.
-    - **Decision**: Structured tracking and AI pressure-testing of high-stakes decisions.
-    - **Content**: Content pipeline management, AI challenging angles and hooks.
-    - **Thinking Partner**: Adversarial AI for reasoning attack and contradiction exposure.
-- **Compounding Intelligence**: Achieved through memory pins, cross-zone connections, and synthesis.
+### Architect Console (M2M Governance)
+- **Audit Ledger**: Immutable forensic log of ProofOfLogic certificates with expandable audit record cards, risk scoring visualization, and tier badges.
+- **Adversarial Oracle**: Manual adversarial reasoning — expose contradictions, attack assumptions, pressure-test logic.
+- **Terminal Console**: Dashboard for protocol monitoring and configuration.
+- **x402 Fee Structure**: Read-only display of Execution Zone pricing (Micro $2.50, Founder $5.00, Treasury $50.00 USDC).
+- **ProvisionAgentAllowance**: Governance component for provisioning USDC escrow to execution agents, displaying Available Velocity and Pending Logic Traces metrics.
+- **Cryptographic Ledger**: Expandable audit record cards with full provenance data.
+- **Onboarding**: An interactive tutorial with spotlight highlights, keyboard navigation, and localStorage persistence.
 - **Music Library**: Local upload and playback of audio files, categorized by Focus, Reflection, and Creative zones.
 - **Offline Support**: Enables offline writing and browsing via local-first storage and service worker caching.
 
