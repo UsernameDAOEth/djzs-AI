@@ -1,0 +1,36 @@
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz.env.deploy
+.env
+.env.*
+!.env.example
+!.env.deploy.example
+
+# XMTP local database state (contains conversation history + agent identifiers)
+xmtp-dev-*.db3
+xmtp-dev-*.db3-shm
+xmtp-dev-*.db3-wal
+
+# Legacy NFT/newsletter platform artifacts
+deploy-nft/
+contracts/
+hardhat*.config.*
+deploy*.mjs
+connect-wallet-modal.png
+full_page.png
+homepage-no-debug.png
+homepage_subscribe_access.png
+journal_connect_wallet.png
+journal_subscription_gate.png
+subscribe-*.png
+subscribe_*.png
+wallet_modal.png
+walletconnect_qr.png
+.env
+.env.*
+*.db3
+*.db3-shm
+*.db3-wal

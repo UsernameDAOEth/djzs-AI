@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  djzs-oracle:
+    image: djzs/djzs-ai:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${PORT:-5000}
+      - DATABASE_URL=${DATABASE_URL:-}
+      - VENICE_API_KEY=${VENICE_API_KEY:-}
+      - BASE_RPC_URL=${BASE_RPC_URL:-https://mainnet.base.org}
+      - TREASURY_WALLET_ADDRESS=${TREASURY_WALLET_ADDRESS:-}
+      - XMTP_ENV=${XMTP_ENV:-production}
+    restart: unless-stopped
