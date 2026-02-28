@@ -27,7 +27,6 @@ Think of it as a **cryptographically-attested code review by a hostile second br
 ---
 
 ## Architecture
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                      Calling Agent                          │
@@ -187,6 +186,7 @@ All detected reasoning flaws are mapped to strict, machine-parseable codes. **Au
 
 ## Verification (Free & Public)
 
+
 Verify any ProofOfLogic certificate by Irys transaction ID — no payment required:
 
 ```bash
@@ -195,6 +195,23 @@ GET /api/audit/verify/:txId
 
 ```bash
 curl https://YOUR_ORACLE_URL/api/audit/verify/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH
+```
+
+Returns:
+```json
+{
+  "verified": true,
+  "provenance_provider": "IRYS_DATACHAIN",
+  "irys_tx_id": "71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
+  "irys_url": "https://gateway.irys.xyz/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
+  "certificate": {
+    "audit_id": "fe1f14d0-73ac-4467-ac33-d76bf3fdce21",
+    "timestamp": "2026-02-25T00:58:33.760Z",
+    "tier": "micro",
+    "verdict": "PASS",
+    "risk_score": 0
+  }
+}
 ```
 
 ---
@@ -312,21 +329,22 @@ The Sovereign Principal Interface provides four governance zones:
 - Node.js 18+
 - PostgreSQL database
 - Base Mainnet wallet with USDC (for testing payments)
+  
 - Ethereum wallet with ETH on Base (for Irys upload fees)
 
-```bash
+ ```bash
 git clone https://github.com/UsernameDAOEth/djzs-AI.git
 cd djzs-AI
 npm install
-```
-
-Set environment variables, then:
-
-```bash
+  ```
+  
+  Set environment variables, then:
+ 
+ ```bash
 npm run db:push   # Push schema to database
 npm run dev       # Start development server (API only)
 npm start         # Production: boots API + XMTP Agent via concurrently
-```
+ ```
 
 ### Environment Variables
 
@@ -348,6 +366,7 @@ npm start         # Production: boots API + XMTP Agent via concurrently
 | `CDP_API_KEY_SECRET` | Coinbase Developer Platform secret |
 | `X402_NETWORK` | x402 network (default: `eip155:8453`) |
 | `VENICE_MODEL` | Venice model (default: `llama-3.3-70b`) |
+| `VENICE_BASE_URL` | Venice API base URL (default: `https://api.venice.ai/api/v1`) |
 | `XMTP_WALLET_KEY` | 0x-prefixed hex private key for XMTP Oracle identity |
 | `XMTP_ENV` | XMTP environment: `dev` or `production` |
 
@@ -356,7 +375,6 @@ npm start         # Production: boots API + XMTP Agent via concurrently
 ## Deployment
 
 ### Docker
-
 ```bash
 docker build -t djzs-ai .
 docker run -p 5000:5000 --env-file .env djzs-ai
