@@ -1,23 +1,32 @@
-# DJZS AI Oracle: The Immutable Mind
+# DJZS — Adversarial Reasoning Auditor for AI Agents
 
-**A trustless AI auditing protocol for the Agent-to-Agent economy.**
+> **No agent acts without audit.**
+> *DJZS Protocol — The Immutable Mind*
 
-The DJZS Oracle runs inside a [Phala Network](https://phala.network) Trusted Execution Environment (Intel SGX hardware enclave), uses [Venice AI](https://venice.ai) for uncensored adversarial reasoning, settles payments in USDC on [Base](https://base.org), and engraves every Proof-of-Logic certificate permanently on the [Irys Datachain](https://irys.xyz).
-
-No agent acts without audit. Every reasoning trace is stress-tested against the DJZS-LF failure taxonomy before execution. Every verdict is permanently verifiable.
-
-Repository: [`github.com/UsernameDAOEth/djzs-box`](https://github.com/UsernameDAOEth/djzs-box)
+[![Live](https://img.shields.io/badge/Live-djzs.ai-blue)](https://djzs.ai)
+[![License](https://img.shields.io/badge/license-See%20LICENSE-lightgrey)](./LICENSE)
 
 ---
 
-## The Architecture Stack
+## What DJZS Is
 
-| Layer | Technology | Role |
-|---|---|---|
-| **Compute** | Phala Network (Intel SGX) | Hardware-isolated execution — private keys never touch disk |
-| **Intelligence** | Venice AI (Uncensored LLM) | Adversarial logic analysis with zero data retention |
-| **Settlement** | Base Network (USDC) | x402 micropayments — pay-per-audit, no subscriptions |
-| **Memory** | Irys Datachain | Permanent, immutable ProofOfLogic certificate storage |
+DJZS is a **provably-isolated adversarial reasoning audit** for autonomous AI agents.
+
+It does NOT claim deterministic formal verification. It provides something different and complementary: a hostile second brain that stress-tests agent logic in a hardware-isolated environment, then permanently certifies the result on-chain.
+
+Think of it as a **cryptographically-attested code review by a hostile second brain.** The value isn't that it's perfect — it's that it's independent, isolated, and permanent.
+
+**Three pillars:**
+
+- **Adversarial LLM Analysis** — Venice AI stress-tests agent reasoning against the DJZS-LF structured failure taxonomy inside a TEE. Outputs a binary `PASS / FAIL` verdict with machine-parseable failure codes.
+- **Tamper-Proof Isolation** — The audit runs inside a Phala/Intel SGX enclave. Neither the agent operator nor DJZS itself can alter the verdict after execution.
+- **Immutable Certification** — Every audit result is stored permanently on Irys Datachain with a publicly verifiable, no-auth gateway URL.
+
+> ⚠️ **On Venice AI's "zero data retention" claim:** DJZS's SGX enclave isolates keys and execution from the host operator — it does not enforce Venice's data retention policy. That guarantee is Venice's own claim. Sophisticated operators should evaluate it independently.
+
+---
+
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -50,19 +59,46 @@ Repository: [`github.com/UsernameDAOEth/djzs-box`](https://github.com/UsernameDA
 └─────────────────────────────────────────────────────────────┘
 ```
 
+### Stack
+
+| Layer | Technology | Role |
+|---|---|---|
+| **Compute** | Phala Network (Intel SGX) | Hardware-isolated execution — private keys never touch disk |
+| **Intelligence** | Venice AI (llama-3.3-70b, uncensored) | Adversarial logic analysis with zero data retention |
+| **Settlement** | Base Network (USDC) | x402 micropayments — pay-per-audit, no subscriptions |
+| **Memory** | Irys Datachain | Permanent, immutable ProofOfLogic certificate storage |
+| **Messaging** | XMTP MLS | A2A encrypted dark-channel — agents DM the Oracle directly |
+
 ---
 
-## API Integration Guide
+## A2A Dark-Channel (XMTP Integration)
 
-### Tiered Zone Pricing
+DJZS exposes an encrypted agent-to-agent channel via XMTP MLS. Agents can submit reasoning traces directly to the Oracle node without any public HTTP surface — alpha never leaves the encrypted channel.
+
+**Prefix routing dispatches payloads to different backends:**
+
+| Prefix | Backend | Use Case |
+|---|---|---|
+| `Thinking:` | AdversarialOracle | Logic stress-test, contradiction detection |
+| `Journal:` | JournalInsight | Narrative drift analysis, founder reasoning audit |
+
+The XMTP agent listener (`server/agent.ts`) runs concurrently with the REST API inside the Phala CVM. Both share the same SGX enclave — the same key isolation guarantees apply to all channels.
+
+---
+
+## API Integration
+
+### Tiered Pricing
 
 | Tier | Endpoint | Price (USDC) | Memo Limit | Use Case |
 |---|---|---|---|---|
 | Micro-Zone | `POST /api/audit/micro` | $2.50 | 1,000 chars | Operational sanity checks, binary risk scoring |
 | Founder Zone | `POST /api/audit/founder` | $5.00 | 5,000 chars | Strategic roadmap diligence, narrative drift detection |
-| Treasury Zone | `POST /api/audit/treasury` | $50.00 | Unlimited | Exhaustive adversarial stress-test for capital deployment |
+| Treasury Zone | `POST /api/audit/treasury` | $50.00 | Unlimited | Exhaustive adversarial stress-test for capital deployment decisions |
 
 `POST /api/audit` is a backward-compatible alias for Micro-Zone.
+
+**Treasury Zone** runs an uncapped adversarial analysis designed for high-stakes capital deployment — multiple reasoning passes, full DJZS-LF sweep, and structural recommendations. Appropriate when the cost of a bad decision materially exceeds $50.
 
 ### Request Format
 
@@ -77,7 +113,7 @@ curl -X POST https://YOUR_ORACLE_URL/api/audit/micro \
   }'
 ```
 
-#### Request Fields
+### Request Fields
 
 | Field | Type | Required | Description |
 |---|---|---|---|
@@ -85,29 +121,18 @@ curl -X POST https://YOUR_ORACLE_URL/api/audit/micro \
 | `audit_type` | string | No | `treasury`, `founder_drift`, `strategy`, or `general` (default: `general`) |
 | `target_system` | string | No | Project name or wallet address — tags the Irys upload for GraphQL discoverability |
 
-#### Headers
-
-| Header | Required | Description |
-|---|---|---|
-| `Content-Type` | Yes | `application/json` |
-| `x-payment-proof` | Yes | Base Mainnet transaction hash for USDC payment to treasury wallet |
-
 ### Payment Flow
 
 1. Agent sends USDC to the treasury wallet on Base Mainnet
 2. Agent includes the TX hash in the `x-payment-proof` header
-3. Oracle verifies the transaction on-chain via viem:
-   - Confirms TX succeeded on Base Mainnet
-   - Decodes ERC-20 Transfer event logs from the USDC contract
-   - Validates recipient matches treasury wallet and amount meets tier minimum
-   - Checks for replay attacks (each TX hash can only be used once)
+3. Oracle verifies on-chain via viem: confirms TX success, decodes ERC-20 Transfer logs, validates recipient and amount, checks replay attacks (each TX hash is single-use)
 4. On verification, the adversarial audit runs and the ProofOfLogic certificate is minted on Irys
 
 ---
 
-## The Proof-of-Logic Certificate
+## ProofOfLogic Certificate
 
-Every successful audit returns a deterministic JSON certificate. The verdict is binary — PASS or FAIL. No probabilistic hedging.
+Every successful audit returns a deterministic JSON certificate. The verdict is binary — `PASS` or `FAIL`. No probabilistic hedging.
 
 ```json
 {
@@ -129,59 +154,24 @@ Every successful audit returns a deterministic JSON certificate. The verdict is 
 }
 ```
 
-### Key Response Fields
+The `irys_url` is permanent and public — no API key, no auth, no expiration. Anyone can verify the AI's reasoning by visiting the gateway URL directly.
+
+### Key Fields
 
 | Field | Description |
 |---|---|
 | `verdict` | `PASS` or `FAIL` — deterministic, binary |
 | `risk_score` | 0–100 (0 = flawless logic, 100 = critically compromised) |
 | `flags` | Array of DJZS-LF failure codes with severity and description |
-| `cryptographic_hash` | SHA-256 hash of the input strategy memo for tamper detection |
-| `provenance_provider` | Always `"IRYS_DATACHAIN"` — confirms permanent storage |
-| `irys_tx_id` | Irys Datachain transaction ID — the permanent receipt |
-| `irys_url` | Direct gateway link to the immutable certificate on the public ledger |
-
-The `irys_url` is a permanent, publicly accessible link. Anyone can verify the AI's reasoning by visiting the gateway URL — no API key, no authentication, no expiration.
-
----
-
-## Verification Endpoint
-
-Verify any ProofOfLogic certificate by its Irys transaction ID:
-
-```bash
-GET /api/audit/verify/:txId
-```
-
-This endpoint is **free and public** — no x402 payment required.
-
-```bash
-curl https://YOUR_ORACLE_URL/api/audit/verify/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH
-```
-
-Returns:
-
-```json
-{
-  "verified": true,
-  "provenance_provider": "IRYS_DATACHAIN",
-  "irys_tx_id": "71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
-  "irys_url": "https://gateway.irys.xyz/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
-  "certificate": {
-    "audit_id": "fe1f14d0-73ac-4467-ac33-d76bf3fdce21",
-    "timestamp": "2026-02-25T00:58:33.760Z",
-    "tier": "micro",
-    "verdict": "PASS",
-    "risk_score": 0
-  }
-}
-```
+| `cryptographic_hash` | SHA-256 of the input strategy memo — tamper detection |
+| `irys_tx_id` | Permanent Irys receipt — the immutable audit record |
+| `irys_url` | Direct public gateway link to the certificate |
 
 ---
 
 ## DJZS-LF Failure Code Taxonomy
 
-The Oracle maps all detected reasoning flaws to strict, machine-parseable failure codes. Autonomous agents should halt execution on CRITICAL or HIGH severity flags.
+All detected reasoning flaws are mapped to strict, machine-parseable codes. **Autonomous agents should halt execution on `CRITICAL` or `HIGH` severity flags.**
 
 | Code | Category | Name | Severity | Auto-Abort |
 |---|---|---|---|---|
@@ -192,6 +182,20 @@ The Oracle maps all detected reasoning flaws to strict, machine-parseable failur
 | `DJZS-I01` | Incentive | MISALIGNED_INCENTIVE | Medium | No (Review) |
 | `DJZS-I02` | Incentive | NARRATIVE_DEPENDENCY | Medium | No (Review) |
 | `DJZS-X01` | Execution | UNHEDGED_EXECUTION | Critical | Yes |
+
+---
+
+## Verification (Free & Public)
+
+Verify any ProofOfLogic certificate by Irys transaction ID — no payment required:
+
+```bash
+GET /api/audit/verify/:txId
+```
+
+```bash
+curl https://YOUR_ORACLE_URL/api/audit/verify/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH
+```
 
 ---
 
@@ -206,21 +210,9 @@ The Oracle maps all detected reasoning flaws to strict, machine-parseable failur
 
 ---
 
-## Irys Datachain Tags
+## Irys Datachain & GraphQL Discoverability
 
-Every upload to Irys includes metadata tags for GraphQL discoverability. Founders and agents can query the [Irys GraphQL endpoint](https://uploader.irys.xyz/graphql) to find all audits for a specific project.
-
-| Tag | Value | Purpose |
-|---|---|---|
-| `Protocol` | `ProofOfLogic` | Identifies DJZS protocol certificates |
-| `application-id` | `DJZS-Oracle` | Application identifier |
-| `Content-Type` | `application/json` | Data format |
-| `Target-System` | Project name or `Unknown` | Enables per-project search |
-| `audit-id` | UUID | Unique audit identifier |
-| `tier` | `micro` / `founder` / `treasury` | Audit tier |
-| `verdict` | `PASS` / `FAIL` | Audit result |
-
-### Example GraphQL Query
+Every upload includes metadata tags. Query the [Irys GraphQL endpoint](https://uploader.irys.xyz/graphql) to find all audits for a specific project:
 
 ```graphql
 query {
@@ -240,26 +232,42 @@ query {
 }
 ```
 
+### Tags
+
+| Tag | Value | Purpose |
+|---|---|---|
+| `Protocol` | `ProofOfLogic` | Identifies DJZS protocol certificates |
+| `application-id` | `DJZS-Oracle` | Application identifier |
+| `Target-System` | Project name or `Unknown` | Enables per-project search |
+| `audit-id` | UUID | Unique audit identifier |
+| `tier` | `micro` / `founder` / `treasury` | Audit tier |
+| `verdict` | `PASS` / `FAIL` | Audit result |
+
 ---
 
-## Architect Console (Sovereign Principal Interface)
+## Architect Console
 
-Four governance zones for autonomous agent oversight:
+The Sovereign Principal Interface provides four governance zones:
 
 | Zone | Purpose |
 |---|---|
-| Audit Ledger | Immutable forensic log of ProofOfLogic certificates with Irys Datachain provenance |
-| Adversarial Oracle | Adversarial AI reasoning attack — expose contradictions, challenge assumptions, pressure-test logic |
+| Audit Ledger | Immutable forensic log of ProofOfLogic certificates with Irys provenance |
+| Adversarial Oracle | Manual reasoning attack interface — expose contradictions, challenge assumptions |
 | Terminal Console | Protocol monitoring and configuration dashboard |
-| x402 Governance | Execution Zone fee structure display and USDC escrow provisioning via ProvisionAgentAllowance |
+| x402 Governance | Fee structure display and USDC escrow provisioning |
 
-### Local Node State
+**Local node state** uses Dexie (IndexedDB) with AES-GCM-256 encryption. All ProofOfLogic certificates are permanently stored on Irys — local state is supplementary cache. BYOK: bring your own Venice API key for full control over AI billing.
 
-- **Storage:** Dexie (IndexedDB) for local telemetry and audit record caching
-- **Export:** "Export Logic Logs (.zip)" downloads local IndexedDB state for offline analysis
-- **Core Provenance:** All ProofOfLogic certificates are permanently stored on Irys Datachain — local state is supplementary
-- **Encryption:** WebCrypto PBKDF2 + AES-GCM-256 with user-managed passphrase
-- **BYOK:** Bring Your Own Venice API Key for full control over AI usage and billing
+---
+
+## Security Design
+
+- **TEE Isolation** — Oracle runs inside a Phala Cloud CVM (Intel SGX). Private keys for Venice AI, Irys wallet, and x402 are managed in hardware — inaccessible to the host operator
+- **Replay Protection** — Each payment TX hash is single-use
+- **On-Chain Verification** — USDC payments verified directly against Base Mainnet via viem
+- **Immutable Provenance** — Irys certificates cannot be altered or deleted after upload
+- **Local-First Vault** — Client workspace data stored on-device with WebCrypto PBKDF2 + AES-GCM-256
+- **No Hardcoded Secrets** — All sensitive values loaded from environment variables inside the TEE enclave
 
 ---
 
@@ -268,74 +276,32 @@ Four governance zones for autonomous agent oversight:
 | Component | File | Purpose |
 |---|---|---|
 | Audit Engine | `server/audit-agent.ts` | Venice AI adversarial logic analysis with DJZS-LF taxonomy |
-| Irys Service | `server/irys.ts` | Permanent certificate upload to Irys Datachain with metadata tags |
-| Payment Verifier | `server/payment-verifier.ts` | On-chain USDC payment verification via viem on Base Mainnet |
+| Irys Service | `server/irys.ts` | Permanent certificate upload with metadata tags |
+| Payment Verifier | `server/payment-verifier.ts` | On-chain USDC verification via viem on Base Mainnet |
 | OpenClaw Runner | `server/openclaw.ts` | Unified AI agent dispatcher (JournalInsight, AdversarialOracle) |
-| XMTP Agent | `server/agent.ts` | A2A encrypted listener — routes `Thinking:` to AdversarialOracle, `Journal:` to JournalInsight via XMTP MLS |
+| XMTP Agent | `server/agent.ts` | A2A encrypted listener — routes `Thinking:` / `Journal:` via XMTP MLS |
 | Venice AI Client | `server/venice.ts` | Privacy-first AI processing via Venice API |
 | Storage Layer | `server/storage.ts` | PostgreSQL persistence via Drizzle ORM |
 | Audit Schema | `shared/audit-schema.ts` | Tier config, DJZS-LF failure codes, Zod validation |
-| Agent Discovery | `server/routes.ts` | `/.well-known/agent.json` manifest for A2A discovery |
+| Agent Discovery | `server/routes.ts` | `/.well-known/agent.json` A2A manifest |
 
 ---
 
-## Security Design
-
-- **TEE Isolation** — Oracle runs inside a Phala Cloud CVM (Intel SGX). Private keys for Venice AI, Irys wallet, and x402 payment verification are managed in hardware — they never touch disk
-- **Zero Data Retention** — Venice AI claims no data retention or training on inputs. Strategy memos are processed in real-time
-- **Replay Protection** — Each payment TX hash can only be used for one audit
-- **On-Chain Verification** — USDC payments verified directly against Base Mainnet via viem
-- **Immutable Provenance** — Audit certificates are permanently stored on Irys Datachain. Once uploaded, they cannot be altered or deleted
-- **Local-First Vault** — User workspace data stored on-device with AES-GCM-256 encryption
-- **No Hardcoded Secrets** — All sensitive values loaded from environment variables inside the TEE
-
----
-
-## Environment Variables
-
-All secrets are server-side only and managed inside the TEE enclave.
-
-### Required
-
-| Variable | Description |
-|---|---|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `TREASURY_WALLET_ADDRESS` | Base Mainnet wallet for receiving USDC payments |
-| `VENICE_API_KEY` | Venice AI API key for adversarial audit analysis |
-| `BASE_RPC_URL` | Base Mainnet RPC endpoint for on-chain payment verification |
-| `IRYS_PRIVATE_KEY` | Ethereum wallet private key for Irys Datachain uploads (needs ETH on Base for fees) |
-
-### Optional
-
-| Variable | Description |
-|---|---|
-| `CDP_API_KEY_ID` | Coinbase Developer Platform API key ID (enables x402 protocol) |
-| `CDP_API_KEY_SECRET` | Coinbase Developer Platform API secret |
-| `X402_NETWORK` | Network identifier for x402 (default: `eip155:8453`) |
-| `VENICE_MODEL` | Venice AI model (default: `llama-3.3-70b`) |
-| `VENICE_BASE_URL` | Venice API base URL (default: `https://api.venice.ai/api/v1`) |
-| `XMTP_WALLET_KEY` | 0x-prefixed hex private key for XMTP Oracle agent identity |
-| `XMTP_ENV` | XMTP messaging environment: `dev` or `production` |
-
----
-
-## Tech Stack
+## Full Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Compute | Phala Network TEE (Intel SGX hardware enclave) |
+| Compute | Phala Network TEE (Intel SGX) |
 | Intelligence | Venice AI (llama-3.3-70b, uncensored) |
-| Provenance | Irys Datachain (permanent, immutable storage) |
+| Provenance | Irys Datachain |
 | Settlement | USDC on Base Mainnet, x402 protocol |
+| Messaging | XMTP (MLS protocol, quantum-resistant) |
 | Frontend | React 18, TypeScript, Vite, Tailwind CSS, Radix UI |
 | Backend | Express.js, TypeScript |
 | Database | PostgreSQL, Drizzle ORM |
 | Wallet | RainbowKit, wagmi, viem |
-| Local Storage | Dexie (IndexedDB), AES-GCM-256 encryption |
-| Routing | Wouter (client), Express (server) |
-| State | TanStack Query (server state), React hooks (local) |
+| Local Storage | Dexie (IndexedDB), AES-GCM-256 |
 | Validation | Zod |
-| Messaging | XMTP (MLS protocol, quantum-resistant) |
 
 ---
 
@@ -348,21 +314,42 @@ All secrets are server-side only and managed inside the TEE enclave.
 - Base Mainnet wallet with USDC (for testing payments)
 - Ethereum wallet with ETH on Base (for Irys upload fees)
 
-### Install & Run
-
 ```bash
-git clone https://github.com/UsernameDAOEth/djzs-box.git
-cd djzs-box
+git clone https://github.com/UsernameDAOEth/djzs-AI.git
+cd djzs-AI
 npm install
 ```
 
-Set environment variables (see tables above), then:
+Set environment variables, then:
 
 ```bash
-npm run db:push        # Push schema to database
-npm run dev            # Start development server (API only)
-npm start              # Production: boots API + XMTP Agent via concurrently
+npm run db:push   # Push schema to database
+npm run dev       # Start development server (API only)
+npm start         # Production: boots API + XMTP Agent via concurrently
 ```
+
+### Environment Variables
+
+**Required:**
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `TREASURY_WALLET_ADDRESS` | Base Mainnet wallet for receiving USDC |
+| `VENICE_API_KEY` | Venice AI API key |
+| `BASE_RPC_URL` | Base Mainnet RPC endpoint |
+| `IRYS_PRIVATE_KEY` | Ethereum wallet private key for Irys uploads (needs ETH on Base) |
+
+**Optional:**
+
+| Variable | Description |
+|---|---|
+| `CDP_API_KEY_ID` | Coinbase Developer Platform key ID (enables x402) |
+| `CDP_API_KEY_SECRET` | Coinbase Developer Platform secret |
+| `X402_NETWORK` | x402 network (default: `eip155:8453`) |
+| `VENICE_MODEL` | Venice model (default: `llama-3.3-70b`) |
+| `XMTP_WALLET_KEY` | 0x-prefixed hex private key for XMTP Oracle identity |
+| `XMTP_ENV` | XMTP environment: `dev` or `production` |
 
 ---
 
@@ -375,29 +362,24 @@ docker build -t djzs-ai .
 docker run -p 5000:5000 --env-file .env djzs-ai
 ```
 
-### Phala Cloud TEE (Recommended for Production)
+### Phala Cloud TEE (Recommended)
 
-Deploy to Phala Cloud's Trusted Execution Environment for hardware-level isolation:
-
-1. Build Docker image and push to DockerHub: `djzs/djzs-ai:latest`
+1. Build and push Docker image to DockerHub: `djzs/djzs-ai:latest`
 2. Provision a CVM on Phala Cloud with environment variables injected at runtime
-3. `npm start` boots both the Express REST API and the XMTP Agent listener simultaneously via `concurrently` — required for Phala CVM's single-entrypoint constraint
-4. All private keys (Venice API, Irys wallet, XMTP wallet, x402 keys) are managed inside the SGX enclave — they never touch disk and are inaccessible to the host operator
+3. `npm start` boots Express REST API + XMTP Agent simultaneously via `concurrently` — required for Phala's single-entrypoint constraint
+4. All private keys are managed inside the SGX enclave — never touch disk, inaccessible to the host operator
 
 Current deployment: `dstack-pha-prod5.phala.network`
 
-### GitHub Actions CI/CD
+### CI/CD
 
-The repository includes a GitHub Actions workflow (`.github/workflows/docker-publish.yml`) for automated Docker builds on push to `main`. Add these secrets to your GitHub repository:
-
-- `DOCKERHUB_USERNAME` — your DockerHub username
-- `DOCKERHUB_TOKEN` — a DockerHub access token
+Automated Docker builds via GitHub Actions (`.github/workflows/docker-publish.yml`) on push to `main`. Add `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` to your repository secrets.
 
 ---
 
 ## License
 
-See LICENSE file for details.
+See [LICENSE](./LICENSE) for details.
 
 ---
 

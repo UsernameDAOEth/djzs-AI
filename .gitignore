@@ -3,18 +3,17 @@ dist
 .DS_Store
 server/public
 vite.config.ts.*
-*.tar.gz.env.deploy
+*.tar.gz
+
 .env
 .env.*
 !.env.example
 !.env.deploy.example
 
-# XMTP local database state (contains conversation history + agent identifiers)
-xmtp-dev-*.db3
-xmtp-dev-*.db3-shm
-xmtp-dev-*.db3-wal
+*.db3
+*.db3-shm
+*.db3-wal
 
-# Legacy NFT/newsletter platform artifacts
 deploy-nft/
 contracts/
 hardhat*.config.*
@@ -29,8 +28,3 @@ subscribe-*.png
 subscribe_*.png
 wallet_modal.png
 walletconnect_qr.png
-.env
-.env.*
-*.db3
-*.db3-shm
-*.db3-wal
