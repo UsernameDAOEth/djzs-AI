@@ -73,7 +73,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // GitHub Integration - check connection and list repos (Replit-only)
   app.get("/api/github/status", async (_req, res) => {
     try {
       const octokit = await getGitHubClient();
@@ -121,7 +120,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ==================== OPENCLAW AGENT RUNNER ====================
   app.post("/api/openclaw/run", async (req, res) => {
     try {
       const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
@@ -308,7 +306,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Message must include author address" });
       }
       
-      // Verify author is a valid, non-muted member
       const member = await storage.getMember(authorAddress);
       if (!member) {
         return res.status(403).json({ error: "Not a registered member" });
@@ -331,9 +328,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ==================== JOURNAL API ====================
-  
-  // Create a journal entry and analyze it with Venice AI
   app.post("/api/journal/analyze", async (req, res) => {
     try {
       const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
@@ -347,19 +341,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Entry must be at least 10 characters" });
       }
       
-      // 1. Save the entry
       const entry = await storage.createJournalEntry({ content, walletAddress });
-      
-      // 2. Retrieve context (3 recent entries)
       const recentEntries = await storage.getRecentJournalEntries(walletAddress, 3);
-      
-      // Filter out the current entry from recent entries
       const contextEntries = recentEntries.filter(e => e.id !== entry.id);
-      
-      // 3. Call Venice AI with journal analysis
       const analysis = await analyzeJournalEntry(content, contextEntries, userVeniceKey);
-      
-      // 4. Return entry + analysis + zone
       res.json({
         entry,
         analysis,
@@ -374,7 +359,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get recent journal entries
   app.get("/api/journal/entries/:walletAddress", async (req, res) => {
     try {
       const entries = await storage.getRecentJournalEntries(req.params.walletAddress, 20);
@@ -385,9 +369,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ==================== AGENT API (v1 Adversarial Oracle) ====================
-  
-  // Analyze entry with the Adversarial Oracle agent
   app.post("/api/agent/analyze", async (req, res) => {
     try {
       const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
@@ -522,9 +503,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ==================== AGENT-TO-AGENT (A2A) AUDIT API ====================
-  // x402 payment middleware for the audit endpoint
-  // Uses @coinbase/x402 (official CDP facilitator) for USDC micropayments on Base Mainnet
   const TREASURY_WALLET = process.env.TREASURY_WALLET_ADDRESS;
   if (!TREASURY_WALLET) {
     console.warn("TREASURY_WALLET_ADDRESS not set — payment verification will reject all transactions");

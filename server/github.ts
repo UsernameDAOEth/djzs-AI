@@ -1,4 +1,3 @@
-// GitHub Integration - uses Replit's GitHub connection
 import { Octokit } from '@octokit/rest'
 
 let connectionSettings: any;
@@ -37,9 +36,6 @@ async function getAccessToken() {
   return accessToken;
 }
 
-// WARNING: Never cache this client.
-// Access tokens expire, so a new client must be created each time.
-// Always call this function again to get a fresh client.
 export async function getUncachableGitHubClient() {
   const accessToken = await getAccessToken();
   return new Octokit({ auth: accessToken });
