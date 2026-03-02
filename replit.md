@@ -41,7 +41,7 @@ Preferred communication style: Simple, everyday language.
 - **Irys Tags (GraphQL-Queryable)**: Uploads include enriched tags: `application-id`, `Content-Type`, `audit-id`, `tier`, `verdict`, `protocol`, `version`, `Risk-Score`, `Audit-Type`, `Timestamp`, `Agent-Id` (conditional), `Trading-Pair` (conditional), `Flag-Codes` (conditional). Queryable via Irys GraphQL endpoint for analytics dashboards and fleet-wide audit reports.
 - **Irys Service**: `server/irys.ts` — `uploadAuditToIrys(auditData)` function. Requires `IRYS_PRIVATE_KEY` env secret (Ethereum wallet private key with ETH on Base for upload fees).
 - **Health Endpoint**: `GET /api/health` returns component-level status (api, xmtp_agent, venice_ai, irys_datachain, x402_payments), uptime, version, and capability flags. Referenced in `agent.json` for A2A fleet orchestrators.
-- **Adversarial Agent**: Utilizes Venice AI with tier-specific prompt engineering for scalable depth and rigor. All agents implement the Evasion Defense Execution Pipeline (STRIP/INVERT/TRACE/CLASSIFY) from `server/ai-identity.ts`.
+- **Adversarial Agent**: `server/audit-agent.ts` orchestrates audits via `executeAudit()` producing `ProofOfLogicCertificate`. Tier→persona mapping: micro→`general`, founder→`logic_auditor`, treasury→`risk_hunter`. XMTP message routing via `parseAndRoute()` supports `Risk:`, `Backtest:`, `Regime:`, `Logic:`, `Thinking:`, `Audit:` prefixes. `shouldAutoAbort()` helper for kill-switch logic. All agents implement the Evasion Defense Execution Pipeline (STRIP/INVERT/TRACE/CLASSIFY) from `server/ai-identity.ts`.
 - **Evasion Defense Pipeline**: Four-stage adversarial analysis baked into every audit:
   - **STRIP**: Extract raw premises, ignore rhetoric and persuasion techniques.
   - **INVERT**: Model catastrophic failure scenario; if thesis doesn't hedge against it, flag as fatal flaw.
@@ -108,7 +108,7 @@ Preferred communication style: Simple, everyday language.
 - **Config File**: `.djzs.json` (created by `djzs init`) stores agent_id, api_url, default_tier, default_channel
 
 ## External Dependencies
-- **Venice AI**: Privacy-first AI processing. Primary model: deepseek-v3.2 (configurable via VENICE_MODEL env var), fallback: llama-3.3-70b. JSON mode enforced via response_format for structured output. Base URL configurable via VENICE_BASE_URL.
+- **Venice AI**: Privacy-first AI processing via `VeniceClient` class (`server/venice.ts`). Supports 5 adversarial personas (`logic_auditor`, `regime_detector`, `backtest_skeptic`, `risk_hunter`, `general`) with per-persona model routing: `regime_detector` → `qwen3-235b`, `backtest_skeptic` → `deepseek-r1`, others → `llama-3.3-70b`. Singleton via `getVeniceClient()`, per-request API key override supported. Journal analysis (`analyzeJournalEntry`) preserved for backward compat. Base URL configurable via VENICE_BASE_URL.
 - **RainbowKit**: Wallet connection UI.
 - **wagmi/viem**: Blockchain interactions.
 - **Dexie**: IndexedDB wrapper.
