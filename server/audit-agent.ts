@@ -153,14 +153,6 @@ export async function handleXMTPMessage(
   rawMessage: string,
   client?: VeniceClient
 ): Promise<string> {
-  if (rawMessage.startsWith("Journal:")) {
-    return JSON.stringify({
-      status: "logged",
-      timestamp: new Date().toISOString(),
-      message: "Journal entry recorded",
-    });
-  }
-
   const { content, persona } = parseAndRoute(rawMessage);
   
   const certificate = await executeAudit({
@@ -208,7 +200,7 @@ export function mapToLegacyAuditLog(
     auditType: extras?.auditType || "general",
     primaryBiasDetected: cert.primary_bias_detected,
     flags: cert.flags.map(f => ({ code: f.code, severity: f.severity, message: f.description })),
-    logicFlaws: cert.logic_flaws.map(f => typeof f === "string" ? { flaw_type: "general", severity: "medium", explanation: f } : f as any),
+    logicFlaws: cert.logic_flaws.map(f => typeof f === "string" ? { flaw_type: "detected", severity: "medium", explanation: f } : f as any),
     structuralRecommendations: cert.structural_recommendations,
     cryptographicHash: cert.cryptographic_hash,
     walletAddress: extras?.walletAddress,
@@ -232,4 +224,4 @@ export async function runLogicAuditAgent(
   }, client);
 }
 
-export { TIER_CONFIG };
+export { TIER_CONFIG as AUDIT_TIER_CONFIG };
