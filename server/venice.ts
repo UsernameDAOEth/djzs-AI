@@ -142,15 +142,15 @@ export class VeniceClient {
   async chat(
     messages: VeniceMessage[],
     model: VeniceModel = DEFAULT_MODEL,
-    temperature: number = 0.2
+    temperature: number = 0.2,
+    options?: { responseFormat?: object; timeoutMs?: number }
   ): Promise<string> {
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.apiKey}`,
-      },
-      body: JSON.stringify({
+    const timeoutMs = options?.timeoutMs || 120_000;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const body: Record<string, unknown> = {
         model,
         messages,
         max_tokens: 2048,
@@ -158,16 +158,37 @@ export class VeniceClient {
         venice_parameters: {
           include_venice_system_prompt: false,
         },
-      }),
-    });
+      };
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Venice API error ${response.status}: ${errorText}`);
+      if (options?.responseFormat) {
+        body.response_format = options.responseFormat;
+      }
+
+      const response = await fetch(`${this.baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Venice API error ${response.status}: ${errorText}`);
+      }
+
+      const data: VeniceResponse = await response.json();
+      return data.choices[0]?.message?.content || "";
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") {
+        throw new Error(`Venice API timed out after ${timeoutMs / 1000}s (model: ${model})`);
+      }
+      throw err;
+    } finally {
+      clearTimeout(timer);
     }
-
-    const data: VeniceResponse = await response.json();
-    return data.choices[0]?.message?.content || "";
   }
 
   async audit(
@@ -208,10 +229,15 @@ Return JSON with: verdict ("PASS"/"FAIL"), risk_score (0-100), confidence (0-1),
     );
 
     try {
-      const cleanContent = content
+      let cleanContent = content
         .replace(/```json\n?/g, "")
         .replace(/```\n?/g, "")
         .trim();
+
+      const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        cleanContent = jsonMatch[0];
+      }
       
       const parsed = JSON.parse(cleanContent);
       
@@ -347,13 +373,21 @@ export async function analyzeJournalEntry(
     { role: "user", content: buildUserPrompt(entry, recentEntries) },
   ];
 
-  const content = await client.chat(messages, DEFAULT_MODEL, 0.7);
+  const content = await client.chat(messages, DEFAULT_MODEL, 0.7, {
+    responseFormat: DJZS_JOURNAL_SCHEMA,
+    timeoutMs: 60_000,
+  });
 
   const sanitized = content.replace(/[\x00-\x1F\x7F]/g, (ch: string) =>
     ch === '\n' || ch === '\r' || ch === '\t' ? ch : ' '
   );
 
-  const parsed = JSON.parse(sanitized);
+  const jsonMatch = sanitized.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error("Journal analysis did not return valid JSON");
+  }
+
+  const parsed = JSON.parse(jsonMatch[0]);
   return journalAnalysisSchema.parse(parsed);
 }
 
