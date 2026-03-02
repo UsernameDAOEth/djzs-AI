@@ -108,7 +108,7 @@ Preferred communication style: Simple, everyday language.
 - **Config File**: `.djzs.json` (created by `djzs init`) stores agent_id, api_url, default_tier, default_channel
 
 ## External Dependencies
-- **Venice AI**: Privacy-first AI processing.
+- **Venice AI**: Privacy-first AI processing. Primary model: deepseek-v3.2 (configurable via VENICE_MODEL env var), fallback: llama-3.3-70b. JSON mode enforced via response_format for structured output. Base URL configurable via VENICE_BASE_URL.
 - **RainbowKit**: Wallet connection UI.
 - **wagmi/viem**: Blockchain interactions.
 - **Dexie**: IndexedDB wrapper.
