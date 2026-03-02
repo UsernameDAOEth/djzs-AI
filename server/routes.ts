@@ -15,7 +15,7 @@ async function getGitHubClient() {
   return _cachedGitHubImport.getUncachableGitHubClient();
 }
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
-import { executeAudit } from "./audit-agent";
+import { executeAudit, mapToLegacyAuditLog } from "./audit-agent";
 import { VeniceClient } from "./venice";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
@@ -706,21 +706,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const irysResult = await uploadAuditToIrys(irysPayload);
 
       try {
-        await storage.createAuditLog({
-          auditId: audit.audit_id,
-          tier: audit.tier,
-          verdict: audit.verdict,
-          riskScore: audit.risk_score,
+        const legacyLog = mapToLegacyAuditLog(audit, {
           strategyMemo: parsed.data.strategy_memo,
           auditType: parsed.data.audit_type || "general",
-          primaryBiasDetected: audit.primary_bias_detected,
-          flags: audit.flags.map(f => ({ code: f.code, severity: f.severity, message: f.description })),
-          logicFlaws: audit.logic_flaws.map(f => typeof f === "string" ? { flaw_type: "general", severity: "medium" as const, explanation: f } : f),
-          structuralRecommendations: audit.structural_recommendations,
-          cryptographicHash: audit.cryptographic_hash,
           walletAddress: walletAddress || null,
           irysTxId: irysResult.irys_tx_id,
         });
+        await storage.createAuditLog(legacyLog);
       } catch (dbError) {
         console.error("Failed to persist audit log:", dbError);
       }

@@ -78,7 +78,7 @@ Preferred communication style: Simple, everyday language.
 ### Privacy Design
 - Emphasizes local-first storage, user control over AI execution, and offline journaling capabilities.
 - XMTP messaging is end-to-end encrypted via MLS protocol with quantum-resistant key encapsulation.
-- **XMTP Agent** (`server/agent.ts`): Standalone listener using `@xmtp/agent-sdk`. Routes `Thinking:` prefix to AdversarialOracle, `Journal:` prefix to JournalInsight. Requires `XMTP_WALLET_KEY` (0x hex) and `XMTP_ENV` (dev/production) env vars. Run separately with `npx tsx server/agent.ts`.
+- **XMTP Agent** (`server/agent.ts`): Standalone listener using `@xmtp/agent-sdk`. Persona-routed via `handleXMTPMessage` from `audit-agent.ts`. Prefixes: `Thinking:`/`Audit:` → general, `Logic:` → logic_auditor, `Risk:` → risk_hunter, `Backtest:` → backtest_skeptic, `Regime:` → regime_detector, `Journal:` → JournalInsight (OpenClaw), `Help:` → usage guide. Requires `XMTP_WALLET_KEY` (0x hex) and `XMTP_ENV` (dev/production) env vars. Run separately with `npx tsx server/agent.ts`.
 - **A2A Test Script** (`scripts/test-a2a-xmtp.ts`): Generates a burner wallet, connects to XMTP devnet, sends a DM to the Oracle, and logs the response. Run with `ORACLE_ADDRESS=0x... npx tsx scripts/test-a2a-xmtp.ts`.
 
 ## Phala TEE Deployment
