@@ -1,0 +1,55 @@
+also check Objective
+Replace `server/venice.ts` and `server/audit-agent.ts` with the user's new versions. The new `venice.ts` introduces a `VeniceClient` class with adversarial personas, per-persona model routing, and a singleton pattern. The new `audit-agent.ts` introduces `executeAudit()` with tier→persona mapping, XMTP message routing, and `ProofOfLogicCertificate` output. Downstream consumers (`server/routes.ts`, `server/openclaw.ts`) must be updated to use the new APIs.
+Breaking Changes to Handle
+* `analyzeJournalEntry()` removed from `venice.ts` → used in `routes.ts` (line 347) and `openclaw.ts` (line 74)
+* `runLogicAuditAgent()` removed from `audit-agent.ts` → used in `routes.ts` (line 689)
+* New `AuditResult` type replaces `DJZSLogicAudit` — different flag shape (`description` instead of `message`), new fields (`confidence`, `scenarios`, `action_items`)
+* New `audit-agent.ts` defines its own `AuditTier` and `TIER_CONFIG` — overlaps with `shared/audit-schema.ts`
+Tasks
+T001: Replace server/venice.ts
+* Blocked By: []
+* Details:
+   * Overwrite with user's new file (VeniceClient class, 5 personas, model routing, singleton)
+   * Add `analyzeJournalEntry()` function using VeniceClient.chat() to maintain backward compat with `routes.ts` and `openclaw.ts`
+   * Preserves journal system prompt and JSON schema from old venice.ts
+   * Files: `server/venice.ts`
+   * Acceptance: VeniceClient + personas + journal analysis all present
+T002: Replace server/audit-agent.ts
+* Blocked By: []
+* Details:
+   * Overwrite with user's new file (executeAudit, parseAndRoute, handleXMTPMessage, shouldAutoAbort, ProofOfLogicCertificate)
+   * Import `AuditTier` from `@shared/audit-schema` instead of redefining it locally, to avoid type conflicts with routes.ts
+   * Files: `server/audit-agent.ts`
+   * Acceptance: File compiles, no duplicate type definitions
+T003: Update server/routes.ts
+* Blocked By: [T001, T002]
+* Details:
+   * Change import: `runLogicAuditAgent` → `executeAudit` from `./audit-agent`
+   * Update `createTierHandler` (line 689): call `executeAudit()` with `AuditInput` shape instead of old `runLogicAuditAgent(parsed.data, tier, userVeniceKey)`
+   * Handle new VeniceClient apiKey: pass via constructor when `userVeniceKey` header is present
+   * Map `ProofOfLogicCertificate` fields to existing `createAuditLog()` storage call
+   * Map new flag shape (`description` field) to storage expectations
+   * `analyzeJournalEntry` import stays (T001 preserves it)
+   * Files: `server/routes.ts`
+   * Acceptance: All audit tier routes and journal route work
+T004: Update server/openclaw.ts
+* Blocked By: [T001]
+* Details:
+   * `analyzeJournalEntry` import stays — T001 preserves backward compat
+   * Verify no other breaking changes affect openclaw
+   * Files: `server/openclaw.ts`
+   * Acceptance: OpenClaw JournalInsight agent still works
+T005: Reconcile shared/audit-schema.ts
+* Blocked By: [T002]
+* Details:
+   * Add `INFO` to `auditFlagSeveritySchema` (new venice.ts outputs it)
+   * Keep all existing schemas intact for frontend and route validation
+   * Files: `shared/audit-schema.ts`
+   * Acceptance: No type conflicts across the codebase
+T006: Verify and update replit.md
+* Blocked By: [T001, T002, T003, T004, T005]
+* Details:
+   * Restart workflow, verify app starts without errors
+   * Update replit.md with new architecture (VeniceClient, personas, model routing, executeAudit)
+   * Files: `replit.md`
+   * Acceptance: App starts, health endpoint responds
