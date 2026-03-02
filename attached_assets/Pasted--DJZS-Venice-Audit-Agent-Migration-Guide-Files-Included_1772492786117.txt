@@ -1,0 +1,206 @@
+# DJZS Venice + Audit Agent Migration Guide
+
+## Files Included
+
+| File | Task | Purpose |
+|------|------|---------|
+| `venice.ts` | T001 | New VeniceClient with personas |
+| `audit-agent.ts` | T002 | New executeAudit with tier mapping |
+| `agent.ts` | T002 | Updated XMTP listener |
+| `routes.ts.patch` | T003 | Exact changes for routes.ts |
+| `openclaw.ts.verify` | T004 | Confirms no changes needed |
+| `audit-schema.ts.patch` | T005 | Add INFO severity |
+| `replit.md` | T006 | Updated architecture docs |
+
+## Overview
+
+This migration replaces `server/venice.ts` and `server/audit-agent.ts` with new versions that introduce:
+- **VeniceClient class** with adversarial personas
+- **Per-persona model routing** (Llama 3.3 70B, Qwen3 235B, DeepSeek R1)
+- **executeAudit()** with tier→persona mapping
+- **XMTP prefix routing** for different audit types
+
+## Files to Replace
+
+```bash
+# Backup existing files
+cp server/venice.ts server/venice.ts.bak
+cp server/audit-agent.ts server/audit-agent.ts.bak
+cp server/agent.ts server/agent.ts.bak
+
+# Replace with new files
+cp new/venice.ts server/venice.ts
+cp new/audit-agent.ts server/audit-agent.ts
+cp new/agent.ts server/agent.ts
+```
+
+---
+
+## Breaking Changes & Fixes
+
+### 1. shared/audit-schema.ts — Add INFO severity
+
+**Find:**
+```typescript
+export const auditFlagSeveritySchema = z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW"]);
+```
+
+**Replace with:**
+```typescript
+export const auditFlagSeveritySchema = z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]);
+```
+
+---
+
+### 2. server/routes.ts — Update audit endpoint
+
+**Old import:**
+```typescript
+import { runLogicAuditAgent } from "./audit-agent";
+```
+
+**New import:**
+```typescript
+import { executeAudit, runLogicAuditAgent, mapToLegacyAuditLog } from "./audit-agent";
+```
+
+> Note: `runLogicAuditAgent` is still available as a backward-compat wrapper. You can migrate to `executeAudit` at your own pace.
+
+**Option A: Keep using runLogicAuditAgent (no changes needed)**
+
+The new `audit-agent.ts` includes a backward-compatible wrapper:
+```typescript
+// This still works:
+const result = await runLogicAuditAgent(parsed.data, tier, userVeniceKey);
+```
+
+**Option B: Migrate to executeAudit (recommended)**
+
+```typescript
+// Old:
+const result = await runLogicAuditAgent(parsed.data, tier, userVeniceKey);
+
+// New:
+import { VeniceClient } from "./venice";
+
+const client = userVeniceKey ? new VeniceClient(userVeniceKey) : undefined;
+const certificate = await executeAudit({
+  strategy_memo: parsed.data.strategy_memo,
+  audit_type: parsed.data.audit_type,
+  target_system: parsed.data.target_system,
+  tier,
+}, client);
+
+// If storing to database with legacy schema:
+const legacyFormat = mapToLegacyAuditLog(certificate);
+await createAuditLog(legacyFormat);
+```
+
+---
+
+### 3. server/routes.ts — analyzeJournalEntry (no changes needed)
+
+The new `venice.ts` preserves `analyzeJournalEntry()` for backward compatibility:
+
+```typescript
+// This still works:
+import { analyzeJournalEntry } from "./venice";
+const analysis = await analyzeJournalEntry(entry, userVeniceKey);
+```
+
+---
+
+### 4. server/openclaw.ts — No changes needed
+
+`analyzeJournalEntry` is preserved. JournalInsight agent continues to work.
+
+---
+
+## New Flag Shape
+
+**Old format:**
+```typescript
+{
+  code: "DJZS-S01",
+  severity: "CRITICAL",
+  message: "Circular reasoning detected"  // ← 'message'
+}
+```
+
+**New format:**
+```typescript
+{
+  code: "DJZS-S01",
+  severity: "CRITICAL",
+  description: "Circular reasoning detected",  // ← 'description'
+  recommendation?: "Restructure argument..."   // ← new optional field
+}
+```
+
+**Migration helper:**
+
+Use `mapToLegacyAuditLog()` to convert:
+```typescript
+import { mapToLegacyAuditLog } from "./audit-agent";
+
+const certificate = await executeAudit(input);
+const legacy = mapToLegacyAuditLog(certificate);
+// legacy.flags[].message is populated from description
+```
+
+---
+
+## New XMTP Prefixes
+
+| Prefix | Persona | Model |
+|--------|---------|-------|
+| `Thinking:` | general | llama-3.3-70b |
+| `Audit:` | general | llama-3.3-70b |
+| `Logic:` | logic_auditor | llama-3.3-70b |
+| `Risk:` | risk_hunter | llama-3.3-70b |
+| `Backtest:` | backtest_skeptic | deepseek-r1 |
+| `Regime:` | regime_detector | qwen3-235b |
+| `Journal:` | — (logged only) | — |
+| `Help:` | — (shows usage) | — |
+
+---
+
+## New Certificate Fields
+
+`ProofOfLogicCertificate` now includes:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `confidence` | number | 0-1 confidence score |
+| `scenarios` | array | Stress-test scenarios (optional) |
+| `action_items` | array | Concrete next steps |
+| `persona_used` | string | Which adversarial persona ran |
+| `model_used` | string | Which Venice model was used |
+
+---
+
+## Testing Checklist
+
+After migration, verify:
+
+- [ ] `npm run dev` starts without errors
+- [ ] `GET /health` returns 200
+- [ ] `POST /api/audit/micro` returns ProofOfLogicCertificate
+- [ ] `POST /api/audit/founder` works
+- [ ] `POST /api/audit/treasury` works
+- [ ] Journal analysis endpoint works
+- [ ] XMTP agent starts and responds to messages
+- [ ] `Thinking:` prefix routes to general persona
+- [ ] `Risk:` prefix routes to risk_hunter persona
+- [ ] `Help:` prefix returns usage guide
+
+---
+
+## Rollback
+
+If issues arise:
+```bash
+cp server/venice.ts.bak server/venice.ts
+cp server/audit-agent.ts.bak server/audit-agent.ts
+cp server/agent.ts.bak server/agent.ts
+```
