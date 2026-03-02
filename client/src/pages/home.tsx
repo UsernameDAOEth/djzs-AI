@@ -279,6 +279,14 @@ export default function Home() {
                 <Coins size={12} className="text-cyan-500" />
                 Base Mainnet
               </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border border-border bg-muted/50 text-muted-foreground" data-testid="badge-venice-ai">
+                <FlaskConical size={12} className="text-teal-500" />
+                Venice AI
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border border-border bg-muted/50 text-muted-foreground" data-testid="badge-xmtp">
+                <Lock size={12} className="text-blue-500" />
+                XMTP
+              </span>
             </div>
           </motion.div>
 
