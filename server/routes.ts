@@ -15,7 +15,8 @@ async function getGitHubClient() {
   return _cachedGitHubImport.getUncachableGitHubClient();
 }
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
-import { runLogicAuditAgent } from "./audit-agent";
+import { executeAudit } from "./audit-agent";
+import { VeniceClient } from "./venice";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
 import { uploadAuditToIrys } from "./irys";
@@ -686,7 +687,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const audit = await runLogicAuditAgent(parsed.data, tier, userVeniceKey);
+      const veniceClient = userVeniceKey ? new VeniceClient(userVeniceKey) : undefined;
+      const audit = await executeAudit({
+        strategy_memo: parsed.data.strategy_memo,
+        audit_type: parsed.data.audit_type || "general",
+        tier,
+        intelligence_context: parsed.data.intelligence_context,
+        trade_params: parsed.data.trade_params,
+        agent_id: parsed.data.agent_id,
+      }, veniceClient);
 
       const irysPayload: Record<string, any> = {
         ...audit,
@@ -705,8 +714,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           strategyMemo: parsed.data.strategy_memo,
           auditType: parsed.data.audit_type || "general",
           primaryBiasDetected: audit.primary_bias_detected,
-          flags: audit.flags,
-          logicFlaws: audit.logic_flaws,
+          flags: audit.flags.map(f => ({ code: f.code, severity: f.severity, message: f.description })),
+          logicFlaws: audit.logic_flaws.map(f => typeof f === "string" ? { flaw_type: "general", severity: "medium" as const, explanation: f } : f),
           structuralRecommendations: audit.structural_recommendations,
           cryptographicHash: audit.cryptographic_hash,
           walletAddress: walletAddress || null,

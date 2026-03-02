@@ -48,7 +48,7 @@ export const LOGIC_FAILURE_TAXONOMY: Record<LogicFailureCode, { category: string
   "DJZS-X01": { category: "Execution", name: "UNHEDGED_EXECUTION", description: "No fallback plan. Single point of failure in execution with no contingency or abort conditions defined." },
 };
 
-export const auditFlagSeveritySchema = z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]);
+export const auditFlagSeveritySchema = z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL", "INFO"]);
 export type AuditFlagSeverity = z.infer<typeof auditFlagSeveritySchema>;
 
 export const auditFlagSchema = z.object({
