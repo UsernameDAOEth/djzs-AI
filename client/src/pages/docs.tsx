@@ -294,7 +294,7 @@ export default function Docs() {
                     <tr className="border-b border-border/50">
                       <td className="py-2 px-4"><code className="text-teal-400 font-mono text-xs">protocol</code></td>
                       <td className="py-2 px-4 text-xs text-muted-foreground font-mono">string</td>
-                      <td className="py-2 px-4 text-xs text-muted-foreground">avantis, uniswap, aave</td>
+                      <td className="py-2 px-4 text-xs text-muted-foreground">uniswap, aave, compound</td>
                     </tr>
                     <tr className="border-b border-border/50">
                       <td className="py-2 px-4"><code className="text-teal-400 font-mono text-xs">pair</code></td>
@@ -357,7 +357,7 @@ export default function Docs() {
     "`}<span className="text-teal-400">strategy_memo</span>{`": "Going long ETH based on breakout above 200-day MA.",
     "`}<span className="text-teal-400">agent_id</span>{`": "0x1234...abcd",
     "`}<span className="text-teal-400">trade_params</span>{`": {
-      "protocol": "avantis",
+      "protocol": "uniswap",
       "pair": "ETH/USD",
       "direction": "long",
       "leverage": 5,
