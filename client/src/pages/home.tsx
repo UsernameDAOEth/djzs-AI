@@ -124,7 +124,7 @@ export default function Home() {
               </a>
               <Link href="/docs" className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" data-testid="link-header-developers">
                 <BookOpen size={15} className="text-teal-400 group-hover:text-teal-300 transition-colors" />
-                Developers
+                Documents
               </Link>
             </nav>
             {isConnected ? (
@@ -190,7 +190,7 @@ export default function Home() {
                   data-testid="link-mobile-developers"
                 >
                   <BookOpen size={16} className="text-teal-400" />
-                  Developers
+                  Documents
                 </Link>
                 <Link
                   href="/privacy"
