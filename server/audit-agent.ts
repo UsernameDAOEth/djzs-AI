@@ -179,4 +179,57 @@ export function shouldAutoAbort(cert: ProofOfLogicCertificate): boolean {
   );
 }
 
+export interface LegacyAuditLog {
+  auditId: string;
+  tier: AuditTier;
+  verdict: string;
+  riskScore: number;
+  strategyMemo?: string;
+  auditType: string;
+  primaryBiasDetected: string;
+  flags: { code: string; severity: string; message: string }[];
+  logicFlaws: { flaw_type: string; severity: string; explanation: string }[];
+  structuralRecommendations: string[];
+  cryptographicHash: string;
+  walletAddress?: string | null;
+  irysTxId?: string | null;
+}
+
+export function mapToLegacyAuditLog(
+  cert: ProofOfLogicCertificate,
+  extras?: { strategyMemo?: string; auditType?: string; walletAddress?: string | null; irysTxId?: string | null }
+): LegacyAuditLog {
+  return {
+    auditId: cert.audit_id,
+    tier: cert.tier,
+    verdict: cert.verdict,
+    riskScore: cert.risk_score,
+    strategyMemo: extras?.strategyMemo,
+    auditType: extras?.auditType || "general",
+    primaryBiasDetected: cert.primary_bias_detected,
+    flags: cert.flags.map(f => ({ code: f.code, severity: f.severity, message: f.description })),
+    logicFlaws: cert.logic_flaws.map(f => typeof f === "string" ? { flaw_type: "general", severity: "medium", explanation: f } : f as any),
+    structuralRecommendations: cert.structural_recommendations,
+    cryptographicHash: cert.cryptographic_hash,
+    walletAddress: extras?.walletAddress,
+    irysTxId: extras?.irysTxId,
+  };
+}
+
+export async function runLogicAuditAgent(
+  request: { strategy_memo: string; audit_type?: string; intelligence_context?: string; trade_params?: Record<string, unknown>; agent_id?: string },
+  tier: AuditTier = "micro",
+  apiKeyOverride?: string
+): Promise<ProofOfLogicCertificate> {
+  const client = apiKeyOverride ? new VeniceClient(apiKeyOverride) : undefined;
+  return executeAudit({
+    strategy_memo: request.strategy_memo,
+    audit_type: (request.audit_type as AuditInput["audit_type"]) || "general",
+    tier,
+    intelligence_context: request.intelligence_context,
+    trade_params: request.trade_params,
+    agent_id: request.agent_id,
+  }, client);
+}
+
 export { TIER_CONFIG };

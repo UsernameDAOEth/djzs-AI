@@ -1,60 +1,82 @@
 import { Agent } from "@xmtp/agent-sdk";
 import {
   runAgent,
-  detectIntent,
   extractContent,
   formatJournalReply,
-  formatAdversarialReply,
   type JournalInsightPayload,
-  type AdversarialOraclePayload,
   type JournalInsightOutput,
-  type AdversarialOracleOutput,
 } from "./openclaw";
+import { handleXMTPMessage } from "./audit-agent";
+
+const AUDIT_PREFIXES = ["Risk:", "Backtest:", "Regime:", "Logic:", "Thinking:", "Audit:"];
+
+const HELP_TEXT = [
+  "DJZS Oracle — Adversarial Logic Auditor",
+  "",
+  "Audit Prefixes:",
+  "  Thinking: <memo>   → General audit (llama-3.3-70b)",
+  "  Audit: <memo>      → General audit (llama-3.3-70b)",
+  "  Logic: <memo>      → Logic flaw detection (llama-3.3-70b)",
+  "  Risk: <memo>       → Risk management gaps (llama-3.3-70b)",
+  "  Backtest: <memo>   → Overfitting detection (deepseek-r1)",
+  "  Regime: <memo>     → Regime stress-test (qwen3-235b)",
+  "",
+  "Journal:",
+  "  Journal: <entry>   → Reasoning trace analysis",
+  "",
+  "Commands:",
+  "  /help or Help:     → Show this guide",
+  "  /zones             → List available zones",
+].join("\n");
 
 function djzsReply(text: string): string | null {
   const t = (text || "").trim();
 
-  if (t.startsWith("/help")) {
-    return [
-      "DJZS Agent commands:",
-      "",
-      "Zones:",
-      "  /zones - List all zones",
-      "",
-      "OpenClaw Agents:",
-      "  Journal: <entry> - Analyze a reasoning trace",
-      "  Thinking: <question> - Adversarial Oracle attack",
-      "",
-      "Type a command prefix to route to the right agent.",
-    ].join("\n");
+  if (t.startsWith("/help") || t.startsWith("Help:")) {
+    return HELP_TEXT;
   }
 
   if (t.startsWith("/zones")) {
     return [
-      "DJZS Zones (v1):",
-      "01 Journal - Daily reflections with AI adversarial oracle",
-      "02 Adversarial Oracle - Debate ideas, find patterns, deepen analysis",
+      "DJZS Zones (v2):",
+      "01 Journal      — Reasoning trace analysis with adversarial oracle",
+      "02 Logic Audit   — Detect circular reasoning, missing falsifiability",
+      "03 Risk Hunter   — Find risk management gaps and tail risks",
+      "04 Backtest Skeptic — Detect overfitting and data snooping",
+      "05 Regime Detector  — Stress-test against regime changes",
     ].join("\n");
   }
 
   return null;
 }
 
+function isAuditPrefix(text: string): boolean {
+  return AUDIT_PREFIXES.some(p => text.startsWith(p));
+}
+
 async function handleAgentMessage(sender: string, text: string): Promise<string> {
-  const intent = detectIntent(text);
+  const t = text.trim();
 
-  if (!intent) {
-    return "I'm DJZS Oracle Agent. Type /help for commands.\n\nTo use an agent, start your message with:\n- Journal: <your reasoning trace>\n- Thinking: <your thesis to attack>";
+  if (isAuditPrefix(t)) {
+    try {
+      return await handleXMTPMessage(t);
+    } catch (err) {
+      console.error(`[XMTP] Audit error:`, err);
+      const errorMsg = err instanceof Error ? err.message : "Unknown error";
+      if (errorMsg.includes("VENICE_API_KEY")) {
+        return "AI processing is not configured. Please set up your Venice API key.";
+      }
+      return `Audit failed: ${errorMsg}`;
+    }
   }
 
-  const content = extractContent(text, intent);
+  if (t.toLowerCase().startsWith("journal:")) {
+    const content = t.slice(8).trim();
+    if (!content || content.length < 3) {
+      return 'Please provide some content after the "Journal:" prefix.';
+    }
 
-  if (!content || content.length < 3) {
-    return `Please provide some content after the "${intent === "JournalInsight" ? "Journal:" : "Thinking:"}" prefix.`;
-  }
-
-  try {
-    if (intent === "JournalInsight") {
+    try {
       const payload: JournalInsightPayload = {
         type: "journal_entry",
         user_id: sender,
@@ -63,28 +85,17 @@ async function handleAgentMessage(sender: string, text: string): Promise<string>
       };
       const result = await runAgent("JournalInsight", payload) as JournalInsightOutput;
       return formatJournalReply(result);
+    } catch (err) {
+      console.error(`[XMTP] Journal error:`, err);
+      const errorMsg = err instanceof Error ? err.message : "Unknown error";
+      if (errorMsg.includes("VENICE_API_KEY")) {
+        return "AI processing is not configured. Please set up your Venice API key.";
+      }
+      return `Journal analysis failed: ${errorMsg}`;
     }
-
-    if (intent === "AdversarialOracle") {
-      const payload: AdversarialOraclePayload = {
-        type: "adversarial_oracle",
-        user_id: sender,
-        question: content,
-        relevant_memory: [],
-      };
-      const result = await runAgent("AdversarialOracle", payload) as AdversarialOracleOutput;
-      return formatAdversarialReply(result);
-    }
-
-    return "Unknown agent intent.";
-  } catch (err) {
-    console.error(`OpenClaw agent error (${intent}):`, err);
-    const errorMsg = err instanceof Error ? err.message : "Unknown error";
-    if (errorMsg.includes("VENICE_API_KEY")) {
-      return "AI processing is not configured. Please set up your Venice API key.";
-    }
-    return `Agent processing failed: ${errorMsg}`;
   }
+
+  return "I'm DJZS Oracle Agent. Type /help or Help: for commands.\n\nPrefixes:\n- Thinking: <thesis to audit>\n- Risk: <strategy to stress-test>\n- Journal: <reasoning trace>";
 }
 
 async function main() {
@@ -92,7 +103,7 @@ async function main() {
     env: (process.env.XMTP_ENV as "dev" | "production") || "dev",
   });
 
-  console.log("DJZS XMTP Agent online (OpenClaw-powered)");
+  console.log("DJZS XMTP Agent online (persona-routed)");
 
   agent.on("start", (ctx: any) => {
     console.log("[XMTP] Streams active — ready to receive messages");
