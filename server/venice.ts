@@ -5,12 +5,16 @@ import {
 } from "@shared/schema";
 import { DJZS_CORE_IDENTITY } from "./ai-identity";
 
-const VENICE_API_BASE = "https://api.venice.ai/api/v1";
+const VENICE_API_BASE = process.env.VENICE_BASE_URL || "https://api.venice.ai/api/v1";
+
+const PRIMARY_MODEL = process.env.VENICE_MODEL || "deepseek-v3.2";
+const FALLBACK_MODEL = "llama-3.3-70b";
 
 const DJZS_JOURNAL_SCHEMA = {
   type: "json_schema" as const,
   json_schema: {
     name: "djzs_journal_v1",
+    strict: true,
     schema: {
       type: "object",
       additionalProperties: false,
@@ -68,7 +72,7 @@ function buildUserPrompt(
 
   if (recentEntries.length > 0) {
     prompt += "## Recent Entries\n";
-    recentEntries.forEach((e, i) => {
+    recentEntries.forEach((e) => {
       const date = new Date(e.createdAt).toLocaleDateString();
       prompt += `### ${date}\n${e.content.slice(0, 500)}${e.content.length > 500 ? "..." : ""}\n\n`;
     });
@@ -79,6 +83,41 @@ function buildUserPrompt(
   prompt += "\n\n---\nAnalyze this entry in context of my recent writing.";
 
   return prompt;
+}
+
+async function callVenice(
+  apiKey: string,
+  model: string,
+  messages: { role: string; content: string }[],
+): Promise<string> {
+  const response = await fetch(`${VENICE_API_BASE}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.7,
+      max_tokens: 1000,
+      response_format: DJZS_JOURNAL_SCHEMA,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Venice API error [${model}]: ${response.status} — ${errorText}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+
+  if (!content) {
+    throw new Error(`No content in Venice response from model: ${model}`);
+  }
+
+  return content;
 }
 
 export async function analyzeJournalEntry(
@@ -92,37 +131,31 @@ export async function analyzeJournalEntry(
     throw new Error("VENICE_API_KEY not configured");
   }
 
-  const response = await fetch(`${VENICE_API_BASE}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "llama-3.3-70b",
-      messages: [
-        { role: "system", content: buildJournalSystemPrompt() },
-        { role: "user", content: buildUserPrompt(entry, recentEntries) },
-      ],
-      temperature: 0.7,
-      max_tokens: 1000,
-    }),
-  });
+  const messages = [
+    { role: "system", content: buildJournalSystemPrompt() },
+    { role: "user", content: buildUserPrompt(entry, recentEntries) },
+  ];
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("Venice API error:", response.status, errorText);
-    throw new Error(`Venice API error: ${response.status}`);
+  let content: string;
+
+  try {
+    content = await callVenice(apiKey, PRIMARY_MODEL, messages);
+    console.log(`[Venice] Audit completed via primary model: ${PRIMARY_MODEL}`);
+  } catch (primaryError) {
+    console.warn(`[Venice] Primary model (${PRIMARY_MODEL}) failed — falling back to ${FALLBACK_MODEL}:`, primaryError);
+    try {
+      content = await callVenice(apiKey, FALLBACK_MODEL, messages);
+      console.log(`[Venice] Audit completed via fallback model: ${FALLBACK_MODEL}`);
+    } catch (fallbackError) {
+      console.error(`[Venice] Both models failed. Fallback error:`, fallbackError);
+      throw new Error(`Venice inference failed on both ${PRIMARY_MODEL} and ${FALLBACK_MODEL}`);
+    }
   }
 
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content;
-  
-  if (!content) {
-    throw new Error("No content in Venice response");
-  }
+  const sanitized = content.replace(/[\x00-\x1F\x7F]/g, (ch: string) =>
+    ch === '\n' || ch === '\r' || ch === '\t' ? ch : ' '
+  );
 
-  const sanitizedContent = content.replace(/[\x00-\x1F\x7F]/g, (ch: string) => ch === '\n' || ch === '\r' || ch === '\t' ? ch : ' ');
-  const parsed = JSON.parse(sanitizedContent);
+  const parsed = JSON.parse(sanitized);
   return journalAnalysisSchema.parse(parsed);
 }
