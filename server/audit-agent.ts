@@ -15,6 +15,7 @@ import {
   getAbortTriggers,
   type EscrowContext,
 } from "./adversarial-audit";
+import { readAuditPendingEvent } from "./escrow-contract";
 
 export interface AuditInput {
   strategy_memo: string;
@@ -28,6 +29,7 @@ export interface AuditInput {
   escrow_id?: number;
   escrow_context?: EscrowContext;
   execution_trace_hash?: `0x${string}`;
+  escrow_tx_hash?: string;
 }
 
 export interface ProofOfLogicCertificate extends AuditResult {
@@ -43,6 +45,7 @@ export interface ProofOfLogicCertificate extends AuditResult {
   
   should_abort?: boolean;
   abort_reasons?: string[];
+  on_chain_hash_verified?: boolean;
 }
 
 const TIER_CONFIG: Record<AuditTier, {
@@ -84,6 +87,7 @@ export async function executeAudit(
     escrow_id,
     escrow_context,
     execution_trace_hash,
+    escrow_tx_hash,
   } = input;
 
   const tierConfig = TIER_CONFIG[tier];
@@ -95,13 +99,55 @@ export async function executeAudit(
 
   const audit_id = crypto.randomUUID();
   const timestamp = new Date().toISOString();
+  let onChainHashVerified = false;
+  let resolvedEscrowContext = escrow_context;
 
-  if (execution_trace_hash) {
+  if (escrow_tx_hash) {
+    console.log(`[Audit ${audit_id}] Reading AuditPending event from tx ${escrow_tx_hash}`);
+    const eventData = await readAuditPendingEvent(escrow_tx_hash);
+
+    if (escrow_id !== undefined && Number(eventData.escrowId) !== escrow_id) {
+      throw new Error(
+        `Escrow ID mismatch — request escrow_id ${escrow_id} does not match ` +
+        `on-chain event escrowId ${eventData.escrowId} from tx ${escrow_tx_hash}`
+      );
+    }
+
+    const hashValid = verifyTraceHash(strategy_memo, eventData.executionTraceHash);
+    if (!hashValid) {
+      const computedHash = computeTraceHash(strategy_memo);
+      throw new Error(
+        `Hash mismatch — strategy memo has been tampered. ` +
+        `On-chain: ${eventData.executionTraceHash}, computed: ${computedHash}`
+      );
+    }
+    onChainHashVerified = true;
+    console.log(`[Audit ${audit_id}] On-chain hash verification passed (escrow ${eventData.escrowId})`);
+
+    if (!resolvedEscrowContext) {
+      resolvedEscrowContext = {
+        escrow_id: Number(eventData.escrowId),
+        amount: Number(eventData.amount) / 1e6,
+        tier,
+        creator: eventData.creator,
+        recipient: eventData.recipient,
+      };
+    }
+  } else if (execution_trace_hash) {
     const hashValid = verifyTraceHash(strategy_memo, execution_trace_hash);
     if (!hashValid) {
       throw new Error("Hash mismatch — strategy memo has been tampered");
     }
+    onChainHashVerified = true;
     console.log(`[Audit ${audit_id}] Hash verification passed`);
+  }
+
+  if (!resolvedEscrowContext && escrow_id) {
+    resolvedEscrowContext = {
+      escrow_id,
+      amount: 0,
+      tier,
+    };
   }
 
   const selectedPersona = persona || tierConfig.default_persona;
@@ -112,12 +158,6 @@ export async function executeAudit(
     .digest("hex");
 
   const keccak256_hash = computeTraceHash(strategy_memo);
-
-  const resolvedEscrowContext = escrow_context || (escrow_id ? {
-    escrow_id,
-    amount: 0,
-    tier,
-  } : undefined);
 
   const result = await veniceClient.audit(
     strategy_memo,
@@ -139,6 +179,7 @@ export async function executeAudit(
     keccak256_hash,
     should_abort: abort,
     abort_reasons: abortReasons.length > 0 ? abortReasons : undefined,
+    on_chain_hash_verified: onChainHashVerified || undefined,
     ...result,
   };
 

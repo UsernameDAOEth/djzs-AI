@@ -236,6 +236,18 @@ export function getFailureDefinition(code: string) {
   return LOGIC_FAILURE_TAXONOMY[code as LogicFailureCode] ?? null;
 }
 
+export const escrowAuditRequestSchema = z.object({
+  escrow_id: z.number().int().positive(),
+  escrow_tx_hash: z.string().regex(/^0x[0-9a-fA-F]+$/, "Must be a valid hex string"),
+  strategy_memo: z.string().min(20, "Strategy memo must be at least 20 characters"),
+  audit_type: z.enum(["treasury", "founder_drift", "strategy", "general"]).default("general").optional(),
+  intelligence_context: z.string().optional(),
+  trade_params: tradeParamsSchema.optional(),
+  agent_id: z.string().optional(),
+});
+
+export type EscrowAuditRequest = z.infer<typeof escrowAuditRequestSchema>;
+
 export function validateMemoLength(memo: string, tier: AuditTier): boolean {
   const config = TIER_CONFIG[tier];
   if (config.maxMemoLength === Infinity) return true;
