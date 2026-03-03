@@ -94,10 +94,13 @@ The XMTP agent listener (`server/agent.ts`) runs concurrently with the REST API 
 | Micro-Zone | `POST /api/audit/micro` | $2.50 | 1,000 chars | Operational sanity checks, binary risk scoring |
 | Founder Zone | `POST /api/audit/founder` | $5.00 | 5,000 chars | Strategic roadmap diligence, narrative drift detection |
 | Treasury Zone | `POST /api/audit/treasury` | $50.00 | Unlimited | Exhaustive adversarial stress-test for capital deployment decisions |
+| Escrow Zone | `POST /api/audit/escrow` | Escrow-funded | Per tier | On-chain escrow audit with hash verification + settlement callback |
 
 `POST /api/audit` is a backward-compatible alias for Micro-Zone.
 
 **Treasury Zone** runs an uncapped adversarial analysis designed for high-stakes capital deployment — multiple reasoning passes, full DJZS-LF sweep, and structural recommendations. Appropriate when the cost of a bad decision materially exceeds $50.
+
+**Escrow Zone** is for agents with on-chain escrow contracts. No x402 payment required — the escrow IS the payment. The Oracle verifies the caller's signature, reads the `AuditPending` event from the escrow transaction, verifies the strategy memo hash on-chain, runs the adversarial audit, uploads to Irys, and settles the escrow contract on Base Mainnet.
 
 ### Request Format
 
@@ -112,6 +115,22 @@ curl -X POST https://YOUR_ORACLE_URL/api/audit/micro \
   }'
 ```
 
+### Escrow Request Format
+
+```bash
+curl -X POST https://YOUR_ORACLE_URL/api/audit/escrow \
+  -H "Content-Type: application/json" \
+  -H "x-escrow-signature: 0xSIGNATURE_FROM_RECIPIENT_WALLET" \
+  -d '{
+    "escrow_id": 42,
+    "escrow_tx_hash": "0xTRANSACTION_HASH_CONTAINING_AUDIT_PENDING_EVENT",
+    "strategy_memo": "Proposal to bridge 500K USDC from Ethereum to Base via official bridge for yield optimization.",
+    "audit_type": "treasury"
+  }'
+```
+
+The `x-escrow-signature` header must be an EIP-191 signature of the message `DJZS-AUDIT:{escrowId}:{keccak256(strategy_memo)}`, signed by the escrow recipient's wallet.
+
 ### Request Fields
 
 | Field | Type | Required | Description |
@@ -119,6 +138,11 @@ curl -X POST https://YOUR_ORACLE_URL/api/audit/micro \
 | `strategy_memo` | string | Yes | The reasoning trace to audit (min 20 chars) |
 | `audit_type` | string | No | `treasury`, `founder_drift`, `strategy`, or `general` (default: `general`) |
 | `target_system` | string | No | Project name or wallet address — tags the Irys upload for GraphQL discoverability |
+| `escrow_id` | number | Escrow only | On-chain escrow ID (positive integer) |
+| `escrow_tx_hash` | string | Escrow only | Transaction hash containing the `AuditPending` event |
+| `intelligence_context` | string | No | Pre-flight intelligence brief from `/api/intelligence/brief` |
+| `trade_params` | object | No | Structured trade parameters for deterministic trade auditing |
+| `agent_id` | string | No | Wallet address or XMTP identity for reputation tracking |
 
 ### Payment Flow
 
@@ -126,6 +150,18 @@ curl -X POST https://YOUR_ORACLE_URL/api/audit/micro \
 2. Agent includes the TX hash in the `x-payment-proof` header
 3. Oracle verifies on-chain via viem: confirms TX success, decodes ERC-20 Transfer logs, validates recipient and amount, checks replay attacks (each TX hash is single-use)
 4. On verification, the adversarial audit runs and the ProofOfLogic certificate is minted on Irys
+
+### Escrow Audit Flow
+
+For agents using on-chain escrow contracts, the flow is different — no x402 payment required:
+
+1. Agent creates an escrow on the DJZS Escrow Contract (Base Mainnet), which emits an `AuditPending` event containing `escrowId`, `creator`, `recipient`, `executionTraceHash`, and `amount`
+2. Agent signs the message `DJZS-AUDIT:{escrowId}:{keccak256(strategy_memo)}` with the recipient wallet
+3. Agent calls `POST /api/audit/escrow` with the signature in `x-escrow-signature` header, plus `escrow_id`, `escrow_tx_hash`, and `strategy_memo` in the body
+4. Oracle verifies: (a) signature proves caller is the escrow recipient, (b) escrow is not already settled, (c) `executionTraceHash` from the on-chain event matches `keccak256(strategy_memo)` — rejecting tampered memos, (d) `escrow_id` in the request matches the event's `escrowId` — preventing mismatch attacks
+5. Adversarial audit runs, ProofOfLogic certificate is uploaded to Irys Datachain
+6. Oracle calls `settleEscrow(escrowId, passed, irisTxId)` on-chain — releasing or freezing funds based on the verdict
+7. Response includes the full certificate, Irys provenance, and `settlement_tx_hash`
 
 ---
 
@@ -135,18 +171,34 @@ Every successful audit returns a deterministic JSON certificate. The verdict is 
 
 ```json
 {
-  "audit_id": "fe1f14d0-73ac-4467-ac33-d76bf3fdce21",
-  "timestamp": "2026-02-25T00:58:33.760Z",
+  "audit_id": "219a7394-0132-4e02-b2cf-00dfdb28a0ec",
+  "timestamp": "2026-03-03T22:33:20.601Z",
   "tier": "micro",
-  "risk_score": 0,
-  "verdict": "PASS",
-  "primary_bias_detected": "None",
-  "flags": [],
-  "logic_flaws": [],
-  "structural_recommendations": [
-    "Continue to utilize fundamental arithmetic operations as a baseline for logical verification"
+  "verdict": "FAIL",
+  "risk_score": 90,
+  "primary_flaw": "DJZS-X01",
+  "summary": "The strategy fails due to critical logic and risk management flaws, including circular logic, authority substitution, and lack of risk bounds.",
+  "flags": [
+    {
+      "code": "DJZS-S01",
+      "severity": "CRITICAL",
+      "evidence": "The conclusion that ETH will keep going up is based on the premise that it has been going up for 3 days, which is a circular logic.",
+      "recommendation": "Consider multiple factors and historical data to support the conclusion."
+    },
+    {
+      "code": "DJZS-X01",
+      "severity": "CRITICAL",
+      "evidence": "No stop loss is defined, which means there are no risk bounds.",
+      "recommendation": "Define a stop loss and consider position sizing to manage risk."
+    }
   ],
-  "cryptographic_hash": "0e4576dd63709edd70573146b5e7255e79295cfe3eb18e517f03ab2e27d2850d",
+  "should_abort": true,
+  "abort_reasons": [
+    "DJZS-S01 (CRITICAL): The conclusion that ETH will keep going up is based on the premise that it has been going up for 3 days.",
+    "DJZS-X01 (CRITICAL): No stop loss is defined, which means there are no risk bounds."
+  ],
+  "cryptographic_hash": "3afb941dabed235a39fcdcaf862153dd6593dfdae6d62f4e1b3b8f55e9e202f8",
+  "keccak256_hash": "0xe10053b20f9bf900329f372951d9d45a9b3e7f8584fb5493fd61549564e3676d",
   "provenance_provider": "IRYS_DATACHAIN",
   "irys_tx_id": "71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
   "irys_url": "https://gateway.irys.xyz/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH"
@@ -155,16 +207,24 @@ Every successful audit returns a deterministic JSON certificate. The verdict is 
 
 The `irys_url` is permanent and public — no API key, no auth, no expiration. Anyone can verify the AI's reasoning by visiting the gateway URL directly.
 
+Escrow audit responses additionally include `settlement_tx_hash`, `escrow_id`, `escrow_creator`, and `escrow_recipient`.
+
 ### Key Fields
 
 | Field | Description |
 |---|---|
 | `verdict` | `PASS` or `FAIL` — deterministic, binary |
 | `risk_score` | 0–100 (0 = flawless logic, 100 = critically compromised) |
-| `flags` | Array of DJZS-LF failure codes with severity and description |
+| `primary_flaw` | The dominant DJZS-LF failure code, or `"None"` |
+| `summary` | One-sentence natural language summary of the audit result |
+| `flags` | Array of DJZS-LF failure codes with `severity`, `evidence`, and `recommendation` |
+| `should_abort` | Boolean — `true` if the agent should halt execution |
+| `abort_reasons` | Array of human-readable abort trigger descriptions |
 | `cryptographic_hash` | SHA-256 of the input strategy memo — tamper detection |
+| `keccak256_hash` | Keccak-256 of the strategy memo — for on-chain verification |
 | `irys_tx_id` | Permanent Irys receipt — the immutable audit record |
 | `irys_url` | Direct public gateway link to the certificate |
+| `settlement_tx_hash` | (Escrow only) Base Mainnet TX hash of the `settleEscrow` call |
 
 ---
 
@@ -172,15 +232,19 @@ The `irys_url` is permanent and public — no API key, no auth, no expiration. A
 
 All detected reasoning flaws are mapped to strict, machine-parseable codes. **Autonomous agents should halt execution on `CRITICAL` or `HIGH` severity flags.**
 
-| Code | Category | Name | Severity | Auto-Abort |
-|---|---|---|---|---|
-| `DJZS-S01` | Structural | CIRCULAR_LOGIC | Critical | Yes |
-| `DJZS-S02` | Structural | MISSING_FALSIFIABILITY | Critical | Yes |
-| `DJZS-E01` | Epistemic | CONFIRMATION_TUNNEL | High | Yes |
-| `DJZS-E02` | Epistemic | AUTHORITY_SUBSTITUTION | High | Yes |
-| `DJZS-I01` | Incentive | MISALIGNED_INCENTIVE | Medium | No (Review) |
-| `DJZS-I02` | Incentive | NARRATIVE_DEPENDENCY | Medium | No (Review) |
-| `DJZS-X01` | Execution | UNHEDGED_EXECUTION | Critical | Yes |
+| Code | Category | Name | Severity | Auto-Abort | Risk Points |
+|---|---|---|---|---|---|
+| `DJZS-S01` | Structural | CIRCULAR_LOGIC | Critical | Yes | 30 |
+| `DJZS-S02` | Structural | MISSING_FALSIFIABILITY | Critical | Yes | 25 |
+| `DJZS-E01` | Epistemic | CONFIRMATION_TUNNEL | High | Yes | 20 |
+| `DJZS-E02` | Epistemic | AUTHORITY_SUBSTITUTION | High | Yes | 20 |
+| `DJZS-I01` | Incentive | MISALIGNED_INCENTIVE | Medium | No (Review) | 15 |
+| `DJZS-I02` | Incentive | NARRATIVE_DEPENDENCY | Medium | No (Review) | 15 |
+| `DJZS-X01` | Execution | UNHEDGED_EXECUTION | Critical | Yes | 25 |
+| `DJZS-X02` | Execution | DATA_DEPENDENCY | High | Yes | 15 |
+| `DJZS-X03` | Execution | COMPLEXITY_EXCESS | Medium | No (Review) | 10 |
+| `DJZS-T01` | Temporal | TEMPORAL_ASSUMPTION | High | Yes | 15 |
+| `DJZS-T02` | Temporal | REGIME_BLINDNESS | Medium | No (Review) | 15 |
 
 ---
 
@@ -224,6 +288,7 @@ Returns:
 | `GET /api/audit/schema` | Full API schema with pricing, field definitions, and integration details |
 | `GET /api/audit/logs` | Paginated audit history |
 | `GET /api/audit/verify/:txId` | Public certificate verification via Irys Datachain |
+| `POST /api/audit/escrow` | Escrow-funded audit with on-chain hash verification + settlement callback |
 
 ---
 
@@ -369,6 +434,8 @@ npm start         # Production: boots API + XMTP Agent via concurrently
 | `VENICE_BASE_URL` | Venice API base URL (default: `https://api.venice.ai/api/v1`) |
 | `XMTP_WALLET_KEY` | 0x-prefixed hex private key for XMTP Oracle identity |
 | `XMTP_ENV` | XMTP environment: `dev` or `production` |
+| `ESCROW_CONTRACT_ADDRESS` | Deployed DJZS Escrow Contract address on Base Mainnet |
+| `SETTLEMENT_PRIVATE_KEY` | 0x-prefixed hex private key for the settlement wallet (signs `settleEscrow` transactions) |
 
 ---
 
