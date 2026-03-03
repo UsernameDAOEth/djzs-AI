@@ -4,6 +4,16 @@ import {
   type JournalEntry, 
 } from "@shared/schema";
 import { DJZS_CORE_IDENTITY } from "./ai-identity";
+import {
+  ADVERSARIAL_AUDIT_PROMPT,
+  buildAuditMessages,
+  buildQuickAuditMessages,
+  parseAuditResponse,
+  formatResultForLog,
+  type AdversarialAuditResult,
+  type AdversarialAuditFlag,
+  type EscrowContext,
+} from "./adversarial-audit";
 
 const VENICE_BASE_URL = process.env.VENICE_BASE_URL || "https://api.venice.ai/api/v1";
 const VENICE_API_KEY = process.env.VENICE_API_KEY;
@@ -70,11 +80,7 @@ Identify:
 Calculate worst-case scenarios with specific loss amounts.
 Output valid JSON only. No prose, no markdown.`,
 
-  general: `You are DJZS Adversarial Oracle — a deterministic logic auditor for the A2A economy.
-
-Analyze for logical flaws, cognitive biases, and execution risks.
-Apply DJZS-LF failure taxonomy. Be direct. Challenge assumptions.
-Output valid JSON only. No prose, no markdown.`
+  general: ADVERSARIAL_AUDIT_PROMPT
 };
 
 const PERSONA_MODELS: Record<AdversarialPersona, VeniceModel> = {
@@ -106,22 +112,25 @@ interface VeniceResponse {
 export interface AuditResult {
   verdict: "PASS" | "FAIL";
   risk_score: number;
-  confidence: number;
-  primary_bias_detected: string;
+  primary_flaw: string;
+  summary: string;
   flags: {
     code: string;
     severity: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO";
-    description: string;
-    recommendation?: string;
+    evidence: string;
+    recommendation: string;
+    description?: string;
   }[];
-  logic_flaws: string[];
+  confidence?: number;
+  primary_bias_detected?: string;
+  logic_flaws?: string[];
   scenarios?: {
     name: string;
     outcome: string;
     estimated_impact: string;
   }[];
-  structural_recommendations: string[];
-  action_items: string[];
+  structural_recommendations?: string[];
+  action_items?: string[];
   model_used: string;
   persona_used: AdversarialPersona;
 }
@@ -194,55 +203,50 @@ export class VeniceClient {
   async audit(
     strategyMemo: string,
     persona: AdversarialPersona = "general",
-    metadata?: { tier?: string; auditType?: string; targetSystem?: string; intelligenceContext?: string; tradeParams?: Record<string, unknown> }
+    metadata?: { tier?: string; auditType?: string; targetSystem?: string; intelligenceContext?: string; tradeParams?: Record<string, unknown>; escrowContext?: EscrowContext }
   ): Promise<AuditResult> {
-    const systemPrompt = PERSONA_SYSTEM_PROMPTS[persona];
     const model = PERSONA_MODELS[persona];
 
-    let userPrompt = `
-AUDIT REQUEST
-Tier: ${metadata?.tier || "micro"}
-Type: ${metadata?.auditType || "general"}
-Target: ${metadata?.targetSystem || "Unknown"}
-`;
+    let messages: VeniceMessage[];
 
-    if (metadata?.intelligenceContext) {
-      userPrompt += `\nFOUNDER INTELLIGENCE BRIEF\n${metadata.intelligenceContext}\n`;
-    }
+    if (persona === "general") {
+      const escrowCtx = metadata?.escrowContext;
+      if (escrowCtx || (metadata?.tier && metadata.tier !== "micro")) {
+        messages = buildAuditMessages(strategyMemo, escrowCtx) as VeniceMessage[];
+      } else {
+        messages = buildQuickAuditMessages(strategyMemo) as VeniceMessage[];
+      }
+    } else {
+      const systemPrompt = PERSONA_SYSTEM_PROMPTS[persona];
 
-    userPrompt += `\nSTRATEGY MEMO\n${strategyMemo}\n`;
+      let userPrompt = `<strategy_memo>\n${strategyMemo}\n</strategy_memo>`;
 
-    if (metadata?.tradeParams) {
-      userPrompt += `\nSTRUCTURED TRADE PARAMETERS\n${JSON.stringify(metadata.tradeParams, null, 2)}\n`;
-    }
+      if (metadata?.intelligenceContext) {
+        userPrompt += `\n\n<intelligence_brief>\n${metadata.intelligenceContext}\n</intelligence_brief>`;
+      }
 
-    userPrompt += `
-Return JSON with: verdict ("PASS"/"FAIL"), risk_score (0-100), confidence (0-1), primary_bias_detected, flags (array with code/severity/description), logic_flaws (array), scenarios (array, optional), structural_recommendations (array), action_items (array).${metadata?.intelligenceContext ? ' Factor the Founder Intelligence Brief into your analysis.' : ''}${metadata?.tradeParams ? ' Cross-reference trade_params against strategy_memo — flag parameter/narrative mismatches.' : ''}`;
-    userPrompt = userPrompt.trim();
+      if (metadata?.tradeParams) {
+        userPrompt += `\n\n<trade_params>\n${JSON.stringify(metadata.tradeParams, null, 2)}\n</trade_params>`;
+      }
 
-    const content = await this.chat(
-      [
+      userPrompt += `\n\nReturn JSON with: verdict ("PASS"/"FAIL"), risk_score (0-100), primary_flaw, summary, flags (array with code/severity/evidence/recommendation).`;
+      if (metadata?.intelligenceContext) userPrompt += " Factor the intelligence brief into your analysis.";
+      if (metadata?.tradeParams) userPrompt += " Cross-reference trade_params against strategy_memo — flag parameter/narrative mismatches.";
+
+      messages = [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
-      ],
-      model
-    );
+      ];
+    }
+
+    const content = await this.chat(messages, model, 0);
 
     try {
-      let cleanContent = content
-        .replace(/```json\n?/g, "")
-        .replace(/```\n?/g, "")
-        .trim();
+      const parsed = parseAuditResponse(content);
 
-      const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        cleanContent = jsonMatch[0];
-      }
-      
-      const parsed = JSON.parse(cleanContent);
-      
       return {
         ...parsed,
+        flags: parsed.flags.map(f => ({ ...f, description: f.evidence })),
         model_used: model,
         persona_used: persona,
       };
@@ -250,16 +254,14 @@ Return JSON with: verdict ("PASS"/"FAIL"), risk_score (0-100), confidence (0-1),
       return {
         verdict: "FAIL",
         risk_score: 50,
-        confidence: 0.3,
-        primary_bias_detected: "Response parsing error",
+        primary_flaw: "Response parsing error",
+        summary: "Failed to parse AI response as structured JSON",
         flags: [{
           code: "DJZS-X99",
           severity: "HIGH" as const,
-          description: "Failed to parse AI response as JSON",
+          evidence: "Venice returned content that could not be parsed as valid JSON",
+          recommendation: "Retry the audit",
         }],
-        logic_flaws: ["AI response was not valid JSON"],
-        structural_recommendations: ["Retry audit"],
-        action_items: ["Review raw response"],
         model_used: model,
         persona_used: persona,
       };

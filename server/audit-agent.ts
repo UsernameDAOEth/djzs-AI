@@ -6,6 +6,15 @@ import {
   type AdversarialPersona,
 } from "./venice";
 import type { AuditTier } from "@shared/audit-schema";
+import {
+  verifyTraceHash,
+  computeTraceHash,
+  mapToLegacyFormat,
+  shouldAbort as shouldAbortResult,
+  formatResultForLog,
+  getAbortTriggers,
+  type EscrowContext,
+} from "./adversarial-audit";
 
 export interface AuditInput {
   strategy_memo: string;
@@ -16,6 +25,9 @@ export interface AuditInput {
   intelligence_context?: string;
   trade_params?: Record<string, unknown>;
   agent_id?: string;
+  escrow_id?: number;
+  escrow_context?: EscrowContext;
+  execution_trace_hash?: `0x${string}`;
 }
 
 export interface ProofOfLogicCertificate extends AuditResult {
@@ -23,10 +35,14 @@ export interface ProofOfLogicCertificate extends AuditResult {
   timestamp: string;
   tier: AuditTier;
   cryptographic_hash: string;
+  keccak256_hash?: string;
   
   provenance_provider?: "IRYS_DATACHAIN";
   irys_tx_id?: string;
   irys_url?: string;
+  
+  should_abort?: boolean;
+  abort_reasons?: string[];
 }
 
 const TIER_CONFIG: Record<AuditTier, {
@@ -65,6 +81,9 @@ export async function executeAudit(
     persona,
     intelligence_context,
     trade_params,
+    escrow_id,
+    escrow_context,
+    execution_trace_hash,
   } = input;
 
   const tierConfig = TIER_CONFIG[tier];
@@ -74,26 +93,52 @@ export async function executeAudit(
     );
   }
 
-  const selectedPersona = persona || tierConfig.default_persona;
-
   const audit_id = crypto.randomUUID();
   const timestamp = new Date().toISOString();
+
+  if (execution_trace_hash) {
+    const hashValid = verifyTraceHash(strategy_memo, execution_trace_hash);
+    if (!hashValid) {
+      throw new Error("Hash mismatch — strategy memo has been tampered");
+    }
+    console.log(`[Audit ${audit_id}] Hash verification passed`);
+  }
+
+  const selectedPersona = persona || tierConfig.default_persona;
+
   const cryptographic_hash = crypto
     .createHash("sha256")
     .update(strategy_memo)
     .digest("hex");
 
+  const keccak256_hash = computeTraceHash(strategy_memo);
+
+  const resolvedEscrowContext = escrow_context || (escrow_id ? {
+    escrow_id,
+    amount: 0,
+    tier,
+  } : undefined);
+
   const result = await veniceClient.audit(
     strategy_memo,
     selectedPersona,
-    { tier, auditType: audit_type, targetSystem: target_system, intelligenceContext: intelligence_context, tradeParams: trade_params }
+    { tier, auditType: audit_type, targetSystem: target_system, intelligenceContext: intelligence_context, tradeParams: trade_params, escrowContext: resolvedEscrowContext }
   );
+
+  console.log(`[Audit ${audit_id}] ${formatResultForLog(result)}`);
+
+  const abortTriggers = getAbortTriggers(result);
+  const abort = shouldAbortResult(result);
+  const abortReasons = abortTriggers.map(f => `${f.code} (${f.severity}): ${f.evidence}`);
 
   const certificate: ProofOfLogicCertificate = {
     audit_id,
     timestamp,
     tier,
     cryptographic_hash,
+    keccak256_hash,
+    should_abort: abort,
+    abort_reasons: abortReasons.length > 0 ? abortReasons : undefined,
     ...result,
   };
 
@@ -165,10 +210,8 @@ export async function handleXMTPMessage(
 }
 
 export function shouldAutoAbort(cert: ProofOfLogicCertificate): boolean {
-  const criticalCodes = ["DJZS-S01", "DJZS-S02", "DJZS-E01", "DJZS-E02", "DJZS-X01"];
-  return cert.flags.some(
-    f => criticalCodes.includes(f.code) || f.severity === "CRITICAL"
-  );
+  if (cert.should_abort) return true;
+  return shouldAbortResult(cert);
 }
 
 export interface LegacyAuditLog {
@@ -191,6 +234,8 @@ export function mapToLegacyAuditLog(
   cert: ProofOfLogicCertificate,
   extras?: { strategyMemo?: string; auditType?: string; walletAddress?: string | null; irysTxId?: string | null }
 ): LegacyAuditLog {
+  const legacy = mapToLegacyFormat(cert);
+
   return {
     auditId: cert.audit_id,
     tier: cert.tier,
@@ -198,10 +243,12 @@ export function mapToLegacyAuditLog(
     riskScore: cert.risk_score,
     strategyMemo: extras?.strategyMemo,
     auditType: extras?.auditType || "general",
-    primaryBiasDetected: cert.primary_bias_detected,
-    flags: cert.flags.map(f => ({ code: f.code, severity: f.severity, message: f.description })),
-    logicFlaws: cert.logic_flaws.map(f => typeof f === "string" ? { flaw_type: "detected", severity: "medium", explanation: f } : f as any),
-    structuralRecommendations: cert.structural_recommendations,
+    primaryBiasDetected: cert.primary_bias_detected || legacy.primaryBiasDetected || cert.primary_flaw || "None",
+    flags: cert.flags.map(f => ({ code: f.code, severity: f.severity, message: f.description || f.evidence || "" })),
+    logicFlaws: (cert.logic_flaws || legacy.logicFlaws).map(f =>
+      typeof f === "string" ? { flaw_type: "detected", severity: "medium", explanation: f } : f as any
+    ),
+    structuralRecommendations: cert.structural_recommendations || legacy.structuralRecommendations,
     cryptographicHash: cert.cryptographic_hash,
     walletAddress: extras?.walletAddress,
     irysTxId: extras?.irysTxId,
