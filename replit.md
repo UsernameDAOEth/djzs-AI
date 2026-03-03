@@ -55,6 +55,35 @@ Preferred communication style: Simple, everyday language.
   - `DJZS-I01` MISALIGNED_INCENTIVE — Proposed action benefits proposer disproportionately vs stated stakeholders.
   - `DJZS-I02` NARRATIVE_DEPENDENCY — Strategy survival depends on a specific narrative remaining true; no hedge.
   - `DJZS-X01` UNHEDGED_EXECUTION — No fallback plan; single point of failure with no abort conditions.
+  - `DJZS-X02` DATA_DEPENDENCY — Strategy depends on data source that may be stale, manipulated, or unavailable.
+  - `DJZS-X03` COMPLEXITY_EXCESS — Unnecessary complexity; simpler approach achieves same outcome with lower risk.
+  - `DJZS-T01` TEMPORAL_ASSUMPTION — Strategy assumes specific timing/sequencing that may not hold.
+  - `DJZS-T02` REGIME_BLINDNESS — Strategy assumes current market regime persists indefinitely.
+- **Adversarial Audit Module** (`server/adversarial-audit.ts`):
+  - Full `ADVERSARIAL_AUDIT_PROMPT` with expanded DJZS-LF taxonomy, deterministic verdict rules, and risk score calculation
+  - `buildAuditMessages()` / `buildQuickAuditMessages()` for structured prompt construction with escrow context support
+  - `parseAuditResponse()` for strict JSON validation of Venice responses
+  - `computeTraceHash()` / `verifyTraceHash()` for on-chain keccak256 hash verification via viem
+  - `mapToLegacyFormat()` for backward compatibility with legacy audit log shape
+  - `shouldAbort()` / `getAbortTriggers()` for deterministic kill-switch logic
+  - New `AuditResult` shape: `primary_flaw` + `summary` + flags with `evidence`/`recommendation` (legacy fields preserved as optional)
+- **Escrow Contract Integration** (`server/escrow-contract.ts`):
+  - ABI for DJZS Escrow Contract: `AuditPending` event, `settleEscrow` function, `getEscrow` view function
+  - `readAuditPendingEvent(txHash)` — reads tx receipt, decodes `AuditPending` event, returns escrow metadata + on-chain `executionTraceHash`
+  - `callSettleEscrow(escrowId, passed, irisTxId)` — sends settlement transaction on Base Mainnet via `SETTLEMENT_PRIVATE_KEY`
+  - `readEscrowState(escrowId)` — reads on-chain escrow state (creator, recipient, amount, hash, settled)
+  - Requires `ESCROW_CONTRACT_ADDRESS` and `SETTLEMENT_PRIVATE_KEY` env vars; warns gracefully on startup if missing
+- **Signature Verification** (`server/signature-verifier.ts`):
+  - `buildSignatureMessage(escrowId, memoHash)` — deterministic EIP-191 message format: `DJZS-AUDIT:${escrowId}:${memoHash}`
+  - `verifyCallerIsRecipient(signature, escrowId, memoHash, expectedAddress)` — recovers signer via `viem.verifyMessage`, compares to expected recipient
+  - `requireEscrowSignature()` — Express middleware that validates `x-escrow-signature` header, reads on-chain escrow state, verifies caller is recipient, attaches `req.escrowData` for downstream use
+- **Escrow Audit Endpoint**: `POST /api/audit/escrow` — escrow-funded audit flow (no x402 payment):
+  1. Signature verification middleware proves caller is escrow recipient
+  2. Reads `AuditPending` event from `escrow_tx_hash`, verifies strategy_memo hash on-chain
+  3. Runs adversarial audit via Venice AI
+  4. Uploads ProofOfLogic certificate to Irys Datachain
+  5. Calls `settleEscrow(escrowId, passed, irisTxId)` on Base Mainnet
+  6. Returns certificate + `settlement_tx_hash` + Irys provenance
 
 ### Local-First Vault
 - **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI insights, memory pins, trade artifacts, market alerts, and audit records.

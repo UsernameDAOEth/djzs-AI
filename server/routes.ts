@@ -14,12 +14,14 @@ async function getGitHubClient() {
   }
   return _cachedGitHubImport.getUncachableGitHubClient();
 }
-import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
+import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier, escrowAuditRequestSchema } from "@shared/audit-schema";
 import { executeAudit, mapToLegacyAuditLog } from "./audit-agent";
 import { VeniceClient } from "./venice";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
 import { uploadAuditToIrys } from "./irys";
+import { callSettleEscrow } from "./escrow-contract";
+import { requireEscrowSignature } from "./signature-verifier";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -746,6 +748,122 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/audit/treasury", createVerifiedPaymentGate("treasury"), createTierHandler("treasury"));
   app.post("/api/audit", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
 
+  app.post("/api/audit/escrow", requireEscrowSignature(), async (req: any, res) => {
+    try {
+      const parsed = escrowAuditRequestSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          error: "Invalid escrow audit request",
+          details: parsed.error.errors,
+        });
+      }
+
+      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
+      const veniceClient = userVeniceKey ? new VeniceClient(userVeniceKey) : undefined;
+
+      const escrowData = req.escrowData;
+      const tier: AuditTier = escrowData?.amount
+        ? (Number(escrowData.amount) >= 50_000_000 ? "treasury" : Number(escrowData.amount) >= 5_000_000 ? "founder" : "micro")
+        : "micro";
+
+      const audit = await executeAudit({
+        strategy_memo: parsed.data.strategy_memo,
+        audit_type: parsed.data.audit_type || "general",
+        tier,
+        intelligence_context: parsed.data.intelligence_context,
+        trade_params: parsed.data.trade_params,
+        agent_id: parsed.data.agent_id,
+        escrow_id: parsed.data.escrow_id,
+        escrow_tx_hash: parsed.data.escrow_tx_hash,
+      }, veniceClient);
+
+      const irysPayload: Record<string, any> = {
+        ...audit,
+        audit_type: parsed.data.audit_type || "general",
+        escrow_id: parsed.data.escrow_id,
+        ...(parsed.data.agent_id && { agent_id: parsed.data.agent_id }),
+        ...(parsed.data.trade_params && { trade_params: parsed.data.trade_params }),
+      };
+      const irysResult = await uploadAuditToIrys(irysPayload);
+
+      let settlement_tx_hash: string | undefined;
+      let settlement_error: string | undefined;
+      if (irysResult.irys_tx_id) {
+        try {
+          const escrowIdBigInt = BigInt(parsed.data.escrow_id);
+          const passed = audit.verdict === "PASS";
+          console.log(`[Escrow ${parsed.data.escrow_id}] Settling on-chain: passed=${passed}, irisTxId=${irysResult.irys_tx_id}`);
+          settlement_tx_hash = await callSettleEscrow(escrowIdBigInt, passed, irysResult.irys_tx_id);
+          console.log(`[Escrow ${parsed.data.escrow_id}] Settlement tx: ${settlement_tx_hash}`);
+        } catch (settlementErr) {
+          const msg = settlementErr instanceof Error ? settlementErr.message : "Unknown error";
+          settlement_error = msg;
+          console.error(`[Escrow ${parsed.data.escrow_id}] Settlement failed:`, msg);
+        }
+      } else {
+        settlement_error = "Irys upload failed — settlement deferred until certificate is permanently stored";
+        console.warn(`[Escrow ${parsed.data.escrow_id}] ${settlement_error}`);
+      }
+
+      try {
+        const legacyLog = mapToLegacyAuditLog(audit, {
+          strategyMemo: parsed.data.strategy_memo,
+          auditType: parsed.data.audit_type || "general",
+          walletAddress: escrowData?.recipient || null,
+          irysTxId: irysResult.irys_tx_id,
+        });
+        await storage.createAuditLog(legacyLog);
+      } catch (dbError) {
+        console.error("Failed to persist escrow audit log:", dbError);
+      }
+
+      const response: Record<string, any> = {
+        ...audit,
+        provenance_provider: "IRYS_DATACHAIN",
+        irys_tx_id: irysResult.irys_tx_id,
+        irys_url: irysResult.irys_url,
+        escrow_id: parsed.data.escrow_id,
+        ...(settlement_tx_hash && { settlement_tx_hash }),
+        ...(settlement_error && { settlement_error }),
+        ...(irysResult.irys_error && { irys_error: irysResult.irys_error }),
+        ...(escrowData && {
+          escrow_creator: escrowData.creator,
+          escrow_recipient: escrowData.recipient,
+        }),
+      };
+
+      res.json(response);
+    } catch (error) {
+      console.error("Escrow Audit failed:", error);
+      if (error instanceof Error && error.message.includes("Hash mismatch")) {
+        return res.status(409).json({
+          error: "Hash verification failed",
+          message: error.message,
+          code: "DJZS-HASH-MISMATCH",
+        });
+      }
+      if (error instanceof Error && error.message.includes("Escrow ID mismatch")) {
+        return res.status(409).json({
+          error: "Escrow ID mismatch",
+          message: error.message,
+          code: "DJZS-ESCROW-MISMATCH",
+        });
+      }
+      if (error instanceof Error && (error.message.includes("ESCROW_CONTRACT_ADDRESS") || error.message.includes("SETTLEMENT_PRIVATE_KEY") || error.message.includes("BASE_RPC_URL"))) {
+        return res.status(503).json({
+          error: "Escrow service not configured",
+          code: "DJZS-ESCROW-CONFIG",
+        });
+      }
+      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
+        return res.status(503).json({ error: "AI service not configured" });
+      }
+      res.status(500).json({
+        error: "Escrow audit execution failed",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  });
 
   app.get("/api/audit/verify/:txId", async (req, res) => {
     try {
@@ -837,6 +955,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           description: TIER_CONFIG.treasury.description,
           memo_limit: "unlimited",
         },
+      },
+      escrow: {
+        endpoint: "POST /api/audit/escrow",
+        price: "Escrow-funded (no x402 payment required)",
+        description: "Escrow-aware audit flow. Requires on-chain escrow via DJZS Escrow Contract. Verifies caller signature (x-escrow-signature header), reads AuditPending event from escrow_tx_hash, verifies strategy_memo hash on-chain, runs adversarial audit, uploads to Irys, and settles escrow on Base Mainnet.",
+        requires: ["x-escrow-signature header", "escrow_id", "escrow_tx_hash", "strategy_memo"],
+        escrow_contract: process.env.ESCROW_CONTRACT_ADDRESS || "not configured",
       },
       verification: {
         endpoint: "GET /api/audit/verify/:txId",
