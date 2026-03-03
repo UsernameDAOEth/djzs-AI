@@ -55,6 +55,18 @@ Preferred communication style: Simple, everyday language.
   - `DJZS-I01` MISALIGNED_INCENTIVE — Proposed action benefits proposer disproportionately vs stated stakeholders.
   - `DJZS-I02` NARRATIVE_DEPENDENCY — Strategy survival depends on a specific narrative remaining true; no hedge.
   - `DJZS-X01` UNHEDGED_EXECUTION — No fallback plan; single point of failure with no abort conditions.
+  - `DJZS-X02` DATA_DEPENDENCY — Strategy depends on data source that may be stale, manipulated, or unavailable.
+  - `DJZS-X03` COMPLEXITY_EXCESS — Unnecessary complexity; simpler approach achieves same outcome with lower risk.
+  - `DJZS-T01` TEMPORAL_ASSUMPTION — Strategy assumes specific timing/sequencing that may not hold.
+  - `DJZS-T02` REGIME_BLINDNESS — Strategy assumes current market regime persists indefinitely.
+- **Adversarial Audit Module** (`server/adversarial-audit.ts`):
+  - Full `ADVERSARIAL_AUDIT_PROMPT` with expanded DJZS-LF taxonomy, deterministic verdict rules, and risk score calculation
+  - `buildAuditMessages()` / `buildQuickAuditMessages()` for structured prompt construction with escrow context support
+  - `parseAuditResponse()` for strict JSON validation of Venice responses
+  - `computeTraceHash()` / `verifyTraceHash()` for on-chain keccak256 hash verification via viem
+  - `mapToLegacyFormat()` for backward compatibility with legacy audit log shape
+  - `shouldAbort()` / `getAbortTriggers()` for deterministic kill-switch logic
+  - New `AuditResult` shape: `primary_flaw` + `summary` + flags with `evidence`/`recommendation` (legacy fields preserved as optional)
 
 ### Local-First Vault
 - **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI insights, memory pins, trade artifacts, market alerts, and audit records.
