@@ -53,3 +53,7 @@ VENICE_MODEL = "deepseek-v3.2"
 
 [agent]
 integrations = ["github:1.0.0"]
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
