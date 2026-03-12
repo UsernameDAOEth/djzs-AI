@@ -155,7 +155,6 @@ async function main() {
   console.log("║    5 End-to-End Runs: Audit → Irys → Escrow Gate           ║");
   console.log("╚══════════════════════════════════════════════════════════════╝");
   console.log(`\nTimestamp: ${new Date().toISOString()}`);
-  console.log(`IRYS_PRIVATE_KEY: ${process.env.IRYS_PRIVATE_KEY ? "configured" : "NOT SET"}`);
   console.log(`ESCROW_CONTRACT_ADDRESS: ${process.env.ESCROW_CONTRACT_ADDRESS || "NOT SET (settlement will be deferred)"}`);
   console.log(`TRUST_SCORE_CONTRACT_ADDRESS: ${process.env.TRUST_SCORE_CONTRACT_ADDRESS || "NOT SET (chain write will be skipped)"}`);
   console.log(`ESCROW_TRUST_THRESHOLD: ${process.env.ESCROW_TRUST_THRESHOLD || "40 (default)"}`);
