@@ -677,7 +677,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 </div>
                 <div className="p-3 rounded-lg bg-muted border border-border">
                   <p className="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-1">Oracle Address</p>
-                  <code className="text-xs text-foreground font-mono break-all" data-testid="text-oracle-address">0xC5Ab9496233c1e51eD21c712e8abc86a3F434fc5</code>
+                  <code className="text-xs text-foreground font-mono break-all" data-testid="text-oracle-address">0xc2eCfe214071C2B77f90111f222E4a4D25ac3A98</code>
                 </div>
                 <div className="p-3 rounded-lg bg-muted border border-border">
                   <p className="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-1">Message Prefixes</p>
@@ -1388,6 +1388,59 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
           </div>
         </motion.section>
 
+        <motion.section variants={fadeUp} className="mb-20" data-testid="section-deployed-contracts">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Deployed Contracts</h2>
+          <p className="text-muted-foreground mb-8">All DJZS Protocol contracts are live on Base Mainnet. Click any address to verify on BaseScan.</p>
+          <div className="overflow-x-auto rounded-xl border border-border">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border bg-muted/50">
+                  <th className="text-left px-6 py-4 font-bold text-foreground">Contract</th>
+                  <th className="text-left px-6 py-4 font-bold text-foreground">Address</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name: "DJZSAgentRegistry", address: "0xe40d5669Ce8e06A91188B82Ce7292175E2013E41" },
+                  { name: "DJZSLogicTrustScore", address: "0xB3324D07A8713b354435FF0e2A982A504e81b137" },
+                  { name: "DJZSStaking", address: "0xA362947D23D52C05a431E378F30C8A962De91e8A" },
+                  { name: "DJZSEscrowLock", address: "0xB041760147a60F63Ca701da9e431412bCc25Cfb7" },
+                ].map((c) => (
+                  <tr key={c.name} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4 font-mono text-foreground font-medium" data-testid={`text-contract-name-${c.name}`}>{c.name}</td>
+                    <td className="px-6 py-4">
+                      <a
+                        href={`https://basescan.org/address/${c.address}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-teal-500 hover:text-teal-400 transition-colors flex items-center gap-2 break-all"
+                        data-testid={`link-contract-${c.name}`}
+                      >
+                        {c.address}
+                        <ExternalLink className="w-3 h-3 shrink-0" />
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-6 p-4 rounded-lg bg-muted/50 border border-border">
+            <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">ERC-8004 Registration</p>
+            <a
+              href="https://basescan.org/tx/0x99b9fcfc64af207771afde1851fa7e569e5161d5bb166dbd000b44743bd1ce23"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs text-teal-500 hover:text-teal-400 transition-colors flex items-center gap-2 break-all"
+              data-testid="link-erc8004-registration"
+            >
+              0x99b9fcfc64af207771afde1851fa7e569e5161d5bb166dbd000b44743bd1ce23
+              <ExternalLink className="w-3 h-3 shrink-0" />
+            </a>
+            <p className="text-xs text-muted-foreground mt-2">On-chain agent identity minted on Base Mainnet via the Synthesis hackathon registration contract.</p>
+          </div>
+        </motion.section>
+
         <motion.section variants={fadeUp} className="mb-20">
           <h2 className="text-2xl font-bold text-foreground mb-2">Quick Links</h2>
           <p className="text-muted-foreground mb-8">Jump to the tools, docs, and endpoints you need.</p>
@@ -1417,7 +1470,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               testId="link-terms"
             />
             <QuickLink 
-              href="https://github.com/UsernameDAOEth/djzs-box"
+              href="https://github.com/UsernameDAOEth/djzs-AI"
               title="GitHub Repository"
               description="Open-source protocol code, Docker image, and deployment scripts"
               external
