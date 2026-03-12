@@ -12,11 +12,19 @@ module.exports = {
       accounts: { mnemonic: process.env.DEPLOYER_MNEMONIC || "" },
       chainId: 8453,
     },
-    baseSepolia: {
-      url: process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
-      accounts: { mnemonic: process.env.DEPLOYER_MNEMONIC || "" },
-      chainId: 84532,
+  },
+  etherscan: {
+    apiKey: {
+      base: process.env.BASESCAN_API_KEY || "",
     },
+    customChains: [{
+      network: "base",
+      chainId: 8453,
+      urls: {
+        apiURL: "https://api.basescan.org/api",
+        browserURL: "https://basescan.org",
+      },
+    }],
   },
   paths: { sources: "./contracts", artifacts: "./artifacts", cache: "./cache" },
 };
