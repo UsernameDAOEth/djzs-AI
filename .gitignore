@@ -15,8 +15,6 @@ vite.config.ts.*
 *.db3-wal
 
 deploy-nft/
-contracts/
-hardhat*.config.*
 deploy*.mjs
 connect-wallet-modal.png
 full_page.png

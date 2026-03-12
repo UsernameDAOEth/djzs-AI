@@ -67,6 +67,19 @@ Preferred communication style: Simple, everyday language.
   - `mapToLegacyFormat()` for backward compatibility with legacy audit log shape
   - `shouldAbort()` / `getAbortTriggers()` for deterministic kill-switch logic
   - New `AuditResult` shape: `primary_flaw` + `summary` + flags with `evidence`/`recommendation` (legacy fields preserved as optional)
+- **On-Chain Trust Score Writer** (`server/chainWriter.ts`):
+  - `writeTrustScore({ agentAddress, verdict, riskScore, flags, irysTxId })` — calls `DJZSLogicTrustScore.updateScore()` on Base Mainnet
+  - `readLatestTrustScore(agentAddress)` — reads latest trust score from on-chain contract
+  - Wired into both tiered audit endpoints and escrow audit endpoint; fires after Irys upload succeeds
+  - Requires `TRUST_SCORE_CONTRACT_ADDRESS`, `SETTLEMENT_PRIVATE_KEY`, and `BASE_RPC_URL` env vars; gracefully skipped if not configured
+  - Audit responses include `trust_score_tx_hash` when chain write succeeds
+- **Solidity Contracts** (`contracts/`):
+  - `DJZSLogicTrustScore.sol` — on-chain trust score registry with authorized writer access control
+  - `DJZSEscrowLock.sol` — USDC escrow with AuditPending/Settled lifecycle
+  - `DJZSStaking.sol` — agent staking with time lock and slashing
+  - `DJZSAgentRegistry.sol` — on-chain agent registry with metadata
+  - Deployment: `hardhat.config.cjs` + `scripts/deploy.cjs` for Base Mainnet
+  - Documentation: `CONTRACTS.md` with full interface reference
 - **Escrow Contract Integration** (`server/escrow-contract.ts`):
   - ABI for DJZS Escrow Contract: `AuditPending` event, `settleEscrow` function, `getEscrow` view function
   - `readAuditPendingEvent(txHash)` — reads tx receipt, decodes `AuditPending` event, returns escrow metadata + on-chain `executionTraceHash`

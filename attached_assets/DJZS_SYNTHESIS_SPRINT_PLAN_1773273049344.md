@@ -14,7 +14,7 @@
 |---|---|
 | Participant ID | `1edf7b02720e4cda9596470328e7bd92` |
 | Team ID | `13b341fbe3684cfda9a56b510ec2e15f` |
-| API Key | `<REDACTED>` |
+| API Key | `REDACTED — see environment secrets` |
 | On-Chain TX | `0x99b9fcfc64af207771afde1851fa7e569e5161d5bb166dbd000b44743bd1ce23` |
 | ERC-8004 | Live on Base Mainnet |
 

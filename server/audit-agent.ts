@@ -7,6 +7,7 @@ import {
   type IntelligenceContext,
 } from "./venice";
 import type { AuditTier } from "@shared/audit-schema";
+import { writeTrustScore, type ChainWriterResult } from "./chainWriter";
 import {
   verifyTraceHash,
   computeTraceHash,
@@ -326,6 +327,26 @@ export async function runLogicAuditAgent(
     trade_params: request.trade_params,
     agent_id: request.agent_id,
   }, client);
+}
+
+export async function postAuditChainWrite(
+  audit: ProofOfLogicCertificate,
+  agentAddress: string | undefined,
+  irysTxId: string | null
+): Promise<ChainWriterResult> {
+  if (!irysTxId || !agentAddress || !process.env.TRUST_SCORE_CONTRACT_ADDRESS) {
+    return { trust_score_tx_hash: null };
+  }
+  const flagCodes = Array.isArray(audit.flags)
+    ? audit.flags.map((f: any) => f.code || "").filter(Boolean)
+    : [];
+  return writeTrustScore({
+    agentAddress,
+    verdict: audit.verdict,
+    riskScore: audit.risk_score,
+    flags: flagCodes,
+    irysTxId,
+  });
 }
 
 export { TIER_CONFIG as AUDIT_TIER_CONFIG };
