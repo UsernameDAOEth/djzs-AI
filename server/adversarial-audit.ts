@@ -177,25 +177,29 @@ export function buildQuickAuditMessages(
   ];
 }
 
-export function parseAuditResponse(responseText: string): AdversarialAuditResult {
-  let text = responseText.trim();
-
-  if (text.startsWith("```json")) text = text.slice(7);
-  if (text.startsWith("```")) text = text.slice(3);
-  if (text.endsWith("```")) text = text.slice(0, -3);
-  text = text.trim();
-
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    text = jsonMatch[0];
-  }
-
-  let result: AdversarialAuditResult;
-
+function tryDirectParse(text: string): AdversarialAuditResult | null {
   try {
-    result = JSON.parse(text);
-  } catch (e) {
-    throw new Error(`Venice returned invalid JSON: ${e}`);
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+function tryRegexExtract(text: string): AdversarialAuditResult | null {
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) return null;
+  try {
+    return JSON.parse(jsonMatch[0]);
+  } catch {
+    return null;
+  }
+}
+
+function validateAuditResult(raw: unknown): AdversarialAuditResult {
+  const result = raw as AdversarialAuditResult;
+
+  if (!result || typeof result !== "object") {
+    throw new Error("Parsed value is not an object");
   }
 
   if (!["PASS", "FAIL"].includes(result.verdict)) {
@@ -207,7 +211,7 @@ export function parseAuditResponse(responseText: string): AdversarialAuditResult
   }
 
   if (!Array.isArray(result.flags)) {
-    throw new Error("flags must be an array");
+    result.flags = [];
   }
 
   if (!result.primary_flaw) {
@@ -219,6 +223,50 @@ export function parseAuditResponse(responseText: string): AdversarialAuditResult
   }
 
   return result;
+}
+
+function buildParseErrorResult(reason: string, responseText: string): AdversarialAuditResult {
+  return {
+    verdict: "FAIL",
+    risk_score: 50,
+    flags: [{
+      code: "DJZS-X99",
+      severity: "HIGH" as const,
+      evidence: `${reason} (length=${responseText.length}): ${responseText.slice(0, 200)}`,
+      recommendation: "Retry the audit — model returned non-JSON content",
+    }],
+    primary_flaw: "Response parsing error",
+    summary: "Failed to parse AI response as structured JSON",
+  };
+}
+
+export function parseAuditResponse(responseText: string): AdversarialAuditResult {
+  let text = responseText.trim();
+
+  if (text.startsWith("```json")) text = text.slice(7);
+  if (text.startsWith("```")) text = text.slice(3);
+  if (text.endsWith("```")) text = text.slice(0, -3);
+  text = text.trim();
+
+  const direct = tryDirectParse(text);
+  if (direct) {
+    try {
+      return validateAuditResult(direct);
+    } catch {
+      return buildParseErrorResult("Schema validation failed on direct parse", responseText);
+    }
+  }
+
+  const regex = tryRegexExtract(text);
+  if (regex) {
+    try {
+      return validateAuditResult(regex);
+    } catch {
+      return buildParseErrorResult("Schema validation failed on regex extract", responseText);
+    }
+  }
+
+  return buildParseErrorResult("Unparseable response", responseText);
 }
 
 export function computeTraceHash(strategyMemo: string): `0x${string}` {

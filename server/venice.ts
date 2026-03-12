@@ -17,6 +17,10 @@ import {
 
 const VENICE_BASE_URL = process.env.VENICE_BASE_URL || "https://api.venice.ai/api/v1";
 const VENICE_API_KEY = process.env.VENICE_API_KEY;
+const VENICE_TIMEOUT_MS = (() => {
+  const val = parseInt(process.env.VENICE_TIMEOUT_MS || "30000", 10);
+  return Number.isFinite(val) && val > 0 ? val : 30000;
+})();
 
 export const VENICE_MODELS = {
   LLAMA_3_3_70B: "llama-3.3-70b",
@@ -27,6 +31,27 @@ export const VENICE_MODELS = {
 
 type VeniceModel = typeof VENICE_MODELS[keyof typeof VENICE_MODELS];
 const DEFAULT_MODEL: VeniceModel = VENICE_MODELS.LLAMA_3_3_70B;
+
+export interface IntelligenceContext {
+  market_data?: {
+    prices?: Record<string, number>;
+    volumes?: Record<string, number>;
+    sentiment?: string;
+    timestamp?: string;
+  };
+  risk_parameters?: {
+    max_drawdown?: number;
+    position_limit?: number;
+    stop_loss?: number;
+    leverage_cap?: number;
+  };
+  historical_context?: {
+    prior_audits?: { audit_id: string; verdict: string; risk_score: number }[];
+    performance_history?: { period: string; return_pct: number }[];
+    notes?: string;
+  };
+  custom?: Record<string, unknown>;
+}
 
 export type AdversarialPersona = 
   | "logic_auditor"
@@ -83,13 +108,44 @@ Output valid JSON only. No prose, no markdown.`,
   general: ADVERSARIAL_AUDIT_PROMPT
 };
 
-const PERSONA_MODELS: Record<AdversarialPersona, VeniceModel> = {
-  logic_auditor: VENICE_MODELS.LLAMA_3_3_70B,
-  regime_detector: VENICE_MODELS.QWEN3_235B,
-  backtest_skeptic: VENICE_MODELS.DEEPSEEK_R1,
-  risk_hunter: VENICE_MODELS.LLAMA_3_3_70B,
-  general: VENICE_MODELS.LLAMA_3_3_70B,
-};
+function getPersonaModel(persona: AdversarialPersona): VeniceModel {
+  const envKey = `VENICE_MODEL_${persona.toUpperCase()}`;
+  const envVal = process.env[envKey];
+  if (envVal) return envVal as VeniceModel;
+
+  const globalOverride = process.env.VENICE_DEFAULT_MODEL;
+  if (globalOverride) return globalOverride as VeniceModel;
+
+  const defaults: Record<AdversarialPersona, VeniceModel> = {
+    logic_auditor: VENICE_MODELS.LLAMA_3_3_70B,
+    regime_detector: VENICE_MODELS.QWEN3_235B,
+    backtest_skeptic: VENICE_MODELS.DEEPSEEK_R1,
+    risk_hunter: VENICE_MODELS.LLAMA_3_3_70B,
+    general: VENICE_MODELS.LLAMA_3_3_70B,
+  };
+  return defaults[persona];
+}
+
+const RETRY_DELAYS_MS = [1000, 2000, 4000];
+const RETRYABLE_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
+const NON_RETRYABLE_STATUS_CODES = new Set([400, 401, 403]);
+
+function isRetryableError(err: unknown, statusCode?: number): boolean {
+  if (statusCode !== undefined) {
+    if (NON_RETRYABLE_STATUS_CODES.has(statusCode)) return false;
+    if (RETRYABLE_STATUS_CODES.has(statusCode)) return true;
+  }
+  if (err instanceof Error) {
+    if (err.name === "AbortError") return false;
+    if (err.message.includes("Venice API error 4") && !err.message.includes("Venice API error 429")) return false;
+    return true;
+  }
+  return false;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 interface VeniceMessage {
   role: "system" | "user" | "assistant";
@@ -154,58 +210,91 @@ export class VeniceClient {
     temperature: number = 0.2,
     options?: { responseFormat?: object; timeoutMs?: number }
   ): Promise<string> {
-    const timeoutMs = options?.timeoutMs || 120_000;
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    const timeoutMs = options?.timeoutMs || VENICE_TIMEOUT_MS;
+    const maxRetries = RETRY_DELAYS_MS.length;
+    let lastError: Error | undefined;
 
-    try {
-      const body: Record<string, unknown> = {
-        model,
-        messages,
-        max_tokens: 2048,
-        temperature,
-        venice_parameters: {
-          include_venice_system_prompt: false,
-        },
-      };
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-      if (options?.responseFormat) {
-        body.response_format = options.responseFormat;
+      try {
+        const body: Record<string, unknown> = {
+          model,
+          messages,
+          max_tokens: 2048,
+          temperature,
+          venice_parameters: {
+            include_venice_system_prompt: false,
+          },
+        };
+
+        if (options?.responseFormat) {
+          body.response_format = options.responseFormat;
+        }
+
+        const response = await fetch(`${this.baseUrl}/chat/completions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.apiKey}`,
+          },
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          const err = new Error(`Venice API error ${response.status}: ${errorText}`);
+
+          if (attempt < maxRetries && isRetryableError(err, response.status)) {
+            console.warn(`[Venice] Attempt ${attempt + 1}/${maxRetries + 1} failed (${response.status}), retrying in ${RETRY_DELAYS_MS[attempt]}ms...`);
+            lastError = err;
+            clearTimeout(timer);
+            await sleep(RETRY_DELAYS_MS[attempt]);
+            continue;
+          }
+          throw err;
+        }
+
+        const data: VeniceResponse = await response.json();
+        return data.choices[0]?.message?.content || "";
+      } catch (err: unknown) {
+        clearTimeout(timer);
+
+        if (err instanceof Error && err.name === "AbortError") {
+          const timeoutErr = new Error(`Venice API timed out after ${timeoutMs / 1000}s (model: ${model})`);
+          if (attempt < maxRetries) {
+            console.warn(`[Venice] Attempt ${attempt + 1}/${maxRetries + 1} timed out, retrying in ${RETRY_DELAYS_MS[attempt]}ms...`);
+            lastError = timeoutErr;
+            await sleep(RETRY_DELAYS_MS[attempt]);
+            continue;
+          }
+          throw timeoutErr;
+        }
+
+        if (attempt < maxRetries && isRetryableError(err)) {
+          console.warn(`[Venice] Attempt ${attempt + 1}/${maxRetries + 1} failed (${(err as Error).message}), retrying in ${RETRY_DELAYS_MS[attempt]}ms...`);
+          lastError = err as Error;
+          await sleep(RETRY_DELAYS_MS[attempt]);
+          continue;
+        }
+
+        throw err;
+      } finally {
+        clearTimeout(timer);
       }
-
-      const response = await fetch(`${this.baseUrl}/chat/completions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Venice API error ${response.status}: ${errorText}`);
-      }
-
-      const data: VeniceResponse = await response.json();
-      return data.choices[0]?.message?.content || "";
-    } catch (err: unknown) {
-      if (err instanceof Error && err.name === "AbortError") {
-        throw new Error(`Venice API timed out after ${timeoutMs / 1000}s (model: ${model})`);
-      }
-      throw err;
-    } finally {
-      clearTimeout(timer);
     }
+
+    throw lastError || new Error("Venice API request failed after all retries");
   }
 
   async audit(
     strategyMemo: string,
     persona: AdversarialPersona = "general",
-    metadata?: { tier?: string; auditType?: string; targetSystem?: string; intelligenceContext?: string; tradeParams?: Record<string, unknown>; escrowContext?: EscrowContext }
+    metadata?: { tier?: string; auditType?: string; targetSystem?: string; intelligenceContext?: string | IntelligenceContext; tradeParams?: Record<string, unknown>; escrowContext?: EscrowContext }
   ): Promise<AuditResult> {
-    const model = PERSONA_MODELS[persona];
+    const model = getPersonaModel(persona);
 
     let messages: VeniceMessage[];
 
@@ -222,7 +311,10 @@ export class VeniceClient {
       let userPrompt = `<strategy_memo>\n${strategyMemo}\n</strategy_memo>`;
 
       if (metadata?.intelligenceContext) {
-        userPrompt += `\n\n<intelligence_brief>\n${metadata.intelligenceContext}\n</intelligence_brief>`;
+        const ctxStr = typeof metadata.intelligenceContext === "string"
+          ? metadata.intelligenceContext
+          : JSON.stringify(metadata.intelligenceContext, null, 2);
+        userPrompt += `\n\n<intelligence_brief>\n${ctxStr}\n</intelligence_brief>`;
       }
 
       if (metadata?.tradeParams) {
@@ -241,31 +333,14 @@ export class VeniceClient {
 
     const content = await this.chat(messages, model, 0);
 
-    try {
-      const parsed = parseAuditResponse(content);
+    const parsed = parseAuditResponse(content);
 
-      return {
-        ...parsed,
-        flags: parsed.flags.map(f => ({ ...f, description: f.evidence })),
-        model_used: model,
-        persona_used: persona,
-      };
-    } catch {
-      return {
-        verdict: "FAIL",
-        risk_score: 50,
-        primary_flaw: "Response parsing error",
-        summary: "Failed to parse AI response as structured JSON",
-        flags: [{
-          code: "DJZS-X99",
-          severity: "HIGH" as const,
-          evidence: "Venice returned content that could not be parsed as valid JSON",
-          recommendation: "Retry the audit",
-        }],
-        model_used: model,
-        persona_used: persona,
-      };
-    }
+    return {
+      ...parsed,
+      flags: parsed.flags.map(f => ({ ...f, description: f.evidence })),
+      model_used: model,
+      persona_used: persona,
+    };
   }
 }
 
@@ -393,4 +468,4 @@ export async function analyzeJournalEntry(
   return journalAnalysisSchema.parse(parsed);
 }
 
-export { PERSONA_SYSTEM_PROMPTS, PERSONA_MODELS, DEFAULT_MODEL };
+export { PERSONA_SYSTEM_PROMPTS, getPersonaModel, DEFAULT_MODEL };

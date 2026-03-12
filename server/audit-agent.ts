@@ -4,6 +4,7 @@ import {
   getVeniceClient,
   type AuditResult,
   type AdversarialPersona,
+  type IntelligenceContext,
 } from "./venice";
 import type { AuditTier } from "@shared/audit-schema";
 import {
@@ -23,7 +24,7 @@ export interface AuditInput {
   target_system?: string;
   tier?: AuditTier;
   persona?: AdversarialPersona;
-  intelligence_context?: string;
+  intelligence_context?: string | IntelligenceContext;
   trade_params?: Record<string, unknown>;
   agent_id?: string;
   escrow_id?: number;
@@ -159,13 +160,28 @@ export async function executeAudit(
 
   const keccak256_hash = computeTraceHash(strategy_memo);
 
+  const startTime = Date.now();
+
   const result = await veniceClient.audit(
     strategy_memo,
     selectedPersona,
     { tier, auditType: audit_type, targetSystem: target_system, intelligenceContext: intelligence_context, tradeParams: trade_params, escrowContext: resolvedEscrowContext }
   );
 
+  const duration_ms = Date.now() - startTime;
+
   console.log(`[Audit ${audit_id}] ${formatResultForLog(result)}`);
+  console.log(JSON.stringify({
+    event: "audit_complete",
+    audit_id,
+    verdict: result.verdict,
+    risk_score: result.risk_score,
+    flag_count: result.flags.length,
+    duration_ms,
+    tier,
+    persona: selectedPersona,
+    model: result.model_used,
+  }));
 
   const abortTriggers = getAbortTriggers(result);
   const abort = shouldAbortResult(result);
@@ -297,7 +313,7 @@ export function mapToLegacyAuditLog(
 }
 
 export async function runLogicAuditAgent(
-  request: { strategy_memo: string; audit_type?: string; intelligence_context?: string; trade_params?: Record<string, unknown>; agent_id?: string },
+  request: { strategy_memo: string; audit_type?: string; intelligence_context?: string | IntelligenceContext; trade_params?: Record<string, unknown>; agent_id?: string },
   tier: AuditTier = "micro",
   apiKeyOverride?: string
 ): Promise<ProofOfLogicCertificate> {
