@@ -20,8 +20,8 @@ import { VeniceClient } from "./venice";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
 import { uploadAuditToIrys } from "./irys";
-import { callSettleEscrow } from "./escrow-contract";
 import { requireEscrowSignature } from "./signature-verifier";
+import { evaluateEscrowGate } from "./escrowGate";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -792,27 +792,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const irysResult = await uploadAuditToIrys(irysPayload);
 
-      let settlement_tx_hash: string | undefined;
-      let settlement_error: string | undefined;
-      if (irysResult.irys_tx_id) {
-        try {
-          const escrowIdBigInt = BigInt(parsed.data.escrow_id);
-          const passed = audit.verdict === "PASS";
-          console.log(`[Escrow ${parsed.data.escrow_id}] Settling on-chain: passed=${passed}, irisTxId=${irysResult.irys_tx_id}`);
-          settlement_tx_hash = await callSettleEscrow(escrowIdBigInt, passed, irysResult.irys_tx_id);
-          console.log(`[Escrow ${parsed.data.escrow_id}] Settlement tx: ${settlement_tx_hash}`);
-        } catch (settlementErr) {
-          const msg = settlementErr instanceof Error ? settlementErr.message : "Unknown error";
-          settlement_error = msg;
-          console.error(`[Escrow ${parsed.data.escrow_id}] Settlement failed:`, msg);
-        }
-      } else {
-        settlement_error = "Irys upload failed — settlement deferred until certificate is permanently stored";
-        console.warn(`[Escrow ${parsed.data.escrow_id}] ${settlement_error}`);
-      }
-
       const escrowAgentAddr = parsed.data.agent_id || escrowData?.recipient;
       const escrowTrustScoreResult = await postAuditChainWrite(audit, escrowAgentAddr, irysResult.irys_tx_id);
+
+      const gateResult = await evaluateEscrowGate({
+        audit,
+        irysResult,
+        chainWriteResult: escrowTrustScoreResult,
+        escrowContext: {
+          escrowId: parsed.data.escrow_id,
+          creator: escrowData?.creator,
+          recipient: escrowData?.recipient,
+          amount: escrowData?.amount,
+        },
+      });
 
       try {
         const legacyLog = mapToLegacyAuditLog(audit, {
@@ -832,8 +825,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         irys_tx_id: irysResult.irys_tx_id,
         irys_url: irysResult.irys_url,
         escrow_id: parsed.data.escrow_id,
-        ...(settlement_tx_hash && { settlement_tx_hash }),
-        ...(settlement_error && { settlement_error }),
+        escrow_action: gateResult.action,
+        trust_score: gateResult.gate_event.trust_score,
+        trust_threshold: gateResult.gate_event.threshold,
+        ...(gateResult.settlement_tx_hash && { settlement_tx_hash: gateResult.settlement_tx_hash }),
+        ...(gateResult.settlement_error && { settlement_error: gateResult.settlement_error }),
         ...(irysResult.irys_error && { irys_error: irysResult.irys_error }),
         ...(escrowTrustScoreResult.trust_score_tx_hash && { trust_score_tx_hash: escrowTrustScoreResult.trust_score_tx_hash }),
         ...(escrowTrustScoreResult.trust_score_error && { trust_score_error: escrowTrustScoreResult.trust_score_error }),

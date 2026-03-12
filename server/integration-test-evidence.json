@@ -1,0 +1,175 @@
+{
+  "timestamp": "2026-03-12T00:58:25.040Z",
+  "total_tests": 5,
+  "results": [
+    {
+      "test_name": "PASS_1: Well-structured DCA strategy with risk bounds",
+      "expected_path": "PASS",
+      "audit_id": "96430652-0ccc-4589-b392-b98ea760044e",
+      "verdict": "FAIL",
+      "risk_score": 65,
+      "trust_score": 35,
+      "flag_count": 3,
+      "flags": [
+        "DJZS-X02 (HIGH)",
+        "DJZS-T01 (HIGH)",
+        "DJZS-I01 (MEDIUM)"
+      ],
+      "irys_tx_id": "BcwhJEV7XfeFz1MARQkmbEnGpwf9uTCuybP1dwVnGYw1",
+      "irys_url": "https://gateway.irys.xyz/BcwhJEV7XfeFz1MARQkmbEnGpwf9uTCuybP1dwVnGYw1",
+      "escrow_action": "LOCK",
+      "settlement_tx_hash": null,
+      "settlement_error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions",
+      "gate_event": {
+        "event": "escrow_gate_decision",
+        "escrow_id": 101,
+        "verdict": "FAIL",
+        "trust_score": 35,
+        "threshold": 40,
+        "action_taken": "LOCK",
+        "tx_hash": null,
+        "irys_tx_id": "BcwhJEV7XfeFz1MARQkmbEnGpwf9uTCuybP1dwVnGYw1",
+        "certificate_hash": "ac1a03900f80b35352b79dc7c37606ebfd080d221ab6d3147b2366d8c4892f7b",
+        "timestamp": "2026-03-12T00:57:44.815Z",
+        "error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions"
+      },
+      "duration_ms": 9885
+    },
+    {
+      "test_name": "PASS_2: Conservative treasury rebalance with explicit risk controls",
+      "expected_path": "PASS",
+      "audit_id": "edf67dc7-8444-4454-8819-10ffd2e0fe26",
+      "verdict": "FAIL",
+      "risk_score": 65,
+      "trust_score": 35,
+      "flag_count": 4,
+      "flags": [
+        "DJZS-E01 (HIGH)",
+        "DJZS-I01 (MEDIUM)",
+        "DJZS-T01 (HIGH)",
+        "DJZS-X02 (HIGH)"
+      ],
+      "irys_tx_id": "2SPDEfFdXUQNLNMsEkvBZ8J5A4njazEj6LnNZ546Ckok",
+      "irys_url": "https://gateway.irys.xyz/2SPDEfFdXUQNLNMsEkvBZ8J5A4njazEj6LnNZ546Ckok",
+      "escrow_action": "LOCK",
+      "settlement_tx_hash": null,
+      "settlement_error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions",
+      "gate_event": {
+        "event": "escrow_gate_decision",
+        "escrow_id": 102,
+        "verdict": "FAIL",
+        "trust_score": 35,
+        "threshold": 40,
+        "action_taken": "LOCK",
+        "tx_hash": null,
+        "irys_tx_id": "2SPDEfFdXUQNLNMsEkvBZ8J5A4njazEj6LnNZ546Ckok",
+        "certificate_hash": "c34f1cfe33cbd74d240b27d1b29ea158146276669cc844a2c77dec19917df9bb",
+        "timestamp": "2026-03-12T00:57:53.502Z",
+        "error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions"
+      },
+      "duration_ms": 8686
+    },
+    {
+      "test_name": "FAIL_1: FOMO-driven leveraged trade with no risk bounds",
+      "expected_path": "FAIL",
+      "audit_id": "45204407-68d5-4794-b39e-7228de4a9c30",
+      "verdict": "FAIL",
+      "risk_score": 95,
+      "trust_score": 5,
+      "flag_count": 5,
+      "flags": [
+        "DJZS-E01 (HIGH)",
+        "DJZS-E02 (HIGH)",
+        "DJZS-S01 (CRITICAL)",
+        "DJZS-X01 (CRITICAL)",
+        "DJZS-I01 (MEDIUM)"
+      ],
+      "irys_tx_id": "G8TNstxkpWVX6zMj9Qizz5Mzj6rajHSSp2csvm3gEKDR",
+      "irys_url": "https://gateway.irys.xyz/G8TNstxkpWVX6zMj9Qizz5Mzj6rajHSSp2csvm3gEKDR",
+      "escrow_action": "LOCK",
+      "settlement_tx_hash": null,
+      "settlement_error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions",
+      "gate_event": {
+        "event": "escrow_gate_decision",
+        "escrow_id": 103,
+        "verdict": "FAIL",
+        "trust_score": 5,
+        "threshold": 40,
+        "action_taken": "LOCK",
+        "tx_hash": null,
+        "irys_tx_id": "G8TNstxkpWVX6zMj9Qizz5Mzj6rajHSSp2csvm3gEKDR",
+        "certificate_hash": "b5839a49766713f7758224108c6e64d25b194ff0d74e992c606879ee16d02d00",
+        "timestamp": "2026-03-12T00:58:11.534Z",
+        "error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions"
+      },
+      "duration_ms": 18033
+    },
+    {
+      "test_name": "FAIL_2: Circular logic with authority substitution",
+      "expected_path": "FAIL",
+      "audit_id": "de234f98-f16e-433e-b003-1199852cca5d",
+      "verdict": "FAIL",
+      "risk_score": 85,
+      "trust_score": 15,
+      "flag_count": 4,
+      "flags": [
+        "DJZS-S01 (CRITICAL)",
+        "DJZS-E02 (MEDIUM)",
+        "DJZS-E01 (MEDIUM)",
+        "DJZS-X01 (CRITICAL)"
+      ],
+      "irys_tx_id": "Hpzv4qEKn7hDrNzyxEByFMbZy25kqvxVwmuCpV4b47Hn",
+      "irys_url": "https://gateway.irys.xyz/Hpzv4qEKn7hDrNzyxEByFMbZy25kqvxVwmuCpV4b47Hn",
+      "escrow_action": "LOCK",
+      "settlement_tx_hash": null,
+      "settlement_error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions",
+      "gate_event": {
+        "event": "escrow_gate_decision",
+        "escrow_id": 104,
+        "verdict": "FAIL",
+        "trust_score": 15,
+        "threshold": 40,
+        "action_taken": "LOCK",
+        "tx_hash": null,
+        "irys_tx_id": "Hpzv4qEKn7hDrNzyxEByFMbZy25kqvxVwmuCpV4b47Hn",
+        "certificate_hash": "79f4ee712062d172f4e62260025ae11866977328fd4df64e1ee13d8d029f64df",
+        "timestamp": "2026-03-12T00:58:18.831Z",
+        "error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions"
+      },
+      "duration_ms": 7297
+    },
+    {
+      "test_name": "EDGE_1: Borderline strategy - PASS verdict but potentially high risk score",
+      "expected_path": "EDGE",
+      "audit_id": "382fa456-ff5d-48c4-ac69-facf3a807d22",
+      "verdict": "FAIL",
+      "risk_score": 65,
+      "trust_score": 35,
+      "flag_count": 3,
+      "flags": [
+        "DJZS-X01 (CRITICAL)",
+        "DJZS-T01 (HIGH)",
+        "DJZS-S02 (HIGH)"
+      ],
+      "irys_tx_id": "8Mjfz7dkWskpWPSpCJTxyXb2SnJGwpTDkAeDAncRcnY8",
+      "irys_url": "https://gateway.irys.xyz/8Mjfz7dkWskpWPSpCJTxyXb2SnJGwpTDkAeDAncRcnY8",
+      "escrow_action": "LOCK",
+      "settlement_tx_hash": null,
+      "settlement_error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions",
+      "gate_event": {
+        "event": "escrow_gate_decision",
+        "escrow_id": 105,
+        "verdict": "FAIL",
+        "trust_score": 35,
+        "threshold": 40,
+        "action_taken": "LOCK",
+        "tx_hash": null,
+        "irys_tx_id": "8Mjfz7dkWskpWPSpCJTxyXb2SnJGwpTDkAeDAncRcnY8",
+        "certificate_hash": "e7c3afcaa60024b90e92afc9eb593a8590753d98dcb42f3e0df521713f769e36",
+        "timestamp": "2026-03-12T00:58:25.035Z",
+        "error": "SETTLEMENT_PRIVATE_KEY environment variable is required for escrow settlement transactions"
+      },
+      "duration_ms": 6204
+    }
+  ]
+}
