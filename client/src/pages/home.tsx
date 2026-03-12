@@ -118,10 +118,10 @@ export default function Home() {
           </Link>
           <div className="flex items-center gap-3 sm:gap-5">
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-              <a href="#demo" className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" data-testid="link-header-test-oracle">
+              <Link href="/demo" className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" data-testid="link-header-test-oracle">
                 <FlaskConical size={15} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
-                Test Oracle
-              </a>
+                Live Demo
+              </Link>
               <Link href="/docs" className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" data-testid="link-header-developers">
                 <BookOpen size={15} className="text-teal-400 group-hover:text-teal-300 transition-colors" />
                 Documents
@@ -174,15 +174,15 @@ export default function Home() {
               className="md:hidden border-t border-border overflow-hidden bg-background/98"
             >
               <nav className="flex flex-col px-4 py-3 gap-1">
-                <a
-                  href="#demo"
+                <Link
+                  href="/demo"
                   className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   onClick={() => setMobileMenuOpen(false)}
                   data-testid="link-mobile-test-oracle"
                 >
                   <FlaskConical size={16} className="text-purple-400" />
-                  Test Oracle
-                </a>
+                  Live Demo
+                </Link>
                 <Link
                   href="/docs"
                   className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
@@ -489,6 +489,17 @@ export default function Home() {
                   )}
                   <span>{demoScanning ? "ORACLE SCANNING..." : "EXECUTE JET AUDIT"}</span>
                 </button>
+
+                <Link
+                  href="/demo"
+                  className="w-full flex items-center justify-center space-x-2 py-3 mt-3 rounded-lg font-bold transition-all hover:-translate-y-0.5 text-white no-underline"
+                  style={{ background: '#F37E20', boxShadow: '0 4px 20px rgba(243,126,32,0.3)' }}
+                  data-testid="link-demo-full-pipeline"
+                >
+                  <FlaskConical size={18} />
+                  <span>Try Full Pipeline Demo</span>
+                  <ArrowRight size={16} />
+                </Link>
               </div>
 
               <div className="p-8 bg-background dark:bg-[#050505] relative min-h-[400px] flex flex-col">

@@ -18,6 +18,7 @@ import Security from "@/pages/security";
 import DashboardLayout, { useDashboardView } from "@/pages/dashboard/dashboard-layout";
 import DashboardOverview from "@/pages/dashboard/dashboard-overview";
 import { AuditLedgerView, RiskParametersView, APISettingsView } from "@/pages/dashboard/dashboard-views";
+import Demo from "@/pages/demo";
 import NotFound from "@/pages/not-found";
 
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -62,6 +63,7 @@ function Router() {
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/security" component={Security} />
+        <Route path="/demo" component={Demo} />
         <Route path="/dashboard">
           <DashboardLayout><DashboardContent /></DashboardLayout>
         </Route>
