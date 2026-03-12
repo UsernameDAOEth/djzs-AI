@@ -1,0 +1,34 @@
+~/workspace$ npx hardhat --config hardhat.config.cjs run scripts/deploy-remaining.cjs --network base
+[dotenv@17.3.1] injecting env (3) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+✖ Help us improve Hardhat with anonymous crash reports & basic usage data? (Y/n) · y
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+Deploying remaining contracts with: 0xc2eCfe214071C2B77f90111f222E4a4D25ac3A98
+DJZSStaking deployed to: 0xA362947D23D52C05a431E378F30C8A962De91e8A
+ProviderError: replacement transaction underpriced
+    at HttpProvider.request (/home/runner/workspace/node_modules/hardhat/src/internal/core/providers/http.ts:116:21)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at HardhatEthersSigner.sendTransaction (/home/runner/workspace/node_modules/@nomicfoundation/hardhat-ethers/src/signers.ts:185:18)
+    at ContractFactory.deploy (/home/runner/workspace/node_modules/ethers/src.ts/contract/factory.ts:111:24)
+    at main (/home/runner/workspace/scripts/deploy-remaining.cjs:16:22)
+~/workspace$ cat > ~/workspace/scripts/deploy-escrow.cjs << 'EOF'
+const hre = require("hardhat");
+async function main() {
+  const [deployer] = await hre.ethers.getSigners();
+  console.log("Deploying DJZSEscrowLock with:", deployer.address);
+  const usdcAddress = process.env.BASE_USDC_ADDRESS || "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+  const EscrowLock = await hre.ethers.getContractFactory("DJZSEscrowLock");
+  const escrowLock = await EscrowLock.deploy(usdcAddress);
+  await escrowLock.waitForDeployment();
+  console.log("DJZSEscrowLock deployed to:", await escrowLock.getAddress());
+}
+main()
+  .then(() => process.exit(0))
+  .catch((error) => { console.error(error); process.exit(1); });
+EOF
+npx hardhat --config hardhat.config.cjs run scripts/deploy-escrow.cjs --network base
+[dotenv@17.3.1] injecting env (3) from .env -- tip: 🤖 agentic secret storage: https://dotenvx.com/as2
+✖ Help us improve Hardhat with anonymous crash reports & basic usage data? (Y/n) · y
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+Deploying DJZSEscrowLock with: 0xc2eCfe214071C2B77f90111f222E4a4D25ac3A98
+DJZSEscrowLock deployed to: 0xB041760147a60F63Ca701da9e431412bCc25Cfb7
+~/workspace$ 

@@ -115,6 +115,8 @@
     "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "@openzeppelin/contracts": "^5.6.1",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
     "@types/connect-pg-simple": "^7.0.3",
@@ -127,8 +129,10 @@
     "@types/react-dom": "^18.3.1",
     "@types/ws": "^8.5.13",
     "autoprefixer": "^10.4.23",
+    "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.4",
     "esbuild": "^0.27.2",
+    "hardhat": "^2.28.6",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7",
