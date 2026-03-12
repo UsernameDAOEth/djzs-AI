@@ -86,6 +86,14 @@ Preferred communication style: Simple, everyday language.
   - `callSettleEscrow(escrowId, passed, irisTxId)` — sends settlement transaction on Base Mainnet via `SETTLEMENT_PRIVATE_KEY`
   - `readEscrowState(escrowId)` — reads on-chain escrow state (creator, recipient, amount, hash, settled)
   - Requires `ESCROW_CONTRACT_ADDRESS` and `SETTLEMENT_PRIVATE_KEY` env vars; warns gracefully on startup if missing
+- **Escrow Gate Module** (`server/escrowGate.ts`):
+  - `evaluateEscrowGate(input)` — Takes audit result + Irys upload result + escrow context, applies gate logic, calls settlement
+  - Gate decision: verdict PASS + trust_score >= threshold → RELEASE; otherwise → LOCK
+  - Trust score = 100 - risk_score (inverse of audit risk score)
+  - Threshold configurable via `ESCROW_TRUST_THRESHOLD` env var (default: 40)
+  - Emits structured `escrow_gate_decision` JSON events with: escrow_id, verdict, trust_score, threshold, action_taken, tx_hash, irys_tx_id, certificate_hash, timestamp
+  - `computeTrustScore()`, `computeCertificateHash()`, `determineAction()` exported for testing
+  - Integration test results documented in `server/escrow-integration-test-results.md`
 - **Signature Verification** (`server/signature-verifier.ts`):
   - `buildSignatureMessage(escrowId, memoHash)` — deterministic EIP-191 message format: `DJZS-AUDIT:${escrowId}:${memoHash}`
   - `verifyCallerIsRecipient(signature, escrowId, memoHash, expectedAddress)` — recovers signer via `viem.verifyMessage`, compares to expected recipient
