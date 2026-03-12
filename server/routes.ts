@@ -15,7 +15,7 @@ async function getGitHubClient() {
   return _cachedGitHubImport.getUncachableGitHubClient();
 }
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier, escrowAuditRequestSchema } from "@shared/audit-schema";
-import { executeAudit, mapToLegacyAuditLog } from "./audit-agent";
+import { executeAudit, mapToLegacyAuditLog, postAuditChainWrite } from "./audit-agent";
 import { VeniceClient } from "./venice";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
@@ -64,6 +64,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         xmtp_agent: process.env.XMTP_WALLET_KEY ? "configured" : "not_configured",
         venice_ai: process.env.VENICE_API_KEY ? "configured" : "not_configured",
         irys_datachain: process.env.IRYS_PRIVATE_KEY ? "configured" : "not_configured",
+        trust_score_contract: process.env.TRUST_SCORE_CONTRACT_ADDRESS ? "configured" : "not_configured",
         x402_payments: "active",
       },
       capabilities: {
@@ -707,6 +708,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const irysResult = await uploadAuditToIrys(irysPayload);
 
+      const agentAddr = parsed.data.agent_id || walletAddress;
+      const trustScoreResult = await postAuditChainWrite(audit, agentAddr, irysResult.irys_tx_id);
+
       try {
         const legacyLog = mapToLegacyAuditLog(audit, {
           strategyMemo: parsed.data.strategy_memo,
@@ -724,6 +728,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         provenance_provider: "IRYS_DATACHAIN",
         irys_tx_id: irysResult.irys_tx_id,
         irys_url: irysResult.irys_url,
+        ...(trustScoreResult.trust_score_tx_hash && { trust_score_tx_hash: trustScoreResult.trust_score_tx_hash }),
+        ...(trustScoreResult.trust_score_error && { trust_score_error: trustScoreResult.trust_score_error }),
       };
       if (irysResult.irys_error) {
         response.irys_error = irysResult.irys_error;
@@ -805,6 +811,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn(`[Escrow ${parsed.data.escrow_id}] ${settlement_error}`);
       }
 
+      const escrowAgentAddr = parsed.data.agent_id || escrowData?.recipient;
+      const escrowTrustScoreResult = await postAuditChainWrite(audit, escrowAgentAddr, irysResult.irys_tx_id);
+
       try {
         const legacyLog = mapToLegacyAuditLog(audit, {
           strategyMemo: parsed.data.strategy_memo,
@@ -826,6 +835,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...(settlement_tx_hash && { settlement_tx_hash }),
         ...(settlement_error && { settlement_error }),
         ...(irysResult.irys_error && { irys_error: irysResult.irys_error }),
+        ...(escrowTrustScoreResult.trust_score_tx_hash && { trust_score_tx_hash: escrowTrustScoreResult.trust_score_tx_hash }),
+        ...(escrowTrustScoreResult.trust_score_error && { trust_score_error: escrowTrustScoreResult.trust_score_error }),
         ...(escrowData && {
           escrow_creator: escrowData.creator,
           escrow_recipient: escrowData.recipient,
@@ -962,6 +973,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description: "Escrow-aware audit flow. Requires on-chain escrow via DJZS Escrow Contract. Verifies caller signature (x-escrow-signature header), reads AuditPending event from escrow_tx_hash, verifies strategy_memo hash on-chain, runs adversarial audit, uploads to Irys, and settles escrow on Base Mainnet.",
         requires: ["x-escrow-signature header", "escrow_id", "escrow_tx_hash", "strategy_memo"],
         escrow_contract: process.env.ESCROW_CONTRACT_ADDRESS || "not configured",
+        trust_score_contract: process.env.TRUST_SCORE_CONTRACT_ADDRESS || "not configured",
       },
       verification: {
         endpoint: "GET /api/audit/verify/:txId",
@@ -994,6 +1006,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         provenance_provider: "IRYS_DATACHAIN - permanent storage provider",
         irys_tx_id: "string | null - Irys Datachain transaction ID for permanent certificate",
         irys_url: "string | null - Direct gateway link to the permanent ProofOfLogic certificate",
+        trust_score_tx_hash: "string | null - Base Mainnet transaction hash for on-chain trust score update (requires agent_id and TRUST_SCORE_CONTRACT_ADDRESS)",
       },
     });
   });
