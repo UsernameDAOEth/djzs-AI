@@ -14,17 +14,10 @@ module.exports = {
     },
   },
   etherscan: {
-    apiKey: {
-      base: process.env.BASESCAN_API_KEY || "",
-    },
-    customChains: [{
-      network: "base",
-      chainId: 8453,
-      urls: {
-        apiURL: "https://api.basescan.org/api",
-        browserURL: "https://basescan.org",
-      },
-    }],
+    apiKey: process.env.BASESCAN_API_KEY || "",
+  },
+  sourcify: {
+    enabled: true,
   },
   paths: { sources: "./contracts", artifacts: "./artifacts", cache: "./cache" },
 };

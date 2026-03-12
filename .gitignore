@@ -10,6 +10,9 @@ vite.config.ts.*
 !.env.example
 !.env.deploy.example
 
+artifacts/
+cache/
+
 *.db3
 *.db3-shm
 *.db3-wal

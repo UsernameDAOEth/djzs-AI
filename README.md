@@ -475,12 +475,12 @@ Automated Docker builds via GitHub Actions (`.github/workflows/docker-publish.ym
 
 | Contract | Address | Purpose |
 |---|---|---|
-| `DJZSLogicTrustScore` | `TO_BE_DEPLOYED` | On-chain trust score registry |
-| `DJZSEscrowLock` | `TO_BE_DEPLOYED` | USDC escrow with audit-gated settlement |
-| `DJZSStaking` | `TO_BE_DEPLOYED` | Agent staking with slashing |
-| `DJZSAgentRegistry` | `TO_BE_DEPLOYED` | On-chain agent registry |
+| `DJZSLogicTrustScore` | [`0xB3324D07A8713b354435FF0e2A982A504e81b137`](https://basescan.org/address/0xB3324D07A8713b354435FF0e2A982A504e81b137) | On-chain trust score registry |
+| `DJZSEscrowLock` | [`0xB041760147a60F63Ca701da9e431412bCc25Cfb7`](https://basescan.org/address/0xB041760147a60F63Ca701da9e431412bCc25Cfb7) | USDC escrow with audit-gated settlement |
+| `DJZSStaking` | [`0xA362947D23D52C05a431E378F30C8A962De91e8A`](https://basescan.org/address/0xA362947D23D52C05a431E378F30C8A962De91e8A) | Agent staking with slashing |
+| `DJZSAgentRegistry` | [`0xe40d5669Ce8e06A91188B82Ce7292175E2013E41`](https://basescan.org/address/0xe40d5669Ce8e06A91188B82Ce7292175E2013E41) | On-chain agent registry |
 
-> **Note:** Contract source code is in `contracts/`. Deploy using `scripts/deploy.cjs` with Hardhat. After deployment, update addresses above and set environment variables (`TRUST_SCORE_CONTRACT_ADDRESS`, `ESCROW_CONTRACT_ADDRESS`). See [CONTRACTS.md](./CONTRACTS.md) for full interface reference.
+> **Note:** Contract source code is in `contracts/`. See [CONTRACTS.md](./CONTRACTS.md) for full interface reference.
 
 ### Irys Datachain Certificates
 
