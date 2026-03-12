@@ -10,7 +10,7 @@ The DJZS protocol uses 4 Solidity contracts deployed on Base Mainnet. Together t
 
 **Purpose**: Stores on-chain trust scores for autonomous agents after each audit. The chain writer calls `updateScore()` to record the verdict, risk score, and flag codes permanently on Base.
 
-**Deployed Address**: `<TRUST_SCORE_CONTRACT_ADDRESS>`
+**Deployed Address**: `TO_BE_DEPLOYED` *(update after Base Mainnet deployment)*
 
 ### Key Functions
 
@@ -45,7 +45,7 @@ No parameters. Deployer becomes owner and first authorized writer.
 
 **Purpose**: Holds USDC in escrow during an audit. When the audit completes, the settlement agent calls `settleEscrow()` to release funds to the recipient (PASS) or refund to the creator (FAIL).
 
-**Deployed Address**: `<ESCROW_CONTRACT_ADDRESS>`
+**Deployed Address**: `TO_BE_DEPLOYED` *(update after Base Mainnet deployment)*
 
 ### Key Functions
 
@@ -82,7 +82,7 @@ No parameters. Deployer becomes owner and first authorized writer.
 
 **Purpose**: Allows agents or agent operators to stake tokens as a credibility bond. Staked agents can be slashed by the protocol owner if an audit reveals malicious behavior.
 
-**Deployed Address**: `<STAKING_CONTRACT_ADDRESS>`
+**Deployed Address**: `TO_BE_DEPLOYED` *(update after Base Mainnet deployment)*
 
 ### Key Functions
 
@@ -117,7 +117,7 @@ No parameters. Deployer becomes owner and first authorized writer.
 
 **Purpose**: On-chain registry of autonomous agents. Agents self-register (or are registered by the protocol owner) with a name and metadata URI. Used for fleet discovery and reputation tracking.
 
-**Deployed Address**: `<AGENT_REGISTRY_ADDRESS>`
+**Deployed Address**: `TO_BE_DEPLOYED` *(update after Base Mainnet deployment)*
 
 ### Key Functions
 

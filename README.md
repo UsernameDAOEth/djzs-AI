@@ -462,6 +462,95 @@ Automated Docker builds via GitHub Actions (`.github/workflows/docker-publish.ym
 
 ---
 
+## On-Chain Artifacts
+
+### Synthesis Hackathon
+
+| Artifact | Link |
+|---|---|
+| Registration TX (ERC-8004) | [`0x99b9fcfc...`](https://basescan.org/tx/0x99b9fcfc64af207771afde1851fa7e569e5161d5bb166dbd000b44743bd1ce23) |
+| Phala TEE Deployment | [dstack-pha-prod5.phala.network](https://d7255cce710465c7e67fd27a4688e9d9f5296179-5000.dstack-pha-prod5.phala.network) |
+
+### Solidity Contracts (Base Mainnet)
+
+| Contract | Address | Purpose |
+|---|---|---|
+| `DJZSLogicTrustScore` | `TO_BE_DEPLOYED` | On-chain trust score registry |
+| `DJZSEscrowLock` | `TO_BE_DEPLOYED` | USDC escrow with audit-gated settlement |
+| `DJZSStaking` | `TO_BE_DEPLOYED` | Agent staking with slashing |
+| `DJZSAgentRegistry` | `TO_BE_DEPLOYED` | On-chain agent registry |
+
+> **Note:** Contract source code is in `contracts/`. Deploy using `scripts/deploy.cjs` with Hardhat. After deployment, update addresses above and set environment variables (`TRUST_SCORE_CONTRACT_ADDRESS`, `ESCROW_CONTRACT_ADDRESS`). See [CONTRACTS.md](./CONTRACTS.md) for full interface reference.
+
+### Irys Datachain Certificates
+
+Every audit produces a permanent ProofOfLogic certificate on Irys. Sample certificates from integration testing:
+
+| Test Case | Verdict | Risk Score | Irys Certificate |
+|---|---|---|---|
+| FOMO leveraged trade (no risk bounds) | FAIL | 95 | [G8TNstxk...](https://gateway.irys.xyz/G8TNstxkpWVX6zMj9Qizz5Mzj6rajHSSp2csvm3gEKDR) |
+| Circular logic with authority substitution | FAIL | 85 | [Hpzv4qEK...](https://gateway.irys.xyz/Hpzv4qEKn7hDrNzyxEByFMbZy25kqvxVwmuCpV4b47Hn) |
+| Borderline strategy (edge case) | FAIL | 65 | [8Mjfz7dk...](https://gateway.irys.xyz/8Mjfz7dkWskpWPSpCJTxyXb2SnJGwpTDkAeDAncRcnY8) |
+| DCA strategy with risk bounds | FAIL | 65 | [BcwhJEV7...](https://gateway.irys.xyz/BcwhJEV7XfeFz1MARQkmbEnGpwf9uTCuybP1dwVnGYw1) |
+| Conservative treasury rebalance | FAIL | 65 | [2SPDEfFd...](https://gateway.irys.xyz/2SPDEfFdXUQNLNMsEkvBZ8J5A4njazEj6LnNZ546Ckok) |
+
+All certificates are permanent, public, and require no authentication to verify: click any Irys link above.
+
+---
+
+## How to Run the Demo
+
+### 1. Quick Audit (cURL)
+
+```bash
+curl -X POST https://d7255cce710465c7e67fd27a4688e9d9f5296179-5000.dstack-pha-prod5.phala.network/api/audit/micro \
+  -H "Content-Type: application/json" \
+  -H "x-payment-proof: 0xYOUR_BASE_MAINNET_TX_HASH" \
+  -d '{
+    "strategy_memo": "Your agent reasoning trace here (min 20 chars)",
+    "audit_type": "treasury",
+    "target_system": "YourProject"
+  }'
+```
+
+### 2. CLI Tool
+
+```bash
+cd djzs-AI
+npx djzs health                          # Check Oracle status
+npx djzs init                            # Generate wallet + config
+npx djzs audit "Your strategy memo"      # Run adversarial audit
+```
+
+### 3. Architect Console (Web UI)
+
+Visit [djzs.ai](https://djzs.ai) to access the Sovereign Principal Interface:
+- **Audit Ledger** — Browse all ProofOfLogic certificates
+- **Adversarial Oracle** — Submit reasoning traces for manual stress-testing
+- **Terminal Console** — Monitor protocol status
+
+### 4. Verify Any Certificate
+
+```bash
+curl https://d7255cce710465c7e67fd27a4688e9d9f5296179-5000.dstack-pha-prod5.phala.network/api/audit/verify/G8TNstxkpWVX6zMj9Qizz5Mzj6rajHSSp2csvm3gEKDR
+```
+
+Or visit the Irys gateway directly: `https://gateway.irys.xyz/<IRYS_TX_ID>`
+
+---
+
+## Hackathon Submission
+
+- **Event:** The Synthesis (synthesis.md)
+- **Tracks:** Agents that Trust, Agents that Cooperate, Agents that Pay
+- **Participant ID:** `1edf7b02720e4cda9596470328e7bd92`
+- **Team ID:** `13b341fbe3684cfda9a56b510ec2e15f`
+- **Conversation Log:** [CONVERSATION_LOG.md](./CONVERSATION_LOG.md)
+- **Demo Script:** [DEMO_SCRIPT.md](./DEMO_SCRIPT.md)
+- **Submission Payload:** [SUBMISSION_PAYLOAD.json](./SUBMISSION_PAYLOAD.json)
+
+---
+
 ## License
 
 See [LICENSE](./LICENSE) for details.
