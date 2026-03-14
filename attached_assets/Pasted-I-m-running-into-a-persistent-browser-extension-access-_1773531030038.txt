@@ -1,0 +1,36 @@
+I'm running into a persistent browser extension access issue that's preventing me from taking any active actions on the page — clicking, typing, taking screenshots, and executing JavaScript are all blocked with a "Cannot access a chrome-extension:// URL of different extension" error. The read-only tools (reading page content, navigating, finding elements) still work, but I cannot interact with the page to actually make changes.
+
+Here's what I was able to verify before the issue blocked me:
+
+**Current state of your djzs-oracle-v3 Phala deployment:**
+
+Your docker-compose.yml currently has these environment variables:
+- NODE_ENV=production
+- PORT=5000
+- DATABASE_URL, VENICE_API_KEY, BASE_RPC_URL, TREASURY_WALLET_ADDRESS, BRAVE_API_KEY, XMTP_ENV, IRYS_PRIVATE_KEY (all referencing encrypted env vars)
+
+**What needs to be done (I couldn't complete due to the browser issue):**
+
+1. **Update docker-compose.yml** to add these new environment variable references:
+   ```yaml
+   - VENICE_MODEL=${VENICE_MODEL:-llama-3.3-70b}
+   - XMTP_WALLET_KEY=${XMTP_WALLET_KEY:-}
+   - SESSION_SECRET=${SESSION_SECRET:-}
+   - TRUST_SCORE_CONTRACT_ADDRESS=${TRUST_SCORE_CONTRACT_ADDRESS:-}
+   - ESCROW_CONTRACT_ADDRESS=${ESCROW_CONTRACT_ADDRESS:-}
+   - STAKING_CONTRACT_ADDRESS=${STAKING_CONTRACT_ADDRESS:-}
+   - AGENT_REGISTRY_ADDRESS=${AGENT_REGISTRY_ADDRESS:-}
+   ```
+   Also change `XMTP_ENV` default from `production` to `dev`.
+
+2. **Add Encrypted Env variables** (click "+ Add Variable" for each):
+   - `TRUST_SCORE_CONTRACT_ADDRESS` = `0xB3324D07A8713b354435FF0e2A982A504e81b137`
+   - `ESCROW_CONTRACT_ADDRESS` = `0xB041760147a60F63Ca701da9e431412bCc25Cfb7`
+   - `STAKING_CONTRACT_ADDRESS` = `0xA362947D23D52C05a431E378F30C8A962De91e8A`
+   - `AGENT_REGISTRY_ADDRESS` = `0xe40d5669Ce8e06A91188B82Ce7292175E2013E41`
+   - `VENICE_MODEL` = `llama-3.3-70b`
+   - Also verify/add: `XMTP_WALLET_KEY` and `SESSION_SECRET` (you'll need your own values for these)
+
+3. **Save** and then **Redeploy** the instance.
+
+Could you try refreshing your browser or restarting the Claude extension, and then ask me to try again? The "Cannot access a chrome-extension:// URL" error is a browser-level issue preventing me from clicking or typing on the page.
