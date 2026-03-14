@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -9,110 +9,59 @@ import {
   ChevronDown, ChevronUp, Sun, Moon, FlaskConical, BookOpen, Menu, X, Lock
 } from "lucide-react";
 
-const DEMO_SCENARIOS = {
-  fomo: {
+const DEMO_SCENARIOS = [
+  {
+    key: "fomo",
     label: "FOMO Momentum Buy",
     description: "Social-driven pump chase with no verified data",
     memo: "EXECUTE IMMEDIATE BUY: 500 SOL of $SHILL. 1-minute volume is spiking and Crypto Twitter implies a tier-1 exchange listing today. Cannot miss this pump.",
-    response: {
-      audit_id: "d7e3a1f0-9c4b-4e2a-b8f1-3a5c7d9e2b4f",
-      timestamp: "2026-02-25T01:12:44.000Z",
-      tier: "micro" as const,
-      verdict: "FAIL" as const,
-      risk_score: 98,
-      primary_bias_detected: "FOMO",
-      flags: [
-        { code: "DJZS-I01", severity: "CRITICAL", message: "FOMO Loop — execution driven by social momentum and unverified Twitter sentiment.", evidence: "Memo references '1-minute volume spike' and 'Crypto Twitter implies' as sole justification.", recommendation: "Verify exchange listing via official announcement channels before any capital deployment." },
-        { code: "DJZS-X01", severity: "CRITICAL", message: "Unhedged Execution — no stop-loss, position sizing, or max drawdown defined.", evidence: "500 SOL allocation with zero risk bounds specified.", recommendation: "Define position size limits based on verified liquidity depth and set explicit stop-loss levels." }
-      ],
-      logic_flaws: [
-        { flaw_type: "Momentum Dependency", severity: "critical", explanation: "Trade thesis relies entirely on 1-minute volume spike and unverified exchange listing rumor." },
-        { flaw_type: "Missing Falsifiability", severity: "critical", explanation: "No exit condition or failure scenario defined. If listing doesn't happen, no abort trigger exists." }
-      ],
-      structural_recommendations: ["Verify exchange listing via official announcement channels", "Set position size limits based on verified liquidity depth", "Define explicit stop-loss and max drawdown thresholds"],
-      cryptographic_hash: "4a9b2c8f1e3d7a6b0c5f9e2d8a1b4c7f3e6d9a0b5c8f1e2d7a4b9c6f3e0d8a1b",
-      provenance_provider: "IRYS_DATACHAIN",
-      irys_tx_id: "8kNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
-      irys_url: "https://gateway.irys.xyz/8kNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
-      basescan_tx: "0x7a3b9c1d2e4f5678901234567890abcdef1234567890abcdef1234567890abcd"
-    }
   },
-  hallucination: {
+  {
+    key: "hallucination",
     label: "Hallucinated Data",
     description: "References a protocol and audit that don't exist",
     memo: "Routing 50k USDC into Yield Protocol V4 based on their latest audit report from yesterday.",
-    response: {
-      audit_id: "a2b4c6d8-e0f1-4a3b-c5d7-e9f0a1b2c3d4",
-      timestamp: "2026-02-25T01:13:02.000Z",
-      tier: "micro" as const,
-      verdict: "FAIL" as const,
-      risk_score: 85,
-      primary_bias_detected: "Confirmation_Bias",
-      flags: [
-        { code: "DJZS-E01", severity: "HIGH", message: "Epistemic Failure — Yield Protocol V4 does not exist. No audit report was published.", evidence: "Referenced 'Yield Protocol V4' and 'latest audit report from yesterday' — neither can be verified.", recommendation: "Cross-reference all protocol names against verified registries before capital allocation." },
-        { code: "DJZS-E02", severity: "HIGH", message: "Authority Substitution — reliance on unverifiable audit claim.", evidence: "Decision based on 'their latest audit report' without linking to any verifiable source.", recommendation: "Require on-chain contract verification and link to published audit reports." }
-      ],
-      logic_flaws: [
-        { flaw_type: "Hallucinated Reference", severity: "critical", explanation: "The referenced protocol and audit report cannot be verified against any known source." }
-      ],
-      structural_recommendations: ["Cross-reference all protocol names against verified registries", "Require on-chain contract verification before capital allocation", "Link to published, verifiable audit reports"],
-      cryptographic_hash: "7f2e1a9b3c5d8f0e4a6b2c7d1e3f9a5b8c0d4e6f2a7b1c3d5e9f0a8b4c6d2e7f",
-      provenance_provider: "IRYS_DATACHAIN",
-      irys_tx_id: "5rPQzM7kfHnWp9TNDrtgQRK9pBDUt26kXxjplf4W3tUI",
-      irys_url: "https://gateway.irys.xyz/5rPQzM7kfHnWp9TNDrtgQRK9pBDUt26kXxjplf4W3tUI",
-      basescan_tx: "0x2b4c6d8e0f1a3b5c7d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c"
-    }
   },
-  valid: {
+  {
+    key: "valid",
     label: "Clean Strategy",
     description: "Well-structured DCA with verified parameters",
-    memo: "Executing DCA of 2 ETH. Structural support verified at $2800. Liquidity depth is sufficient. Max slippage set to 0.5%.",
-    response: {
-      audit_id: "fe1f14d0-73ac-4467-ac33-d76bf3fdce21",
-      timestamp: "2026-02-25T01:14:18.000Z",
-      tier: "micro" as const,
-      verdict: "PASS" as const,
-      risk_score: 12,
-      primary_bias_detected: "None",
-      flags: [],
-      logic_flaws: [],
-      structural_recommendations: ["Continue to verify liquidity depth at execution time", "Monitor slippage tolerance against real-time spread"],
-      cryptographic_hash: "9b3a4f2c1e7d8a0b5c6f3e9d2a1b4c7f0e8d5a3b6c9f1e2d7a4b0c5f8e3d6a9b",
-      provenance_provider: "IRYS_DATACHAIN",
-      irys_tx_id: "71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
-      irys_url: "https://gateway.irys.xyz/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
-      basescan_tx: "0x9b3a4f2c1e7d8a0b5c6f3e9d2a1b4c7f0e8d5a3b6c9f1e2d7a4b0c5f8e3d6a9b"
-    }
+    memo: "Strategy Memo: Rebalance DAO Treasury — Conservative Yield Allocation. Current treasury: $2.4M USDC across 3 wallets on Base Mainnet. Proposal: Allocate 12% ($288,000) to Aave V3 USDC lending pool on Base. Rationale: Aave V3 Base USDC supply APY has averaged 3.8% over the past 90 days (source: DefiLlama, verified March 10 2026). 12% allocation is within our 15% single-protocol concentration limit per governance vote GV-2026-003. Aave V3 on Base has $847M TVL with no exploit history since deployment. Remaining 88% stays in USDC across existing custody wallets. Falsifiability: This strategy is WRONG if Aave V3 TVL drops below $200M, USDC APY falls below 1.5%, or any security incident is disclosed. Risk assessment: Smart contract risk - Aave V3 audited by Trail of Bits, Certora, SigmaPrime. Bug bounty $250K via Immunefi. Liquidity risk - $847M TVL means $288K position is 0.034% of pool, instant withdrawal. Rate risk - If APY drops below 2%, auto-withdraw. Worst case: Full protocol exploit = $288K loss (12% of treasury). Treasury survives at $2.1M. Operations unaffected. Execution: Single transaction via treasury multisig (3-of-5 signers). No leverage, no derivatives, no bridging. Stop-loss: Auto-withdraw if TVL drops below $200M. Timeline: Execute within 48 hours of governance approval. No urgency.",
   },
-  edge: {
+  {
+    key: "edge",
     label: "Race Condition Edge Case",
     description: "Reasonable strategy with hidden temporal risk",
     memo: "Arbitrage opportunity: ETH is $2,845 on DEX-A and $2,860 on DEX-B. Executing simultaneous buy/sell across both venues. Expected profit: 0.53% after gas. Slippage tolerance: 0.1%.",
-    response: {
-      audit_id: "c3d5e7f9-a1b3-4c5d-e7f9-a1b3c5d7e9f1",
-      timestamp: "2026-02-25T01:15:33.000Z",
-      tier: "founder" as const,
-      verdict: "FAIL" as const,
-      risk_score: 62,
-      primary_bias_detected: "Overconfidence",
-      flags: [
-        { code: "DJZS-T02", severity: "MEDIUM", message: "Race Condition Risk — assumes sequential execution but could be front-run.", evidence: "Cross-DEX arbitrage with 0.1% slippage tolerance is vulnerable to MEV bots and block-level front-running.", recommendation: "Use Flashbots or private transaction relay to prevent MEV extraction." },
-        { code: "DJZS-X03", severity: "MEDIUM", message: "Slippage Exposure — 0.1% tolerance may be insufficient for cross-venue execution.", evidence: "0.53% expected profit with 0.1% slippage tolerance leaves minimal margin for execution costs.", recommendation: "Increase slippage tolerance or reduce position size to account for cross-venue latency." }
-      ],
-      logic_flaws: [
-        { flaw_type: "Temporal Assumption", severity: "high", explanation: "Arbitrage assumes prices remain stable across the execution window of two separate transactions." }
-      ],
-      structural_recommendations: ["Use Flashbots or private mempool for MEV protection", "Account for gas costs across both transactions in profit calculation", "Add circuit breaker if price delta closes below 0.3% before second leg executes"],
-      cryptographic_hash: "c3d5e7f9a1b3c5d7e9f1a3b5c7d9e1f3a5b7c9d1e3f5a7b9c1d3e5f7a9b1c3d5",
-      provenance_provider: "IRYS_DATACHAIN",
-      irys_tx_id: "3mKPxN8jgIoYp6QOFthRSK0oDCVu37lYxzkqmg5X4uVJ",
-      irys_url: "https://gateway.irys.xyz/3mKPxN8jgIoYp6QOFthRSK0oDCVu37lYxzkqmg5X4uVJ",
-      basescan_tx: "0xc3d5e7f9a1b3c5d7e9f1a3b5c7d9e1f3a5b7c9d1e3f5a7b9c1d3e5f7a9b1c3d5"
-    }
-  }
-} as const;
+  },
+];
 
-type DemoScenario = keyof typeof DEMO_SCENARIOS;
+interface AuditFlag {
+  code: string;
+  severity: string;
+  message: string;
+  evidence?: string;
+  recommendation?: string;
+}
+
+interface AuditResult {
+  audit_id: string;
+  timestamp: string;
+  tier: string;
+  verdict: "PASS" | "FAIL";
+  risk_score: number;
+  primary_bias_detected: string;
+  flags: AuditFlag[];
+  logic_flaws: { flaw_type: string; severity: string; explanation: string }[];
+  structural_recommendations: string[];
+  cryptographic_hash: string;
+  provenance_provider: string;
+  irys_tx_id: string | null;
+  irys_url: string | null;
+  irys_error?: string;
+  trust_score_tx_hash?: string;
+  trust_score_error?: string;
+}
 
 const PIPELINE_STEPS = [
   { id: "signature", label: "Signature", icon: Lock, description: "Verifying request signature" },
@@ -154,7 +103,7 @@ function RiskScoreGauge({ score }: { score: number }) {
   );
 }
 
-function FlagCard({ flag, index }: { flag: { code: string; severity: string; message: string; evidence: string; recommendation: string }; index: number }) {
+function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
   const [expanded, setExpanded] = useState(false);
   const severityColor = flag.severity === "CRITICAL" ? "text-red-500 dark:text-red-400 border-red-500/30 bg-red-500/10" :
     flag.severity === "HIGH" ? "text-orange-500 dark:text-orange-400 border-orange-500/30 bg-orange-500/10" :
@@ -196,14 +145,18 @@ function FlagCard({ flag, index }: { flag: { code: string; severity: string; mes
                 <div className="text-xs font-mono text-muted-foreground mb-1">MESSAGE</div>
                 <p className="text-sm text-foreground/80">{flag.message}</p>
               </div>
-              <div>
-                <div className="text-xs font-mono text-muted-foreground mb-1">EVIDENCE</div>
-                <p className="text-sm text-foreground/70 italic">{flag.evidence}</p>
-              </div>
-              <div>
-                <div className="text-xs font-mono text-muted-foreground mb-1">RECOMMENDATION</div>
-                <p className="text-sm text-teal-600 dark:text-teal-400">{flag.recommendation}</p>
-              </div>
+              {flag.evidence && (
+                <div>
+                  <div className="text-xs font-mono text-muted-foreground mb-1">EVIDENCE</div>
+                  <p className="text-sm text-foreground/70 italic">{flag.evidence}</p>
+                </div>
+              )}
+              {flag.recommendation && (
+                <div>
+                  <div className="text-xs font-mono text-muted-foreground mb-1">RECOMMENDATION</div>
+                  <p className="text-sm text-teal-600 dark:text-teal-400">{flag.recommendation}</p>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -219,66 +172,84 @@ export default function Demo() {
   const [tier, setTier] = useState("micro");
   const [running, setRunning] = useState(false);
   const [currentStep, setCurrentStep] = useState(-1);
-  const [result, setResult] = useState<(typeof DEMO_SCENARIOS)[DemoScenario]["response"] | null>(null);
+  const [result, setResult] = useState<AuditResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
-  const loadScenario = (key: DemoScenario) => {
-    setMemo(DEMO_SCENARIOS[key].memo);
-    setTier(DEMO_SCENARIOS[key].response.tier);
+  const loadScenario = (key: string) => {
+    const scenario = DEMO_SCENARIOS.find(s => s.key === key);
+    if (!scenario) return;
+    abortRef.current?.abort();
+    setMemo(scenario.memo);
     setResult(null);
+    setError(null);
     setCurrentStep(-1);
     setRunning(false);
   };
 
-  const runAudit = () => {
+  const runAudit = useCallback(async () => {
     if (!memo.trim() || running) return;
+    abortRef.current?.abort();
     setRunning(true);
     setResult(null);
+    setError(null);
     setCurrentStep(0);
-  };
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    const stepTimers = [600, 600];
+    for (const delay of stepTimers) {
+      await new Promise(r => setTimeout(r, delay));
+      if (controller.signal.aborted) return;
+      setCurrentStep(prev => prev + 1);
+    }
+
+    try {
+      const auditType = tier === "treasury" ? "treasury" : tier === "founder" ? "founder_drift" : "general";
+      const response = await fetch("/api/audit/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          strategy_memo: memo,
+          audit_type: auditType,
+        }),
+        signal: controller.signal,
+      });
+
+      if (controller.signal.aborted) return;
+      setCurrentStep(3);
+      await new Promise(r => setTimeout(r, 400));
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => null);
+        throw new Error(errData?.error || `Server returned ${response.status}`);
+      }
+
+      const data: AuditResult = await response.json();
+
+      if (controller.signal.aborted) return;
+      setCurrentStep(4);
+      await new Promise(r => setTimeout(r, 400));
+      setCurrentStep(5);
+      await new Promise(r => setTimeout(r, 300));
+
+      setResult(data);
+    } catch (err: any) {
+      if (err.name === "AbortError") return;
+      setError(err.message || "Audit request failed");
+      setCurrentStep(-1);
+    } finally {
+      setRunning(false);
+      abortRef.current = null;
+    }
+  }, [memo, tier, running]);
 
   useEffect(() => {
-    if (!running || currentStep < 0) return;
-
-    if (currentStep < PIPELINE_STEPS.length - 1) {
-      const timer = setTimeout(() => setCurrentStep(prev => prev + 1), 650);
-      return () => clearTimeout(timer);
-    }
-
-    if (currentStep === PIPELINE_STEPS.length - 1) {
-      const timer = setTimeout(() => {
-        const matchKey = Object.keys(DEMO_SCENARIOS).find(
-          k => DEMO_SCENARIOS[k as DemoScenario].memo === memo
-        ) as DemoScenario | undefined;
-
-        if (matchKey) {
-          setResult(DEMO_SCENARIOS[matchKey].response);
-        } else {
-          setResult({
-            audit_id: crypto.randomUUID(),
-            timestamp: new Date().toISOString(),
-            tier: tier as "micro" | "founder" | "treasury",
-            verdict: "FAIL" as const,
-            risk_score: 72,
-            primary_bias_detected: "Unknown",
-            flags: [
-              { code: "DJZS-S02", severity: "CRITICAL", message: "Missing Falsifiability — no failure condition defined in the reasoning trace.", evidence: "Custom memo lacks explicit exit conditions or risk bounds.", recommendation: "Define clear failure conditions and abort triggers before executing." }
-            ],
-            logic_flaws: [
-              { flaw_type: "Incomplete Reasoning", severity: "high", explanation: "The submitted reasoning trace lacks the structural rigor required for a PASS verdict." }
-            ],
-            structural_recommendations: ["Add explicit failure conditions", "Define position sizing and risk bounds", "Include verifiable data sources"],
-            cryptographic_hash: "ab3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c",
-            provenance_provider: "IRYS_DATACHAIN",
-            irys_tx_id: "demo_" + Date.now(),
-            irys_url: "https://gateway.irys.xyz/demo_" + Date.now(),
-            basescan_tx: "0xdemo" + Date.now().toString(16)
-          });
-        }
-        setRunning(false);
-      }, 600);
-      return () => clearTimeout(timer);
-    }
-  }, [running, currentStep, memo, tier]);
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen text-foreground bg-background">
@@ -336,13 +307,13 @@ export default function Demo() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 sm:mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-mono mb-4" style={{ border: '1px solid rgba(243,126,32,0.3)', background: 'rgba(243,126,32,0.08)', color: '#F37E20' }}>
             <FlaskConical size={16} />
-            <span>Live Demo</span>
+            <span>Live Demo — Real Audit Engine</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3 text-foreground" data-testid="text-demo-page-title">
             Audit-to-Certificate Pipeline
           </h1>
           <p className="text-muted-foreground text-base sm:text-lg max-w-2xl" data-testid="text-demo-page-subtitle">
-            Paste a reasoning memo, select an audit tier, and watch the full pipeline execute: signature verification, adversarial analysis, Irys upload, and on-chain settlement.
+            Paste a reasoning memo, select a scenario, and watch the real Oracle execute: adversarial analysis via Venice AI, Irys Datachain upload, and on-chain trust score settlement.
           </p>
         </motion.div>
 
@@ -360,19 +331,19 @@ export default function Demo() {
                 <div>
                   <label className="text-xs font-mono text-muted-foreground mb-2 block" data-testid="label-demo-scenarios">PRELOADED SCENARIOS</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
-                    {(Object.keys(DEMO_SCENARIOS) as DemoScenario[]).map((key) => (
+                    {DEMO_SCENARIOS.map((scenario) => (
                       <button
-                        key={key}
-                        onClick={() => loadScenario(key)}
+                        key={scenario.key}
+                        onClick={() => loadScenario(scenario.key)}
                         className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all text-sm ${
-                          memo === DEMO_SCENARIOS[key].memo
+                          memo === scenario.memo
                             ? "border-purple-500 bg-purple-500/10 text-purple-600 dark:text-purple-300"
                             : "border-border dark:border-gray-800 hover:border-purple-500/30 text-muted-foreground hover:text-foreground"
                         }`}
-                        data-testid={`button-scenario-${key}`}
+                        data-testid={`button-scenario-${scenario.key}`}
                       >
-                        <div className="font-medium">{DEMO_SCENARIOS[key].label}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">{DEMO_SCENARIOS[key].description}</div>
+                        <div className="font-medium">{scenario.label}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{scenario.description}</div>
                       </button>
                     ))}
                   </div>
@@ -487,7 +458,25 @@ export default function Demo() {
             </motion.div>
 
             <AnimatePresence mode="wait">
-              {result ? (
+              {error ? (
+                <motion.div
+                  key="error"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="rounded-xl border border-red-500/30 bg-red-500/5 p-6"
+                  data-testid="demo-error-container"
+                >
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle size={20} className="text-red-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-sm font-bold text-red-500 mb-1">Audit Failed</div>
+                      <p className="text-sm text-foreground/70">{error}</p>
+                      <p className="text-xs text-muted-foreground mt-2">The Oracle may be temporarily unavailable. Try again in a few seconds.</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : result ? (
                 <motion.div
                   key="result"
                   initial={{ opacity: 0, y: 20 }}
@@ -520,18 +509,21 @@ export default function Demo() {
                           <span className="px-3 py-1.5 bg-muted dark:bg-gray-900 text-muted-foreground rounded-lg border border-border dark:border-gray-800 text-xs font-mono" data-testid="text-result-tier">
                             TIER: {result.tier.toUpperCase()}
                           </span>
+                          <span className="px-2.5 py-1 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-md border border-cyan-500/20 text-[10px] font-mono font-bold" data-testid="badge-live-audit">
+                            LIVE
+                          </span>
                         </div>
                         <div className="text-xs text-muted-foreground font-mono space-y-1">
                           <div data-testid="text-result-audit-id">ID: {result.audit_id}</div>
                           <div data-testid="text-result-timestamp">TIME: {new Date(result.timestamp).toLocaleString()}</div>
-                          {result.primary_bias_detected !== "None" && (
+                          {result.primary_bias_detected && result.primary_bias_detected !== "None" && (
                             <div data-testid="text-result-bias">BIAS: <span className="text-[#F37E20]">{result.primary_bias_detected}</span></div>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    {result.flags.length > 0 && (
+                    {result.flags && result.flags.length > 0 && (
                       <div>
                         <div className="text-xs font-mono text-muted-foreground mb-3" data-testid="label-result-flags">FAILURE CODES ({result.flags.length})</div>
                         <div className="space-y-2">
@@ -542,7 +534,7 @@ export default function Demo() {
                       </div>
                     )}
 
-                    {result.structural_recommendations.length > 0 && (
+                    {result.structural_recommendations && result.structural_recommendations.length > 0 && (
                       <div>
                         <div className="text-xs font-mono text-muted-foreground mb-2" data-testid="label-result-recommendations">RECOMMENDATIONS</div>
                         <ul className="space-y-1.5">
@@ -559,34 +551,54 @@ export default function Demo() {
                     <div className="border-t border-border dark:border-gray-800 pt-4 space-y-3">
                       <div className="text-xs font-mono text-muted-foreground" data-testid="label-result-provenance">ON-CHAIN PROVENANCE</div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <a
-                          href={result.irys_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-3 rounded-lg border border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 transition-colors group"
-                          data-testid="link-result-irys"
-                        >
-                          <Database size={16} className="text-purple-500 dark:text-purple-400" />
-                          <div className="min-w-0 flex-1">
-                            <div className="text-xs font-mono font-bold text-purple-600 dark:text-purple-300">Irys Certificate</div>
-                            <div className="text-[10px] font-mono text-muted-foreground truncate">{result.irys_tx_id}</div>
+                        {result.irys_url ? (
+                          <a
+                            href={result.irys_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-3 rounded-lg border border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 transition-colors group"
+                            data-testid="link-result-irys"
+                          >
+                            <Database size={16} className="text-purple-500 dark:text-purple-400" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-mono font-bold text-purple-600 dark:text-purple-300">Irys Certificate</div>
+                              <div className="text-[10px] font-mono text-muted-foreground truncate">{result.irys_tx_id}</div>
+                            </div>
+                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-purple-400 transition-colors flex-shrink-0" />
+                          </a>
+                        ) : (
+                          <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-border bg-muted/30">
+                            <Database size={16} className="text-muted-foreground" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-mono font-bold text-muted-foreground">Irys Certificate</div>
+                              <div className="text-[10px] font-mono text-muted-foreground/60">{result.irys_error || "Not configured in this environment"}</div>
+                            </div>
                           </div>
-                          <ExternalLink size={14} className="text-muted-foreground group-hover:text-purple-400 transition-colors flex-shrink-0" />
-                        </a>
-                        <a
-                          href={`https://basescan.org/tx/${result.basescan_tx}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/10 transition-colors group"
-                          data-testid="link-result-basescan"
-                        >
-                          <ShieldCheck size={16} className="text-cyan-500 dark:text-cyan-400" />
-                          <div className="min-w-0 flex-1">
-                            <div className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-300">BaseScan TX</div>
-                            <div className="text-[10px] font-mono text-muted-foreground truncate">{result.basescan_tx}</div>
+                        )}
+                        {result.trust_score_tx_hash ? (
+                          <a
+                            href={`https://basescan.org/tx/${result.trust_score_tx_hash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/10 transition-colors group"
+                            data-testid="link-result-basescan"
+                          >
+                            <ShieldCheck size={16} className="text-cyan-500 dark:text-cyan-400" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-300">BaseScan TX</div>
+                              <div className="text-[10px] font-mono text-muted-foreground truncate">{result.trust_score_tx_hash}</div>
+                            </div>
+                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-cyan-400 transition-colors flex-shrink-0" />
+                          </a>
+                        ) : (
+                          <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-border bg-muted/30">
+                            <ShieldCheck size={16} className="text-muted-foreground" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-mono font-bold text-muted-foreground">Trust Score TX</div>
+                              <div className="text-[10px] font-mono text-muted-foreground/60">{result.trust_score_error || "Contract not configured in this environment"}</div>
+                            </div>
                           </div>
-                          <ExternalLink size={14} className="text-muted-foreground group-hover:text-cyan-400 transition-colors flex-shrink-0" />
-                        </a>
+                        )}
                       </div>
                       <div className="text-[10px] font-mono text-muted-foreground/60 break-all" data-testid="text-result-hash">
                         SHA-256: {result.cryptographic_hash}
