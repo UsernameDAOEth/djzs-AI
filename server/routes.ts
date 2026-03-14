@@ -754,6 +754,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/audit/treasury", createVerifiedPaymentGate("treasury"), createTierHandler("treasury"));
   app.post("/api/audit", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
 
+  const demoRateLimit = new Map<string, number>();
+  app.post("/api/audit/demo", async (req: any, res) => {
+    const ip = req.ip || req.connection?.remoteAddress || "unknown";
+    const now = Date.now();
+    const lastRequest = demoRateLimit.get(ip) || 0;
+    if (now - lastRequest < 15000) {
+      return res.status(429).json({
+        error: "Demo rate limit: one request per 15 seconds.",
+        code: "DJZS-DEMO-RATE",
+        retry_after_ms: 15000 - (now - lastRequest),
+      });
+    }
+    demoRateLimit.set(ip, now);
+
+    for (const [key, ts] of demoRateLimit) {
+      if (now - ts > 300000) demoRateLimit.delete(key);
+    }
+
+    return createTierHandler("micro")(req, res);
+  });
+
   app.post("/api/audit/escrow", requireEscrowSignature(), async (req: any, res) => {
     try {
       const parsed = escrowAuditRequestSchema.safeParse(req.body);
