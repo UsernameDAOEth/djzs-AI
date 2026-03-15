@@ -18,8 +18,8 @@ import {
 const VENICE_BASE_URL = process.env.VENICE_BASE_URL || "https://api.venice.ai/api/v1";
 const VENICE_API_KEY = process.env.VENICE_API_KEY;
 const VENICE_TIMEOUT_MS = (() => {
-  const val = parseInt(process.env.VENICE_TIMEOUT_MS || "30000", 10);
-  return Number.isFinite(val) && val > 0 ? val : 30000;
+  const val = parseInt(process.env.VENICE_TIMEOUT_MS || "60000", 10);
+  return Number.isFinite(val) && val > 0 ? val : 60000;
 })();
 
 export const VENICE_MODELS = {
@@ -126,7 +126,7 @@ function getPersonaModel(persona: AdversarialPersona): VeniceModel {
   return defaults[persona];
 }
 
-const RETRY_DELAYS_MS = [1000, 2000, 4000];
+const RETRY_DELAYS_MS = [2000, 4000, 8000, 12000];
 const RETRYABLE_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
 const NON_RETRYABLE_STATUS_CODES = new Set([400, 401, 403]);
 
