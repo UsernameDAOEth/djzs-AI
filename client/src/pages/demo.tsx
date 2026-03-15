@@ -127,7 +127,7 @@ function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
             {flag.severity}
           </span>
           <span className="font-mono text-sm text-foreground/80 font-semibold" data-testid={`text-flag-code-${index}`}>{flag.code}</span>
-          <span className="text-sm text-muted-foreground truncate hidden sm:inline">{flag.message.split("—")[0]}</span>
+          <span className="text-sm text-muted-foreground truncate hidden sm:inline">{(flag.message || "").split("—")[0]}</span>
         </div>
         {expanded ? <ChevronUp size={16} className="text-muted-foreground flex-shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground flex-shrink-0" />}
       </button>
