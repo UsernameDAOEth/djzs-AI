@@ -395,7 +395,7 @@ export default function Demo() {
                   ) : (
                     <Play size={20} />
                   )}
-                  <span>{running ? "ORACLE SCANNING..." : "Run DJZS Audit"}</span>
+                  <span>{running ? "ORACLE SCANNING — may take up to 90s..." : "Run DJZS Audit"}</span>
                 </button>
               </div>
             </motion.div>
