@@ -772,7 +772,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (now - ts > 300000) demoRateLimit.delete(key);
     }
 
-    const DEMO_AGENT_ADDRESS = "0x000000000000000000000000000000000000dEA0";
+    const DEMO_AGENT_ADDRESS = "0x000000000000000000000000000000000000dea0";
     if (!req.body.agent_id) {
       req.body.agent_id = DEMO_AGENT_ADDRESS;
     }
