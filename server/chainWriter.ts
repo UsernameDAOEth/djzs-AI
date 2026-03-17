@@ -66,14 +66,15 @@ function getTrustScoreContractAddress(): Address {
 }
 
 function getChainWriterWalletClient() {
-  const privateKey = process.env.SETTLEMENT_PRIVATE_KEY;
-  if (!privateKey) {
+  const rawKey = process.env.SETTLEMENT_PRIVATE_KEY;
+  if (!rawKey) {
     throw new Error("SETTLEMENT_PRIVATE_KEY environment variable is required for chain writer transactions");
   }
   const rpcUrl = process.env.BASE_RPC_URL;
   if (!rpcUrl) {
     throw new Error("BASE_RPC_URL environment variable is required for chain writer transactions");
   }
+  const privateKey = rawKey.startsWith("0x") ? rawKey : `0x${rawKey}`;
   const account = privateKeyToAccount(privateKey as Hex);
   return createWalletClient({
     account,
