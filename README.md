@@ -547,7 +547,6 @@ Or visit the Irys gateway directly: `https://gateway.irys.xyz/<IRYS_TX_ID>`
 - **Team ID:** `13b341fbe3684cfda9a56b510ec2e15f`
 - **Conversation Log:** [CONVERSATION_LOG.md](./CONVERSATION_LOG.md)
 - **Demo Script:** [DEMO_SCRIPT.md](./DEMO_SCRIPT.md)
-- **Submission Payload:** [SUBMISSION_PAYLOAD.json](./SUBMISSION_PAYLOAD.json)
 
 ---
 

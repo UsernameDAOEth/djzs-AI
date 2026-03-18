@@ -12,6 +12,10 @@ vite.config.ts.*
 
 artifacts/
 cache/
+output.json
+pyproject.toml
+uv.lock
+attached_assets/
 
 *.db3
 *.db3-shm
