@@ -1,0 +1,115 @@
+Now I have both files side by side from the correct `djzs-AI` repo. Here's the full picture:
+
+**`demo.tsx`** — clean two-column layout (Agent Payload Injector left, Pipeline Progress + ProofOfLogic Certificate right), hits `/api/audit/demo` (free, rate-limited).
+
+**`chat.tsx`** — 1865 lines, the full Architect Console with sidebar, wallet connection, escrow provisioning, audit ledger, adversarial oracle, local node state export, etc. Completely different UI.
+
+The simplest path to what you want: **replace `chat.tsx` with a copy of `demo.tsx` that hits the real x402 endpoints instead of `/api/audit/demo`.**
+
+Here are the exact changes to make to a copy of `demo.tsx` that becomes your new `chat.tsx`:
+
+---
+
+**Change 1: The fetch URL in `runAudit`** (this is the only functional change)
+
+In demo.tsx, around the `runAudit` function, change:
+
+```tsx
+// BEFORE (demo.tsx ~line 100):
+const auditType = tier === "treasury" ? "treasury" 
+  : tier === "founder" ? "founder_drift" : "general";
+const response = await fetch("/api/audit/demo", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    strategy_memo: memo,
+    audit_type: auditType,
+  }),
+  signal: controller.signal,
+});
+```
+
+to:
+
+```tsx
+// AFTER (chat.tsx — real x402 endpoints):
+const auditType = tier === "treasury" ? "treasury" 
+  : tier === "founder" ? "founder_drift" : "general";
+const endpoint = tier === "treasury" ? "/api/audit/treasury"
+  : tier === "founder" ? "/api/audit/founder" : "/api/audit/micro";
+const response = await fetch(endpoint, {
+  method: "POST",
+  headers: { 
+    "Content-Type": "application/json",
+    // x402 middleware handles payment negotiation automatically
+    // if BYOK Venice key, pass it through:
+    ...(userVeniceKey && { "x-venice-api-key": userVeniceKey }),
+    ...(address && { "x-wallet-address": address }),
+  },
+  body: JSON.stringify({
+    strategy_memo: memo,
+    audit_type: auditType,
+    agent_id: address,
+  }),
+  signal: controller.signal,
+});
+```
+
+**Change 2: Add wallet awareness** — add imports and wallet state at the top of the component:
+
+```tsx
+// Add to imports:
+import { useAccount } from "wagmi";
+
+// Inside the Demo() component, add:
+const { address, isConnected } = useAccount();
+```
+
+**Change 3: Update the header subtitle and metadata**
+
+```tsx
+// Change the badge text:
+<span>Live Demo — Real Audit Engine</span>
+// to:
+<span>x402 Audit Console — Live</span>
+
+// Change the Helmet title:
+<title>Live Demo | DJZS Protocol</title>
+// to:
+<title>DJZS — Audit Console</title>
+
+// Change the subtitle text:
+"Paste a reasoning memo, select a scenario, and watch the real Oracle execute..."
+// to:
+"Route your reasoning trace through the x402 Oracle. Real USDC payments on Base Mainnet."
+```
+
+**Change 4: Add a wallet gate to the Run button**
+
+```tsx
+// Change the Run button's disabled condition:
+disabled={!memo.trim() || running}
+// to:
+disabled={!memo.trim() || running || !isConnected}
+
+// And update the button label for the disconnected state:
+<span>{
+  !isConnected ? "Connect Wallet to Audit" 
+  : running ? "ORACLE SCANNING — may take up to 90s..." 
+  : "Run DJZS Audit"
+}</span>
+```
+
+**Change 5: Update the route in `App.tsx`**
+
+Make sure your router points `/chat` to this new component:
+
+```tsx
+import ChatPage from "@/pages/chat";
+// ...
+<Route path="/chat" component={ChatPage} />
+```
+
+---
+
+That's it. You're literally taking demo.tsx, swapping the single `/api/audit/demo` fetch to the tier-specific `/api/audit/micro|founder|treasury` endpoints, adding wallet awareness, and the x402 middleware on your server already handles the payment negotiation. The entire design — the scenario buttons, the pipeline stepper, the RiskScoreGauge, the FlagCard accordions, the Irys provenance links — all stays identical.
