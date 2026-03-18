@@ -266,7 +266,7 @@ export default function Chat() {
   return (
     <div className="min-h-screen text-foreground bg-background">
       <Helmet>
-        <title>DJZS — Audit Console</title>
+        <title>x402 Audit Console — Live | DJZS Protocol</title>
         <meta name="description" content="Route your reasoning trace through the x402 Oracle. Real USDC payments on Base Mainnet. Adversarial analysis, Irys Datachain upload, and on-chain trust score settlement." />
         <meta property="og:title" content="DJZS x402 Audit Console" />
         <meta property="og:description" content="Wallet-gated audit console. Pay with USDC on Base Mainnet via x402 protocol. Full ProofOfLogic certificate pipeline." />
