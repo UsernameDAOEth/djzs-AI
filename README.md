@@ -327,18 +327,18 @@ query {
 
 ---
 
-## Architect Console
+## x402 Audit Console
 
-The Sovereign Principal Interface provides four governance zones:
+The `/chat` page is a wallet-gated audit interface for running paid audits against the real x402 endpoints:
 
-| Zone | Purpose |
+| Feature | Description |
 |---|---|
-| Audit Ledger | Immutable forensic log of ProofOfLogic certificates with Irys provenance |
-| Adversarial Oracle | Manual reasoning attack interface — expose contradictions, challenge assumptions |
-| Terminal Console | Protocol monitoring and configuration dashboard |
-| x402 Governance | Fee structure display and USDC escrow provisioning |
+| Tier Selection | Micro ($2.50), Founder ($5.00), Treasury ($50.00) USDC on Base Mainnet |
+| Wallet Gate | Requires RainbowKit wallet connection; Run button disabled when disconnected |
+| Pipeline Visualization | Real-time status: signature → hash check → auditing → Irys upload → settlement |
+| ProofOfLogic Certificate | Risk score gauge, DJZS-LF failure codes, Irys certificate link, BaseScan TX link |
 
-**Local node state** uses Dexie (IndexedDB) with AES-GCM-256 encryption. All ProofOfLogic certificates are permanently stored on Irys — local state is supplementary cache. BYOK: bring your own Venice API key for full control over AI billing.
+BYOK: bring your own Venice API key for full control over AI billing. The Live Demo (`/demo`) provides a free, rate-limited preview with preloaded scenarios.
 
 ---
 
@@ -348,7 +348,7 @@ The Sovereign Principal Interface provides four governance zones:
 - **Replay Protection** — Each payment TX hash is single-use
 - **On-Chain Verification** — USDC payments verified directly against Base Mainnet via viem
 - **Immutable Provenance** — Irys certificates cannot be altered or deleted after upload
-- **Local-First Vault** — Client workspace data stored on-device with WebCrypto PBKDF2 + AES-GCM-256
+- **Minimal Client State** — No client-side document store; all ProofOfLogic certificates persisted permanently on Irys Datachain
 - **No Hardcoded Secrets** — All sensitive values loaded from environment variables inside the TEE enclave
 
 ---
@@ -382,7 +382,7 @@ The Sovereign Principal Interface provides four governance zones:
 | Backend | Express.js, TypeScript |
 | Database | PostgreSQL, Drizzle ORM |
 | Wallet | RainbowKit, wagmi, viem |
-| Local Storage | Dexie (IndexedDB), AES-GCM-256 |
+| Local Storage | Browser localStorage (BYOK keys) |
 | Validation | Zod |
 
 ---
@@ -522,12 +522,12 @@ npx djzs init                            # Generate wallet + config
 npx djzs audit "Your strategy memo"      # Run adversarial audit
 ```
 
-### 3. Architect Console (Web UI)
+### 3. x402 Audit Console (Web UI)
 
-Visit [djzs.ai](https://djzs.ai) to access the Sovereign Principal Interface:
-- **Audit Ledger** — Browse all ProofOfLogic certificates
-- **Adversarial Oracle** — Submit reasoning traces for manual stress-testing
-- **Terminal Console** — Monitor protocol status
+Visit [djzs.ai/chat](https://djzs.ai/chat) for wallet-gated paid audits, or [djzs.ai/demo](https://djzs.ai/demo) for a free rate-limited preview:
+- **Tier Selection** — Micro ($2.50), Founder ($5.00), Treasury ($50.00) USDC on Base
+- **Pipeline Visualization** — Real-time audit progress with Irys + BaseScan links
+- **ProofOfLogic Certificate** — Risk score, DJZS-LF failure codes, permanent Irys provenance
 
 ### 4. Verify Any Certificate
 

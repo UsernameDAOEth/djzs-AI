@@ -19,8 +19,7 @@ The following components existed as part of the DJZS Protocol project prior to T
 
 **Server & Client**
 - Express.js backend with audit routes, payment verification, and Irys upload
-- React + TypeScript + Tailwind frontend (Architect Console, Audit Ledger, Terminal)
-- Dexie/IndexedDB local storage with AES-GCM-256 encryption
+- React + TypeScript + Tailwind frontend (x402 Audit Console, Live Demo)
 - BYOK (Bring Your Own Key) Venice AI integration
 
 **Agent Infrastructure**

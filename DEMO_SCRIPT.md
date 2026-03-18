@@ -37,7 +37,7 @@
 
 > "Verdict: FAIL. Risk score 95 out of 100. The Oracle caught circular logic — DJZS-S01 — and unhedged execution — DJZS-X01. The escrow gate LOCKS the funds. The agent cannot execute."
 
-**On Screen:** Submit memo via Architect Console or cURL. Show the ProofOfLogic certificate with FAIL verdict, risk score, and DJZS-LF flags. Show Irys certificate link.
+**On Screen:** Submit memo via x402 Audit Console or cURL. Show the ProofOfLogic certificate with FAIL verdict, risk score, and DJZS-LF flags. Show Irys certificate link.
 
 ### Part B — The Adversarial Difference (20 seconds)
 
