@@ -1,0 +1,78 @@
+{
+  "name": "DJZS Protocol",
+  "description": "Logic Firewall for AI Agents — audits strategy memos before on-chain execution using adversarial AI analysis, producing verifiable PASS/FAIL verdicts with immutable Proof-of-Logic certificates",
+  "version": "1.0.0",
+  "agentId": 29515,
+  "erc8004": {
+    "tokenId": 29515,
+    "contractAddress": "0x1d3ac535f6920ea3e56008086e4627b52a845a07",
+    "chain": "base",
+    "chainId": 8453,
+    "ownerAddress": "0xc2eCfe214071C2B77f90111f222E4a4D25ac3A98",
+    "transferTxHash": "0x874517982e9923369142b2b5046251ac5469de92141c1f75f7273d7e3f589cc9"
+  },
+  "operator": {
+    "walletAddress": "0xc2eCfe214071C2B77f90111f222E4a4D25ac3A98"
+  },
+  "capabilities": [
+    "strategy-memo-audit",
+    "adversarial-reasoning-analysis",
+    "proof-of-logic-certificate-generation",
+    "on-chain-trust-scoring",
+    "failure-taxonomy-classification"
+  ],
+  "endpoints": {
+    "demo": "https://djzs.ai/demo",
+    "audit": "https://djzs.ai/api/audit/demo",
+    "health": "https://djzs.ai/api/health"
+  },
+  "infrastructure": {
+    "runtime": "Phala Cloud TEE (dstack-0.5.3, Intel TDX)",
+    "inference": "Venice AI API (llama-3.3-70b)",
+    "storage": "Irys Datachain",
+    "settlement": "Base Mainnet"
+  },
+  "contracts": {
+    "trustScore": {
+      "address": "0xB3324D07A8713b354435FF0e2A982A504e81b137",
+      "chain": "base",
+      "verified": true
+    },
+    "escrowLock": {
+      "address": "0xB041760147a60F63Ca701da9e431412bCc25Cfb7",
+      "chain": "base",
+      "verified": true
+    },
+    "agentRegistry": {
+      "address": "0xe40d5669Ce8e06A91188B82Ce7292175E2013E41",
+      "chain": "base",
+      "verified": true
+    },
+    "staking": {
+      "address": "0xA362947D23D52C05a431E378F30C8A962De91e8A",
+      "chain": "base",
+      "verified": true
+    }
+  },
+  "failureTaxonomy": {
+    "name": "DJZS-LF",
+    "version": "1.0",
+    "codes": [
+      "DJZS-S01: CIRCULAR_LOGIC",
+      "DJZS-S02: MISSING_FALSIFIABILITY",
+      "DJZS-E01: CONFIRMATION_TUNNEL",
+      "DJZS-E02: AUTHORITY_SUBSTITUTION",
+      "DJZS-I01: MISALIGNED_INCENTIVE",
+      "DJZS-I02: NARRATIVE_DEPENDENCY",
+      "DJZS-X01: UNHEDGED_EXECUTION",
+      "DJZS-X02: LIQUIDITY_RISK",
+      "DJZS-X03: SLIPPAGE_EXPOSURE",
+      "DJZS-T01: STALE_DATA_DEPENDENCY",
+      "DJZS-T02: RACE_CONDITION_RISK"
+    ]
+  },
+  "model": "llama-3.3-70b",
+  "framework": "custom-express-oracle",
+  "created": "2026-02-28T17:00:18Z",
+  "updated": "2026-03-18T03:23:02Z"
+}
