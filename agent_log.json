@@ -42,13 +42,15 @@
       }
     },
     {
-      "timestamp": "2026-03-17T00:00:00Z",
+      "timestamp": "2026-03-18T17:39:15.976Z",
       "event": "audit_executed",
-      "description": "Full pipeline audit with Irys storage and on-chain Base settlement",
+      "description": "Full pipeline audit — Aave V3 treasury memo — FAIL (score 65)",
       "details": {
-        "verdict": "TODO_REPLACE_WITH_ACTUAL_VERDICT",
-        "irysReceiptId": "TODO_REPLACE_WITH_ACTUAL_IRYS_ID",
-        "basescanTxHash": "TODO_REPLACE_WITH_ACTUAL_TX_HASH"
+        "verdict": "FAIL",
+        "score": 65,
+        "failureCodes": ["DJZS-E01", "DJZS-X02", "DJZS-T01"],
+        "irysReceiptId": "DaJbzVuiixqavqexDrdzjyubT4CAqTnQdZSwUpTeiDL4",
+        "basescanTxHash": "0x9d82c85cf8d57b0505d2bc95233f90a8a549f48ac5b0bdadadcd3ba35202ecd6"
       }
     },
     {
