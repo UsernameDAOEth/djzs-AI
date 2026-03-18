@@ -3,7 +3,7 @@
 ## Overview
 DJZS is a Forensic Terminal and Logic-as-a-Service (LaaS) protocol designed for the Agent-to-Agent (A2A) economy. It acts as a "Logic Oracle for the decentralized web," enforcing an "Audit-Before-Act" loop for autonomous agents through deterministic verification. The system modernizes Journal Entry Testing (JET) for AI reasoning traces, requiring agents to commit their reasoning to an immutable log before executing transactions.
 
-The protocol provides machine-readable adversarial audits via a tiered x402-gated API (Micro, Founder, Treasury tiers based on USDC payments on Base). The Architect Console is a governance-focused interface for the Sovereign Principal, featuring the Audit Ledger (immutable ProofOfLogic certificate review), Adversarial Oracle (manual reasoning stress-testing), Terminal Console, and x402 Governance layer (ProvisionAgentAllowance for escrow provisioning). Each audit generates a Proof of Logic Certificate, including deterministic DJZS-LF failure codes for autonomous agent error handling. The project aims to provide a robust, auditable framework for autonomous agent interactions within the A2A economy.
+The protocol provides machine-readable adversarial audits via a tiered x402-gated API (Micro, Founder, Treasury tiers based on USDC payments on Base). The x402 Audit Console (`/chat`) is a wallet-gated interface that routes audit requests to the real x402 payment endpoints, while the Live Demo (`/demo`) provides a free rate-limited preview. Each audit generates a Proof of Logic Certificate, including deterministic DJZS-LF failure codes for autonomous agent error handling. The project aims to provide a robust, auditable framework for autonomous agent interactions within the A2A economy.
 
 ### Integration Channels (Dark/Light)
 - **Dark Channel (XMTP)**: E2E encrypted via MLS protocol. Alpha protection for proprietary trading agents. Agent DMs the Oracle at `0xC5Ab9496233c1e51eD21c712e8abc86a3F434fc5`, gets verdict privately. Zero public trace. Message prefixes: `Thinking:` → AdversarialOracle, `Journal:` → JournalInsight.
@@ -21,7 +21,7 @@ Preferred communication style: Simple, everyday language.
 - **Technology Stack**: React 18 with TypeScript and Vite.
 - **UI/UX**: Radix UI components with Tailwind CSS, supporting dark/light modes (dark by default). The design features a futuristic dark palette (charcoal, orange, teal, purple, gold) and a warm light palette, characterized by sharp corners and subtle borders. Fonts used are Merriweather (headings) and Nunito (body).
 - **Routing**: Wouter for client-side navigation.
-- **State Management**: React hooks for local state, TanStack Query for server state, and Dexie (IndexedDB) for a local-first vault.
+- **State Management**: React hooks for local state, TanStack Query for server state.
 
 ### Backend
 - **Framework**: Express.js with TypeScript.
@@ -106,27 +106,24 @@ Preferred communication style: Simple, everyday language.
   5. Calls `settleEscrow(escrowId, passed, irisTxId)` on Base Mainnet
   6. Returns certificate + `settlement_tx_hash` + Irys provenance
 
-### Local-First Vault
-- **Storage**: Dexie (IndexedDB) for on-device storage of journal entries, AI insights, memory pins, trade artifacts, market alerts, and audit records.
-- **Encryption**: WebCrypto PBKDF2 + AES-GCM-256 provides transparent encryption/decryption of sensitive fields using a user-managed passphrase.
-
 ### Web3 Integration
 - **Wallet Connection**: RainbowKit for Base mainnet and Base Sepolia.
-- **ENS Resolution**: Custom hook for resolving ENS names.
-- **Wallet Identity**: Optional wallet-based authentication.
+- **Wallet Identity**: Wallet-based authentication for x402 Audit Console.
 
-### Architect Console (M2M Governance)
-- **Audit Ledger**: Immutable forensic log of ProofOfLogic certificates with expandable audit record cards, risk scoring visualization, and tier badges.
-- **Adversarial Oracle**: Manual adversarial reasoning — expose contradictions, attack assumptions, pressure-test logic.
-- **Terminal Console**: Dashboard for protocol monitoring and configuration.
-- **x402 Fee Structure**: Read-only display of Execution Zone pricing (Micro $2.50, Founder $5.00, Treasury $50.00 USDC).
-- **ProvisionAgentAllowance**: Governance component for provisioning USDC escrow to execution agents. Reads live USDC balance via wagmi `useReadContract` (balanceOf on Base Mainnet USDC contract). Displays Available Velocity and Pending Logic Traces metrics. Detects wrong network (shows SWITCH_NETWORK), disconnected state, and defaults to 50.00 USDC input.
-- **Local Node State**: Export-only telemetry section at the bottom of the Audit Ledger view. "Export Logic Logs (.zip)" downloads local IndexedDB state. No import functionality (core state is on Irys Datachain).
-- **Onboarding**: An interactive tutorial ("Protocol Specs") with spotlight highlights, keyboard navigation, and localStorage persistence.
-- **Offline Support**: Enables offline writing and browsing via local-first storage and service worker caching.
+### x402 Audit Console (`/chat`)
+- Wallet-gated audit interface using the same clean two-column layout as the demo page.
+- Routes to real x402 payment endpoints (`/api/audit/micro`, `/api/audit/founder`, `/api/audit/treasury`) based on tier selection.
+- Requires wallet connection via RainbowKit; Run button disabled when disconnected.
+- Passes wallet address and optional BYOK Venice API key in request headers.
+- Full pipeline visualization: signature → hash check → auditing → Irys upload → settlement → complete.
+- Displays ProofOfLogic certificate with risk score gauge, DJZS-LF failure codes, Irys certificate link, and BaseScan TX link.
+
+### Live Demo (`/demo`)
+- Free, rate-limited demo of the audit pipeline via `/api/audit/demo`.
+- Same UI layout as the x402 Audit Console but no wallet required.
+- Preloaded scenarios for quick testing.
 
 ### Privacy Design
-- Emphasizes local-first storage, user control over AI execution, and offline journaling capabilities.
 - XMTP messaging is end-to-end encrypted via MLS protocol with quantum-resistant key encapsulation.
 - **XMTP Agent** (`server/agent.ts`): Standalone listener using `@xmtp/agent-sdk`. Persona-routed via `handleXMTPMessage` from `audit-agent.ts`. Prefixes: `Thinking:`/`Audit:` → general, `Logic:` → logic_auditor, `Risk:` → risk_hunter, `Backtest:` → backtest_skeptic, `Regime:` → regime_detector, `Journal:` → JournalInsight (OpenClaw), `Help:` → usage guide. Requires `XMTP_WALLET_KEY` (0x hex) and `XMTP_ENV` (dev/production) env vars. Run separately with `npx tsx server/agent.ts`.
 - **A2A Test Script** (`scripts/test-a2a-xmtp.ts`): Generates a burner wallet, connects to XMTP devnet, sends a DM to the Oracle, and logs the response. Run with `ORACLE_ADDRESS=0x... npx tsx scripts/test-a2a-xmtp.ts`.
@@ -142,8 +139,7 @@ Preferred communication style: Simple, everyday language.
 - **Key Fix**: `allowed_envs` must be set in compose_file during provision AND `env_keys` (list of "KEY=value" strings) in create CVM call
 - **DB Resilience**: App starts gracefully without database (server/db.ts exports nullable db, server/index.ts wraps seedDefaultRooms in try/catch)
 - **Neon DB**: Endpoint `ep-cool-fog-a6aibsm0.us-west-2.aws.neon.tech` is currently disabled; app runs without it
-- **Security Hardening**: node:22-slim base (Go CVEs), minimatch 10.2.1 override (ReDoS CVE), cross-spawn 7.0.6 (patched), undici 6.23.0 override (decompression DoS), @xmtp/proto 3.88.0 override, 10 build-only packages moved to devDependencies
-- **Audit Status**: `npm audit --omit=dev` reports 0 vulnerabilities; 2 remaining moderate (vite→esbuild dev-server) are non-exploitable in production
+- **Security Hardening**: node:22-slim base (Go CVEs), minimatch 10.2.3 override (ReDoS CVE), cross-spawn 7.0.6 (patched), undici 6.24.0 override (decompression DoS), hono 4.12.4 override, serialize-javascript 7.0.3 override, @xmtp/proto 3.88.0 override, 10 build-only packages moved to devDependencies
 
 ## Developer CLI (`cli/`)
 - **Package**: `@djzs/cli` v0.1.0 — Developer CLI for the DJZS protocol
@@ -161,7 +157,6 @@ Preferred communication style: Simple, everyday language.
 - **Venice AI**: Privacy-first AI processing via `VeniceClient` class (`server/venice.ts`). Supports 5 adversarial personas (`logic_auditor`, `regime_detector`, `backtest_skeptic`, `risk_hunter`, `general`) with per-persona model routing: `regime_detector` → `qwen3-235b`, `backtest_skeptic` → `deepseek-r1`, others → `llama-3.3-70b`. Singleton via `getVeniceClient()`, per-request API key override supported. Journal analysis (`analyzeJournalEntry`) preserved for backward compat. Base URL configurable via VENICE_BASE_URL.
 - **RainbowKit**: Wallet connection UI.
 - **wagmi/viem**: Blockchain interactions.
-- **Dexie**: IndexedDB wrapper.
 - **Zod**: Schema validation.
 - **Radix UI**: Frontend component library.
 - **Tailwind CSS**: Styling framework.
