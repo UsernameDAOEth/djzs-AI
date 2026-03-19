@@ -777,8 +777,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
       req.body.agent_id = DEMO_AGENT_ADDRESS;
     }
 
-    const selectedTier: AuditTier = req.body.tier === "treasury" ? "treasury" : req.body.tier === "founder" ? "founder" : "micro";
-    return createTierHandler(selectedTier)(req, res);
+    const demoSchema = z.object({
+      strategy_memo: z.string().min(20, "Strategy memo must be at least 20 characters"),
+      audit_type: z.enum(["treasury", "founder_drift", "strategy", "general"]).default("general"),
+      agent_id: z.string().optional(),
+      tier: z.string().optional(),
+    });
+
+    const parsed = demoSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({
+        error: "Invalid demo audit request",
+        details: parsed.error.errors,
+      });
+    }
+
+    try {
+      const veniceClient = undefined;
+      const audit = await executeAudit({
+        strategy_memo: parsed.data.strategy_memo,
+        audit_type: parsed.data.audit_type || "general",
+        tier: "micro",
+        agent_id: parsed.data.agent_id,
+      }, veniceClient);
+
+      const irysResult = await uploadAuditToIrys(audit);
+      const trustScoreResult = await postAuditChainWrite(audit, parsed.data.agent_id, irysResult.irys_tx_id);
+
+      const response: any = {
+        audit_id: audit.audit_id,
+        timestamp: audit.timestamp,
+        tier: "micro",
+        cryptographic_hash: audit.cryptographic_hash,
+        keccak256_hash: audit.keccak256_hash,
+        should_abort: audit.should_abort,
+        abort_reasons: audit.abort_reasons,
+        verdict: audit.verdict,
+        risk_score: audit.risk_score,
+        flags: audit.flags,
+        primary_flaw: audit.primary_flaw,
+        summary: audit.summary,
+        model_used: audit.model_used,
+        persona_used: audit.persona_used,
+        provenance_provider: "IRYS_DATACHAIN",
+        irys_tx_id: irysResult.irys_tx_id,
+        irys_url: irysResult.irys_url,
+        ...(trustScoreResult.trust_score_tx_hash && { trust_score_tx_hash: trustScoreResult.trust_score_tx_hash }),
+        ...(trustScoreResult.trust_score_error && { trust_score_error: trustScoreResult.trust_score_error }),
+      };
+      if (irysResult.irys_error) {
+        response.irys_error = irysResult.irys_error;
+      }
+
+      res.json(response);
+    } catch (error) {
+      console.error("Demo audit failed:", error);
+      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
+        return res.status(503).json({ error: "AI service not configured" });
+      }
+      res.status(500).json({
+        error: "Audit execution failed",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
   });
 
   app.post("/api/audit/escrow", requireEscrowSignature(), async (req: any, res) => {
