@@ -39,7 +39,8 @@ const DEMO_SCENARIOS = [
 interface AuditFlag {
   code: string;
   severity: string;
-  message: string;
+  message?: string;
+  description?: string;
   evidence?: string;
   recommendation?: string;
 }
@@ -127,7 +128,7 @@ function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
             {flag.severity}
           </span>
           <span className="font-mono text-sm text-foreground/80 font-semibold" data-testid={`text-flag-code-${index}`}>{flag.code}</span>
-          <span className="text-sm text-muted-foreground truncate hidden sm:inline">{(flag.message || "").split("—")[0]}</span>
+          <span className="text-sm text-muted-foreground truncate hidden sm:inline">{(flag.message || flag.description || "").split("—")[0]}</span>
         </div>
         {expanded ? <ChevronUp size={16} className="text-muted-foreground flex-shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground flex-shrink-0" />}
       </button>
@@ -143,7 +144,7 @@ function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
             <div className="px-4 pb-4 space-y-3 border-t border-border dark:border-gray-800">
               <div className="pt-3">
                 <div className="text-xs font-mono text-muted-foreground mb-1">MESSAGE</div>
-                <p className="text-sm text-foreground/80">{flag.message}</p>
+                <p className="text-sm text-foreground/80">{flag.message || flag.description}</p>
               </div>
               {flag.evidence && (
                 <div>
@@ -213,6 +214,7 @@ export default function Demo() {
         body: JSON.stringify({
           strategy_memo: memo,
           audit_type: auditType,
+          tier,
         }),
         signal: controller.signal,
       });

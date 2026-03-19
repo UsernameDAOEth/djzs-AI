@@ -777,7 +777,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       req.body.agent_id = DEMO_AGENT_ADDRESS;
     }
 
-    return createTierHandler("micro")(req, res);
+    const selectedTier: AuditTier = req.body.tier === "treasury" ? "treasury" : req.body.tier === "founder" ? "founder" : "micro";
+    return createTierHandler(selectedTier)(req, res);
   });
 
   app.post("/api/audit/escrow", requireEscrowSignature(), async (req: any, res) => {
