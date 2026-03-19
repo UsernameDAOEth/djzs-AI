@@ -797,7 +797,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const audit = await executeAudit({
         strategy_memo: parsed.data.strategy_memo,
         audit_type: parsed.data.audit_type || "general",
-        tier: "micro",
+        tier: "treasury",
         agent_id: parsed.data.agent_id,
       }, veniceClient);
 
