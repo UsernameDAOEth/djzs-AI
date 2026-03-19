@@ -58,7 +58,7 @@ export function TorusLogo({
 
         ctx.beginPath();
         ctx.arc(projX, projY, Math.max(0.8, 1.2 * scale), 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(243, 126, 32, ${alpha})`;
+        ctx.fillStyle = `rgba(243, 160, 80, ${alpha})`;
         ctx.fill();
       }
     }
