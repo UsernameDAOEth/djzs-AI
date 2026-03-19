@@ -467,3 +467,34 @@ input, textarea, [contenteditable] {
     animation-direction: reverse;
   }
 }
+
+@keyframes djzs-rotate-y {
+  0% { transform: perspective(200px) rotateY(0deg); }
+  100% { transform: perspective(200px) rotateY(360deg); }
+}
+@keyframes djzs-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-1.5px); }
+}
+@keyframes djzs-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(243,126,32,0.3)); }
+  50% { filter: drop-shadow(0 0 10px rgba(243,126,32,0.5)) drop-shadow(0 0 20px rgba(243,126,32,0.15)); }
+}
+.djzs-logo-wrap {
+  animation: djzs-float 4s ease-in-out infinite, djzs-glow 3s ease-in-out infinite;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.djzs-logo-img {
+  animation: djzs-rotate-y 8s linear infinite;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  will-change: transform;
+}
+.djzs-logo-wrap:hover .djzs-logo-img {
+  animation-duration: 2s;
+}
+.djzs-logo-wrap:hover {
+  animation: djzs-float 2s ease-in-out infinite, djzs-glow 1.5s ease-in-out infinite;
+}

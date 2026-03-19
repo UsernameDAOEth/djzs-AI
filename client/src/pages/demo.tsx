@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { useTheme } from "@/lib/theme";
+import { AnimatedLogo } from "@/components/AnimatedLogo";
 import {
   ArrowLeft, ArrowRight, Play, Terminal, ShieldCheck, ShieldAlert,
   AlertTriangle, CheckCircle2, Upload, Database, ExternalLink,
@@ -266,7 +267,7 @@ export default function Demo() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <Link href="/">
             <span className="flex items-center gap-2.5" data-testid="link-demo-home-logo">
-              <img src="/logo.png" alt="DJZS" className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg transition-transform hover:scale-105" style={{ filter: 'drop-shadow(0 0 4px rgba(243,126,32,0.3))' }} />
+              <AnimatedLogo />
               <span className="text-lg sm:text-xl font-bold tracking-tighter text-foreground">DJZS<span className="text-purple-500">.ai</span></span>
             </span>
           </Link>
