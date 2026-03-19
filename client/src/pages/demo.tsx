@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { useTheme } from "@/lib/theme";
-import { AnimatedLogo } from "@/components/AnimatedLogo";
+import { TorusLogo } from "@/components/TorusLogo";
 import {
   ArrowLeft, ArrowRight, Play, Terminal, ShieldCheck, ShieldAlert,
   AlertTriangle, CheckCircle2, Upload, Database, ExternalLink,
@@ -267,7 +267,7 @@ export default function Demo() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <Link href="/">
             <span className="flex items-center gap-2.5" data-testid="link-demo-home-logo">
-              <AnimatedLogo />
+              <TorusLogo />
               <span className="text-lg sm:text-xl font-bold tracking-tighter text-foreground">DJZS<span className="text-purple-500">.ai</span></span>
             </span>
           </Link>

@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/lib/theme";
-import { AnimatedLogo } from "@/components/AnimatedLogo";
+import { TorusLogo } from "@/components/TorusLogo";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -137,7 +137,7 @@ export default function Docs() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
             <button className="flex items-center gap-2 text-sm font-bold text-foreground tracking-wide uppercase opacity-60 hover:opacity-100 hover:text-orange-400 transition-all group">
-              <AnimatedLogo size="sm" data-testid="img-logo-docs" />
+              <TorusLogo size="sm" data-testid="img-logo-docs" />
               <span>DJZS</span>
             </button>
           </Link>

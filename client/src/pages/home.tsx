@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { RevealSection } from "@/components/hero";
 import { ApiTiers } from "@/components/ApiTiers";
 import { FinalCTA } from "@/components/FinalCTA";
-import { AnimatedLogo } from "@/components/AnimatedLogo";
+import { TorusLogo } from "@/components/TorusLogo";
 import { WhoUsesOracle } from "@/components/WhoUsesOracle";
 import { Helmet } from "react-helmet";
 import { useTheme } from "@/lib/theme";
@@ -113,7 +113,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <Link href="/">
             <span className="flex items-center gap-2.5" data-testid="link-home-logo">
-              <AnimatedLogo data-testid="img-logo-header" />
+              <TorusLogo data-testid="img-logo-header" />
               <span className="text-lg sm:text-xl font-bold tracking-tighter text-foreground" data-testid="text-header-brand">DJZS<span className="text-purple-500">.ai</span></span>
             </span>
           </Link>
