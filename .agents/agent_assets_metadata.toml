@@ -6,3 +6,9 @@ id = "kP6iwOeR-ukVDxWenoMEH"
 uri = "file://attached_assets/djzs-banner.png"
 type = "image"
 title = "DJZS Protocol - Synthesis Hackathon Banner"
+
+[[outputs]]
+id = "AOe8SyBb98ABfvMXuJrI8"
+uri = "file://attached_assets/djzs-banner-square.png"
+type = "image"
+title = "DJZS Protocol - Square Banner for Synthesis"
