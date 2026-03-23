@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "kP6iwOeR-ukVDxWenoMEH"
+uri = "file://attached_assets/djzs-banner.png"
+type = "image"
+title = "DJZS Protocol - Synthesis Hackathon Banner"
