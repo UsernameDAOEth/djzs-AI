@@ -34,7 +34,7 @@ export async function uploadAuditToIrys(auditData: Record<string, any>): Promise
       { name: "audit-id", value: auditData.audit_id || "unknown" },
       { name: "tier", value: auditData.tier || "unknown" },
       { name: "verdict", value: auditData.verdict || "unknown" },
-      { name: "protocol", value: "ProofOfLogic" },
+      { name: "Protocol", value: "ProofOfLogic" },
       { name: "version", value: "2.0" },
       { name: "Risk-Score", value: String(auditData.risk_score ?? "unknown") },
       { name: "Audit-Type", value: auditData.audit_type || "general" },
