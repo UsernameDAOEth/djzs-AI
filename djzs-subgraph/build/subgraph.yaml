@@ -1,0 +1,119 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: DJZSLogicTrustScore
+    network: base
+    source:
+      address: "0xB3324D07A8713b354435FF0e2A982A504e81b137"
+      abi: DJZSLogicTrustScore
+      startBlock: 43246652
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Agent
+        - AuditRecord
+        - LFFlag
+        - LFCodeCoOccurrence
+        - TrustScoreStats
+      abis:
+        - name: DJZSLogicTrustScore
+          file: DJZSLogicTrustScore/abis/DJZSLogicTrustScore.json
+      eventHandlers:
+        - event: ScoreUpdated(indexed address,uint256,string,string[],string,uint256)
+          handler: handleScoreUpdated
+        - event: WriterAuthorized(indexed address)
+          handler: handleWriterAuthorized
+        - event: WriterRevoked(indexed address)
+          handler: handleWriterRevoked
+      file: DJZSLogicTrustScore/DJZSLogicTrustScore.wasm
+  - kind: ethereum
+    name: DJZSStaking
+    network: base
+    source:
+      address: "0xA362947D23D52C05a431E378F30C8A962De91e8A"
+      abi: DJZSStaking
+      startBlock: 43247029
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Staker
+        - StakeEvent
+        - SlashEvent
+        - TrustScoreSnapshot
+      abis:
+        - name: DJZSStaking
+          file: DJZSStaking/abis/DJZSStaking.json
+      eventHandlers:
+        - event: Staked(indexed address,uint256,uint256)
+          handler: handleStaked
+        - event: Unstaked(indexed address,uint256)
+          handler: handleUnstaked
+        - event: Slashed(indexed address,uint256,string)
+          handler: handleSlashed
+        - event: MinimumStakeUpdated(uint256)
+          handler: handleMinimumStakeUpdated
+        - event: LockDurationUpdated(uint256)
+          handler: handleLockDurationUpdated
+      file: DJZSStaking/DJZSStaking.wasm
+  - kind: ethereum
+    name: DJZSEscrowLock
+    network: base
+    source:
+      address: "0xB041760147a60F63Ca701da9e431412bCc25Cfb7"
+      abi: DJZSEscrowLock
+      startBlock: 43247069
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Escrow
+        - EscrowEvent
+      abis:
+        - name: DJZSEscrowLock
+          file: DJZSEscrowLock/abis/DJZSEscrowLock.json
+      eventHandlers:
+        - event: EscrowCreated(indexed uint256,address,address,uint256,bytes32)
+          handler: handleEscrowCreated
+        - event: AuditPending(indexed uint256,address,address,bytes32,uint256)
+          handler: handleAuditPending
+        - event: EscrowSettled(indexed uint256,bool,string)
+          handler: handleEscrowSettled
+        - event: EscrowRefunded(indexed uint256)
+          handler: handleEscrowRefunded
+      file: DJZSEscrowLock/DJZSEscrowLock.wasm
+  - kind: ethereum
+    name: DJZSAgentRegistry
+    network: base
+    source:
+      address: "0xe40d5669Ce8e06A91188B82Ce7292175E2013E41"
+      abi: DJZSAgentRegistry
+      startBlock: 43246651
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - RegisteredAgent
+        - AgentEvent
+      abis:
+        - name: DJZSAgentRegistry
+          file: DJZSAgentRegistry/abis/DJZSAgentRegistry.json
+      eventHandlers:
+        - event: AgentRegistered(indexed address,string,indexed address)
+          handler: handleAgentRegistered
+        - event: AgentDeactivated(indexed address)
+          handler: handleAgentDeactivated
+        - event: AgentReactivated(indexed address)
+          handler: handleAgentReactivated
+        - event: AgentMetadataUpdated(indexed address,string)
+          handler: handleAgentMetadataUpdated
+      file: DJZSAgentRegistry/DJZSAgentRegistry.wasm

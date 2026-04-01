@@ -34,10 +34,12 @@ function createSnapshot(
   stakerId: string,
   currentAmount: BigDecimal,
   delta: BigDecimal,
+  txHash: string,
+  logIndex: string,
   blockNumber: BigInt,
   blockTimestamp: BigInt,
 ): void {
-  let id = stakerId + "-" + blockNumber.toString();
+  let id = txHash + "-" + logIndex;
   let snapshot = new TrustScoreSnapshot(id);
   snapshot.staker = stakerId;
   snapshot.amount = currentAmount;
@@ -72,7 +74,7 @@ export function handleStaked(event: Staked): void {
   stakeEvent.transactionHash = event.transaction.hash;
   stakeEvent.save();
 
-  createSnapshot(address, staker.amount, amount, event.block.number, event.block.timestamp);
+  createSnapshot(address, staker.amount, amount, event.transaction.hash.toHexString(), event.logIndex.toString(), event.block.number, event.block.timestamp);
 }
 
 export function handleUnstaked(event: Unstaked): void {
@@ -98,7 +100,7 @@ export function handleUnstaked(event: Unstaked): void {
   stakeEvent.transactionHash = event.transaction.hash;
   stakeEvent.save();
 
-  createSnapshot(address, staker.amount, negativeDelta, event.block.number, event.block.timestamp);
+  createSnapshot(address, staker.amount, negativeDelta, event.transaction.hash.toHexString(), event.logIndex.toString(), event.block.number, event.block.timestamp);
 }
 
 export function handleSlashed(event: Slashed): void {
@@ -128,7 +130,7 @@ export function handleSlashed(event: Slashed): void {
   slashEvent.transactionHash = event.transaction.hash;
   slashEvent.save();
 
-  createSnapshot(address, staker.amount, negativeDelta, event.block.number, event.block.timestamp);
+  createSnapshot(address, staker.amount, negativeDelta, event.transaction.hash.toHexString(), event.logIndex.toString(), event.block.number, event.block.timestamp);
 }
 
 export function handleMinimumStakeUpdated(event: MinimumStakeUpdated): void {}
