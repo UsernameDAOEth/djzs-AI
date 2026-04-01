@@ -27,6 +27,43 @@ const FAILURE_CODES = [
 
 const TOOLS_LIST = ["query_pol_certificates", "query_agent_trust"];
 
+interface IrysTag {
+  name: string;
+  value: string;
+}
+
+interface IrysTransactionNode {
+  id: string;
+  address: string;
+  tags: IrysTag[];
+}
+
+interface IrysTransactionEdge {
+  node: IrysTransactionNode;
+}
+
+interface IrysGraphQLResponse {
+  data?: {
+    transactions?: {
+      edges?: IrysTransactionEdge[];
+    };
+  };
+  errors?: Array<{ message: string }>;
+}
+
+interface CertificateRecord {
+  irys_id: string;
+  irys_url: string;
+  verdict: string;
+  tier: string;
+  target_system: string;
+  audit_id: string | null;
+  risk_score: string | null;
+  flag_codes: string | null;
+  timestamp: string | null;
+  agent_id: string | null;
+}
+
 function createServer(): McpServer {
   const server = new McpServer({
     name: "djzs-trust-mcp",
@@ -57,7 +94,7 @@ function createServer(): McpServer {
               content: [{ type: "text" as const, text: JSON.stringify({ error: `Certificate ${irys_tx_id} not found (HTTP ${resp.status})` }) }],
             };
           }
-          const cert = await resp.json();
+          const cert: unknown = await resp.json();
           return {
             content: [{
               type: "text" as const,
@@ -70,7 +107,7 @@ function createServer(): McpServer {
           };
         } catch (err) {
           return {
-            content: [{ type: "text" as const, text: JSON.stringify({ error: `Failed to fetch certificate: ${err}` }) }],
+            content: [{ type: "text" as const, text: JSON.stringify({ error: `Failed to fetch certificate: ${String(err)}` }) }],
           };
         }
       }
@@ -114,7 +151,7 @@ function createServer(): McpServer {
           };
         }
 
-        const data: any = await resp.json();
+        const data = (await resp.json()) as IrysGraphQLResponse;
 
         if (data.errors) {
           return {
@@ -122,9 +159,9 @@ function createServer(): McpServer {
           };
         }
 
-        const edges = data?.data?.transactions?.edges || [];
+        const edges = data.data?.transactions?.edges ?? [];
 
-        const certificates = edges.map((edge: any) => {
+        const certificates: CertificateRecord[] = edges.map((edge) => {
           const node = edge.node;
           const tagMap: Record<string, string> = {};
           for (const t of node.tags) tagMap[t.name] = t.value;
@@ -143,8 +180,8 @@ function createServer(): McpServer {
           };
         });
 
-        const passCount = certificates.filter((c: any) => c.verdict === "PASS").length;
-        const failCount = certificates.filter((c: any) => c.verdict === "FAIL").length;
+        const passCount = certificates.filter((c) => c.verdict === "PASS").length;
+        const failCount = certificates.filter((c) => c.verdict === "FAIL").length;
 
         return {
           content: [{
@@ -159,7 +196,7 @@ function createServer(): McpServer {
         };
       } catch (err) {
         return {
-          content: [{ type: "text" as const, text: JSON.stringify({ error: `Irys GraphQL query failed: ${err}` }) }],
+          content: [{ type: "text" as const, text: JSON.stringify({ error: `Irys GraphQL query failed: ${String(err)}` }) }],
         };
       }
     }
