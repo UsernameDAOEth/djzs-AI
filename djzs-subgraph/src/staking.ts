@@ -3,6 +3,8 @@ import {
   Staked,
   Unstaked,
   Slashed,
+  MinimumStakeUpdated,
+  LockDurationUpdated,
 } from "../generated/DJZSStaking/DJZSStaking";
 import {
   Staker,
@@ -128,3 +130,7 @@ export function handleSlashed(event: Slashed): void {
 
   createSnapshot(address, staker.amount, negativeDelta, event.block.number, event.block.timestamp);
 }
+
+export function handleMinimumStakeUpdated(event: MinimumStakeUpdated): void {}
+
+export function handleLockDurationUpdated(event: LockDurationUpdated): void {}

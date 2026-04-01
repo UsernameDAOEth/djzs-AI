@@ -58,6 +58,10 @@ dataSources:
           handler: handleUnstaked
         - event: Slashed(indexed address,uint256,string)
           handler: handleSlashed
+        - event: MinimumStakeUpdated(uint256)
+          handler: handleMinimumStakeUpdated
+        - event: LockDurationUpdated(uint256)
+          handler: handleLockDurationUpdated
       file: ./src/staking.ts
   - kind: ethereum
     name: DJZSEscrowLock
