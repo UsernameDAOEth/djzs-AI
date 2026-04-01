@@ -1,0 +1,129 @@
+type Agent @entity {
+  id: ID!
+  totalAudits: BigInt!
+  latestRiskScore: BigInt!
+  latestVerdict: String!
+  passCount: BigInt!
+  failCount: BigInt!
+  audits: [AuditRecord!]! @derivedFrom(field: "agent")
+  flags: [LFFlag!]! @derivedFrom(field: "agent")
+}
+
+type AuditRecord @entity {
+  id: ID!
+  agent: Agent!
+  riskScore: BigInt!
+  verdict: String!
+  flags: [String!]!
+  irysReceiptId: String!
+  irysUrl: String!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type LFFlag @entity {
+  id: ID!
+  agent: Agent!
+  code: String!
+  auditRecord: AuditRecord!
+  timestamp: BigInt!
+}
+
+type LFCodeCoOccurrence @entity {
+  id: ID!
+  codeA: String!
+  codeB: String!
+  count: BigInt!
+}
+
+type TrustScoreStats @entity {
+  id: ID!
+  totalAudits: BigInt!
+  totalPasses: BigInt!
+  totalFails: BigInt!
+  uniqueAgents: BigInt!
+}
+
+type Staker @entity {
+  id: ID!
+  amount: BigDecimal!
+  stakedAt: BigInt!
+  lockUntil: BigInt!
+  active: Boolean!
+  totalSlashed: BigDecimal!
+  events: [StakeEvent!]! @derivedFrom(field: "staker")
+  slashEvents: [SlashEvent!]! @derivedFrom(field: "staker")
+}
+
+type StakeEvent @entity {
+  id: ID!
+  staker: Staker!
+  eventType: String!
+  amount: BigDecimal!
+  lockUntil: BigInt
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type SlashEvent @entity {
+  id: ID!
+  staker: Staker!
+  amount: BigDecimal!
+  reason: String!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type TrustScoreSnapshot @entity {
+  id: ID!
+  staker: Staker!
+  amount: BigDecimal!
+  delta: BigDecimal!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+}
+
+type Escrow @entity {
+  id: ID!
+  escrowId: BigInt!
+  creator: Bytes!
+  recipient: Bytes!
+  amount: BigInt!
+  executionTraceHash: Bytes!
+  settled: Boolean!
+  passed: Boolean
+  irisTxId: String
+  status: String!
+  events: [EscrowEvent!]! @derivedFrom(field: "escrow")
+}
+
+type EscrowEvent @entity {
+  id: ID!
+  escrow: Escrow!
+  eventType: String!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type RegisteredAgent @entity {
+  id: ID!
+  name: String!
+  metadataUri: String!
+  agentOwner: Bytes!
+  active: Boolean!
+  registeredAt: BigInt!
+  events: [AgentEvent!]! @derivedFrom(field: "registeredAgent")
+}
+
+type AgentEvent @entity {
+  id: ID!
+  registeredAgent: RegisteredAgent!
+  eventType: String!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
