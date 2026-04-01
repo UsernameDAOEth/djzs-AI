@@ -1,0 +1,16 @@
+name = "djzs-trust-mcp"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+
+[durable_objects]
+bindings = [
+  { name = "DJZSTrustMCP", class_name = "DJZSTrustMCP" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["DJZSTrustMCP"]
