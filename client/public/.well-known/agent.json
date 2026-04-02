@@ -44,7 +44,7 @@
       "endpoint": "/api/audit/micro",
       "method": "POST",
       "description": "High-frequency operational ledger and sanity check. Binary risk scoring.",
-      "price": "2.50",
+      "price": "0.10",
       "expected_payload": {
         "strategy_memo": "string (required, min 20 chars, max 1000 chars)",
         "audit_type": "string (optional) - treasury | founder_drift | strategy | general",
@@ -68,7 +68,7 @@
       "endpoint": "/api/audit/founder",
       "method": "POST",
       "description": "Strategic roadmap diligence. Detects narrative drift and confirmation bias.",
-      "price": "5.00",
+      "price": "1.00",
       "expected_payload": {
         "strategy_memo": "string (required, min 20 chars, max 5000 chars)",
         "audit_type": "string (optional) - treasury | founder_drift | strategy | general",
@@ -81,7 +81,7 @@
       "endpoint": "/api/audit/treasury",
       "method": "POST",
       "description": "Exhaustive adversarial stress-test for capital deployment proposals.",
-      "price": "50.00",
+      "price": "10.00",
       "expected_payload": {
         "strategy_memo": "string (required, min 20 chars, unlimited length)",
         "audit_type": "string (optional) - treasury | founder_drift | strategy | general",
