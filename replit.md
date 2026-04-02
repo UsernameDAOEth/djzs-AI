@@ -30,7 +30,7 @@ Preferred communication style: Simple, everyday language.
 
 ### A2A Audit API (Tiered Zone Architecture)
 - **Agent Discovery**: `/.well-known/agent.json` manifest for machine-readable service discovery.
-- **Tiered Endpoints**: Micro-Zone ($2.50 USDC, 1000 char limit), Founder Zone ($5.00 USDC, 5000 char limit), and Treasury Zone ($50.00 USDC, unlimited). `POST /api/audit` serves as a backward-compatible alias for the Micro-Zone.
+- **Tiered Endpoints**: Micro-Zone ($0.10 USDC, 1000 char limit), Founder Zone ($1.00 USDC, 5000 char limit), and Treasury Zone ($10.00 USDC, unlimited). `POST /api/audit` serves as a backward-compatible alias for the Micro-Zone.
 - **Schema Discovery**: `GET /api/audit/schema` for API details, pricing, and integration.
 - **Payment**: x402 protocol for USDC micropayments on Base.
 - **Audit Types**: Supports `treasury`, `founder_drift`, `strategy`, and `general` logic audits.

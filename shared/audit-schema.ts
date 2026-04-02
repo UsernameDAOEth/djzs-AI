@@ -6,21 +6,21 @@ export type AuditTier = z.infer<typeof auditTierSchema>;
 export const TIER_CONFIG = {
   micro: {
     name: "The Micro-Zone",
-    price: "$2.50",
+    price: "$0.10",
     maxMemoLength: 1000,
     description: "High-frequency operational ledger and sanity check. Binary risk scoring.",
     endpoint: "/api/audit/micro",
   },
   founder: {
     name: "The Founder Zone",
-    price: "$5.00",
+    price: "$1.00",
     maxMemoLength: 5000,
     description: "Strategic roadmap diligence. Detects narrative drift and confirmation bias.",
     endpoint: "/api/audit/founder",
   },
   treasury: {
     name: "The Treasury Zone",
-    price: "$50.00",
+    price: "$10.00",
     maxMemoLength: Infinity,
     description: "Exhaustive adversarial stress-test for capital deployment proposals.",
     endpoint: "/api/audit/treasury",

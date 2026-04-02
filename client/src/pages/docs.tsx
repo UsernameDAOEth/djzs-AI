@@ -226,7 +226,7 @@ export default function Docs() {
                 </div>
                 <div className="p-4 rounded-lg bg-muted border border-border">
                   <p className="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-1">Micro-Zone Cost</p>
-                  <code className="text-xs text-foreground font-mono">$2.50 USDC</code>
+                  <code className="text-xs text-foreground font-mono">$0.10 USDC</code>
                 </div>
               </div>
               <div className="p-4 rounded-lg bg-red-500/[0.04] border border-red-500/15">
@@ -854,7 +854,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
-                  <span><strong className="text-amber-300">Fee Structure</strong> - Read-only display of Execution Zone pricing (Micro $2.50, Founder $5.00, Treasury $50.00 USDC)</span>
+                  <span><strong className="text-amber-300">Fee Structure</strong> - Read-only display of Execution Zone pricing (Micro $0.10, Founder $1.00, Treasury $10.00 USDC)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0"></span>
@@ -903,7 +903,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <div className="p-6 rounded-lg bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/20 hover:border-teal-500/30 transition-all">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-foreground">Micro-Zone</h3>
-                <span className="text-sm font-bold text-teal-400 bg-teal-500/10 px-3 py-1 rounded">$2.50</span>
+                <span className="text-sm font-bold text-teal-400 bg-teal-500/10 px-3 py-1 rounded">$0.10</span>
               </div>
               <p className="text-muted-foreground mb-4 leading-relaxed">Fast binary risk scoring for operational decisions. Quick "check my work" — submit a strategy memo, get a risk score and bias detection back in seconds.</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
@@ -924,7 +924,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <div className="p-6 rounded-lg bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/20 hover:border-orange-500/30 transition-all">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-foreground">Founder Zone</h3>
-                <span className="text-sm font-bold text-orange-400 bg-orange-500/10 px-3 py-1 rounded">$5.00</span>
+                <span className="text-sm font-bold text-orange-400 bg-orange-500/10 px-3 py-1 rounded">$1.00</span>
               </div>
               <p className="text-muted-foreground mb-4 leading-relaxed">Deep roadmap diligence for strategic decisions. Detects mission drift, narrative dependency, and founder blind spots.</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
@@ -945,7 +945,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <div className="p-6 rounded-lg bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/20 hover:border-purple-500/30 transition-all">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-foreground">Treasury Zone</h3>
-                <span className="text-sm font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded">$50.00</span>
+                <span className="text-sm font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded">$10.00</span>
               </div>
               <p className="text-muted-foreground mb-4 leading-relaxed">Exhaustive adversarial governance audit. Full breakdown for DAO treasury proposals, multi-sig decisions, and high-stakes governance votes.</p>
               <ul className="space-y-2 text-sm text-muted-foreground">

@@ -535,7 +535,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "POST /api/audit/micro": {
               accepts: {
                 scheme: "exact",
-                price: "$2.50",
+                price: "$0.10",
                 network: X402_NETWORK,
                 payTo: TREASURY_WALLET,
               },
@@ -544,7 +544,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "POST /api/audit/founder": {
               accepts: {
                 scheme: "exact",
-                price: "$5.00",
+                price: "$1.00",
                 network: X402_NETWORK,
                 payTo: TREASURY_WALLET,
               },
@@ -553,7 +553,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "POST /api/audit/treasury": {
               accepts: {
                 scheme: "exact",
-                price: "$50.00",
+                price: "$10.00",
                 network: X402_NETWORK,
                 payTo: TREASURY_WALLET,
               },
@@ -562,7 +562,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "POST /api/audit": {
               accepts: {
                 scheme: "exact",
-                price: "$2.50",
+                price: "$0.10",
                 network: X402_NETWORK,
                 payTo: TREASURY_WALLET,
               },
@@ -575,9 +575,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       x402Initialized = true;
       console.log(`x402 payment middleware initialized for 3 Zone tiers on Base Mainnet via Coinbase CDP`);
-      console.log(`  Micro-Zone:    POST /api/audit/micro    ($2.50 USDC)`);
-      console.log(`  Founder Zone:  POST /api/audit/founder  ($5.00 USDC)`);
-      console.log(`  Treasury Zone: POST /api/audit/treasury ($50.00 USDC)`);
+      console.log(`  Micro-Zone:    POST /api/audit/micro    ($0.10 USDC)`);
+      console.log(`  Founder Zone:  POST /api/audit/founder  ($1.00 USDC)`);
+      console.log(`  Treasury Zone: POST /api/audit/treasury ($10.00 USDC)`);
     } catch (error) {
       console.warn("x402 middleware not initialized (non-blocking):", error instanceof Error ? error.message : error);
       console.warn("Audit endpoint will operate without payment gate");
@@ -1034,19 +1034,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       zones: {
         micro: {
           endpoint: "POST /api/audit/micro",
-          price: "$2.50 USDC",
+          price: "$0.10 USDC",
           description: TIER_CONFIG.micro.description,
           memo_limit: "1000 chars",
         },
         founder: {
           endpoint: "POST /api/audit/founder",
-          price: "$5.00 USDC",
+          price: "$1.00 USDC",
           description: TIER_CONFIG.founder.description,
           memo_limit: "5000 chars",
         },
         treasury: {
           endpoint: "POST /api/audit/treasury",
-          price: "$50.00 USDC",
+          price: "$10.00 USDC",
           description: TIER_CONFIG.treasury.description,
           memo_limit: "unlimited",
         },
@@ -1071,7 +1071,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       },
       backward_compatible: {
         endpoint: "POST /api/audit",
-        price: "$2.50 USDC",
+        price: "$0.10 USDC",
         note: "Alias for Micro-Zone. Use tiered endpoints for full control.",
       },
       request: {

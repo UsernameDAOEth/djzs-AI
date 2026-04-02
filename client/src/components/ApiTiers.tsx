@@ -6,7 +6,7 @@ const tiers = [
   {
     name: "Micro",
     endpoint: "/api/audit/micro",
-    price: "$2.50",
+    price: "$0.10",
     color: "#22d3ee",
     borderColor: "border-cyan-500/30",
     bgGlow: "rgba(34,211,238,0.06)",
@@ -24,7 +24,7 @@ const tiers = [
   {
     name: "Founder",
     endpoint: "/api/audit/founder",
-    price: "$5.00",
+    price: "$1.00",
     color: "#a78bfa",
     borderColor: "border-purple-500/30",
     bgGlow: "rgba(167,139,250,0.06)",
@@ -43,7 +43,7 @@ const tiers = [
   {
     name: "Treasury",
     endpoint: "/api/audit/treasury",
-    price: "$50.00",
+    price: "$10.00",
     color: "#4ade80",
     borderColor: "border-green-500/30",
     bgGlow: "rgba(74,222,128,0.06)",

@@ -264,7 +264,7 @@ export default function Home() {
             </div>
 
             <p className="text-xs text-muted-foreground pt-2" data-testid="text-cta-microcopy">
-              $2.50 / $5.00 / $50.00 USDC per audit. Instant settlement on Base Mainnet. No subscriptions.
+              $0.10 / $1.00 / $10.00 USDC per audit. Instant settlement on Base Mainnet. No subscriptions.
             </p>
 
             <div className="flex flex-wrap gap-3 pt-1" data-testid="trust-badges">
@@ -403,7 +403,7 @@ export default function Home() {
                   <div className="text-sm font-mono text-muted-foreground mb-2" data-testid="text-phase-02">PHASE 02</div>
                   <h3 className="text-xl font-bold text-foreground mb-3">The x402 Tollbooth</h3>
                   <p className="text-muted-foreground leading-relaxed max-w-xs">
-                    The agent pays a $2.50 USDC micro-transaction on Base Mainnet. The TX hash is injected into the request header.
+                    The agent pays a $0.10 USDC micro-transaction on Base Mainnet. The TX hash is injected into the request header.
                   </p>
                 </motion.div>
 

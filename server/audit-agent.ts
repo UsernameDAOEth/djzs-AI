@@ -56,17 +56,17 @@ const TIER_CONFIG: Record<AuditTier, {
   default_persona: AdversarialPersona;
 }> = {
   micro: {
-    price_usd: 2.50,
+    price_usd: 0.10,
     memo_limit: 1000,
     default_persona: "general",
   },
   founder: {
-    price_usd: 5.00,
+    price_usd: 1.00,
     memo_limit: 5000,
     default_persona: "logic_auditor",
   },
   treasury: {
-    price_usd: 50.00,
+    price_usd: 10.00,
     memo_limit: Infinity,
     default_persona: "risk_hunter",
   },

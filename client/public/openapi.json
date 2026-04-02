@@ -3,7 +3,7 @@
   "info": {
     "title": "DJZS Logic-as-a-Service Protocol",
     "version": "1.0.0",
-    "description": "Adversarial logic verification for autonomous systems. Returns deterministic Proof of Logic Certificates with DJZS-LF failure codes for auto-abort sequences. Three tiers: Micro ($2.50), Founder ($5.00), Treasury ($50.00) USDC on Base Mainnet.",
+    "description": "Adversarial logic verification for autonomous systems. Returns deterministic Proof of Logic Certificates with DJZS-LF failure codes for auto-abort sequences. Three tiers: Micro ($0.10), Founder ($1.00), Treasury ($10.00) USDC on Base Mainnet.",
     "x-agent-discovery": "/.well-known/agent.json",
     "x-payment-protocol": "x402",
     "x-payment-currency": "USDC",
@@ -20,14 +20,14 @@
     "/api/audit/micro": {
       "post": {
         "operationId": "verifyLogicTrace",
-        "summary": "Micro-Zone ($2.50) Logic Audit",
+        "summary": "Micro-Zone ($0.10) Logic Audit",
         "description": "High-frequency sanity checks for trading bots. Fast execution, binary risk scoring. Character limit: 1000.",
         "parameters": [
           {
             "name": "x-payment-proof",
             "in": "header",
             "required": true,
-            "description": "Base Mainnet TX hash for $2.50 USDC",
+            "description": "Base Mainnet TX hash for $0.10 USDC",
             "schema": { "type": "string" }
           }
         ],
@@ -78,14 +78,14 @@
     "/api/audit/founder": {
       "post": {
         "operationId": "verifyFounderLogic",
-        "summary": "Founder Zone ($5.00) Logic Audit",
+        "summary": "Founder Zone ($1.00) Logic Audit",
         "description": "Strategic roadmap diligence for VC agents. Detects narrative drift and confirmation bias. Character limit: 5000.",
         "parameters": [
           {
             "name": "x-payment-proof",
             "in": "header",
             "required": true,
-            "description": "Base Mainnet TX hash for $5.00 USDC",
+            "description": "Base Mainnet TX hash for $1.00 USDC",
             "schema": { "type": "string" }
           }
         ],
@@ -136,14 +136,14 @@
     "/api/audit/treasury": {
       "post": {
         "operationId": "verifyTreasuryLogic",
-        "summary": "Treasury Zone ($50.00) Logic Audit",
+        "summary": "Treasury Zone ($10.00) Logic Audit",
         "description": "Exhaustive adversarial stress-test for capital deployment proposals. Unlimited character length.",
         "parameters": [
           {
             "name": "x-payment-proof",
             "in": "header",
             "required": true,
-            "description": "Base Mainnet TX hash for $50.00 USDC",
+            "description": "Base Mainnet TX hash for $10.00 USDC",
             "schema": { "type": "string" }
           }
         ],

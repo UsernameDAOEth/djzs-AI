@@ -15,7 +15,7 @@ The following components existed as part of the DJZS Protocol project prior to T
 - DJZS-LF failure taxonomy design (7 original codes: S01, S02, E01, E02, I01, I02, X01)
 - Irys Datachain integration for immutable Proof-of-Logic certificate storage
 - x402 USDC micropayment verification on Base Mainnet
-- Three-tier pricing model (Micro $2.50, Founder $5.00, Treasury $50.00)
+- Three-tier pricing model (Micro $0.10, Founder $1.00, Treasury $10.00)
 
 **Server & Client**
 - Express.js backend with audit routes, payment verification, and Irys upload

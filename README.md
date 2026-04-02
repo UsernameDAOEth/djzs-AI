@@ -91,9 +91,9 @@ The XMTP agent listener (`server/agent.ts`) runs concurrently with the REST API 
 
 | Tier | Endpoint | Price (USDC) | Memo Limit | Use Case |
 |---|---|---|---|---|
-| Micro-Zone | `POST /api/audit/micro` | $2.50 | 1,000 chars | Operational sanity checks, binary risk scoring |
-| Founder Zone | `POST /api/audit/founder` | $5.00 | 5,000 chars | Strategic roadmap diligence, narrative drift detection |
-| Treasury Zone | `POST /api/audit/treasury` | $50.00 | Unlimited | Exhaustive adversarial stress-test for capital deployment decisions |
+| Micro-Zone | `POST /api/audit/micro` | $0.10 | 1,000 chars | Operational sanity checks, binary risk scoring |
+| Founder Zone | `POST /api/audit/founder` | $1.00 | 5,000 chars | Strategic roadmap diligence, narrative drift detection |
+| Treasury Zone | `POST /api/audit/treasury` | $10.00 | Unlimited | Exhaustive adversarial stress-test for capital deployment decisions |
 | Escrow Zone | `POST /api/audit/escrow` | Escrow-funded | Per tier | On-chain escrow audit with hash verification + settlement callback |
 
 `POST /api/audit` is a backward-compatible alias for Micro-Zone.
@@ -333,7 +333,7 @@ The `/chat` page is a wallet-gated audit interface for running paid audits again
 
 | Feature | Description |
 |---|---|
-| Tier Selection | Micro ($2.50), Founder ($5.00), Treasury ($50.00) USDC on Base Mainnet |
+| Tier Selection | Micro ($0.10), Founder ($1.00), Treasury ($10.00) USDC on Base Mainnet |
 | Wallet Gate | Requires RainbowKit wallet connection; Run button disabled when disconnected |
 | Pipeline Visualization | Real-time status: signature → hash check → auditing → Irys upload → settlement |
 | ProofOfLogic Certificate | Risk score gauge, DJZS-LF failure codes, Irys certificate link, BaseScan TX link |
@@ -525,7 +525,7 @@ npx djzs audit "Your strategy memo"      # Run adversarial audit
 ### 3. x402 Audit Console (Web UI)
 
 Visit [djzs.ai/chat](https://djzs.ai/chat) for wallet-gated paid audits, or [djzs.ai/demo](https://djzs.ai/demo) for a free rate-limited preview:
-- **Tier Selection** — Micro ($2.50), Founder ($5.00), Treasury ($50.00) USDC on Base
+- **Tier Selection** — Micro ($0.10), Founder ($1.00), Treasury ($10.00) USDC on Base
 - **Pipeline Visualization** — Real-time audit progress with Irys + BaseScan links
 - **ProofOfLogic Certificate** — Risk score, DJZS-LF failure codes, permanent Irys provenance
 

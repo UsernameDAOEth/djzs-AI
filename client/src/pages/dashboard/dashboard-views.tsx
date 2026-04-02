@@ -291,9 +291,9 @@ export function APISettingsView() {
   };
 
   const endpoints = [
-    { method: "POST", path: "/api/audit/micro", tier: "Micro", price: "$2.50 USDC", color: "#06b6d4" },
-    { method: "POST", path: "/api/audit/founder", tier: "Founder", price: "$5.00 USDC", color: "#a855f7" },
-    { method: "POST", path: "/api/audit/treasury", tier: "Treasury", price: "$50.00 USDC", color: "#eab308" },
+    { method: "POST", path: "/api/audit/micro", tier: "Micro", price: "$0.10 USDC", color: "#06b6d4" },
+    { method: "POST", path: "/api/audit/founder", tier: "Founder", price: "$1.00 USDC", color: "#a855f7" },
+    { method: "POST", path: "/api/audit/treasury", tier: "Treasury", price: "$10.00 USDC", color: "#eab308" },
     { method: "GET", path: "/api/audit/verify/:txId", tier: "Verify", price: "Free", color: "#14b8a6" },
     { method: "GET", path: "/api/audit/logs", tier: "Console", price: "Free", color: "#22c55e" },
     { method: "GET", path: "/api/audit/schema", tier: "Discovery", price: "Free", color: "#22c55e" },
