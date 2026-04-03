@@ -131,12 +131,12 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@types/ws": "^8.5.13",
-    "autoprefixer": "^10.4.23",
+    "autoprefixer": "^10.4.27",
     "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.4",
     "esbuild": "^0.27.2",
     "hardhat": "^2.28.6",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.8",
     "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.20.5",
@@ -151,6 +151,13 @@
     "@xmtp/proto": "3.88.0",
     "undici": "6.24.0",
     "hono": "4.12.4",
-    "serialize-javascript": "7.0.3"
+    "serialize-javascript": "7.0.3",
+    "cross-spawn": ">=7.0.5",
+    "immutable": ">=4.3.8",
+    "semver": ">=7.5.2",
+    "handlebars": ">=4.7.9",
+    "lodash": ">=4.18.0",
+    "path-to-regexp": ">=0.1.13",
+    "picomatch": ">=2.3.2"
   }
 }
