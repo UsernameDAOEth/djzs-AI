@@ -292,18 +292,13 @@ export function mapToLegacyFormat(result: AdversarialAuditResult): {
 }
 
 export function getAbortTriggers(result: AdversarialAuditResult): AdversarialAuditFlag[] {
-  const abortCodes = [
-    "DJZS-S01", "DJZS-S02", "DJZS-X01",
-    "DJZS-E01", "DJZS-E02", "DJZS-X02", "DJZS-T01",
-  ];
-  return result.flags.filter(f => abortCodes.includes(f.code));
+  return result.flags.filter(f => f.severity === "CRITICAL" || f.severity === "HIGH");
 }
 
 export function shouldAbort(result: AdversarialAuditResult): boolean {
   if (result.verdict === "FAIL") return true;
-  if (result.risk_score >= 60) return true;
+  if (result.risk_score >= 51) return true;
   if (getAbortTriggers(result).length > 0) return true;
-  if (result.flags.length >= 3) return true;
   return false;
 }
 
