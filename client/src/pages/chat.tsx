@@ -18,25 +18,25 @@ const DEMO_SCENARIOS = [
     key: "fomo",
     label: "FOMO Momentum Buy",
     description: "Social-driven pump chase with no verified data",
-    memo: "EXECUTE IMMEDIATE BUY: 500 SOL of $SHILL. 1-minute volume is spiking and Crypto Twitter implies a tier-1 exchange listing today. Cannot miss this pump.",
+    memo: "Allocate 80% of treasury to $MOONDOGE based on 400% price increase this week and three crypto influencer endorsements on Twitter. No fundamental analysis conducted. No risk limits defined. Expected return: 10x in 14 days. Remaining 20% held in USDC as dry powder for the next momentum play.",
   },
   {
     key: "hallucination",
     label: "Hallucinated Data",
     description: "References a protocol and audit that don't exist",
-    memo: "Routing 50k USDC into Yield Protocol V4 based on their latest audit report from yesterday.",
+    memo: "Rebalance treasury into 60% AuroraVault protocol (TVL: $450M, audited by CertiSafe Labs, 12.4% guaranteed APY). Remaining 40% in USDC. Based on the AuroraVault governance report published March 2026 confirming zero exploit history and full insurance coverage via NexusGuard.",
   },
   {
     key: "valid",
     label: "Clean Strategy",
-    description: "Well-structured DCA with verified parameters",
-    memo: "Strategy Memo: Rebalance DAO Treasury — Conservative Yield Allocation. Current treasury: $2.4M USDC across 3 wallets on Base Mainnet. Proposal: Allocate 12% ($288,000) to Aave V3 USDC lending pool on Base. Rationale: Aave V3 Base USDC supply APY has averaged 3.8% over the past 90 days (source: DefiLlama, verified March 10 2026). 12% allocation is within our 15% single-protocol concentration limit per governance vote GV-2026-003. Aave V3 on Base has $847M TVL with no exploit history since deployment. Remaining 88% stays in USDC across existing custody wallets. Falsifiability: This strategy is WRONG if Aave V3 TVL drops below $200M, USDC APY falls below 1.5%, or any security incident is disclosed. Risk assessment: Smart contract risk - Aave V3 audited by Trail of Bits, Certora, SigmaPrime. Bug bounty $250K via Immunefi. Liquidity risk - $847M TVL means $288K position is 0.034% of pool, instant withdrawal. Rate risk - If APY drops below 2%, auto-withdraw. Worst case: Full protocol exploit = $288K loss (12% of treasury). Treasury survives at $2.1M. Operations unaffected. Execution: Single transaction via treasury multisig (3-of-5 signers). No leverage, no derivatives, no bridging. Stop-loss: Auto-withdraw if TVL drops below $200M. Timeline: Execute within 48 hours of governance approval. No urgency.",
+    description: "Well-structured rebalance with verified parameters",
+    memo: "Rebalance DAO treasury to 50% USDC (stable reserve), 30% ETH (blue-chip exposure), 20% wstETH via Lido (yield generation at current 3.8% APY per Lido dashboard, verified March 2026). Total volatile exposure: 50%, within protocol-defined 60% ceiling. Max single-asset concentration: 50% (USDC). Drawdown tolerance: 15% on volatile portion. Rebalance trigger: if volatile allocation drifts beyond +/- 5% of target. Data sources: CoinGecko 90-day moving average, Lido staking dashboard, on-chain USDC reserve verification.",
   },
   {
     key: "edge",
     label: "Race Condition Edge Case",
     description: "Reasonable strategy with hidden temporal risk",
-    memo: "Arbitrage opportunity: ETH is $2,845 on DEX-A and $2,860 on DEX-B. Executing simultaneous buy/sell across both venues. Expected profit: 0.53% after gas. Slippage tolerance: 0.1%.",
+    memo: "Execute ETH-to-USDC swap of 200 ETH ($380,000) using current spot price of $1,900 from CoinGecko API. Slippage tolerance: 0.5%. Execute as single market order on Uniswap v3 ETH/USDC pool. No check on pool depth at execution time. No TWAP or order splitting. Treasury policy allows up to $500,000 per transaction.",
   },
 ];
 
