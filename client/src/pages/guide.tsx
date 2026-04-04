@@ -4,7 +4,7 @@ import { LOGIC_FAILURE_TAXONOMY, VALID_FAILURE_CODES, type LogicFailureCode } fr
 
 const LF_TAXONOMY = VALID_FAILURE_CODES.map((code: LogicFailureCode) => {
   const def = LOGIC_FAILURE_TAXONOMY[code];
-  return { code, ...def };
+  return { ...def, code };
 });
 
 const SEV_STYLES: Record<string, { color: string; bg: string }> = {
