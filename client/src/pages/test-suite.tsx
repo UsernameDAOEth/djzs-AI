@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { Helmet } from "react-helmet";
+import { LOGIC_FAILURE_TAXONOMY, VALID_FAILURE_CODES, type LogicFailureCode } from "@shared/audit-schema";
 
 interface TestCase {
   id: number;
@@ -9,7 +10,7 @@ interface TestCase {
   tier: "micro" | "founder" | "treasury";
   memo: string;
   expectedVerdict: "PASS" | "FAIL";
-  expectedCodes: string[];
+  expectedCodes: LogicFailureCode[];
   rationale: string;
 }
 
@@ -23,49 +24,49 @@ const TEST_CASES: TestCase[] = [
   {
     id: 2, title: "Circular Logic (DJZS-S01)", targetSystem: "TestVault-Bravo", tier: "micro",
     memo: "This token will go up because demand is increasing. We know demand is increasing because the price is going up. The rising price confirms our thesis that the token is undervalued, which means more buyers will enter, pushing the price higher. We should allocate 10% of the fund to this position.",
-    expectedVerdict: "FAIL", expectedCodes: ["S01"],
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-S01"],
     rationale: "The thesis validates itself with its own conclusion.",
   },
   {
     id: 3, title: "Missing Falsifiability (DJZS-S02)", targetSystem: "TestVault-Charlie", tier: "founder",
     memo: "We believe the DeFi sector is entering a structural growth phase. Our thesis is that decentralized protocols will capture increasing market share from traditional finance over the next decade. We recommend a diversified allocation across the top 20 DeFi tokens by TVL. This is a long-term conviction play with no specific exit criteria \u2014 we will reassess periodically as the narrative evolves.",
-    expectedVerdict: "FAIL", expectedCodes: ["S02"],
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-S02"],
     rationale: "No exit condition, no measurable failure state.",
   },
   {
     id: 4, title: "Confirmation Tunnel (DJZS-E01)", targetSystem: "TestVault-Delta", tier: "founder",
     memo: "Three prominent crypto analysts on Twitter have called for ETH to reach $10,000 by Q4. Coinbase's latest report is bullish on Ethereum. The ETH/BTC ratio has historically recovered after drops like this. Reddit sentiment is overwhelmingly positive. Based on this consensus, we recommend a 15% ETH allocation with a stop-loss at $2,500.",
-    expectedVerdict: "FAIL", expectedCodes: ["E01"],
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-E01"],
     rationale: "All sources confirm the same directional bias. No bearish evidence considered.",
   },
   {
     id: 5, title: "Authority Substitution (DJZS-E02)", targetSystem: "TestVault-Echo", tier: "micro",
     memo: "BlackRock's CEO said Bitcoin is \"digital gold\" and institutional adoption is inevitable. ARK Invest's model prices BTC at $1M by 2030. Because these institutions have more resources and data than we do, we should follow their positioning and allocate 20% of the fund to BTC with no stop-loss \u2014 if they're wrong, everyone is wrong.",
-    expectedVerdict: "FAIL", expectedCodes: ["E02"],
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-E02"],
     rationale: "Thesis derived entirely from authority figures. Explicitly abdicates independent judgment.",
   },
   {
     id: 6, title: "Misaligned Incentive + Narrative Dependency (DJZS-I01/I02)", targetSystem: "TestVault-Foxtrot", tier: "treasury",
     memo: "Our fund advisor (who holds a large position in $FOXTROT) recommends we allocate 30% of treasury to the $FOXTROT token. The token's value proposition depends on the \"AI agent economy\" narrative gaining mainstream traction by 2025. If the narrative stalls, the token has no standalone utility, but the advisor assures us the narrative is \"unstoppable.\" We plan to vest the allocation over 12 months with no early exit clause.",
-    expectedVerdict: "FAIL", expectedCodes: ["I01", "I02"],
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-I01", "DJZS-I02"],
     rationale: "Advisor profits from own recommendation; token value collapses without a specific macro thesis.",
   },
   {
     id: 7, title: "Unhedged Execution (DJZS-X01)", targetSystem: "TestVault-Golf", tier: "treasury",
     memo: "Deploy $500K USDC into a new lending protocol on Base that launched 3 days ago. The APY is currently 47%. No audit has been completed on the protocol's smart contracts, but the team says one is \"in progress.\" We will deploy the full amount in a single transaction. If the protocol is exploited, we accept the loss as a cost of early positioning. No insurance, no phased entry, no withdrawal triggers.",
-    expectedVerdict: "FAIL", expectedCodes: ["X01"],
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-X01"],
     rationale: "No risk mitigation on any axis: unaudited protocol, single-tranche deployment, no insurance, no exit triggers.",
   },
 ];
 
 const COVERAGE_MATRIX = [
   { test: 1, tier: "micro", expected: "PASS", codes: "\u2014" },
-  { test: 2, tier: "micro", expected: "FAIL", codes: "S01" },
-  { test: 3, tier: "founder", expected: "FAIL", codes: "S02" },
-  { test: 4, tier: "founder", expected: "FAIL", codes: "E01" },
-  { test: 5, tier: "micro", expected: "FAIL", codes: "E02" },
-  { test: 6, tier: "treasury", expected: "FAIL", codes: "I01, I02" },
-  { test: 7, tier: "treasury", expected: "FAIL", codes: "X01" },
+  { test: 2, tier: "micro", expected: "FAIL", codes: "DJZS-S01" },
+  { test: 3, tier: "founder", expected: "FAIL", codes: "DJZS-S02" },
+  { test: 4, tier: "founder", expected: "FAIL", codes: "DJZS-E01" },
+  { test: 5, tier: "micro", expected: "FAIL", codes: "DJZS-E02" },
+  { test: 6, tier: "treasury", expected: "FAIL", codes: "DJZS-I01, DJZS-I02" },
+  { test: 7, tier: "treasury", expected: "FAIL", codes: "DJZS-X01" },
 ];
 
 const TIER_COLORS: Record<string, string> = {
@@ -89,7 +90,7 @@ export default function TestSuite() {
     }}>
       <Helmet>
         <title>DJZS Oracle — Test Audit Suite</title>
-        <meta name="description" content="Seven strategy memos to exercise the full DJZS-LF failure taxonomy across all three audit tiers." />
+        <meta name="description" content="Seven strategy memos exercising 8 of 11 DJZS-LF failure codes across all three audit tiers." />
       </Helmet>
 
       <style>{`
@@ -127,7 +128,7 @@ export default function TestSuite() {
             Test <em style={{ fontStyle: "italic", color: "#c8f060" }}>Audit Suite</em>
           </h1>
           <p style={{ fontSize: 18, color: "#666", fontWeight: 300, maxWidth: 520, lineHeight: 1.6 }}>
-            Seven strategy memos to exercise the full failure taxonomy across all three tiers. Submit each to the DJZS oracle at djzs.ai.
+            Seven strategy memos exercising 8 of {VALID_FAILURE_CODES.length} DJZS-LF failure codes across all three tiers. Submit each to the DJZS oracle at djzs.ai.
           </p>
           <div style={{ marginTop: 32, display: "flex", gap: 24, alignItems: "center", fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#666" }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8f060", animation: "testPulse 2s ease infinite" }} />
@@ -135,7 +136,7 @@ export default function TestSuite() {
             <span>·</span>
             <span>3 Tiers</span>
             <span>·</span>
-            <span>7 LF Codes</span>
+            <span>8 LF Codes</span>
           </div>
         </header>
 
@@ -287,7 +288,7 @@ export default function TestSuite() {
           </div>
 
           <p style={{ color: "#666", fontSize: 14, marginTop: 20, fontFamily: "'DM Mono', monospace" }}>
-            All seven LF codes covered. Three tiers covered. One clean pass baseline.
+            Eight of {VALID_FAILURE_CODES.length} canonical LF codes covered. Three tiers covered. One clean pass baseline.
           </p>
         </section>
 

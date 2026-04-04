@@ -1,25 +1,18 @@
 import { Link } from "wouter";
 import { Helmet } from "react-helmet";
+import { LOGIC_FAILURE_TAXONOMY, VALID_FAILURE_CODES, type LogicFailureCode } from "@shared/audit-schema";
 
-const LF_TAXONOMY = [
-  { code: "DJZS-S01", name: "Circular Logic", category: "Structural", weight: 30, severity: "CRITICAL" as const, description: "Reasoning chain references its own conclusion as premise" },
-  { code: "DJZS-S02", name: "Layer Inversion", category: "Structural", weight: 25, severity: "HIGH" as const, description: "Verification layer depends on unverified upstream data" },
-  { code: "DJZS-S03", name: "Dependency Ghost", category: "Structural", weight: 18, severity: "MEDIUM" as const, description: "References external dependency that cannot be resolved" },
-  { code: "DJZS-E01", name: "Oracle Unverified", category: "Epistemic", weight: 25, severity: "HIGH" as const, description: "External data source cited without provenance verification" },
-  { code: "DJZS-E02", name: "Confidence Inflation", category: "Epistemic", weight: 18, severity: "MEDIUM" as const, description: "Stated certainty exceeds evidential basis" },
-  { code: "DJZS-I01", name: "FOMO Loop", category: "Incentive", weight: 16, severity: "MEDIUM" as const, description: "Decision driven by social signal rather than verified data" },
-  { code: "DJZS-I02", name: "Misaligned Reward", category: "Incentive", weight: 16, severity: "MEDIUM" as const, description: "Optimization target diverges from stated objective" },
-  { code: "DJZS-I03", name: "Data Unverified", category: "Incentive", weight: 16, severity: "MEDIUM" as const, description: "Numerical claims lack verifiable source attribution" },
-  { code: "DJZS-X01", name: "Execution Unbound", category: "Execution", weight: 36, severity: "CRITICAL" as const, description: "No halt condition or resource ceiling defined" },
-  { code: "DJZS-X02", name: "Race Condition", category: "Execution", weight: 24, severity: "HIGH" as const, description: "Temporal dependency creates non-deterministic outcome" },
-  { code: "DJZS-T01", name: "Stale Reference", category: "Temporal", weight: 12, severity: "LOW" as const, description: "Data reference exceeds freshness threshold" },
-];
+const LF_TAXONOMY = VALID_FAILURE_CODES.map((code: LogicFailureCode) => {
+  const def = LOGIC_FAILURE_TAXONOMY[code];
+  return { code, ...def };
+});
 
 const SEV_STYLES: Record<string, { color: string; bg: string }> = {
   CRITICAL: { color: "#ff5f5f", bg: "rgba(255, 95, 95, 0.08)" },
   HIGH: { color: "#ffaa60", bg: "rgba(255, 170, 96, 0.08)" },
   MEDIUM: { color: "#666", bg: "rgba(255,255,255,0.04)" },
   LOW: { color: "#60f0a0", bg: "rgba(96, 240, 160, 0.08)" },
+  INFO: { color: "#8ab4f8", bg: "rgba(138, 180, 248, 0.08)" },
 };
 
 export default function Guide() {
@@ -224,12 +217,12 @@ export default function Guide() {
             <span style={{ flex: 1, height: 1, background: "#2a2a2a" }} />
           </h2>
           <p style={{ color: "#b0aa9e", marginBottom: 16, fontSize: 16 }}>
-            When an audit returns FAIL, the certificate includes one or more DJZS-LF failure codes. 11 codes across 5 categories. Agents must halt on Critical-severity flags.
+            When an audit returns FAIL, the certificate includes one or more DJZS-LF failure codes. {VALID_FAILURE_CODES.length} codes across 5 categories. Risk scores are additive — each flag contributes its weight toward a cumulative risk score. Agents must halt on Critical-severity or auto-abort flags.
           </p>
 
           <div style={{ display: "grid", gap: 8 }}>
             <div style={{
-              display: "grid", gridTemplateColumns: "100px 1fr 80px 80px", gap: 12, alignItems: "center",
+              display: "grid", gridTemplateColumns: "100px 1fr 80px 80px 60px", gap: 12, alignItems: "center",
               padding: "12px 16px", fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#666",
               textTransform: "uppercase", letterSpacing: "0.08em",
             }}>
@@ -237,12 +230,13 @@ export default function Guide() {
               <span>Name</span>
               <span>Severity</span>
               <span>Category</span>
+              <span>Risk Pts</span>
             </div>
             {LF_TAXONOMY.map((lf) => {
               const sev = SEV_STYLES[lf.severity];
               return (
                 <div key={lf.code} style={{
-                  display: "grid", gridTemplateColumns: "100px 1fr 80px 80px", gap: 12, alignItems: "center",
+                  display: "grid", gridTemplateColumns: "100px 1fr 80px 80px 60px", gap: 12, alignItems: "center",
                   padding: "12px 16px", background: "#111111", border: "1px solid #1e1e1e", borderRadius: 4, fontSize: 14,
                 }} data-testid={`row-taxonomy-${lf.code}`}>
                   <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#c8f060" }}>{lf.code}</span>
@@ -252,6 +246,9 @@ export default function Guide() {
                   </span>
                   <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#666", textAlign: "center" }}>
                     {lf.category}
+                  </span>
+                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#8ab4f8", textAlign: "center" }}>
+                    {lf.riskPoints}
                   </span>
                 </div>
               );
