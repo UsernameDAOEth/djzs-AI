@@ -40,6 +40,6 @@ INVERT: Generate the most likely catastrophic failure scenario for this thesis. 
 
 TRACE: Identify who benefits financially or strategically if this thesis is executed, regardless of its actual success.
 
-CLASSIFY: Based ONLY on the stripped logic, the inversion, and the trace, evaluate the text strictly against the 7 DJZS-LF codes (S01, S02, E01, E02, I01, I02, X01).
+CLASSIFY: Based ONLY on the stripped logic, the inversion, and the trace, evaluate the text strictly against the 11 DJZS-LF v1.0 codes (S01, S02, S03, E01, E02, I01, I02, I03, X01, X02, T01).
 
-OUTPUT RULES: You must output strictly in JSON format. Provide a 'risk_score' (0-100) and an array of 'flags'. Do not provide advice on how to fix the logic. Only provide the diagnosis.`;
+OUTPUT RULES: You must output strictly in JSON format. Provide a 'risk_score' (0-200, sum of detected flag weights) and an array of 'flags'. Do not provide advice on how to fix the logic. Only provide the diagnosis.`;

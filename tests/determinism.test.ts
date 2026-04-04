@@ -82,9 +82,9 @@ function generateTestCases(): { label: string; codes: LFCode[] }[] {
     cases.push({ label: `severity — all ${sev}`, codes });
   }
 
-  cases.push({ label: "just-under-threshold combo", codes: ["DJZS-T01", "DJZS-I01"] });
-  cases.push({ label: "at-threshold combo", codes: ["DJZS-X02", "DJZS-X01"] });
-  cases.push({ label: "just-over-threshold combo", codes: ["DJZS-S01", "DJZS-S02", "DJZS-T01"] });
+  cases.push({ label: "just-under-threshold combo (I01+I02+I03+T01=48)", codes: ["DJZS-I01", "DJZS-I02", "DJZS-I03", "DJZS-T01"] });
+  cases.push({ label: "at-threshold combo (S01+X02=50 still PASS)", codes: ["DJZS-S01", "DJZS-X02"] });
+  cases.push({ label: "over-threshold combo (S01+S02+T01=64 FAIL)", codes: ["DJZS-S01", "DJZS-S02", "DJZS-T01"] });
   cases.push({ label: "max-minus-one code", codes: ALL_LF_CODES.slice(0, -1) });
 
   while (cases.length < 50) {

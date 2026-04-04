@@ -341,7 +341,7 @@ export default function Docs() {
                 </table>
               </div>
               <div className="p-4 rounded-lg bg-teal-500/[0.04] border border-teal-500/15 mb-6">
-                <p className="text-xs text-muted-foreground leading-relaxed">When <code className="text-teal-400 font-mono">trade_params</code> is provided, the Oracle <strong className="text-foreground">cross-references</strong> the structured parameters against the <code className="text-teal-400 font-mono">strategy_memo</code> narrative. Parameter/narrative mismatches — such as claiming a breakout while entering below the stated level — are flagged as logic ruptures. Missing stop-loss on leveraged trades triggers <code className="text-red-400 font-mono">DJZS-X01</code> (UNHEDGED_EXECUTION).</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">When <code className="text-teal-400 font-mono">trade_params</code> is provided, the Oracle <strong className="text-foreground">cross-references</strong> the structured parameters against the <code className="text-teal-400 font-mono">strategy_memo</code> narrative. Parameter/narrative mismatches — such as claiming a breakout while entering below the stated level — are flagged as logic ruptures. Missing stop-loss on leveraged trades triggers <code className="text-red-400 font-mono">DJZS-X01</code> (EXECUTION_UNBOUND).</p>
               </div>
 
               <h4 className="text-sm font-bold text-foreground mb-3">Example cURL Implementation</h4>
@@ -913,7 +913,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
-                  <span>Risk score (0-100) + primary bias detected</span>
+                  <span>Risk score (0-200) + primary bias detected</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0"></span>
@@ -1072,42 +1072,70 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
                   <code className="text-xs font-mono text-orange-300 bg-orange-500/10 px-1.5 py-0.5 rounded">DJZS-S02</code>
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">Structural</span>
                 </div>
-                <p className="text-xs text-muted-foreground">MISSING_FALSIFIABILITY — no scenario disproves the thesis</p>
+                <p className="text-xs text-muted-foreground">LAYER_INVERSION — verification layer depends on unverified upstream data</p>
+              </div>
+              <div className="p-3 rounded-lg bg-muted border border-border">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-orange-300 bg-orange-500/10 px-1.5 py-0.5 rounded">DJZS-S03</code>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase">Structural</span>
+                </div>
+                <p className="text-xs text-muted-foreground">DEPENDENCY_GHOST — references external dependency that cannot be resolved</p>
               </div>
               <div className="p-3 rounded-lg bg-muted border border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <code className="text-xs font-mono text-teal-300 bg-teal-500/10 px-1.5 py-0.5 rounded">DJZS-E01</code>
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">Epistemic</span>
                 </div>
-                <p className="text-xs text-muted-foreground">CONFIRMATION_TUNNEL — only supporting evidence considered</p>
+                <p className="text-xs text-muted-foreground">ORACLE_UNVERIFIED — external data source cited without provenance verification</p>
               </div>
               <div className="p-3 rounded-lg bg-muted border border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <code className="text-xs font-mono text-teal-300 bg-teal-500/10 px-1.5 py-0.5 rounded">DJZS-E02</code>
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">Epistemic</span>
                 </div>
-                <p className="text-xs text-muted-foreground">AUTHORITY_SUBSTITUTION — appeal to authority replaces evidence</p>
+                <p className="text-xs text-muted-foreground">CONFIDENCE_INFLATION — stated certainty exceeds evidential basis</p>
               </div>
               <div className="p-3 rounded-lg bg-muted border border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <code className="text-xs font-mono text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded">DJZS-I01</code>
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">Incentive</span>
                 </div>
-                <p className="text-xs text-muted-foreground">MISALIGNED_INCENTIVE — proposer benefits regardless of outcome</p>
+                <p className="text-xs text-muted-foreground">FOMO_LOOP — decision driven by social signal rather than verified data</p>
               </div>
               <div className="p-3 rounded-lg bg-muted border border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <code className="text-xs font-mono text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded">DJZS-I02</code>
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">Incentive</span>
                 </div>
-                <p className="text-xs text-muted-foreground">NARRATIVE_DEPENDENCY — thesis relies on a single story being true</p>
+                <p className="text-xs text-muted-foreground">MISALIGNED_REWARD — optimization target diverges from stated objective</p>
               </div>
-              <div className="p-3 rounded-lg bg-muted border border-border md:col-span-2">
+              <div className="p-3 rounded-lg bg-muted border border-border">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded">DJZS-I03</code>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase">Incentive</span>
+                </div>
+                <p className="text-xs text-muted-foreground">DATA_UNVERIFIED — numerical claims lack verifiable source attribution</p>
+              </div>
+              <div className="p-3 rounded-lg bg-muted border border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <code className="text-xs font-mono text-red-300 bg-red-500/10 px-1.5 py-0.5 rounded">DJZS-X01</code>
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">Execution</span>
                 </div>
-                <p className="text-xs text-muted-foreground">UNHEDGED_EXECUTION — no contingency plan if assumptions fail</p>
+                <p className="text-xs text-muted-foreground">EXECUTION_UNBOUND — no halt condition or resource ceiling defined</p>
+              </div>
+              <div className="p-3 rounded-lg bg-muted border border-border">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-red-300 bg-red-500/10 px-1.5 py-0.5 rounded">DJZS-X02</code>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase">Execution</span>
+                </div>
+                <p className="text-xs text-muted-foreground">RACE_CONDITION — temporal dependency creates non-deterministic outcome</p>
+              </div>
+              <div className="p-3 rounded-lg bg-muted border border-border md:col-span-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <code className="text-xs font-mono text-yellow-300 bg-yellow-500/10 px-1.5 py-0.5 rounded">DJZS-T01</code>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase">Temporal</span>
+                </div>
+                <p className="text-xs text-muted-foreground">STALE_REFERENCE — data reference exceeds freshness threshold</p>
               </div>
             </div>
 

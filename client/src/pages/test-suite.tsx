@@ -28,46 +28,46 @@ const TEST_CASES: TestCase[] = [
     rationale: "The thesis validates itself with its own conclusion.",
   },
   {
-    id: 3, title: "Missing Falsifiability (DJZS-S02)", targetSystem: "TestVault-Charlie", tier: "founder",
+    id: 3, title: "Layer Inversion (DJZS-S02)", targetSystem: "TestVault-Charlie", tier: "founder",
     memo: "We believe the DeFi sector is entering a structural growth phase. Our thesis is that decentralized protocols will capture increasing market share from traditional finance over the next decade. We recommend a diversified allocation across the top 20 DeFi tokens by TVL. This is a long-term conviction play with no specific exit criteria \u2014 we will reassess periodically as the narrative evolves.",
     expectedVerdict: "FAIL", expectedCodes: ["DJZS-S02"],
     rationale: "No exit condition, no measurable failure state.",
   },
   {
-    id: 4, title: "Confirmation Tunnel (DJZS-E01)", targetSystem: "TestVault-Delta", tier: "founder",
+    id: 4, title: "Oracle Unverified (DJZS-E01)", targetSystem: "TestVault-Delta", tier: "founder",
     memo: "Three prominent crypto analysts on Twitter have called for ETH to reach $10,000 by Q4. Coinbase's latest report is bullish on Ethereum. The ETH/BTC ratio has historically recovered after drops like this. Reddit sentiment is overwhelmingly positive. Based on this consensus, we recommend a 15% ETH allocation with a stop-loss at $2,500.",
     expectedVerdict: "FAIL", expectedCodes: ["DJZS-E01"],
     rationale: "All sources confirm the same directional bias. No bearish evidence considered.",
   },
   {
-    id: 5, title: "Authority Substitution (DJZS-E02)", targetSystem: "TestVault-Echo", tier: "micro",
+    id: 5, title: "Confidence Inflation (DJZS-E02)", targetSystem: "TestVault-Echo", tier: "micro",
     memo: "BlackRock's CEO said Bitcoin is \"digital gold\" and institutional adoption is inevitable. ARK Invest's model prices BTC at $1M by 2030. Because these institutions have more resources and data than we do, we should follow their positioning and allocate 20% of the fund to BTC with no stop-loss \u2014 if they're wrong, everyone is wrong.",
     expectedVerdict: "FAIL", expectedCodes: ["DJZS-E02"],
     rationale: "Thesis derived entirely from authority figures. Explicitly abdicates independent judgment.",
   },
   {
-    id: 6, title: "Misaligned Incentive + Narrative Dependency (DJZS-I01/I02)", targetSystem: "TestVault-Foxtrot", tier: "treasury",
+    id: 6, title: "FOMO Loop + Misaligned Reward (DJZS-I01/I02)", targetSystem: "TestVault-Foxtrot", tier: "treasury",
     memo: "Our fund advisor (who holds a large position in $FOXTROT) recommends we allocate 30% of treasury to the $FOXTROT token. The token's value proposition depends on the \"AI agent economy\" narrative gaining mainstream traction by 2025. If the narrative stalls, the token has no standalone utility, but the advisor assures us the narrative is \"unstoppable.\" We plan to vest the allocation over 12 months with no early exit clause.",
     expectedVerdict: "FAIL", expectedCodes: ["DJZS-I01", "DJZS-I02"],
     rationale: "Advisor profits from own recommendation; token value collapses without a specific macro thesis.",
   },
   {
-    id: 7, title: "Unhedged Execution (DJZS-X01)", targetSystem: "TestVault-Golf", tier: "treasury",
+    id: 7, title: "Execution Unbound (DJZS-X01)", targetSystem: "TestVault-Golf", tier: "treasury",
     memo: "Deploy $500K USDC into a new lending protocol on Base that launched 3 days ago. The APY is currently 47%. No audit has been completed on the protocol's smart contracts, but the team says one is \"in progress.\" We will deploy the full amount in a single transaction. If the protocol is exploited, we accept the loss as a cost of early positioning. No insurance, no phased entry, no withdrawal triggers.",
     expectedVerdict: "FAIL", expectedCodes: ["DJZS-X01"],
     rationale: "No risk mitigation on any axis: unaudited protocol, single-tranche deployment, no insurance, no exit triggers.",
   },
   {
-    id: 8, title: "Liquidity + Slippage Risk (DJZS-X02/X03)", targetSystem: "TestVault-Hotel", tier: "founder",
+    id: 8, title: "Race Condition + Dependency Ghost (DJZS-X02/S03)", targetSystem: "TestVault-Hotel", tier: "founder",
     memo: "Allocate $2M to a small-cap token with $150K daily volume on a single DEX. Our model shows 40% upside in 90 days. We plan to enter the full position in one block and exit at target within a single transaction. We have not modeled slippage or market impact. If the DEX pool depth shrinks, we will wait for recovery. No alternative exit venues have been identified.",
-    expectedVerdict: "FAIL", expectedCodes: ["DJZS-X02", "DJZS-X03"],
-    rationale: "Position size vastly exceeds available liquidity; execution costs and slippage are completely ignored.",
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-X02", "DJZS-S03"],
+    rationale: "Single-block entry on illiquid DEX creates non-deterministic outcome; single DEX dependency cannot be resolved if pool dries up.",
   },
   {
-    id: 9, title: "Stale Data + Race Condition (DJZS-T01/T02)", targetSystem: "TestVault-India", tier: "micro",
+    id: 9, title: "Stale Reference + Data Unverified (DJZS-T01/I03)", targetSystem: "TestVault-India", tier: "micro",
     memo: "Based on an oracle price feed from 48 hours ago, submit a large limit order on a perpetual DEX. The order should execute when the price crosses our entry level. We assume no other participants will see or front-run our order since the mempool is not commonly monitored. The stale price is acceptable because \"prices don't move that fast\" in this asset class.",
-    expectedVerdict: "FAIL", expectedCodes: ["DJZS-T01", "DJZS-T02"],
-    rationale: "Relies on a 48-hour-old price feed; assumes sequential execution in an environment where front-running is endemic.",
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-T01", "DJZS-I03"],
+    rationale: "Relies on a 48-hour-old price feed; \"prices don't move that fast\" is an unverified numerical claim with no source attribution.",
   },
 ];
 
@@ -79,8 +79,8 @@ const COVERAGE_MATRIX = [
   { test: 5, tier: "micro", expected: "FAIL", codes: "DJZS-E02" },
   { test: 6, tier: "treasury", expected: "FAIL", codes: "DJZS-I01, DJZS-I02" },
   { test: 7, tier: "treasury", expected: "FAIL", codes: "DJZS-X01" },
-  { test: 8, tier: "founder", expected: "FAIL", codes: "DJZS-X02, DJZS-X03" },
-  { test: 9, tier: "micro", expected: "FAIL", codes: "DJZS-T01, DJZS-T02" },
+  { test: 8, tier: "founder", expected: "FAIL", codes: "DJZS-X02, DJZS-S03" },
+  { test: 9, tier: "micro", expected: "FAIL", codes: "DJZS-T01, DJZS-I03" },
 ];
 
 const TIER_COLORS: Record<string, string> = {

@@ -256,7 +256,7 @@ export default function Guide() {
                     {lf.category}
                   </span>
                   <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#8ab4f8", textAlign: "center" }}>
-                    {lf.riskPoints}
+                    {lf.weight}
                   </span>
                 </div>
               );
@@ -270,14 +270,13 @@ export default function Guide() {
             <span style={{ flex: 1, height: 1, background: "#2a2a2a" }} />
           </h2>
           <p style={{ color: "#b0aa9e", marginBottom: 16, fontSize: 16 }}>
-            Each detected failure flag adds its risk points to a cumulative score. The total risk score is capped at 100. A verdict of FAIL is issued when any of these conditions are met:
+            Each detected failure flag adds its risk points to a cumulative score. The maximum possible risk score is 200 (all 11 codes detected). A verdict of FAIL is issued when any of these conditions are met:
           </p>
           <div style={{ display: "grid", gap: 8, marginBottom: 24 }}>
             {[
-              { label: "Auto-abort flag detected", detail: "Any CRITICAL or HIGH-severity flag with autoAbort = true triggers immediate FAIL" },
-              { label: "Risk score ≥ 60", detail: "Cumulative risk points from all detected flags reach the fail threshold" },
-              { label: "3+ flags detected", detail: "Three or more distinct failure codes in a single audit" },
-              { label: "Any CRITICAL or HIGH flag", detail: "Presence of a CRITICAL or HIGH severity flag regardless of score" },
+              { label: "Risk score ≥ 60", detail: "Cumulative risk points from all detected flags reach the fail threshold (max 200)" },
+              { label: "CRITICAL flag detected", detail: "Any CRITICAL-severity flag (S01, X01) triggers immediate FAIL" },
+              { label: "Auto-abort flag detected", detail: "Any flag with autoAbort = true (CRITICAL or HIGH severity) triggers FAIL" },
             ].map((rule, i) => (
               <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "12px 16px", background: "#111111", border: "1px solid #1e1e1e", borderRadius: 4 }} data-testid={`rule-scoring-${i}`}>
                 <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#ff5f5f", flexShrink: 0, marginTop: 2 }}>FAIL</span>
@@ -290,7 +289,7 @@ export default function Guide() {
           </div>
           <div style={{ background: "#111111", border: "1px solid #2a2a2a", borderLeft: "3px solid #60f0a0", padding: "16px 20px", borderRadius: 4, fontSize: 14, color: "#b0aa9e" }} data-testid="rule-pass">
             <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#60f0a0", marginRight: 12 }}>PASS</span>
-            No auto-abort flags, risk score below 60, fewer than 3 flags, and no CRITICAL/HIGH severity flags.
+            Risk score below 60 and no auto-abort (CRITICAL/HIGH) flags.
           </div>
         </section>
 

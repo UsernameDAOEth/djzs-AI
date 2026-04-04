@@ -227,8 +227,8 @@ function analyzeBiasPattern(audits: IntelligenceRequest['history']['audits']): B
   const biasCount = dominantBias ? biasFrequency[dominantBias] : 0;
   const trendLabel = riskTrend === 'increasing' ? 'trending upward' : riskTrend === 'decreasing' ? 'trending downward' : 'holding stable';
   const summary = dominantBias
-    ? `Across ${audits.length} audits, ${biasLabel} detected ${biasCount} times (${Math.round(biasCount / audits.length * 100)}%). Avg risk score: ${avgRiskScore}/100, ${trendLabel}.`
-    : `${audits.length} audits analyzed. No dominant bias pattern. Avg risk score: ${avgRiskScore}/100, ${trendLabel}.`;
+    ? `Across ${audits.length} audits, ${biasLabel} detected ${biasCount} times (${Math.round(biasCount / audits.length * 100)}%). Avg risk score: ${avgRiskScore}/200, ${trendLabel}.`
+    : `${audits.length} audits analyzed. No dominant bias pattern. Avg risk score: ${avgRiskScore}/200, ${trendLabel}.`;
   return { type: 'bias_pattern', active: audits.length >= 1, dominant_bias: dominantBias, bias_frequency: biasFrequency, avg_risk_score: avgRiskScore, risk_trend: riskTrend, total_audits: audits.length, summary };
 }
 
@@ -324,7 +324,7 @@ function buildIntelligenceContext(brief: Omit<ServerIntelligenceBrief, 'intellig
   sections.push('--- FOUNDER INTELLIGENCE BRIEF (Server-Side Analysis) ---');
   if (brief.bias_pattern.active && brief.bias_pattern.dominant_bias) {
     sections.push(`\nBIAS PATTERN MEMORY: ${brief.bias_pattern.summary}`);
-    sections.push(`Dominant bias: ${brief.bias_pattern.dominant_bias.replace(/_/g, ' ')} | Avg risk: ${brief.bias_pattern.avg_risk_score}/100 | Trend: ${brief.bias_pattern.risk_trend}`);
+    sections.push(`Dominant bias: ${brief.bias_pattern.dominant_bias.replace(/_/g, ' ')} | Avg risk: ${brief.bias_pattern.avg_risk_score}/200 | Trend: ${brief.bias_pattern.risk_trend}`);
   }
   if (brief.narrative_drift.active && brief.narrative_drift.drift_detected) {
     sections.push(`\nNARRATIVE DRIFT: ${brief.narrative_drift.summary}`);

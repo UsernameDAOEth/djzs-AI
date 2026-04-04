@@ -538,7 +538,7 @@ export default function Home() {
                         </span>
                       )}
                       <span className="px-2 py-1 bg-muted dark:bg-gray-900 text-muted-foreground rounded border border-border dark:border-gray-800 text-xs" data-testid="text-demo-risk-score">
-                        RISK: {demoOutput.risk_score}/100
+                        RISK: {demoOutput.risk_score}/200
                       </span>
                     </div>
                     <pre className="text-foreground/80 overflow-x-auto text-xs leading-relaxed">

@@ -90,7 +90,7 @@ export function AuditLedgerView() {
                         </span>
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <p className="text-xs text-muted-foreground/60 font-mono">{formatTimeAgo(String(audit.createdAt))} · Risk: {audit.riskScore}/100 · Hash: {audit.cryptographicHash.slice(0, 12)}...</p>
+                        <p className="text-xs text-muted-foreground/60 font-mono">{formatTimeAgo(String(audit.createdAt))} · Risk: {audit.riskScore}/200 · Hash: {audit.cryptographicHash.slice(0, 12)}...</p>
                         {audit.irysTxId ? (
                           <a
                             href={`https://gateway.irys.xyz/${audit.irysTxId}`}
@@ -193,7 +193,7 @@ export function RiskParametersView() {
         {[
           { label: "TOTAL AUDITS", value: totalAudits, color: "text-cyan-400" },
           { label: "FAIL RATE", value: `${failRate}%`, color: failRate > 50 ? "text-red-400" : "text-yellow-400" },
-          { label: "AVG RISK SCORE", value: `${avgRisk}/100`, color: avgRisk > 60 ? "text-red-400" : avgRisk > 40 ? "text-yellow-400" : "text-green-400" },
+          { label: "AVG RISK SCORE", value: `${avgRisk}/200`, color: avgRisk >= 120 ? "text-red-400" : avgRisk >= 60 ? "text-yellow-400" : "text-green-400" },
           { label: "PASS / FAIL", value: `${passCount} / ${failCount}`, color: "text-foreground" },
         ].map(stat => (
           <motion.div

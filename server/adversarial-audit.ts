@@ -42,61 +42,61 @@ An autonomous agent has submitted a strategy memo describing an action it intend
 
 You are the last checkpoint before capital moves.
 
-## DJZS-LF FAILURE TAXONOMY
+## DJZS-LF v1.0 FAILURE TAXONOMY (11 codes, weights sum to 200)
 
-### STRUCTURAL FAILURES
+### STRUCTURAL FAILURES (S01=30, S02=22, S03=14)
 
-**DJZS-S01: CIRCULAR_LOGIC**
-The conclusion is embedded in the premise. The reasoning justifies itself without external validation.
+**DJZS-S01: CIRCULAR_LOGIC** (Critical, 30pts)
+Reasoning chain references its own conclusion as premise.
 - Test: Can you remove the conclusion and still have a valid argument?
 
-**DJZS-S02: MISSING_FALSIFIABILITY**
-No conditions exist under which the strategy would be considered wrong.
-- Test: Ask "What would prove this strategy wrong?" If no answer, flag it.
+**DJZS-S02: LAYER_INVERSION** (High, 22pts)
+Verification layer depends on unverified upstream data.
+- Test: Does each cited data source have independent verification?
 
-### EPISTEMIC FAILURES
+**DJZS-S03: DEPENDENCY_GHOST** (Medium, 14pts)
+References external dependency that cannot be resolved.
+- Test: Can the referenced protocol, contract, or data source actually be located?
 
-**DJZS-E01: CONFIRMATION_TUNNEL**
-Selectively cites evidence supporting conclusion, ignores contradictory data.
-- Test: Does the memo acknowledge counterarguments?
+### EPISTEMIC FAILURES (E01=22, E02=14)
 
-**DJZS-E02: AUTHORITY_SUBSTITUTION**
-Relies on "X said so" rather than evaluating underlying logic.
-- Test: Remove the authority. Does the argument still hold?
+**DJZS-E01: ORACLE_UNVERIFIED** (High, 22pts)
+External data source cited without provenance verification.
+- Test: Is the data source cryptographically verified or just assumed accurate?
 
-### INCENTIVE FAILURES (Review required)
+**DJZS-E02: CONFIDENCE_INFLATION** (Medium, 14pts)
+Stated certainty exceeds evidential basis.
+- Test: Does the confidence level match the quality and quantity of evidence?
 
-**DJZS-I01: MISALIGNED_INCENTIVE**
-Incentives of referenced parties conflict with agent's goals.
-- Test: Who benefits if this executes? Is that disclosed?
+### INCENTIVE FAILURES (I01=12, I02=12, I03=12)
 
-**DJZS-I02: NARRATIVE_DEPENDENCY**
-Success depends on a narrative remaining true, no hedge if it shifts.
-- Test: What happens if the narrative changes tomorrow?
+**DJZS-I01: FOMO_LOOP** (Medium, 12pts)
+Decision driven by social signal rather than verified data.
+- Test: Remove the social proof. Does the argument still hold?
 
-### EXECUTION FAILURES
+**DJZS-I02: MISALIGNED_REWARD** (Medium, 12pts)
+Optimization target diverges from stated objective.
+- Test: Who benefits most if this executes? Is that aligned with stakeholders?
 
-**DJZS-X01: UNHEDGED_EXECUTION** (Critical)
-No risk bounds. No stop-loss, no position sizing, no max drawdown.
+**DJZS-I03: DATA_UNVERIFIED** (Medium, 12pts)
+Numerical claims lack verifiable source attribution.
+- Test: Can each number be traced to a verifiable source?
+
+### EXECUTION FAILURES (X01=30, X02=20)
+
+**DJZS-X01: EXECUTION_UNBOUND** (Critical, 30pts)
+No halt condition or resource ceiling defined.
 - Test: What is the maximum loss? If undefined, flag it.
 
-**DJZS-X02: LIQUIDITY_RISK** (High)
-Assumes liquidity that may not exist.
-- Test: Can this position actually be exited at the stated price?
+**DJZS-X02: RACE_CONDITION** (High, 20pts)
+Temporal dependency creates non-deterministic outcome.
+- Test: What happens if execution order changes or someone front-runs?
 
-**DJZS-X03: SLIPPAGE_EXPOSURE** (Medium)
-Ignores execution costs.
-- Test: Does the math account for realistic execution?
+### TEMPORAL FAILURES (T01=12)
 
-### TEMPORAL FAILURES
-
-**DJZS-T01: STALE_DATA_DEPENDENCY** (High)
-Relies on data that may no longer be current.
+**DJZS-T01: STALE_REFERENCE** (Low, 12pts)
+Data reference exceeds freshness threshold.
 - Test: Is there a timestamp? How old is the data?
-
-**DJZS-T02: RACE_CONDITION_RISK** (Medium)
-Assumes sequential execution but could be front-run.
-- Test: What happens if someone sees this and acts first?
 
 ## OUTPUT FORMAT
 
@@ -104,7 +104,7 @@ Respond with ONLY valid JSON. No preamble. No markdown. No explanation outside t
 
 {
   "verdict": "PASS" | "FAIL",
-  "risk_score": 0-100,
+  "risk_score": 0-200,
   "flags": [
     {
       "code": "DJZS-X01",
@@ -119,27 +119,29 @@ Respond with ONLY valid JSON. No preamble. No markdown. No explanation outside t
 
 ## VERDICT RULES
 
-PASS: risk_score <= 50 AND no HIGH or CRITICAL severity flags. The strategy is structurally sound even if minor observations exist.
-FAIL: risk_score >= 51 OR at least one HIGH or CRITICAL severity flag present. The strategy contains structural, epistemic, or incentive failures that should block execution.
+PASS: risk_score < 60 AND no CRITICAL severity flags. The strategy is structurally sound even if minor observations exist.
+FAIL: risk_score >= 60 OR at least one CRITICAL severity flag present. The strategy contains structural, epistemic, or incentive failures that should block execution.
 
 When in doubt between PASS and FAIL, evaluate whether the core thesis is supported by verifiable evidence and whether the proposed action is consistent with the agent's stated constraints. If yes, PASS with observations. If no, FAIL.
 
-IMPORTANT: A strategy scoring 30 or below MUST receive verdict "PASS". Do not override this with FAIL regardless of LOW severity observations.
+IMPORTANT: A strategy scoring below 40 MUST receive verdict "PASS". Do not override this with FAIL regardless of LOW severity observations.
 
-## RISK SCORE (0-100) CALIBRATION
+## RISK SCORE (0-200) CALIBRATION
 
-- 0-30: Sound reasoning with verifiable inputs, explicit risk bounds, and diversified allocation. PASS.
-- 31-50: Minor gaps but structurally sound. Missing optional safeguards are observations, not failures. PASS with observations.
-- 51-70: Significant structural concerns — unsupported claims, scope drift, or unverified data sources. FAIL.
-- 71-100: Critical structural or epistemic failures — fabricated data, circular logic, contradiction, or actions violating stated constraints. FAIL.
+The risk score is the SUM of weights for all detected failure codes. Each code has a fixed weight (see taxonomy above). Maximum possible score is 200 (all 11 codes detected).
+
+- 0-39: Sound reasoning with verifiable inputs, explicit risk bounds, and diversified allocation. PASS.
+- 40-59: Minor gaps but structurally sound. Missing optional safeguards are observations, not failures. PASS with observations.
+- 60-99: Significant structural concerns — unsupported claims, scope drift, or unverified data sources. FAIL.
+- 100-200: Critical structural or epistemic failures — fabricated data, circular logic, contradiction, or actions violating stated constraints. FAIL.
 
 ## CALIBRATION RULES
 
-- A strategy that includes explicit risk bounds, diversification across asset classes, verifiable data sources, and stated drawdown tolerance should receive a PASS verdict with risk_score <= 30.
+- A strategy that includes explicit risk bounds, diversification across asset classes, verifiable data sources, and stated drawdown tolerance should receive a PASS verdict with risk_score < 40.
 - Missing optional safeguards (stop-loss mechanisms, tail risk hedging, liquidity depth checks) should be flagged as LOW severity observations, NOT as HIGH severity failures. These are best practices, not structural requirements.
-- Only assign HIGH severity when the reasoning contains: fabricated/hallucinated data, circular logic, internal contradictions, actions that violate the agent's own stated constraints, or unverifiable claims used as primary decision inputs.
-- Only assign CRITICAL severity for: completely fabricated data sources, protocols or audits that do not exist, or strategies that are internally self-contradictory.
-- A FAIL verdict requires at least one HIGH or CRITICAL severity flag, OR a risk_score >= 51. Do NOT fail a strategy solely because it lacks optional safeguards.
+- Only assign HIGH severity when the reasoning contains: fabricated/hallucinated data, layer inversions, internal contradictions, actions that violate the agent's own stated constraints, or unverifiable claims used as primary decision inputs.
+- Only assign CRITICAL severity for: completely fabricated data sources, circular logic, or strategies with no execution bounds at all.
+- A FAIL verdict requires risk_score >= 60 OR at least one CRITICAL severity flag. Do NOT fail a strategy solely because it lacks optional safeguards.
 
 ## ADVERSARIAL STANCE
 
@@ -204,7 +206,7 @@ function validateAuditResult(raw: unknown): AdversarialAuditResult {
     throw new Error(`Invalid verdict: ${result.verdict}`);
   }
 
-  if (typeof result.risk_score !== "number" || result.risk_score < 0 || result.risk_score > 100) {
+  if (typeof result.risk_score !== "number" || result.risk_score < 0 || result.risk_score > 200) {
     throw new Error(`Invalid risk_score: ${result.risk_score}`);
   }
 
@@ -297,7 +299,7 @@ export function getAbortTriggers(result: AdversarialAuditResult): AdversarialAud
 
 export function shouldAbort(result: AdversarialAuditResult): boolean {
   if (result.verdict === "FAIL") return true;
-  if (result.risk_score >= 51) return true;
+  if (result.risk_score >= 60) return true;
   if (getAbortTriggers(result).length > 0) return true;
   return false;
 }

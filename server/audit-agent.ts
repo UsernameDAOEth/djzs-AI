@@ -6,7 +6,7 @@ import {
   type AdversarialPersona,
   type IntelligenceContext,
 } from "./venice";
-import type { AuditTier } from "@shared/audit-schema";
+import { type AuditTier, SCHEMA_VERSION, WEIGHTS_HASH, MAX_RISK_SCORE, ALL_LF_CODES } from "@shared/audit-schema";
 import { writeTrustScore, type ChainWriterResult } from "./chainWriter";
 import {
   verifyTraceHash,
@@ -40,7 +40,17 @@ export interface ProofOfLogicCertificate extends AuditResult {
   tier: AuditTier;
   cryptographic_hash: string;
   keccak256_hash?: string;
-  
+
+  audit_schema_version?: string;
+  weights_hash?: string;
+  logic_hash?: string;
+  max_possible?: number;
+  pass_threshold?: number;
+  detection_model?: string;
+  scoring_engine?: string;
+  anchor_target?: string;
+  settlement_chain?: string;
+
   provenance_provider?: "IRYS_DATACHAIN";
   irys_tx_id?: string;
   irys_url?: string;
@@ -188,12 +198,32 @@ export async function executeAudit(
   const abort = shouldAbortResult(result);
   const abortReasons = abortTriggers.map(f => `${f.code} (${f.severity}): ${f.evidence}`);
 
+  const detectedCodes = new Set(result.flags.map(f => f.code));
+  const flagVector: Record<string, boolean> = {};
+  for (const code of ALL_LF_CODES) {
+    flagVector[code] = detectedCodes.has(code);
+  }
+  const logicHashInput = JSON.stringify(
+    { schema_version: SCHEMA_VERSION, flags: flagVector, risk_score: result.risk_score },
+    Object.keys({ schema_version: SCHEMA_VERSION, flags: flagVector, risk_score: result.risk_score }).sort()
+  );
+  const logic_hash = "0x" + crypto.createHash("sha256").update(logicHashInput).digest("hex");
+
   const certificate: ProofOfLogicCertificate = {
     audit_id,
     timestamp,
     tier,
     cryptographic_hash,
     keccak256_hash,
+    audit_schema_version: SCHEMA_VERSION,
+    weights_hash: WEIGHTS_HASH,
+    logic_hash,
+    max_possible: MAX_RISK_SCORE,
+    pass_threshold: 60,
+    detection_model: "venice/llama-3.3-70b@temp=0",
+    scoring_engine: "typescript/pure-function",
+    anchor_target: "irys-datachain",
+    settlement_chain: "base-mainnet",
     should_abort: abort,
     abort_reasons: abortReasons.length > 0 ? abortReasons : undefined,
     on_chain_hash_verified: onChainHashVerified || undefined,

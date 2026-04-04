@@ -83,9 +83,9 @@ const TIER_OPTIONS = [
 ];
 
 function RiskScoreGauge({ score }: { score: number }) {
-  const color = score >= 70 ? "#ef4444" : score >= 40 ? "#f59e0b" : "#22c55e";
+  const color = score >= 120 ? "#ef4444" : score >= 60 ? "#f59e0b" : "#22c55e";
   const circumference = 2 * Math.PI * 45;
-  const offset = circumference - (score / 100) * circumference;
+  const offset = circumference - (Math.min(score, 200) / 200) * circumference;
 
   return (
     <div className="relative w-28 h-28 flex-shrink-0">
@@ -101,7 +101,7 @@ function RiskScoreGauge({ score }: { score: number }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-2xl font-bold font-mono" style={{ color }} data-testid="text-risk-score-value">{score}</span>
-        <span className="text-[10px] text-muted-foreground font-mono">/ 100</span>
+        <span className="text-[10px] text-muted-foreground font-mono">/ 200</span>
       </div>
     </div>
   );

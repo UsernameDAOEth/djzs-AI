@@ -8,15 +8,15 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const LF_TAXONOMY: Record<string, { name: string; category: string; weight: number; severity: string; description: string }> = {
   "DJZS-S01": { name: "CIRCULAR_LOGIC",       category: "Structural", weight: 30, severity: "CRITICAL", description: "Reasoning chain references its own conclusion as premise" },
-  "DJZS-S02": { name: "LAYER_INVERSION",      category: "Structural", weight: 25, severity: "HIGH",     description: "Verification layer depends on unverified upstream data" },
-  "DJZS-S03": { name: "DEPENDENCY_GHOST",     category: "Structural", weight: 18, severity: "MEDIUM",   description: "References external dependency that cannot be resolved" },
-  "DJZS-E01": { name: "ORACLE_UNVERIFIED",    category: "Epistemic",  weight: 25, severity: "HIGH",     description: "External data source cited without provenance verification" },
-  "DJZS-E02": { name: "CONFIDENCE_INFLATION", category: "Epistemic",  weight: 18, severity: "MEDIUM",   description: "Stated certainty exceeds evidential basis" },
-  "DJZS-I01": { name: "FOMO_LOOP",            category: "Incentive",  weight: 16, severity: "MEDIUM",   description: "Decision driven by social signal rather than verified data" },
-  "DJZS-I02": { name: "MISALIGNED_REWARD",    category: "Incentive",  weight: 16, severity: "MEDIUM",   description: "Optimization target diverges from stated objective" },
-  "DJZS-I03": { name: "DATA_UNVERIFIED",      category: "Incentive",  weight: 16, severity: "MEDIUM",   description: "Numerical claims lack verifiable source attribution" },
-  "DJZS-X01": { name: "EXECUTION_UNBOUND",    category: "Execution",  weight: 36, severity: "CRITICAL", description: "No halt condition or resource ceiling defined" },
-  "DJZS-X02": { name: "RACE_CONDITION",       category: "Execution",  weight: 24, severity: "HIGH",     description: "Temporal dependency creates non-deterministic outcome" },
+  "DJZS-S02": { name: "LAYER_INVERSION",      category: "Structural", weight: 22, severity: "HIGH",     description: "Verification layer depends on unverified upstream data" },
+  "DJZS-S03": { name: "DEPENDENCY_GHOST",     category: "Structural", weight: 14, severity: "MEDIUM",   description: "References external dependency that cannot be resolved" },
+  "DJZS-E01": { name: "ORACLE_UNVERIFIED",    category: "Epistemic",  weight: 22, severity: "HIGH",     description: "External data source cited without provenance verification" },
+  "DJZS-E02": { name: "CONFIDENCE_INFLATION", category: "Epistemic",  weight: 14, severity: "MEDIUM",   description: "Stated certainty exceeds evidential basis" },
+  "DJZS-I01": { name: "FOMO_LOOP",            category: "Incentive",  weight: 12, severity: "MEDIUM",   description: "Decision driven by social signal rather than verified data" },
+  "DJZS-I02": { name: "MISALIGNED_REWARD",    category: "Incentive",  weight: 12, severity: "MEDIUM",   description: "Optimization target diverges from stated objective" },
+  "DJZS-I03": { name: "DATA_UNVERIFIED",      category: "Incentive",  weight: 12, severity: "MEDIUM",   description: "Numerical claims lack verifiable source attribution" },
+  "DJZS-X01": { name: "EXECUTION_UNBOUND",    category: "Execution",  weight: 30, severity: "CRITICAL", description: "No halt condition or resource ceiling defined" },
+  "DJZS-X02": { name: "RACE_CONDITION",       category: "Execution",  weight: 20, severity: "HIGH",     description: "Temporal dependency creates non-deterministic outcome" },
   "DJZS-T01": { name: "STALE_REFERENCE",      category: "Temporal",   weight: 12, severity: "LOW",      description: "Data reference exceeds freshness threshold" },
 };
 

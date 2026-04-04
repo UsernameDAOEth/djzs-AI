@@ -321,7 +321,7 @@ export class VeniceClient {
         userPrompt += `\n\n<trade_params>\n${JSON.stringify(metadata.tradeParams, null, 2)}\n</trade_params>`;
       }
 
-      userPrompt += `\n\nReturn JSON with: verdict ("PASS"/"FAIL"), risk_score (0-100), primary_flaw, summary, flags (array with code/severity/evidence/recommendation).`;
+      userPrompt += `\n\nReturn JSON with: verdict ("PASS"/"FAIL"), risk_score (0-200, sum of detected flag weights), primary_flaw, summary, flags (array with code/severity/evidence/recommendation).`;
       if (metadata?.intelligenceContext) userPrompt += " Factor the intelligence brief into your analysis.";
       if (metadata?.tradeParams) userPrompt += " Cross-reference trade_params against strategy_memo — flag parameter/narrative mismatches.";
 
@@ -398,7 +398,7 @@ Your role:
    - STRIP the text to raw premises — ignore rhetoric, jargon, formatting.
    - INVERT — what is the most likely catastrophic failure scenario? If not hedged, it is a fatal flaw.
    - TRACE — who benefits financially or strategically regardless of success?
-   - CLASSIFY — evaluate strictly against the 7 DJZS-LF codes (S01, S02, E01, E02, I01, I02, X01). Diagnosis only, no fix advice.
+   - CLASSIFY — evaluate strictly against the 11 DJZS-LF v1.0 codes (S01, S02, S03, E01, E02, I01, I02, I03, X01, X02, T01). Diagnosis only, no fix advice.
    Look for:
    - Is this thinking driven by strategy or by emotion (FOMO, fear, ego, social pressure)?
    - Contradictions between stated goals and actual behavior

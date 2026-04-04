@@ -68,9 +68,9 @@ function verdictDisplay(verdict: string): string {
 }
 
 function riskColor(score: number): string {
-  if (score <= 30) return chalk.green(`${score}/100`);
-  if (score <= 60) return chalk.yellow(`${score}/100`);
-  return chalk.red(`${score}/100`);
+  if (score < 40) return chalk.green(`${score}/200`);
+  if (score < 60) return chalk.yellow(`${score}/200`);
+  return chalk.red(`${score}/200`);
 }
 
 export const auditCommand = new Command("audit")

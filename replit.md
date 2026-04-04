@@ -46,19 +46,20 @@ Preferred communication style: Simple, everyday language.
   - **STRIP**: Extract raw premises, ignore rhetoric and persuasion techniques.
   - **INVERT**: Model catastrophic failure scenario; if thesis doesn't hedge against it, flag as fatal flaw.
   - **TRACE**: Identify who benefits financially/strategically from the proposed action.
-  - **CLASSIFY**: Evaluate against 7 DJZS-LF failure codes; output risk_score (0-100) + flags array; diagnosis only, no fix advice.
-- **DJZS-LF Failure Codes** (defined in `shared/audit-schema.ts`):
-  - `DJZS-S01` CIRCULAR_LOGIC — Conclusion used as premise; self-referencing reasoning without external validation.
-  - `DJZS-S02` MISSING_FALSIFIABILITY — No failure condition defined; thesis cannot be disproven.
-  - `DJZS-E01` CONFIRMATION_TUNNEL — Asymmetric evidence selection; only confirming data cited.
-  - `DJZS-E02` AUTHORITY_SUBSTITUTION — Argument depends on reputation/authority rather than structural evidence.
-  - `DJZS-I01` MISALIGNED_INCENTIVE — Proposed action benefits proposer disproportionately vs stated stakeholders.
-  - `DJZS-I02` NARRATIVE_DEPENDENCY — Strategy survival depends on a specific narrative remaining true; no hedge.
-  - `DJZS-X01` UNHEDGED_EXECUTION — No fallback plan; single point of failure with no abort conditions.
-  - `DJZS-X02` DATA_DEPENDENCY — Strategy depends on data source that may be stale, manipulated, or unavailable.
-  - `DJZS-X03` COMPLEXITY_EXCESS — Unnecessary complexity; simpler approach achieves same outcome with lower risk.
-  - `DJZS-T01` TEMPORAL_ASSUMPTION — Strategy assumes specific timing/sequencing that may not hold.
-  - `DJZS-T02` REGIME_BLINDNESS — Strategy assumes current market regime persists indefinitely.
+  - **CLASSIFY**: Evaluate against 11 DJZS-LF v1.0 codes; output risk_score (0-200, sum of flag weights) + flags array; diagnosis only, no fix advice.
+- **DJZS-LF v1.0 Failure Taxonomy** (defined in `shared/audit-schema.ts`, weights sum to 200):
+  - `DJZS-S01` CIRCULAR_LOGIC (30pts, CRITICAL) — Reasoning chain references its own conclusion as premise.
+  - `DJZS-S02` LAYER_INVERSION (22pts, HIGH) — Verification layer depends on unverified upstream data.
+  - `DJZS-S03` DEPENDENCY_GHOST (14pts, MEDIUM) — References external dependency that cannot be resolved.
+  - `DJZS-E01` ORACLE_UNVERIFIED (22pts, HIGH) — External data source cited without provenance verification.
+  - `DJZS-E02` CONFIDENCE_INFLATION (14pts, MEDIUM) — Stated certainty exceeds evidential basis.
+  - `DJZS-I01` FOMO_LOOP (12pts, MEDIUM) — Decision driven by social signal rather than verified data.
+  - `DJZS-I02` MISALIGNED_REWARD (12pts, MEDIUM) — Optimization target diverges from stated objective.
+  - `DJZS-I03` DATA_UNVERIFIED (12pts, MEDIUM) — Numerical claims lack verifiable source attribution.
+  - `DJZS-X01` EXECUTION_UNBOUND (30pts, CRITICAL) — No halt condition or resource ceiling defined.
+  - `DJZS-X02` RACE_CONDITION (20pts, HIGH) — Temporal dependency creates non-deterministic outcome.
+  - `DJZS-T01` STALE_REFERENCE (12pts, LOW) — Data reference exceeds freshness threshold.
+- **Scoring**: Deterministic — LLM detects boolean flags, scoring is pure function of weights. Max score 200. FAIL threshold: risk_score ≥ 60 OR any CRITICAL flag. Pure-JS SHA-256 for browser compatibility.
 - **Adversarial Audit Module** (`server/adversarial-audit.ts`):
   - Full `ADVERSARIAL_AUDIT_PROMPT` with expanded DJZS-LF taxonomy, deterministic verdict rules, and risk score calculation
   - `buildAuditMessages()` / `buildQuickAuditMessages()` for structured prompt construction with escrow context support

@@ -86,7 +86,7 @@ export default function DashboardOverview() {
     {
       label: "AVG RISK SCORE",
       value: String(avgRisk),
-      valueSuffix: "/100",
+      valueSuffix: "/200",
       sub: "Aggregated from ledger",
       subIcon: null,
       color: "purple",
