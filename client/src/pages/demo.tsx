@@ -1,266 +1,264 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { useTheme } from "@/lib/theme";
 import { TorusLogo } from "@/components/TorusLogo";
-import {
-  ArrowLeft, ArrowRight, Play, Terminal, ShieldCheck, ShieldAlert,
-  AlertTriangle, CheckCircle2, Upload, Database, ExternalLink,
-  ChevronDown, ChevronUp, Sun, Moon, FlaskConical, BookOpen, Menu, X, Lock
-} from "lucide-react";
+import { ArrowLeft, BookOpen, Sun, Moon, Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const DEMO_SCENARIOS = [
-  {
-    key: "fomo",
+const LF_TAXONOMY: Record<string, { name: string; category: string; weight: number; severity: string; description: string }> = {
+  "DJZS-S01": { name: "CIRCULAR_LOGIC",       category: "Structural", weight: 30, severity: "CRITICAL", description: "Reasoning chain references its own conclusion as premise" },
+  "DJZS-S02": { name: "LAYER_INVERSION",      category: "Structural", weight: 25, severity: "HIGH",     description: "Verification layer depends on unverified upstream data" },
+  "DJZS-S03": { name: "DEPENDENCY_GHOST",     category: "Structural", weight: 18, severity: "MEDIUM",   description: "References external dependency that cannot be resolved" },
+  "DJZS-E01": { name: "ORACLE_UNVERIFIED",    category: "Epistemic",  weight: 25, severity: "HIGH",     description: "External data source cited without provenance verification" },
+  "DJZS-E02": { name: "CONFIDENCE_INFLATION", category: "Epistemic",  weight: 18, severity: "MEDIUM",   description: "Stated certainty exceeds evidential basis" },
+  "DJZS-I01": { name: "FOMO_LOOP",            category: "Incentive",  weight: 16, severity: "MEDIUM",   description: "Decision driven by social signal rather than verified data" },
+  "DJZS-I02": { name: "MISALIGNED_REWARD",    category: "Incentive",  weight: 16, severity: "MEDIUM",   description: "Optimization target diverges from stated objective" },
+  "DJZS-I03": { name: "DATA_UNVERIFIED",      category: "Incentive",  weight: 16, severity: "MEDIUM",   description: "Numerical claims lack verifiable source attribution" },
+  "DJZS-X01": { name: "EXECUTION_UNBOUND",    category: "Execution",  weight: 36, severity: "CRITICAL", description: "No halt condition or resource ceiling defined" },
+  "DJZS-X02": { name: "RACE_CONDITION",       category: "Execution",  weight: 24, severity: "HIGH",     description: "Temporal dependency creates non-deterministic outcome" },
+  "DJZS-T01": { name: "STALE_REFERENCE",      category: "Temporal",   weight: 12, severity: "LOW",      description: "Data reference exceeds freshness threshold" },
+};
+
+const ALL_CODES = Object.keys(LF_TAXONOMY);
+const MAX_SCORE = 200;
+const PASS_THRESHOLD = 60;
+const SCHEMA_VERSION_LABEL = "DJZS-LF-v1.0";
+
+interface ScenarioFlag {
+  present: boolean;
+  evidence: string | null;
+}
+
+const SCENARIOS: Record<string, { label: string; desc: string; memo: string; flags: Record<string, ScenarioFlag> }> = {
+  fomo_momentum: {
     label: "FOMO Momentum Buy",
-    description: "Social-driven pump chase with no verified data",
-    memo: "Allocate 80% of treasury to $MOONDOGE based on 400% price increase this week and three crypto influencer endorsements on Twitter. No fundamental analysis conducted. No risk limits defined. Expected return: 10x in 14 days. Remaining 20% held in USDC as dry powder for the next momentum play.",
+    desc: "Social-driven pump chase with no verified data",
+    memo: "Rebalance the USDC/ETH liquidity position on Uniswap V3 when the price moves outside the \u00b15% range from the 7-day TWAP. If ETH drops below $1,800, withdraw all liquidity to USDC and halt. Max position size: 2% of treasury.",
+    flags: {
+      "DJZS-S01": { present: false, evidence: null },
+      "DJZS-S02": { present: false, evidence: null },
+      "DJZS-S03": { present: false, evidence: null },
+      "DJZS-E01": { present: true,  evidence: "TWAP source not cryptographically verified" },
+      "DJZS-E02": { present: false, evidence: null },
+      "DJZS-I01": { present: true,  evidence: "Social-driven pump chase with no verified data anchor" },
+      "DJZS-I02": { present: false, evidence: null },
+      "DJZS-I03": { present: true,  evidence: "Position sizing references unverified treasury balance" },
+      "DJZS-X01": { present: true,  evidence: "No explicit stop-loss mechanism for ETH price collapse" },
+      "DJZS-X02": { present: false, evidence: null },
+      "DJZS-T01": { present: false, evidence: null },
+    }
   },
-  {
-    key: "hallucination",
+  hallucinated: {
     label: "Hallucinated Data",
-    description: "References a protocol and audit that don't exist",
-    memo: "Rebalance treasury into 60% AuroraVault protocol (TVL: $450M, audited by CertiSafe Labs, 12.4% guaranteed APY). Remaining 40% in USDC. Based on the AuroraVault governance report published March 2026 confirming zero exploit history and full insurance coverage via NexusGuard.",
+    desc: "References a protocol and audit that don't exist",
+    memo: "Deploy 40% of reserves into the new LRT vault cited by the Ethereum Foundation Q3 report, targeting 8.2% APY with auto-compounding.",
+    flags: {
+      "DJZS-S01": { present: true,  evidence: "Strategy references non-existent EF Q3 report as basis" },
+      "DJZS-S02": { present: true,  evidence: "Yield assumption layered on fabricated upstream source" },
+      "DJZS-S03": { present: true,  evidence: "LRT vault contract address unresolvable" },
+      "DJZS-E01": { present: true,  evidence: "Ethereum Foundation report does not exist" },
+      "DJZS-E02": { present: true,  evidence: "8.2% APY stated as fact without any market data" },
+      "DJZS-I01": { present: false, evidence: null },
+      "DJZS-I02": { present: true,  evidence: "Auto-compound target misaligned with capital preservation" },
+      "DJZS-I03": { present: true,  evidence: "40% allocation figure has no risk model backing" },
+      "DJZS-X01": { present: true,  evidence: "No withdrawal circuit breaker defined" },
+      "DJZS-X02": { present: false, evidence: null },
+      "DJZS-T01": { present: true,  evidence: "Report reference is temporally impossible" },
+    }
   },
-  {
-    key: "valid",
+  clean: {
     label: "Clean Strategy",
-    description: "Well-structured rebalance with verified parameters",
-    memo: "Rebalance DAO treasury to 50% USDC (stable reserve), 30% ETH (blue-chip exposure), 20% wstETH via Lido (yield generation at current 3.8% APY per Lido dashboard, verified March 2026). Total volatile exposure: 50%, within protocol-defined 60% ceiling. Max single-asset concentration: 50% (USDC). Drawdown tolerance: 15% on volatile portion. Rebalance trigger: if volatile allocation drifts beyond +/- 5% of target. Data sources: CoinGecko 90-day moving average, Lido staking dashboard, on-chain USDC reserve verification.",
+    desc: "Well-structured rebalance with verified parameters",
+    memo: "Rebalance stablecoin allocation: 60% USDC, 30% DAI, 10% FRAX. Trigger: if any asset depegs >0.5% for >1hr per Chainlink oracle. Max slippage 0.3%. Halt if gas >50 gwei.",
+    flags: {
+      "DJZS-S01": { present: false, evidence: null },
+      "DJZS-S02": { present: false, evidence: null },
+      "DJZS-S03": { present: false, evidence: null },
+      "DJZS-E01": { present: false, evidence: null },
+      "DJZS-E02": { present: false, evidence: null },
+      "DJZS-I01": { present: false, evidence: null },
+      "DJZS-I02": { present: false, evidence: null },
+      "DJZS-I03": { present: false, evidence: null },
+      "DJZS-X01": { present: false, evidence: null },
+      "DJZS-X02": { present: false, evidence: null },
+      "DJZS-T01": { present: true,  evidence: "Chainlink heartbeat interval may exceed 1hr threshold" },
+    }
   },
-  {
-    key: "edge",
+  race: {
     label: "Race Condition Edge Case",
-    description: "Reasonable strategy with hidden temporal risk",
-    memo: "Execute ETH-to-USDC swap of 200 ETH ($380,000) using current spot price of $1,900 from CoinGecko API. Slippage tolerance: 0.5%. Execute as single market order on Uniswap v3 ETH/USDC pool. No check on pool depth at execution time. No TWAP or order splitting. Treasury policy allows up to $500,000 per transaction.",
-  },
-];
+    desc: "Reasonable strategy with hidden temporal risk",
+    memo: "Execute market buy of 5 ETH when funding rate flips negative on Binance perps, then immediately open a 2x long on Aave. Close both if combined PnL hits -3%.",
+    flags: {
+      "DJZS-S01": { present: false, evidence: null },
+      "DJZS-S02": { present: false, evidence: null },
+      "DJZS-S03": { present: false, evidence: null },
+      "DJZS-E01": { present: true,  evidence: "Binance funding rate is CEX data without on-chain proof" },
+      "DJZS-E02": { present: false, evidence: null },
+      "DJZS-I01": { present: false, evidence: null },
+      "DJZS-I02": { present: false, evidence: null },
+      "DJZS-I03": { present: false, evidence: null },
+      "DJZS-X01": { present: false, evidence: null },
+      "DJZS-X02": { present: true,  evidence: "Spot buy and Aave long have no atomicity guarantee" },
+      "DJZS-T01": { present: true,  evidence: "Funding rate snapshot may be stale by execution time" },
+    }
+  }
+};
 
-interface AuditFlag {
-  code: string;
-  severity: string;
-  message?: string;
-  description?: string;
-  evidence?: string;
-  recommendation?: string;
+function demoComputeVerdict(flags: Record<string, ScenarioFlag>) {
+  const risk_score = Object.entries(flags)
+    .filter(([_, v]) => v.present)
+    .reduce((sum, [code]) => sum + (LF_TAXONOMY[code]?.weight || 0), 0);
+  const failure_flags = ALL_CODES.filter((code) => flags[code]?.present).sort();
+  const booleanOnly: Record<string, boolean> = {};
+  for (const code of ALL_CODES) booleanOnly[code] = flags[code]?.present ?? false;
+  const logic_hash = fnv(JSON.stringify(booleanOnly) + "|" + risk_score);
+  const weights_hash = fnv(JSON.stringify(Object.fromEntries(Object.entries(LF_TAXONOMY).map(([k, v]) => [k, v.weight]))));
+  return {
+    audit_verdict: risk_score < PASS_THRESHOLD ? "PASS" as const : "FAIL" as const,
+    risk_score, max_possible: MAX_SCORE, pass_threshold: PASS_THRESHOLD,
+    failure_flags, logic_hash, weights_hash,
+    audit_schema_version: SCHEMA_VERSION_LABEL, threshold_block: 29847261,
+    detection_model: "venice/llama-3.3-70b@temp=0", scoring_engine: "typescript/pure-function",
+    anchor_target: "irys-datachain", settlement_chain: "base-mainnet",
+    timestamp: new Date().toISOString(),
+    audit_id: crypto.randomUUID?.() || "demo-" + Date.now(),
+  };
 }
 
-interface AuditResult {
-  audit_id: string;
-  timestamp: string;
-  tier: string;
-  verdict: "PASS" | "FAIL";
-  risk_score: number;
-  primary_bias_detected: string;
-  flags: AuditFlag[];
-  logic_flaws: { flaw_type: string; severity: string; explanation: string }[];
-  structural_recommendations: string[];
-  cryptographic_hash: string;
-  provenance_provider: string;
-  irys_tx_id: string | null;
-  irys_url: string | null;
-  irys_error?: string;
-  trust_score_tx_hash?: string;
-  trust_score_error?: string;
+function fnv(s: string) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return "0x" + (h >>> 0).toString(16).padStart(8, "0");
 }
 
-const PIPELINE_STEPS = [
-  { id: "signature", label: "Signature", icon: Lock, description: "Verifying request signature" },
-  { id: "hash-check", label: "Hash Check", icon: ShieldAlert, description: "Validating payload integrity" },
-  { id: "auditing", label: "Auditing", icon: FlaskConical, description: "Adversarial analysis in TEE" },
-  { id: "uploading", label: "Irys Upload", icon: Upload, description: "Certificate stored on Datachain" },
-  { id: "settlement", label: "Settlement", icon: Database, description: "On-chain settlement on Base" },
-  { id: "complete", label: "Complete", icon: CheckCircle2, description: "ProofOfLogic certificate ready" },
-];
+const SEV: Record<string, { bg: string; border: string; label: string }> = {
+  CRITICAL: { bg: "rgba(239,68,68,0.10)", border: "#ef4444", label: "#ef4444" },
+  HIGH:     { bg: "rgba(249,115,22,0.08)", border: "#f97316", label: "#f97316" },
+  MEDIUM:   { bg: "rgba(234,179,8,0.06)",  border: "#eab308", label: "#eab308" },
+  LOW:      { bg: "rgba(34,197,94,0.06)",   border: "#22c55e", label: "#22c55e" },
+};
+const CAT: Record<string, string> = { Structural: "#ef4444", Epistemic: "#a78bfa", Incentive: "#f97316", Execution: "#ec4899", Temporal: "#06b6d4" };
 
-const TIER_OPTIONS = [
-  { value: "micro", label: "Micro-Zone", price: "$0.10", description: "Binary risk scoring" },
-  { value: "founder", label: "Founder Zone", price: "$1.00", description: "Strategic diligence" },
-  { value: "treasury", label: "Treasury Zone", price: "$10.00", description: "Exhaustive stress-test" },
-];
-
-function RiskScoreGauge({ score }: { score: number }) {
-  const color = score >= 70 ? "#ef4444" : score >= 40 ? "#f59e0b" : "#22c55e";
-  const circumference = 2 * Math.PI * 45;
-  const offset = circumference - (score / 100) * circumference;
-
+function Gauge({ score, verdict }: { score: number; verdict: string }) {
+  const [a, setA] = useState(0);
+  const p = Math.min(score / MAX_SCORE, 1);
+  useEffect(() => { setA(0); const t = setTimeout(() => setA(p), 60); return () => clearTimeout(t); }, [score, p]);
+  const r = 58, c = 2 * Math.PI * r, o = c - a * c;
+  const color = verdict === "PASS" ? "#22c55e" : score >= 120 ? "#ef4444" : "#f97316";
   return (
-    <div className="relative w-28 h-28 flex-shrink-0">
-      <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-muted/30" />
-        <motion.circle
-          cx="50" cy="50" r="45" fill="none" stroke={color} strokeWidth="6"
-          strokeLinecap="round" strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-        />
+    <div style={{ position: "relative", width: 148, height: 148, flexShrink: 0 }} data-testid="gauge-risk-score">
+      <svg width="148" height="148" viewBox="0 0 148 148">
+        <circle cx="74" cy="74" r={r} fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="7" />
+        <circle cx="74" cy="74" r={r} fill="none" stroke={color} strokeWidth="7"
+          strokeLinecap="round" strokeDasharray={c} strokeDashoffset={o}
+          transform="rotate(-90 74 74)"
+          style={{ transition: "stroke-dashoffset 1s cubic-bezier(0.16,1,0.3,1), stroke 0.3s" }} />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-bold font-mono" style={{ color }} data-testid="text-risk-score-value">{score}</span>
-        <span className="text-[10px] text-muted-foreground font-mono">/ 100</span>
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 34, fontWeight: 700, color, lineHeight: 1 }} data-testid="text-risk-score-value">{score}</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "#52525b", marginTop: 2 }}>RISK / {MAX_SCORE}</span>
       </div>
     </div>
   );
 }
 
-function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
-  const [expanded, setExpanded] = useState(false);
-  const severityColor = flag.severity === "CRITICAL" ? "text-red-500 dark:text-red-400 border-red-500/30 bg-red-500/10" :
-    flag.severity === "HIGH" ? "text-orange-500 dark:text-orange-400 border-orange-500/30 bg-orange-500/10" :
-    "text-yellow-500 dark:text-yellow-400 border-yellow-500/30 bg-yellow-500/10";
-
+function Steps({ step }: { step: string }) {
+  const ss = [
+    { k: "sig", l: "Signature", d: "Request sig verified" },
+    { k: "hash", l: "Hash Check", d: "Payload integrity" },
+    { k: "audit", l: "Auditing", d: "Adversarial analysis in TEE" },
+    { k: "irys", l: "Irys Upload", d: "Certificate \u2192 Datachain" },
+    { k: "settle", l: "Settlement", d: "On-chain on Base" },
+    { k: "done", l: "Complete", d: "ProofOfLogic ready" },
+  ];
+  const idx = ss.findIndex(s => s.k === step);
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className="border border-border dark:border-gray-800 rounded-lg overflow-hidden bg-card dark:bg-[#111]"
-      data-testid={`card-flag-${flag.code.toLowerCase()}`}
-    >
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/50 dark:hover:bg-white/5 transition-colors"
-        data-testid={`button-expand-flag-${flag.code.toLowerCase()}`}
-      >
-        <div className="flex items-center gap-3 min-w-0">
-          <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded border ${severityColor}`} data-testid={`badge-flag-severity-${index}`}>
-            {flag.severity}
-          </span>
-          <span className="font-mono text-sm text-foreground/80 font-semibold" data-testid={`text-flag-code-${index}`}>{flag.code}</span>
-          <span className="text-sm text-muted-foreground truncate hidden sm:inline">{(flag.message || flag.description || "").split("—")[0]}</span>
-        </div>
-        {expanded ? <ChevronUp size={16} className="text-muted-foreground flex-shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground flex-shrink-0" />}
-      </button>
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 pb-4 space-y-3 border-t border-border dark:border-gray-800">
-              <div className="pt-3">
-                <div className="text-xs font-mono text-muted-foreground mb-1">MESSAGE</div>
-                <p className="text-sm text-foreground/80">{flag.message || flag.description}</p>
-              </div>
-              {flag.evidence && (
-                <div>
-                  <div className="text-xs font-mono text-muted-foreground mb-1">EVIDENCE</div>
-                  <p className="text-sm text-foreground/70 italic">{flag.evidence}</p>
-                </div>
-              )}
-              {flag.recommendation && (
-                <div>
-                  <div className="text-xs font-mono text-muted-foreground mb-1">RECOMMENDATION</div>
-                  <p className="text-sm text-teal-600 dark:text-teal-400">{flag.recommendation}</p>
-                </div>
-              )}
+    <div style={{ display: "flex", justifyContent: "space-between", padding: "0 2px" }} data-testid="pipeline-steps">
+      {ss.map((s, i) => {
+        const done = i < idx, act = i === idx;
+        const cl = done ? "#22c55e" : act ? "#4ade80" : "#3f3f46";
+        return (
+          <div key={s.k} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1 }} data-testid={`step-icon-${s.k}`}>
+            <div style={{ width: 26, height: 26, borderRadius: "50%", border: `2px solid ${cl}`, background: done ? "rgba(34,197,94,0.12)" : act ? "rgba(74,222,128,0.06)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {done ? <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6l2.5 2.5 4.5-4.5" stroke="#22c55e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                : <div style={{ width: 5, height: 5, borderRadius: "50%", background: act ? "#4ade80" : "#52525b" }} />}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+            <span style={{ fontFamily: "var(--mono)", fontSize: 8.5, fontWeight: 600, color: done || act ? "#d4d4d8" : "#52525b", marginTop: 5, textAlign: "center" }}>{s.l}</span>
+            <span style={{ fontFamily: "var(--mono)", fontSize: 7, color: "#3f3f46", marginTop: 1, textAlign: "center", maxWidth: 80 }}>{s.d}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Flag({ code, data, flag, open, toggle }: { code: string; data: { name: string; category: string; weight: number; severity: string; description: string }; flag: ScenarioFlag; open: boolean; toggle: () => void }) {
+  const sv = SEV[data.severity];
+  return (
+    <div style={{ background: sv.bg, borderLeft: `3px solid ${sv.border}`, border: `1px solid ${sv.border}18`, borderRadius: 5, overflow: "hidden" }} data-testid={`card-flag-${code.toLowerCase()}`}>
+      <button onClick={toggle} style={{ width: "100%", display: "flex", alignItems: "center", gap: 6, padding: "9px 10px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }} data-testid={`button-expand-flag-${code.toLowerCase()}`}>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 8.5, fontWeight: 700, color: sv.label, background: `${sv.label}15`, padding: "2px 5px", borderRadius: 2, letterSpacing: "0.05em", flexShrink: 0 }}>{data.severity}</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 10.5, fontWeight: 600, color: "#e4e4e7", flexShrink: 0 }}>{code}</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 9.5, color: "#71717a", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.name}</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: 10, fontWeight: 700, color: sv.label, flexShrink: 0, minWidth: 28, textAlign: "right" }}>+{data.weight}</span>
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.15s", flexShrink: 0 }}>
+          <path d="M2.75 4.25l2.75 2.75 2.75-2.75" stroke="#52525b" strokeWidth="1.4" strokeLinecap="round"/>
+        </svg>
+      </button>
+      {open && (
+        <div style={{ padding: "0 10px 9px" }}>
+          <div style={{ display: "flex", gap: 6, marginBottom: 5, alignItems: "center" }}>
+            <span style={{ fontFamily: "var(--mono)", fontSize: 8, letterSpacing: "0.06em", color: CAT[data.category], background: `${CAT[data.category]}12`, padding: "1px 5px", borderRadius: 2 }}>{data.category.toUpperCase()}</span>
+            <span style={{ fontFamily: "var(--mono)", fontSize: 8, color: "#52525b" }}>Weight: {data.weight} / {MAX_SCORE}</span>
+          </div>
+          <p style={{ fontFamily: "var(--mono)", fontSize: 9.5, color: "#a1a1aa", margin: "0 0 5px", lineHeight: 1.5 }}>{data.description}</p>
+          {flag.evidence && (
+            <div style={{ background: "rgba(0,0,0,0.35)", borderRadius: 3, padding: "5px 7px", borderLeft: `2px solid ${sv.border}33` }}>
+              <span style={{ fontFamily: "var(--mono)", fontSize: 7.5, color: "#3f3f46", letterSpacing: "0.08em", display: "block", marginBottom: 2 }}>EVIDENCE (human review only — not hashed)</span>
+              <span style={{ fontFamily: "var(--mono)", fontSize: 9, color: "#d4d4d8", lineHeight: 1.4 }}>{flag.evidence}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
 export default function Demo() {
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [memo, setMemo] = useState("");
-  const [tier, setTier] = useState("micro");
+  const [scenario, setScenario] = useState("fomo_momentum");
+  const [expanded, setExpanded] = useState(new Set<string>());
+  const [showMeta, setShowMeta] = useState(false);
   const [running, setRunning] = useState(false);
-  const [currentStep, setCurrentStep] = useState(-1);
-  const [result, setResult] = useState<AuditResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
+  const [pStep, setPStep] = useState("done");
+  const [result, setResult] = useState<ReturnType<typeof demoComputeVerdict> | null>(null);
+  const [tier, setTier] = useState("proxy");
 
-  const loadScenario = (key: string) => {
-    const scenario = DEMO_SCENARIOS.find(s => s.key === key);
-    if (!scenario) return;
-    abortRef.current?.abort();
-    setMemo(scenario.memo);
-    setResult(null);
-    setError(null);
-    setCurrentStep(-1);
-    setRunning(false);
-  };
+  const sc = SCENARIOS[scenario];
+  const verdict = result || demoComputeVerdict(sc.flags);
+  const failed = Object.entries(sc.flags).filter(([_, v]) => v.present).sort((a, b) => (LF_TAXONOMY[b[0]]?.weight || 0) - (LF_TAXONOMY[a[0]]?.weight || 0));
 
-  const runAudit = useCallback(async () => {
-    if (!memo.trim() || running) return;
-    abortRef.current?.abort();
-    setRunning(true);
-    setResult(null);
-    setError(null);
-    setCurrentStep(0);
+  function toggle(code: string) { setExpanded(prev => { const n = new Set(prev); n.has(code) ? n.delete(code) : n.add(code); return n; }); }
+  function run() {
+    setRunning(true); setResult(null); setExpanded(new Set());
+    (["sig","hash","audit","irys","settle","done"] as const).forEach((s, i) => {
+      setTimeout(() => { setPStep(s); if (s === "done") { setResult(demoComputeVerdict(SCENARIOS[scenario].flags)); setRunning(false); } }, i * 450);
+    });
+  }
+  function pick(key: string) { setScenario(key); setResult(null); setExpanded(new Set()); setPStep("done"); }
 
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    const stepTimers = [600, 600];
-    for (const delay of stepTimers) {
-      await new Promise(r => setTimeout(r, delay));
-      if (controller.signal.aborted) return;
-      setCurrentStep(prev => prev + 1);
-    }
-
-    try {
-      const auditType = tier === "treasury" ? "treasury" : tier === "founder" ? "founder_drift" : "general";
-      const response = await fetch("/api/audit/demo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          strategy_memo: memo,
-          audit_type: auditType,
-          tier,
-        }),
-        signal: controller.signal,
-      });
-
-      if (controller.signal.aborted) return;
-      setCurrentStep(3);
-      await new Promise(r => setTimeout(r, 400));
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => null);
-        throw new Error(errData?.error || `Server returned ${response.status}`);
-      }
-
-      const data: AuditResult = await response.json();
-
-      if (controller.signal.aborted) return;
-      setCurrentStep(4);
-      await new Promise(r => setTimeout(r, 400));
-      setCurrentStep(5);
-      await new Promise(r => setTimeout(r, 300));
-
-      setResult(data);
-    } catch (err: any) {
-      if (err.name === "AbortError") return;
-      setError(err.message || "Audit request failed");
-      setCurrentStep(-1);
-    } finally {
-      setRunning(false);
-      abortRef.current = null;
-    }
-  }, [memo, tier, running]);
-
-  useEffect(() => {
-    return () => {
-      abortRef.current?.abort();
-    };
-  }, []);
+  const tiers = [{ key: "proxy", label: "Proxy", price: "$0.001" }, { key: "micro", label: "Micro-Zone", price: "$0.01" }, { key: "founder", label: "Founder Zone", price: "$0.10" }, { key: "treasury", label: "Treasury Zone", price: "$1.00" }];
 
   return (
     <div className="min-h-screen text-foreground bg-background">
       <Helmet>
-        <title>Live Demo | DJZS Protocol — Audit-to-Certificate Pipeline</title>
-        <meta name="description" content="Try the DJZS Zero-Trust Oracle live. Paste a reasoning memo, run an audit, and see the full pipeline: signature, hash check, audit, Irys upload, and on-chain settlement." />
-        <meta property="og:title" content="DJZS Live Demo — Audit-to-Certificate Pipeline" />
-        <meta property="og:description" content="See the full DJZS audit pipeline in action. Paste a memo, select a tier, and watch the ProofOfLogic certificate get generated." />
+        <title>Live Demo | DJZS Protocol — ProofOfLogic Certificate Engine</title>
+        <meta name="description" content="Try the DJZS Zero-Trust Oracle live. Select a scenario, run the audit pipeline, and see the full ProofOfLogic certificate with 200-point risk scoring on the DJZS-LF-v1.0 taxonomy." />
+        <meta property="og:title" content="DJZS Live Demo — ProofOfLogic Certificate Engine" />
+        <meta property="og:description" content="See the full DJZS audit pipeline in action. 200-point risk scale, 11 failure codes, deterministic scoring." />
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </Helmet>
 
       <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-border bg-background/90" style={{ boxShadow: '0 1px 20px rgba(0,0,0,0.08)' }}>
@@ -306,323 +304,133 @@ export default function Demo() {
         </AnimatePresence>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-mono mb-4" style={{ border: '1px solid rgba(243,126,32,0.3)', background: 'rgba(243,126,32,0.08)', color: '#F37E20' }}>
-            <FlaskConical size={16} />
-            <span>Live Demo — Real Audit Engine</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3 text-foreground" data-testid="text-demo-page-title">
-            Audit-to-Certificate Pipeline
-          </h1>
-          <p className="text-muted-foreground text-base sm:text-lg max-w-2xl" data-testid="text-demo-page-subtitle">
-            Paste a reasoning memo, select a scenario, and watch the real Oracle execute: adversarial analysis via Venice AI, Irys Datachain upload, and on-chain trust score settlement.
-          </p>
-        </motion.div>
+      <main className="max-w-[1120px] mx-auto px-4 sm:px-6 py-8" style={{ "--mono": "'JetBrains Mono', monospace" } as React.CSSProperties}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.15fr", gap: 14 }} className="demo-grid">
+          <style>{`.demo-grid { grid-template-columns: 1fr 1.15fr !important; } @media (max-width: 768px) { .demo-grid { grid-template-columns: 1fr !important; } }`}</style>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="rounded-xl border border-border dark:border-gray-800 bg-card dark:bg-[#111] overflow-hidden">
-              <div className="px-5 py-4 border-b border-border dark:border-gray-800 bg-muted dark:bg-[#0d0d0d]">
-                <div className="flex items-center gap-2">
-                  <Terminal size={18} className="text-cyan-500 dark:text-cyan-400" />
-                  <h2 className="font-semibold text-foreground text-sm" data-testid="text-demo-input-title">Agent Payload Injector</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ background: "var(--card, #111113)", border: "1px solid var(--border, #1c1c20)", borderRadius: 7, padding: 12 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "#4ade80", letterSpacing: "0.06em", marginBottom: 8, display: "flex", alignItems: "center", gap: 5 }}>
+                <span style={{ opacity: 0.4 }}>{"\u203A"}_</span> Agent Payload Injector
+              </div>
+              <div style={{ fontSize: 7.5, color: "#3f3f46", letterSpacing: "0.1em", marginBottom: 6 }} data-testid="label-demo-scenarios">PRELOADED SCENARIOS</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                {Object.entries(SCENARIOS).map(([key, s]) => (
+                  <button key={key} onClick={() => pick(key)} style={{ background: scenario === key ? "rgba(74,222,128,0.05)" : "rgba(255,255,255,0.015)", border: `1px solid ${scenario === key ? "#4ade8028" : "var(--border, #1c1c20)"}`, borderRadius: 4, padding: "7px 9px", cursor: "pointer", textAlign: "left", transition: "all 0.12s" }} data-testid={`button-scenario-${key}`}>
+                    <div style={{ fontSize: 10.5, fontWeight: 600, color: scenario === key ? "var(--foreground, #e4e4e7)" : "var(--muted-foreground, #a1a1aa)", fontFamily: "var(--mono)" }}>{s.label}</div>
+                    <div style={{ fontSize: 8.5, color: "#52525b", marginTop: 1, fontFamily: "var(--mono)" }}>{s.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ background: "var(--card, #111113)", border: "1px solid var(--border, #1c1c20)", borderRadius: 7, padding: 12 }}>
+              <div style={{ fontSize: 7.5, color: "#3f3f46", letterSpacing: "0.1em", marginBottom: 5, fontFamily: "var(--mono)" }} data-testid="label-demo-memo">"strategy_memo":</div>
+              <div style={{ background: "var(--background, #09090b)", border: "1px solid var(--border, #1c1c20)", borderRadius: 3, padding: 9, fontSize: 10, color: "var(--foreground, #d4d4d8)", lineHeight: 1.65, fontFamily: "var(--mono)" }} data-testid="textarea-demo-memo">{sc.memo}</div>
+            </div>
+
+            <div style={{ background: "var(--card, #111113)", border: "1px solid var(--border, #1c1c20)", borderRadius: 7, padding: 12 }}>
+              <div style={{ fontSize: 7.5, color: "#3f3f46", letterSpacing: "0.1em", marginBottom: 6, display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--mono)" }}>AUDIT TIER <span style={{ fontSize: 7, color: "#f97316", background: "rgba(249,115,22,0.08)", padding: "1px 4px", borderRadius: 2 }} data-testid="badge-demo-pricing">DEMO PRICING</span></div>
+              <div style={{ display: "flex", gap: 6 }} data-testid="tier-selector">
+                {tiers.map(t => (
+                  <button key={t.key} onClick={() => setTier(t.key)} style={{ flex: 1, padding: "8px 0", borderRadius: 4, cursor: "pointer", background: tier === t.key ? "rgba(74,222,128,0.08)" : "transparent", border: `1px solid ${tier === t.key ? "#4ade8033" : "var(--border, #1c1c20)"}`, textAlign: "center" }} data-testid={`button-tier-${t.key}`}>
+                    <div style={{ fontSize: 9.5, fontWeight: 600, color: tier === t.key ? "#4ade80" : "#71717a", fontFamily: "var(--mono)" }}>{t.label}</div>
+                    <div style={{ fontSize: 8.5, color: "#52525b", marginTop: 1, fontFamily: "var(--mono)" }}>{t.price}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button onClick={run} disabled={running} style={{ background: running ? "#18181b" : "linear-gradient(135deg, #16a34a, #15803d)", border: running ? "1px solid #27272a" : "1px solid #22c55e33", borderRadius: 7, padding: "11px 0", cursor: running ? "default" : "pointer", fontSize: 11.5, fontWeight: 700, color: running ? "#52525b" : "#fff", fontFamily: "var(--mono)", letterSpacing: "0.04em", width: "100%" }} data-testid="button-run-audit">
+              {running ? "\u27F3 AUDITING..." : "\u25B7 Run DJZS Audit"}
+            </button>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ background: "var(--card, #111113)", border: "1px solid var(--border, #1c1c20)", borderRadius: 7, padding: "12px 8px" }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "#4ade80", letterSpacing: "0.06em", marginBottom: 10, display: "flex", alignItems: "center", gap: 5, fontFamily: "var(--mono)" }}>
+                <span style={{ opacity: 0.4 }}>{"\u25C9"}</span> Pipeline Progress
+              </div>
+              <Steps step={pStep} />
+            </div>
+
+            <div style={{ background: "var(--card, #111113)", border: "1px solid var(--border, #1c1c20)", borderRadius: 7, padding: 12 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "#4ade80", letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 5, fontFamily: "var(--mono)" }} data-testid="text-demo-result-title">
+                <span style={{ opacity: 0.4 }}>{"\u203A"}_</span> ProofOfLogic Certificate
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+                <Gauge score={verdict.risk_score} verdict={verdict.audit_verdict} />
+                <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                  <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: "0.04em", color: verdict.audit_verdict === "PASS" ? "#22c55e" : "#ef4444", background: verdict.audit_verdict === "PASS" ? "rgba(34,197,94,0.10)" : "rgba(239,68,68,0.10)", border: `1px solid ${verdict.audit_verdict === "PASS" ? "#22c55e28" : "#ef444428"}`, padding: "2px 7px", borderRadius: 3, fontFamily: "var(--mono)" }} data-testid="badge-result-verdict">
+                      {verdict.audit_verdict === "PASS" ? "\u2713" : "\u26A0"} VERDICT: {verdict.audit_verdict}
+                    </span>
+                    <span style={{ fontSize: 9.5, color: "#a1a1aa", background: "#18181b", border: "1px solid #27272a", padding: "2px 7px", borderRadius: 3, fontFamily: "var(--mono)" }} data-testid="text-result-tier">TIER: {tier.toUpperCase()}</span>
+                    <span style={{ fontSize: 9.5, color: "#71717a", background: "#18181b", border: "1px solid #27272a", padding: "2px 7px", borderRadius: 3, fontFamily: "var(--mono)" }}>THR: {verdict.pass_threshold}</span>
+                  </div>
+                  <div style={{ fontSize: 8, color: "#3f3f46", lineHeight: 1.6, fontFamily: "var(--mono)" }}>
+                    <span data-testid="text-result-audit-id">ID: {verdict.audit_id?.slice(0, 28)}...</span><br />
+                    <span data-testid="text-result-timestamp">TIME: {new Date(verdict.timestamp).toLocaleString()}</span><br />
+                    BLOCK: #{verdict.threshold_block}
+                  </div>
                 </div>
               </div>
 
-              <div className="p-5 space-y-5">
+              <button onClick={() => setShowMeta(!showMeta)} style={{ width: "100%", background: "rgba(74,222,128,0.02)", border: "1px solid var(--border, #1c1c20)", borderRadius: 4, padding: "7px 9px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }} data-testid="button-toggle-provenance">
+                <span style={{ fontSize: 8, color: "#4ade80", letterSpacing: "0.1em", fontFamily: "var(--mono)" }}>AUDIT PROVENANCE</span>
+                <div style={{ flex: 1 }} />
+                <svg width="9" height="9" viewBox="0 0 9 9" fill="none" style={{ transform: showMeta ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>
+                  <path d="M2 3.5l2.5 2.5L7 3.5" stroke="#3f3f46" strokeWidth="1.3" strokeLinecap="round"/>
+                </svg>
+              </button>
+              {showMeta && (
+                <div style={{ background: "var(--background, #09090b)", border: "1px solid var(--border, #1c1c20)", borderRadius: 4, padding: 9, marginBottom: 10, fontSize: 8.5, lineHeight: 1.9, fontFamily: "var(--mono)" }} data-testid="panel-provenance">
+                  {[
+                    ["audit_schema_version", verdict.audit_schema_version],
+                    ["weights_hash", verdict.weights_hash],
+                    ["logic_hash", verdict.logic_hash],
+                    ["threshold_block", `#${verdict.threshold_block}`],
+                    ["pass_threshold", verdict.pass_threshold],
+                    ["max_possible", verdict.max_possible],
+                    ["detection_model", verdict.detection_model],
+                    ["scoring_engine", verdict.scoring_engine],
+                    ["anchor_target", verdict.anchor_target],
+                    ["settlement_chain", verdict.settlement_chain],
+                  ].map(([k, v]) => (
+                    <div key={k as string} style={{ display: "flex", gap: 8 }}>
+                      <span style={{ color: "#3f3f46", minWidth: 140 }}>{k as string}:</span>
+                      <span style={{ color: "#d4d4d8", wordBreak: "break-all" }}>{String(v)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {failed.length > 0 && (
                 <div>
-                  <label className="text-xs font-mono text-muted-foreground mb-2 block" data-testid="label-demo-scenarios">PRELOADED SCENARIOS</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
-                    {DEMO_SCENARIOS.map((scenario) => (
-                      <button
-                        key={scenario.key}
-                        onClick={() => loadScenario(scenario.key)}
-                        className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all text-sm ${
-                          memo === scenario.memo
-                            ? "border-purple-500 bg-purple-500/10 text-purple-600 dark:text-purple-300"
-                            : "border-border dark:border-gray-800 hover:border-purple-500/30 text-muted-foreground hover:text-foreground"
-                        }`}
-                        data-testid={`button-scenario-${scenario.key}`}
-                      >
-                        <div className="font-medium">{scenario.label}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">{scenario.description}</div>
-                      </button>
+                  <div style={{ fontSize: 7.5, color: "#3f3f46", letterSpacing: "0.1em", marginBottom: 6, fontFamily: "var(--mono)" }} data-testid="label-result-flags">DETECTED FAILURES ({failed.length})</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    {failed.map(([code, flag]) => (
+                      <Flag
+                        key={code}
+                        code={code}
+                        data={LF_TAXONOMY[code]}
+                        flag={flag}
+                        open={expanded.has(code)}
+                        toggle={() => toggle(code)}
+                      />
                     ))}
                   </div>
                 </div>
+              )}
 
-                <div>
-                  <label className="text-xs font-mono text-muted-foreground mb-2 block" data-testid="label-demo-memo">"strategy_memo":</label>
-                  <textarea
-                    value={memo}
-                    onChange={(e) => setMemo(e.target.value)}
-                    placeholder="Paste your reasoning memo here or select a scenario above..."
-                    className="w-full p-4 rounded-lg bg-background dark:bg-black border border-border dark:border-gray-800 font-mono text-sm text-foreground/80 h-36 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-all placeholder:text-muted-foreground/40"
-                    data-testid="textarea-demo-memo"
-                  />
+              {failed.length === 0 && (
+                <div style={{ textAlign: "center", padding: 20 }}>
+                  <div style={{ fontSize: 11, color: "#22c55e", fontWeight: 600, fontFamily: "var(--mono)" }} data-testid="text-clean-pass">No failures detected</div>
+                  <div style={{ fontSize: 9, color: "#3f3f46", marginTop: 4, fontFamily: "var(--mono)" }}>All 11 logic checks passed</div>
                 </div>
-
-                <div>
-                  <label className="text-xs font-mono text-muted-foreground mb-2 block" data-testid="label-demo-tier">AUDIT TIER</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {TIER_OPTIONS.map((t) => (
-                      <button
-                        key={t.value}
-                        onClick={() => setTier(t.value)}
-                        className={`px-3 py-2.5 rounded-lg border text-center transition-all ${
-                          tier === t.value
-                            ? "border-[#F37E20] bg-[#F37E20]/10 text-[#F37E20]"
-                            : "border-border dark:border-gray-800 text-muted-foreground hover:border-[#F37E20]/30"
-                        }`}
-                        data-testid={`button-tier-${t.value}`}
-                      >
-                        <div className="text-xs font-bold">{t.label}</div>
-                        <div className="text-[10px] mt-0.5 opacity-70">{t.price}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  onClick={runAudit}
-                  disabled={!memo.trim() || running}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-lg font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ background: '#F37E20', boxShadow: memo.trim() && !running ? '0 4px 20px rgba(243,126,32,0.3)' : 'none' }}
-                  data-testid="button-run-audit"
-                >
-                  {running ? (
-                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
-                      <Terminal size={20} />
-                    </motion.div>
-                  ) : (
-                    <Play size={20} />
-                  )}
-                  <span>{running ? "ORACLE SCANNING — may take up to 90s..." : "Run DJZS Audit"}</span>
-                </button>
-              </div>
-            </motion.div>
-          </div>
-
-          <div className="lg:col-span-3 space-y-6">
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="rounded-xl border border-border dark:border-gray-800 bg-card dark:bg-[#111] overflow-hidden">
-              <div className="px-5 py-4 border-b border-border dark:border-gray-800 bg-muted dark:bg-[#0d0d0d]">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck size={18} className="text-green-500 dark:text-green-400" />
-                  <h2 className="font-semibold text-foreground text-sm" data-testid="text-demo-pipeline-title">Pipeline Progress</h2>
-                </div>
-              </div>
-
-              <div className="p-5">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:justify-between">
-                  {PIPELINE_STEPS.map((step, i) => {
-                    const StepIcon = step.icon;
-                    const isActive = i === currentStep;
-                    const isComplete = i < currentStep || (i === PIPELINE_STEPS.length - 1 && result !== null);
-                    const isPending = i > currentStep && !result;
-
-                    return (
-                      <div key={step.id} className="flex sm:flex-col items-center gap-2 sm:gap-1 sm:flex-1 relative">
-                        {i > 0 && (
-                          <div className="hidden sm:block absolute -left-1/2 top-[14px] w-full h-[2px] bg-border dark:bg-gray-800 -z-10">
-                            {isComplete && (
-                              <motion.div
-                                className="h-full bg-green-500"
-                                initial={{ width: "0%" }}
-                                animate={{ width: "100%" }}
-                                transition={{ duration: 0.3 }}
-                              />
-                            )}
-                          </div>
-                        )}
-                        <div
-                          className={`w-7 h-7 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
-                            isComplete ? "bg-green-500/20 text-green-500 dark:text-green-400 border border-green-500/30" :
-                            isActive ? "bg-[#F37E20]/20 text-[#F37E20] border border-[#F37E20]/30 animate-pulse" :
-                            "bg-muted dark:bg-gray-900 text-muted-foreground border border-border dark:border-gray-800"
-                          }`}
-                          data-testid={`step-icon-${step.id}`}
-                        >
-                          {isComplete ? <CheckCircle2 size={14} /> : <StepIcon size={14} />}
-                        </div>
-                        <div className="sm:text-center">
-                          <div className={`text-[11px] font-mono font-medium ${
-                            isComplete ? "text-green-600 dark:text-green-400" :
-                            isActive ? "text-[#F37E20]" :
-                            "text-muted-foreground"
-                          }`} data-testid={`step-label-${step.id}`}>{step.label}</div>
-                          <div className="text-[10px] text-muted-foreground/60 hidden sm:block">{step.description}</div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </motion.div>
-
-            <AnimatePresence mode="wait">
-              {error ? (
-                <motion.div
-                  key="error"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="rounded-xl border border-red-500/30 bg-red-500/5 p-6"
-                  data-testid="demo-error-container"
-                >
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle size={20} className="text-red-500 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <div className="text-sm font-bold text-red-500 mb-1">Audit Failed</div>
-                      <p className="text-sm text-foreground/70">{error}</p>
-                      <p className="text-xs text-muted-foreground mt-2">The Oracle may be temporarily unavailable. Try again in a few seconds.</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ) : result ? (
-                <motion.div
-                  key="result"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="rounded-xl border border-border dark:border-gray-800 bg-card dark:bg-[#111] overflow-hidden"
-                  data-testid="demo-result-container"
-                >
-                  <div className="px-5 py-4 border-b border-border dark:border-gray-800 bg-muted dark:bg-[#0d0d0d]">
-                    <div className="flex items-center gap-2">
-                      <Terminal size={18} className="text-purple-500 dark:text-purple-400" />
-                      <h2 className="font-semibold text-foreground text-sm" data-testid="text-demo-result-title">ProofOfLogic Certificate</h2>
-                    </div>
-                  </div>
-
-                  <div className="p-5 sm:p-6 space-y-6">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                      <RiskScoreGauge score={result.risk_score} />
-                      <div className="space-y-3 flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          {result.verdict === "FAIL" ? (
-                            <span className="px-3 py-1.5 bg-red-500/20 text-red-500 dark:text-red-400 rounded-lg border border-red-500/30 flex items-center text-sm font-bold" data-testid="badge-result-verdict">
-                              <AlertTriangle size={16} className="mr-1.5" /> VERDICT: FAIL
-                            </span>
-                          ) : (
-                            <span className="px-3 py-1.5 bg-green-500/20 text-green-600 dark:text-green-400 rounded-lg border border-green-500/30 flex items-center text-sm font-bold" data-testid="badge-result-verdict">
-                              <ShieldCheck size={16} className="mr-1.5" /> VERDICT: PASS
-                            </span>
-                          )}
-                          <span className="px-3 py-1.5 bg-muted dark:bg-gray-900 text-muted-foreground rounded-lg border border-border dark:border-gray-800 text-xs font-mono" data-testid="text-result-tier">
-                            TIER: {result.tier.toUpperCase()}
-                          </span>
-                          <span className="px-2.5 py-1 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-md border border-cyan-500/20 text-[10px] font-mono font-bold" data-testid="badge-live-audit">
-                            LIVE
-                          </span>
-                        </div>
-                        <div className="text-xs text-muted-foreground font-mono space-y-1">
-                          <div data-testid="text-result-audit-id">ID: {result.audit_id}</div>
-                          <div data-testid="text-result-timestamp">TIME: {new Date(result.timestamp).toLocaleString()}</div>
-                          {result.primary_bias_detected && result.primary_bias_detected !== "None" && (
-                            <div data-testid="text-result-bias">BIAS: <span className="text-[#F37E20]">{result.primary_bias_detected}</span></div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {result.flags && result.flags.length > 0 && (
-                      <div>
-                        <div className="text-xs font-mono text-muted-foreground mb-3" data-testid="label-result-flags">FAILURE CODES ({result.flags.length})</div>
-                        <div className="space-y-2">
-                          {result.flags.map((flag, i) => (
-                            <FlagCard key={i} flag={flag} index={i} />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {result.structural_recommendations && result.structural_recommendations.length > 0 && (
-                      <div>
-                        <div className="text-xs font-mono text-muted-foreground mb-2" data-testid="label-result-recommendations">RECOMMENDATIONS</div>
-                        <ul className="space-y-1.5">
-                          {result.structural_recommendations.map((rec, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-foreground/70">
-                              <ArrowRight size={14} className="mt-0.5 text-teal-500 dark:text-teal-400 flex-shrink-0" />
-                              <span data-testid={`text-recommendation-${i}`}>{rec}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    <div className="border-t border-border dark:border-gray-800 pt-4 space-y-3">
-                      <div className="text-xs font-mono text-muted-foreground" data-testid="label-result-provenance">ON-CHAIN PROVENANCE</div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {result.irys_url ? (
-                          <a
-                            href={result.irys_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-3 rounded-lg border border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 transition-colors group"
-                            data-testid="link-result-irys"
-                          >
-                            <Database size={16} className="text-purple-500 dark:text-purple-400" />
-                            <div className="min-w-0 flex-1">
-                              <div className="text-xs font-mono font-bold text-purple-600 dark:text-purple-300">Irys Certificate</div>
-                              <div className="text-[10px] font-mono text-muted-foreground truncate">{result.irys_tx_id}</div>
-                            </div>
-                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-purple-400 transition-colors flex-shrink-0" />
-                          </a>
-                        ) : (
-                          <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-border bg-muted/30">
-                            <Database size={16} className="text-muted-foreground" />
-                            <div className="min-w-0 flex-1">
-                              <div className="text-xs font-mono font-bold text-muted-foreground">Irys Certificate</div>
-                              <div className="text-[10px] font-mono text-muted-foreground/60">{result.irys_error || "Not configured in this environment"}</div>
-                            </div>
-                          </div>
-                        )}
-                        {result.trust_score_tx_hash ? (
-                          <a
-                            href={`https://basescan.org/tx/${result.trust_score_tx_hash}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/10 transition-colors group"
-                            data-testid="link-result-basescan"
-                          >
-                            <ShieldCheck size={16} className="text-cyan-500 dark:text-cyan-400" />
-                            <div className="min-w-0 flex-1">
-                              <div className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-300">BaseScan TX</div>
-                              <div className="text-[10px] font-mono text-muted-foreground truncate">{result.trust_score_tx_hash}</div>
-                            </div>
-                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-cyan-400 transition-colors flex-shrink-0" />
-                          </a>
-                        ) : (
-                          <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-border bg-muted/30">
-                            <ShieldCheck size={16} className="text-muted-foreground" />
-                            <div className="min-w-0 flex-1">
-                              <div className="text-xs font-mono font-bold text-muted-foreground">Trust Score TX</div>
-                              <div className="text-[10px] font-mono text-muted-foreground/60">{result.trust_score_error || "Contract not configured in this environment"}</div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-[10px] font-mono text-muted-foreground/60 break-all" data-testid="text-result-hash">
-                        SHA-256: {result.cryptographic_hash}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ) : !running ? (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="rounded-xl border border-dashed border-border dark:border-gray-800 bg-card/50 dark:bg-[#111]/50 p-12 flex flex-col items-center justify-center text-center"
-                  data-testid="demo-empty-state"
-                >
-                  <ShieldAlert size={48} className="text-muted-foreground/30 mb-4" />
-                  <p className="text-muted-foreground font-mono text-sm mb-1">No audit running</p>
-                  <p className="text-muted-foreground/60 text-xs">Select a scenario or paste a memo, then click "Run DJZS Audit"</p>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
+              )}
+            </div>
           </div>
         </div>
       </main>

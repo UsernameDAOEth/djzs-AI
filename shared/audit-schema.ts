@@ -1,4 +1,300 @@
 import { z } from "zod";
+import { createHash } from "crypto";
+
+export type LFCode =
+  | "DJZS-S01" | "DJZS-S02" | "DJZS-S03"
+  | "DJZS-E01" | "DJZS-E02"
+  | "DJZS-I01" | "DJZS-I02" | "DJZS-I03"
+  | "DJZS-X01" | "DJZS-X02"
+  | "DJZS-T01";
+
+export type LogicFailureCode = LFCode;
+
+export type LFCategory = "Structural" | "Epistemic" | "Incentive" | "Execution" | "Temporal";
+export type Severity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
+export type AuditVerdict = "PASS" | "FAIL";
+
+export interface LFDefinition {
+  code: LFCode;
+  name: string;
+  category: LFCategory;
+  weight: number;
+  severity: Severity;
+  description: string;
+  riskPoints: number;
+  autoAbort: boolean;
+}
+
+export interface DetectionFlag {
+  present: boolean;
+  evidence: string | null;
+}
+
+export type DetectionResult = Record<LFCode, DetectionFlag>;
+
+export interface AuditCertificate {
+  audit_id: string;
+  audit_verdict: AuditVerdict;
+  risk_score: number;
+  max_possible: number;
+  pass_threshold: number;
+  failure_flags: LFCode[];
+  logic_hash: string;
+  weights_hash: string;
+  audit_schema_version: string;
+  threshold_block: number;
+  detection_model: string;
+  scoring_engine: string;
+  anchor_target: string;
+  settlement_chain: string;
+  timestamp: string;
+}
+
+export const LOGIC_FAILURE_TAXONOMY: Record<LFCode, LFDefinition> = {
+  "DJZS-S01": {
+    code: "DJZS-S01",
+    name: "CIRCULAR_LOGIC",
+    category: "Structural",
+    weight: 30,
+    severity: "CRITICAL",
+    description: "Reasoning chain references its own conclusion as premise",
+    riskPoints: 30,
+    autoAbort: true,
+  },
+  "DJZS-S02": {
+    code: "DJZS-S02",
+    name: "LAYER_INVERSION",
+    category: "Structural",
+    weight: 25,
+    severity: "HIGH",
+    description: "Verification layer depends on unverified upstream data",
+    riskPoints: 25,
+    autoAbort: true,
+  },
+  "DJZS-S03": {
+    code: "DJZS-S03",
+    name: "DEPENDENCY_GHOST",
+    category: "Structural",
+    weight: 18,
+    severity: "MEDIUM",
+    description: "References external dependency that cannot be resolved",
+    riskPoints: 18,
+    autoAbort: false,
+  },
+
+  "DJZS-E01": {
+    code: "DJZS-E01",
+    name: "ORACLE_UNVERIFIED",
+    category: "Epistemic",
+    weight: 25,
+    severity: "HIGH",
+    description: "External data source cited without provenance verification",
+    riskPoints: 25,
+    autoAbort: true,
+  },
+  "DJZS-E02": {
+    code: "DJZS-E02",
+    name: "CONFIDENCE_INFLATION",
+    category: "Epistemic",
+    weight: 18,
+    severity: "MEDIUM",
+    description: "Stated certainty exceeds evidential basis",
+    riskPoints: 18,
+    autoAbort: false,
+  },
+
+  "DJZS-I01": {
+    code: "DJZS-I01",
+    name: "FOMO_LOOP",
+    category: "Incentive",
+    weight: 16,
+    severity: "MEDIUM",
+    description: "Decision driven by social signal rather than verified data",
+    riskPoints: 16,
+    autoAbort: false,
+  },
+  "DJZS-I02": {
+    code: "DJZS-I02",
+    name: "MISALIGNED_REWARD",
+    category: "Incentive",
+    weight: 16,
+    severity: "MEDIUM",
+    description: "Optimization target diverges from stated objective",
+    riskPoints: 16,
+    autoAbort: false,
+  },
+  "DJZS-I03": {
+    code: "DJZS-I03",
+    name: "DATA_UNVERIFIED",
+    category: "Incentive",
+    weight: 16,
+    severity: "MEDIUM",
+    description: "Numerical claims lack verifiable source attribution",
+    riskPoints: 16,
+    autoAbort: false,
+  },
+
+  "DJZS-X01": {
+    code: "DJZS-X01",
+    name: "EXECUTION_UNBOUND",
+    category: "Execution",
+    weight: 36,
+    severity: "CRITICAL",
+    description: "No halt condition or resource ceiling defined",
+    riskPoints: 36,
+    autoAbort: true,
+  },
+  "DJZS-X02": {
+    code: "DJZS-X02",
+    name: "RACE_CONDITION",
+    category: "Execution",
+    weight: 24,
+    severity: "HIGH",
+    description: "Temporal dependency creates non-deterministic outcome",
+    riskPoints: 24,
+    autoAbort: true,
+  },
+
+  "DJZS-T01": {
+    code: "DJZS-T01",
+    name: "STALE_REFERENCE",
+    category: "Temporal",
+    weight: 12,
+    severity: "LOW",
+    description: "Data reference exceeds freshness threshold",
+    riskPoints: 12,
+    autoAbort: false,
+  },
+} as const;
+
+export const MAX_RISK_SCORE = Object.values(LOGIC_FAILURE_TAXONOMY)
+  .reduce((sum, def) => sum + def.weight, 0);
+
+export const ALL_LF_CODES = Object.keys(LOGIC_FAILURE_TAXONOMY) as LFCode[];
+export const VALID_FAILURE_CODES = ALL_LF_CODES;
+
+export const SCHEMA_VERSION = "DJZS-LF-v1.0";
+
+if (MAX_RISK_SCORE !== 200) {
+  throw new Error(
+    `[DJZS FATAL] Taxonomy weights sum to ${MAX_RISK_SCORE}, expected 200. ` +
+    `Weight table integrity compromised.`
+  );
+}
+
+export const AUTO_ABORT_CODES = VALID_FAILURE_CODES.filter(
+  code => LOGIC_FAILURE_TAXONOMY[code].autoAbort
+);
+
+function sha256(input: string): string {
+  return "0x" + createHash("sha256").update(input).digest("hex");
+}
+
+function canonicalize(obj: Record<string, unknown>): string {
+  return JSON.stringify(obj, Object.keys(obj).sort());
+}
+
+export const WEIGHTS_HASH: string = sha256(
+  canonicalize(
+    Object.fromEntries(
+      Object.entries(LOGIC_FAILURE_TAXONOMY).map(([k, v]) => [k, v.weight])
+    )
+  )
+);
+
+export function calculateRiskScore(flags: DetectionResult): number {
+  return Object.entries(flags)
+    .filter(([_, v]) => (v as DetectionFlag).present)
+    .reduce((sum, [code]) => {
+      const def = LOGIC_FAILURE_TAXONOMY[code as LFCode];
+      return sum + (def?.weight ?? 0);
+    }, 0);
+}
+
+export function determineVerdict(riskScore: number, threshold: number): AuditVerdict {
+  return riskScore < threshold ? "PASS" : "FAIL";
+}
+
+export function computeVerdictHash(
+  flags: DetectionResult,
+  riskScore: number
+): string {
+  const booleanOnly: Record<string, boolean> = {};
+  for (const code of ALL_LF_CODES) {
+    booleanOnly[code] = flags[code]?.present ?? false;
+  }
+
+  const hashInput = canonicalize({
+    schema_version: SCHEMA_VERSION,
+    flags: booleanOnly,
+    risk_score: riskScore,
+  });
+
+  return sha256(hashInput);
+}
+
+export interface VerdictInput {
+  flags: DetectionResult;
+  threshold: number;
+  thresholdBlock: number;
+  auditId: string;
+}
+
+export function computeVerdict(input: VerdictInput): AuditCertificate {
+  const { flags, threshold, thresholdBlock, auditId } = input;
+
+  const riskScore = calculateRiskScore(flags);
+  const verdict = determineVerdict(riskScore, threshold);
+  const logicHash = computeVerdictHash(flags, riskScore);
+
+  const failureFlags = ALL_LF_CODES.filter((code) => flags[code]?.present);
+
+  return {
+    audit_id: auditId,
+    audit_verdict: verdict,
+    risk_score: riskScore,
+    max_possible: MAX_RISK_SCORE,
+    pass_threshold: threshold,
+    failure_flags: failureFlags,
+    logic_hash: logicHash,
+    weights_hash: WEIGHTS_HASH,
+    audit_schema_version: SCHEMA_VERSION,
+    threshold_block: thresholdBlock,
+    detection_model: "venice/llama-3.3-70b@temp=0",
+    scoring_engine: "typescript/pure-function",
+    anchor_target: "irys-datachain",
+    settlement_chain: "base-mainnet",
+    timestamp: new Date().toISOString(),
+  };
+}
+
+export const detectionFlagSchema = z.object({
+  present: z.boolean(),
+  evidence: z.string().nullable(),
+});
+
+export const detectionResultSchema = z.record(
+  z.enum(ALL_LF_CODES as [string, ...string[]]),
+  detectionFlagSchema
+);
+
+export const auditCertificateSchema = z.object({
+  audit_id: z.string(),
+  audit_verdict: z.enum(["PASS", "FAIL"]),
+  risk_score: z.number().min(0).max(200),
+  max_possible: z.literal(200),
+  pass_threshold: z.number().min(0).max(200),
+  failure_flags: z.array(z.string()),
+  logic_hash: z.string(),
+  weights_hash: z.string(),
+  audit_schema_version: z.literal(SCHEMA_VERSION),
+  threshold_block: z.number(),
+  detection_model: z.string(),
+  scoring_engine: z.string(),
+  anchor_target: z.string(),
+  settlement_chain: z.string(),
+  timestamp: z.string(),
+});
 
 export const auditTierSchema = z.enum(["micro", "founder", "treasury"]);
 export type AuditTier = z.infer<typeof auditTierSchema>;
@@ -27,15 +323,7 @@ export const TIER_CONFIG = {
   },
 } as const;
 
-export const Severity = {
-  CRITICAL: "CRITICAL",
-  HIGH: "HIGH",
-  MEDIUM: "MEDIUM",
-  LOW: "LOW",
-  INFO: "INFO",
-} as const;
-
-export type SeverityType = typeof Severity[keyof typeof Severity];
+export type SeverityType = Severity;
 
 export const Verdict = {
   PASS: "PASS",
@@ -44,47 +332,7 @@ export const Verdict = {
 
 export type VerdictType = typeof Verdict[keyof typeof Verdict];
 
-export const logicFailureCodeSchema = z.enum([
-  "DJZS-S01",
-  "DJZS-S02",
-  "DJZS-E01",
-  "DJZS-E02",
-  "DJZS-I01",
-  "DJZS-I02",
-  "DJZS-X01",
-  "DJZS-X02",
-  "DJZS-X03",
-  "DJZS-T01",
-  "DJZS-T02",
-]);
-export type LogicFailureCode = z.infer<typeof logicFailureCodeSchema>;
-
-export const LOGIC_FAILURE_TAXONOMY: Record<LogicFailureCode, {
-  category: string;
-  name: string;
-  severity: SeverityType;
-  autoAbort: boolean;
-  description: string;
-  riskPoints: number;
-}> = {
-  "DJZS-S01": { category: "Structural", name: "CIRCULAR_LOGIC", severity: Severity.CRITICAL, autoAbort: true, description: "Conclusion is used as a premise. The reasoning loop references itself without external validation.", riskPoints: 40 },
-  "DJZS-S02": { category: "Structural", name: "MISSING_FALSIFIABILITY", severity: Severity.CRITICAL, autoAbort: true, description: "No failure condition defined. The thesis cannot be disproven, making it unfalsifiable and therefore unauditable.", riskPoints: 40 },
-  "DJZS-E01": { category: "Epistemic", name: "CONFIRMATION_TUNNEL", severity: Severity.HIGH, autoAbort: true, description: "Evidence selection is asymmetric. Only confirming data is cited; disconfirming signals are absent or dismissed.", riskPoints: 25 },
-  "DJZS-E02": { category: "Epistemic", name: "AUTHORITY_SUBSTITUTION", severity: Severity.HIGH, autoAbort: true, description: "Argument depends on authority or reputation rather than structural evidence. Removes the reasoning from audit.", riskPoints: 25 },
-  "DJZS-I01": { category: "Incentive", name: "MISALIGNED_INCENTIVE", severity: Severity.MEDIUM, autoAbort: false, description: "The proposed action benefits the proposer disproportionately relative to stated stakeholders.", riskPoints: 10 },
-  "DJZS-I02": { category: "Incentive", name: "NARRATIVE_DEPENDENCY", severity: Severity.MEDIUM, autoAbort: false, description: "Strategy survival depends on a specific narrative remaining true. No hedge against narrative collapse.", riskPoints: 10 },
-  "DJZS-X01": { category: "Execution", name: "UNHEDGED_EXECUTION", severity: Severity.CRITICAL, autoAbort: true, description: "No risk bounds defined. Unlimited downside exposure. No stop-loss, position sizing, or max drawdown.", riskPoints: 40 },
-  "DJZS-X02": { category: "Execution", name: "LIQUIDITY_RISK", severity: Severity.HIGH, autoAbort: true, description: "Strategy assumes liquidity that may not exist. Position may not be exitable at stated price.", riskPoints: 25 },
-  "DJZS-X03": { category: "Execution", name: "SLIPPAGE_EXPOSURE", severity: Severity.MEDIUM, autoAbort: false, description: "Strategy ignores execution costs that could erode returns.", riskPoints: 10 },
-  "DJZS-T01": { category: "Temporal", name: "STALE_DATA_DEPENDENCY", severity: Severity.HIGH, autoAbort: true, description: "Strategy relies on data that may no longer be current.", riskPoints: 25 },
-  "DJZS-T02": { category: "Temporal", name: "RACE_CONDITION_RISK", severity: Severity.MEDIUM, autoAbort: false, description: "Assumes sequential execution but could be front-run.", riskPoints: 10 },
-};
-
-export const VALID_FAILURE_CODES = Object.keys(LOGIC_FAILURE_TAXONOMY) as LogicFailureCode[];
-
-export const AUTO_ABORT_CODES = VALID_FAILURE_CODES.filter(
-  code => LOGIC_FAILURE_TAXONOMY[code].autoAbort
-);
+export const logicFailureCodeSchema = z.enum(ALL_LF_CODES as [string, ...string[]]);
 
 export const auditFlagSeveritySchema = z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL", "INFO"]);
 export type AuditFlagSeverity = z.infer<typeof auditFlagSeveritySchema>;
@@ -103,7 +351,7 @@ export const verdictSchema = z.enum(["PASS", "FAIL"]);
 
 export const auditResultSchema = z.object({
   verdict: verdictSchema,
-  risk_score: z.number().min(0).max(100),
+  risk_score: z.number().min(0).max(200),
   flags: z.array(auditFlagSchema),
   primary_flaw: z.string(),
   summary: z.string(),
@@ -121,7 +369,7 @@ export const djzsLogicAuditSchema = z.object({
   audit_id: z.string().uuid(),
   timestamp: z.string().datetime(),
   tier: auditTierSchema,
-  risk_score: z.number().min(0).max(100),
+  risk_score: z.number().min(0).max(200),
   verdict: verdictSchema,
   primary_bias_detected: z.enum([
     "FOMO",
@@ -204,31 +452,21 @@ export function hasAutoAbortFlags(flags: AuditFlag[]): boolean {
 
 export function getRiskPoints(code: string): number {
   const def = LOGIC_FAILURE_TAXONOMY[code as LogicFailureCode];
-  return def?.riskPoints ?? 10;
+  return def?.weight ?? 0;
 }
 
-export function calculateRiskScore(flags: AuditFlag[]): number {
+export function calculateLegacyRiskScore(flags: AuditFlag[]): number {
   if (flags.length === 0) return 0;
-
-  let score = 0;
-  flags.forEach((flag, index) => {
-    score += getRiskPoints(flag.code);
-    if (index > 0) score += 5;
-  });
-
-  return Math.min(score, 100);
+  return flags.reduce((sum, flag) => sum + getRiskPoints(flag.code), 0);
 }
 
-export function determineVerdict(flags: AuditFlag[], riskScore: number): VerdictType {
+export function determineLegacyVerdict(flags: AuditFlag[], riskScore: number): VerdictType {
   if (hasAutoAbortFlags(flags)) return Verdict.FAIL;
   if (riskScore >= 60) return Verdict.FAIL;
-  if (flags.length >= 3) return Verdict.FAIL;
-
   const hasCriticalOrHigh = flags.some(f =>
     f.severity === "CRITICAL" || f.severity === "HIGH"
   );
   if (hasCriticalOrHigh) return Verdict.FAIL;
-
   return Verdict.PASS;
 }
 
