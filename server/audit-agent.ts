@@ -203,10 +203,17 @@ export async function executeAudit(
   for (const code of ALL_LF_CODES) {
     flagVector[code] = detectedCodes.has(code);
   }
-  const logicHashInput = JSON.stringify(
-    { schema_version: SCHEMA_VERSION, flags: flagVector, risk_score: result.risk_score },
-    Object.keys({ schema_version: SCHEMA_VERSION, flags: flagVector, risk_score: result.risk_score }).sort()
-  );
+  const hashObj = { schema_version: SCHEMA_VERSION, flags: flagVector, risk_score: result.risk_score };
+  const logicHashInput = JSON.stringify(hashObj, (_key, value) => {
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const sorted: Record<string, unknown> = {};
+      for (const k of Object.keys(value as Record<string, unknown>).sort()) {
+        sorted[k] = (value as Record<string, unknown>)[k];
+      }
+      return sorted;
+    }
+    return value;
+  });
   const logic_hash = "0x" + crypto.createHash("sha256").update(logicHashInput).digest("hex");
 
   const certificate: ProofOfLogicCertificate = {
