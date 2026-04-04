@@ -188,7 +188,7 @@ export default function Guide() {
           <div style={{ background: "#161616", border: "1px solid #2a2a2a", borderRadius: 6, overflow: "hidden", margin: "24px 0" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: "1px solid #1e1e1e", fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#666" }}>
               <span>ProofOfLogic Certificate — Example Response</span>
-              <span style={{ color: "#60f0a0" }}>● PASS</span>
+              <span style={{ color: "#ff5f5f" }}>● FAIL</span>
             </div>
             <div style={{ padding: 18, fontFamily: "'DM Mono', monospace", fontSize: 12, lineHeight: 1.8, color: "#888" }} data-testid="code-example-response">
               {"{"}<br />
@@ -198,10 +198,18 @@ export default function Guide() {
               &nbsp;&nbsp;<span style={{ color: "#666" }}>"certificates"</span>: [{"{"}<br />
               &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"irys_id"</span>: <span style={{ color: "#b0b0a0" }}>"71oNMzL4hg..."</span>,<br />
               &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"irys_url"</span>: <span style={{ color: "#c8f060" }}>"https://gateway.irys.xyz/71oNMzL4hg..."</span>,<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"verdict"</span>: <span style={{ color: "#60f0a0" }}>"PASS"</span>,<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"tier"</span>: <span style={{ color: "#b0b0a0" }}>"micro"</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"audit_id"</span>: <span style={{ color: "#b0b0a0" }}>"a1b2c3d4-..."</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"verdict"</span>: <span style={{ color: "#ff5f5f" }}>"FAIL"</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"risk_score"</span>: <span style={{ color: "#8ab4f8" }}>65</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"tier"</span>: <span style={{ color: "#b0b0a0" }}>"founder"</span>,<br />
               &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"target_system"</span>: <span style={{ color: "#b0b0a0" }}>"MyDAOProject"</span>,<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"timestamp"</span>: <span style={{ color: "#8ab4f8" }}>1743000000</span><br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"flags"</span>: [{"{"}<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"code"</span>: <span style={{ color: "#ff5f5f" }}>"DJZS-S01"</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"severity"</span>: <span style={{ color: "#ff5f5f" }}>"CRITICAL"</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"message"</span>: <span style={{ color: "#b0b0a0" }}>"Circular reasoning..."</span><br />
+              &nbsp;&nbsp;&nbsp;&nbsp;{"}]"},<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"cryptographic_hash"</span>: <span style={{ color: "#b0b0a0" }}>"0xab3f..."</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "#666" }}>"timestamp"</span>: <span style={{ color: "#b0b0a0" }}>"2026-04-04T20:00:00Z"</span><br />
               &nbsp;&nbsp;{"}]"}<br />
               {"}"}
             </div>
@@ -253,6 +261,36 @@ export default function Guide() {
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        <section className="guide-section" style={{ marginBottom: 72, animationDelay: "0.45s" }}>
+          <h2 style={{ fontSize: 13, fontFamily: "'DM Mono', monospace", fontWeight: 400, letterSpacing: "0.1em", textTransform: "uppercase", color: "#c8f060", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }} data-testid="heading-scoring">
+            Scoring Model
+            <span style={{ flex: 1, height: 1, background: "#2a2a2a" }} />
+          </h2>
+          <p style={{ color: "#b0aa9e", marginBottom: 16, fontSize: 16 }}>
+            Each detected failure flag adds its risk points to a cumulative score. The total risk score is capped at 100. A verdict of FAIL is issued when any of these conditions are met:
+          </p>
+          <div style={{ display: "grid", gap: 8, marginBottom: 24 }}>
+            {[
+              { label: "Auto-abort flag detected", detail: "Any CRITICAL or HIGH-severity flag with autoAbort = true triggers immediate FAIL" },
+              { label: "Risk score ≥ 60", detail: "Cumulative risk points from all detected flags reach the fail threshold" },
+              { label: "3+ flags detected", detail: "Three or more distinct failure codes in a single audit" },
+              { label: "Any CRITICAL or HIGH flag", detail: "Presence of a CRITICAL or HIGH severity flag regardless of score" },
+            ].map((rule, i) => (
+              <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "12px 16px", background: "#111111", border: "1px solid #1e1e1e", borderRadius: 4 }} data-testid={`rule-scoring-${i}`}>
+                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#ff5f5f", flexShrink: 0, marginTop: 2 }}>FAIL</span>
+                <div>
+                  <div style={{ fontSize: 14, color: "#e8e4dc", marginBottom: 2 }}>{rule.label}</div>
+                  <div style={{ fontSize: 13, color: "#666" }}>{rule.detail}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ background: "#111111", border: "1px solid #2a2a2a", borderLeft: "3px solid #60f0a0", padding: "16px 20px", borderRadius: 4, fontSize: 14, color: "#b0aa9e" }} data-testid="rule-pass">
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#60f0a0", marginRight: 12 }}>PASS</span>
+            No auto-abort flags, risk score below 60, fewer than 3 flags, and no CRITICAL/HIGH severity flags.
           </div>
         </section>
 

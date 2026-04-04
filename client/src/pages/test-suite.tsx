@@ -57,6 +57,18 @@ const TEST_CASES: TestCase[] = [
     expectedVerdict: "FAIL", expectedCodes: ["DJZS-X01"],
     rationale: "No risk mitigation on any axis: unaudited protocol, single-tranche deployment, no insurance, no exit triggers.",
   },
+  {
+    id: 8, title: "Liquidity + Slippage Risk (DJZS-X02/X03)", targetSystem: "TestVault-Hotel", tier: "founder",
+    memo: "Allocate $2M to a small-cap token with $150K daily volume on a single DEX. Our model shows 40% upside in 90 days. We plan to enter the full position in one block and exit at target within a single transaction. We have not modeled slippage or market impact. If the DEX pool depth shrinks, we will wait for recovery. No alternative exit venues have been identified.",
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-X02", "DJZS-X03"],
+    rationale: "Position size vastly exceeds available liquidity; execution costs and slippage are completely ignored.",
+  },
+  {
+    id: 9, title: "Stale Data + Race Condition (DJZS-T01/T02)", targetSystem: "TestVault-India", tier: "micro",
+    memo: "Based on an oracle price feed from 48 hours ago, submit a large limit order on a perpetual DEX. The order should execute when the price crosses our entry level. We assume no other participants will see or front-run our order since the mempool is not commonly monitored. The stale price is acceptable because \"prices don't move that fast\" in this asset class.",
+    expectedVerdict: "FAIL", expectedCodes: ["DJZS-T01", "DJZS-T02"],
+    rationale: "Relies on a 48-hour-old price feed; assumes sequential execution in an environment where front-running is endemic.",
+  },
 ];
 
 const COVERAGE_MATRIX = [
@@ -67,6 +79,8 @@ const COVERAGE_MATRIX = [
   { test: 5, tier: "micro", expected: "FAIL", codes: "DJZS-E02" },
   { test: 6, tier: "treasury", expected: "FAIL", codes: "DJZS-I01, DJZS-I02" },
   { test: 7, tier: "treasury", expected: "FAIL", codes: "DJZS-X01" },
+  { test: 8, tier: "founder", expected: "FAIL", codes: "DJZS-X02, DJZS-X03" },
+  { test: 9, tier: "micro", expected: "FAIL", codes: "DJZS-T01, DJZS-T02" },
 ];
 
 const TIER_COLORS: Record<string, string> = {
@@ -90,7 +104,7 @@ export default function TestSuite() {
     }}>
       <Helmet>
         <title>DJZS Oracle — Test Audit Suite</title>
-        <meta name="description" content="Seven strategy memos exercising 8 of 11 DJZS-LF failure codes across all three audit tiers." />
+        <meta name="description" content="Nine strategy memos exercising all 11 DJZS-LF failure codes across all three audit tiers." />
       </Helmet>
 
       <style>{`
@@ -128,15 +142,15 @@ export default function TestSuite() {
             Test <em style={{ fontStyle: "italic", color: "#c8f060" }}>Audit Suite</em>
           </h1>
           <p style={{ fontSize: 18, color: "#666", fontWeight: 300, maxWidth: 520, lineHeight: 1.6 }}>
-            Seven strategy memos exercising 8 of {VALID_FAILURE_CODES.length} DJZS-LF failure codes across all three tiers. Submit each to the DJZS oracle at djzs.ai.
+            Nine strategy memos exercising all {VALID_FAILURE_CODES.length} DJZS-LF failure codes across all three tiers. Submit each to the DJZS oracle at djzs.ai.
           </p>
           <div style={{ marginTop: 32, display: "flex", gap: 24, alignItems: "center", fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#666" }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8f060", animation: "testPulse 2s ease infinite" }} />
-            <span>7 Tests</span>
+            <span>9 Tests</span>
             <span>·</span>
             <span>3 Tiers</span>
             <span>·</span>
-            <span>8 LF Codes</span>
+            <span>{VALID_FAILURE_CODES.length} LF Codes</span>
           </div>
         </header>
 
@@ -288,7 +302,7 @@ export default function TestSuite() {
           </div>
 
           <p style={{ color: "#666", fontSize: 14, marginTop: 20, fontFamily: "'DM Mono', monospace" }}>
-            Eight of {VALID_FAILURE_CODES.length} canonical LF codes covered. Three tiers covered. One clean pass baseline.
+            All {VALID_FAILURE_CODES.length} canonical LF codes covered. Three tiers covered. One clean pass baseline.
           </p>
         </section>
 

@@ -1493,7 +1493,7 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
             <QuickLink 
               href="/test-suite"
               title="Test Audit Suite"
-              description="Seven strategy memos exercising the full DJZS-LF failure taxonomy across all three tiers"
+              description="Nine strategy memos exercising all 11 DJZS-LF failure codes across all three audit tiers"
               testId="link-test-suite"
             />
           </div>
