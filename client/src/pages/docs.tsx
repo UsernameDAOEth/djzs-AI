@@ -1484,6 +1484,18 @@ async function `}<span className="text-orange-400">executeA2ATrade</span>{`(stra
               external
               testId="link-audit-api"
             />
+            <QuickLink 
+              href="/guide"
+              title="MCP User Guide"
+              description="How to connect djzs-trust MCP tool to Claude Desktop and query ProofOfLogic certificates"
+              testId="link-guide"
+            />
+            <QuickLink 
+              href="/test-suite"
+              title="Test Audit Suite"
+              description="Seven strategy memos exercising the full DJZS-LF failure taxonomy across all three tiers"
+              testId="link-test-suite"
+            />
           </div>
         </motion.section>
 

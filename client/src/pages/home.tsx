@@ -645,9 +645,15 @@ export default function Home() {
 
       <footer className="border-t border-border py-12 bg-card dark:bg-black font-mono">
         <div className="max-w-7xl mx-auto px-6 flex flex-col items-center space-y-4">
-          <div className="flex space-x-6">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
             <Link href="/docs" className="text-sm text-muted-foreground hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" data-testid="link-footer-docs">
               Documentation
+            </Link>
+            <Link href="/guide" className="text-sm text-muted-foreground hover:text-green-500 dark:hover:text-green-400 transition-colors" data-testid="link-footer-guide">
+              User Guide
+            </Link>
+            <Link href="/test-suite" className="text-sm text-muted-foreground hover:text-amber-500 dark:hover:text-amber-400 transition-colors" data-testid="link-footer-test-suite">
+              Test Suite
             </Link>
             <a href="https://basescan.org" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-purple-500 dark:hover:text-purple-400 transition-colors" data-testid="link-footer-contract">
               Base Mainnet Contract
