@@ -30,3 +30,9 @@ id = "xHoc68WahXvx8CsYcJcFT"
 uri = "file://attached_assets/DJZS_logo_2048x2048_hq.jpg"
 type = "image"
 title = "DJZS Logo — 2048x2048, 1.49 MB (high quality)"
+
+[[outputs]]
+id = "iDg7xm0a4tBMAEKYG2GUj"
+uri = "file://attached_assets/DJZS_banner_2048x1152.jpg"
+type = "image"
+title = "DJZS Banner — 2048x1152, 0.95 MB"
