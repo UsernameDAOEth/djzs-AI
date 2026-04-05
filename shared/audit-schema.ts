@@ -50,17 +50,17 @@ export interface AuditCertificate {
 }
 
 export const LOGIC_FAILURE_TAXONOMY: Record<LFCode, LFDefinition> = {
-  "DJZS-S01": { code: "DJZS-S01", name: "CIRCULAR_LOGIC",       category: "Structural", weight: 30, severity: "CRITICAL", description: "Reasoning chain references its own conclusion as premise",         riskPoints: 30, autoAbort: true },
-  "DJZS-S02": { code: "DJZS-S02", name: "LAYER_INVERSION",      category: "Structural", weight: 22, severity: "HIGH",     description: "Verification layer depends on unverified upstream data",        riskPoints: 22, autoAbort: true },
-  "DJZS-S03": { code: "DJZS-S03", name: "DEPENDENCY_GHOST",     category: "Structural", weight: 14, severity: "MEDIUM",   description: "References external dependency that cannot be resolved",        riskPoints: 14, autoAbort: false },
+  "DJZS-S01": { code: "DJZS-S01", name: "CIRCULAR_LOGIC",       category: "Structural", weight: 26, severity: "CRITICAL", description: "Reasoning chain references its own conclusion as premise",         riskPoints: 26, autoAbort: true },
+  "DJZS-S02": { code: "DJZS-S02", name: "LAYER_INVERSION",      category: "Structural", weight: 20, severity: "HIGH",     description: "Verification layer depends on unverified upstream data",        riskPoints: 20, autoAbort: true },
+  "DJZS-S03": { code: "DJZS-S03", name: "DEPENDENCY_GHOST",     category: "Structural", weight: 16, severity: "MEDIUM",   description: "References external dependency that cannot be resolved",        riskPoints: 16, autoAbort: false },
   "DJZS-E01": { code: "DJZS-E01", name: "ORACLE_UNVERIFIED",    category: "Epistemic",  weight: 22, severity: "HIGH",     description: "External data source cited without provenance verification",    riskPoints: 22, autoAbort: true },
-  "DJZS-E02": { code: "DJZS-E02", name: "CONFIDENCE_INFLATION", category: "Epistemic",  weight: 14, severity: "MEDIUM",   description: "Stated certainty exceeds evidential basis",                    riskPoints: 14, autoAbort: false },
-  "DJZS-I01": { code: "DJZS-I01", name: "FOMO_LOOP",            category: "Incentive",  weight: 12, severity: "MEDIUM",   description: "Decision driven by social signal rather than verified data",    riskPoints: 12, autoAbort: false },
-  "DJZS-I02": { code: "DJZS-I02", name: "MISALIGNED_REWARD",    category: "Incentive",  weight: 12, severity: "MEDIUM",   description: "Optimization target diverges from stated objective",            riskPoints: 12, autoAbort: false },
-  "DJZS-I03": { code: "DJZS-I03", name: "DATA_UNVERIFIED",      category: "Incentive",  weight: 12, severity: "MEDIUM",   description: "Numerical claims lack verifiable source attribution",           riskPoints: 12, autoAbort: false },
+  "DJZS-E02": { code: "DJZS-E02", name: "CONFIDENCE_INFLATION", category: "Epistemic",  weight: 16, severity: "MEDIUM",   description: "Stated certainty exceeds evidential basis",                    riskPoints: 16, autoAbort: false },
+  "DJZS-I01": { code: "DJZS-I01", name: "FOMO_LOOP",            category: "Incentive",  weight: 16, severity: "MEDIUM",   description: "Decision driven by social signal rather than verified data",    riskPoints: 16, autoAbort: false },
+  "DJZS-I02": { code: "DJZS-I02", name: "MISALIGNED_REWARD",    category: "Incentive",  weight: 14, severity: "MEDIUM",   description: "Optimization target diverges from stated objective",            riskPoints: 14, autoAbort: false },
+  "DJZS-I03": { code: "DJZS-I03", name: "DATA_UNVERIFIED",      category: "Incentive",  weight: 14, severity: "MEDIUM",   description: "Numerical claims lack verifiable source attribution",           riskPoints: 14, autoAbort: false },
   "DJZS-X01": { code: "DJZS-X01", name: "EXECUTION_UNBOUND",    category: "Execution",  weight: 30, severity: "CRITICAL", description: "No halt condition or resource ceiling defined",                 riskPoints: 30, autoAbort: true },
   "DJZS-X02": { code: "DJZS-X02", name: "RACE_CONDITION",       category: "Execution",  weight: 20, severity: "HIGH",     description: "Temporal dependency creates non-deterministic outcome",         riskPoints: 20, autoAbort: true },
-  "DJZS-T01": { code: "DJZS-T01", name: "STALE_REFERENCE",      category: "Temporal",   weight: 12, severity: "LOW",      description: "Data reference exceeds freshness threshold",                   riskPoints: 12, autoAbort: false },
+  "DJZS-T01": { code: "DJZS-T01", name: "STALE_REFERENCE",      category: "Temporal",   weight:  6, severity: "LOW",      description: "Data reference exceeds freshness threshold",                   riskPoints:  6, autoAbort: false },
 } as const;
 
 export const MAX_RISK_SCORE = Object.values(LOGIC_FAILURE_TAXONOMY)

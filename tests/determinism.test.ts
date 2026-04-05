@@ -82,9 +82,10 @@ function generateTestCases(): { label: string; codes: LFCode[] }[] {
     cases.push({ label: `severity — all ${sev}`, codes });
   }
 
-  cases.push({ label: "just-under-threshold combo (I01+I02+I03+T01=48)", codes: ["DJZS-I01", "DJZS-I02", "DJZS-I03", "DJZS-T01"] });
-  cases.push({ label: "at-threshold combo (S01+X02=50 still PASS)", codes: ["DJZS-S01", "DJZS-X02"] });
-  cases.push({ label: "over-threshold combo (S01+S02+T01=64 FAIL)", codes: ["DJZS-S01", "DJZS-S02", "DJZS-T01"] });
+  cases.push({ label: "below-threshold combo (I01+I02+I03+T01=50 PASS)", codes: ["DJZS-I01", "DJZS-I02", "DJZS-I03", "DJZS-T01"] });
+  cases.push({ label: "well-below-threshold combo (S01+X02=46 PASS)", codes: ["DJZS-S01", "DJZS-X02"] });
+  cases.push({ label: "below-threshold combo (S01+S02+T01=52 PASS)", codes: ["DJZS-S01", "DJZS-S02", "DJZS-T01"] });
+  cases.push({ label: "at-threshold combo (S01+S02+S03=62 FAIL)", codes: ["DJZS-S01", "DJZS-S02", "DJZS-S03"] });
   cases.push({ label: "max-minus-one code", codes: ALL_LF_CODES.slice(0, -1) });
 
   while (cases.length < 50) {

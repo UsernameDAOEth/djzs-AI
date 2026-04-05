@@ -7,17 +7,17 @@ import { ArrowLeft, BookOpen, Sun, Moon, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LF_TAXONOMY: Record<string, { name: string; category: string; weight: number; severity: string; description: string }> = {
-  "DJZS-S01": { name: "CIRCULAR_LOGIC",       category: "Structural", weight: 30, severity: "CRITICAL", description: "Reasoning chain references its own conclusion as premise" },
-  "DJZS-S02": { name: "LAYER_INVERSION",      category: "Structural", weight: 22, severity: "HIGH",     description: "Verification layer depends on unverified upstream data" },
-  "DJZS-S03": { name: "DEPENDENCY_GHOST",     category: "Structural", weight: 14, severity: "MEDIUM",   description: "References external dependency that cannot be resolved" },
+  "DJZS-S01": { name: "CIRCULAR_LOGIC",       category: "Structural", weight: 26, severity: "CRITICAL", description: "Reasoning chain references its own conclusion as premise" },
+  "DJZS-S02": { name: "LAYER_INVERSION",      category: "Structural", weight: 20, severity: "HIGH",     description: "Verification layer depends on unverified upstream data" },
+  "DJZS-S03": { name: "DEPENDENCY_GHOST",     category: "Structural", weight: 16, severity: "MEDIUM",   description: "References external dependency that cannot be resolved" },
   "DJZS-E01": { name: "ORACLE_UNVERIFIED",    category: "Epistemic",  weight: 22, severity: "HIGH",     description: "External data source cited without provenance verification" },
-  "DJZS-E02": { name: "CONFIDENCE_INFLATION", category: "Epistemic",  weight: 14, severity: "MEDIUM",   description: "Stated certainty exceeds evidential basis" },
-  "DJZS-I01": { name: "FOMO_LOOP",            category: "Incentive",  weight: 12, severity: "MEDIUM",   description: "Decision driven by social signal rather than verified data" },
-  "DJZS-I02": { name: "MISALIGNED_REWARD",    category: "Incentive",  weight: 12, severity: "MEDIUM",   description: "Optimization target diverges from stated objective" },
-  "DJZS-I03": { name: "DATA_UNVERIFIED",      category: "Incentive",  weight: 12, severity: "MEDIUM",   description: "Numerical claims lack verifiable source attribution" },
+  "DJZS-E02": { name: "CONFIDENCE_INFLATION", category: "Epistemic",  weight: 16, severity: "MEDIUM",   description: "Stated certainty exceeds evidential basis" },
+  "DJZS-I01": { name: "FOMO_LOOP",            category: "Incentive",  weight: 16, severity: "MEDIUM",   description: "Decision driven by social signal rather than verified data" },
+  "DJZS-I02": { name: "MISALIGNED_REWARD",    category: "Incentive",  weight: 14, severity: "MEDIUM",   description: "Optimization target diverges from stated objective" },
+  "DJZS-I03": { name: "DATA_UNVERIFIED",      category: "Incentive",  weight: 14, severity: "MEDIUM",   description: "Numerical claims lack verifiable source attribution" },
   "DJZS-X01": { name: "EXECUTION_UNBOUND",    category: "Execution",  weight: 30, severity: "CRITICAL", description: "No halt condition or resource ceiling defined" },
   "DJZS-X02": { name: "RACE_CONDITION",       category: "Execution",  weight: 20, severity: "HIGH",     description: "Temporal dependency creates non-deterministic outcome" },
-  "DJZS-T01": { name: "STALE_REFERENCE",      category: "Temporal",   weight: 12, severity: "LOW",      description: "Data reference exceeds freshness threshold" },
+  "DJZS-T01": { name: "STALE_REFERENCE",      category: "Temporal",   weight:  6, severity: "LOW",      description: "Data reference exceeds freshness threshold" },
 };
 
 const ALL_CODES = Object.keys(LF_TAXONOMY);
@@ -430,6 +430,33 @@ export default function Demo() {
                   <div style={{ fontSize: 9, color: "#3f3f46", marginTop: 4, fontFamily: "var(--mono)" }}>All 11 logic checks passed</div>
                 </div>
               )}
+
+              {verdict.risk_score > 0 && (() => {
+                const catTotals: Record<string, number> = {};
+                for (const [code] of failed) {
+                  const def = LF_TAXONOMY[code];
+                  if (def) catTotals[def.category] = (catTotals[def.category] || 0) + def.weight;
+                }
+                const cats = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
+                return (
+                  <div style={{ marginTop: 10 }} data-testid="panel-risk-composition">
+                    <div style={{ fontSize: 7.5, color: "#3f3f46", letterSpacing: "0.1em", marginBottom: 5, fontFamily: "var(--mono)" }}>RISK COMPOSITION</div>
+                    <div style={{ display: "flex", height: 10, borderRadius: 3, overflow: "hidden", background: "rgba(255,255,255,0.02)", border: "1px solid var(--border, #1c1c20)" }}>
+                      {cats.map(([cat, pts]) => (
+                        <div key={cat} style={{ width: `${(pts / verdict.risk_score) * 100}%`, background: CAT[cat] || "#71717a", transition: "width 0.3s ease" }} title={`${cat}: ${pts}pts`} data-testid={`bar-composition-${cat.toLowerCase()}`} />
+                      ))}
+                    </div>
+                    <div style={{ display: "flex", gap: 10, marginTop: 5, flexWrap: "wrap" }}>
+                      {cats.map(([cat, pts]) => (
+                        <div key={cat} style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                          <div style={{ width: 6, height: 6, borderRadius: 1, background: CAT[cat] || "#71717a" }} />
+                          <span style={{ fontSize: 7.5, color: "#71717a", fontFamily: "var(--mono)" }} data-testid={`text-composition-${cat.toLowerCase()}`}>{cat} {pts}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>

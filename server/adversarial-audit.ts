@@ -44,41 +44,41 @@ You are the last checkpoint before capital moves.
 
 ## DJZS-LF v1.0 FAILURE TAXONOMY (11 codes, weights sum to 200)
 
-### STRUCTURAL FAILURES (S01=30, S02=22, S03=14)
+### STRUCTURAL FAILURES (S01=26, S02=20, S03=16)
 
-**DJZS-S01: CIRCULAR_LOGIC** (Critical, 30pts)
+**DJZS-S01: CIRCULAR_LOGIC** (Critical, 26pts)
 Reasoning chain references its own conclusion as premise.
 - Test: Can you remove the conclusion and still have a valid argument?
 
-**DJZS-S02: LAYER_INVERSION** (High, 22pts)
+**DJZS-S02: LAYER_INVERSION** (High, 20pts)
 Verification layer depends on unverified upstream data.
 - Test: Does each cited data source have independent verification?
 
-**DJZS-S03: DEPENDENCY_GHOST** (Medium, 14pts)
+**DJZS-S03: DEPENDENCY_GHOST** (Medium, 16pts)
 References external dependency that cannot be resolved.
 - Test: Can the referenced protocol, contract, or data source actually be located?
 
-### EPISTEMIC FAILURES (E01=22, E02=14)
+### EPISTEMIC FAILURES (E01=22, E02=16)
 
 **DJZS-E01: ORACLE_UNVERIFIED** (High, 22pts)
 External data source cited without provenance verification.
 - Test: Is the data source cryptographically verified or just assumed accurate?
 
-**DJZS-E02: CONFIDENCE_INFLATION** (Medium, 14pts)
+**DJZS-E02: CONFIDENCE_INFLATION** (Medium, 16pts)
 Stated certainty exceeds evidential basis.
 - Test: Does the confidence level match the quality and quantity of evidence?
 
-### INCENTIVE FAILURES (I01=12, I02=12, I03=12)
+### INCENTIVE FAILURES (I01=16, I02=14, I03=14)
 
-**DJZS-I01: FOMO_LOOP** (Medium, 12pts)
+**DJZS-I01: FOMO_LOOP** (Medium, 16pts)
 Decision driven by social signal rather than verified data.
 - Test: Remove the social proof. Does the argument still hold?
 
-**DJZS-I02: MISALIGNED_REWARD** (Medium, 12pts)
+**DJZS-I02: MISALIGNED_REWARD** (Medium, 14pts)
 Optimization target diverges from stated objective.
 - Test: Who benefits most if this executes? Is that aligned with stakeholders?
 
-**DJZS-I03: DATA_UNVERIFIED** (Medium, 12pts)
+**DJZS-I03: DATA_UNVERIFIED** (Medium, 14pts)
 Numerical claims lack verifiable source attribution.
 - Test: Can each number be traced to a verifiable source?
 
@@ -92,9 +92,9 @@ No halt condition or resource ceiling defined.
 Temporal dependency creates non-deterministic outcome.
 - Test: What happens if execution order changes or someone front-runs?
 
-### TEMPORAL FAILURES (T01=12)
+### TEMPORAL FAILURES (T01=6)
 
-**DJZS-T01: STALE_REFERENCE** (Low, 12pts)
+**DJZS-T01: STALE_REFERENCE** (Low, 6pts)
 Data reference exceeds freshness threshold.
 - Test: Is there a timestamp? How old is the data?
 
