@@ -12,3 +12,9 @@ id = "AOe8SyBb98ABfvMXuJrI8"
 uri = "file://attached_assets/djzs-banner-square.png"
 type = "image"
 title = "DJZS Protocol - Square Banner for Synthesis"
+
+[[outputs]]
+id = "U2v21oDQXVgCsO-izewZA"
+uri = "file://attached_assets/Gemini_Generated_Image_i4qc0pi4qc0pi4qc_compressed.jpg"
+type = "image"
+title = "DJZS Image — Compressed (1.01 MB)"
