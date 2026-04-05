@@ -18,3 +18,9 @@ id = "U2v21oDQXVgCsO-izewZA"
 uri = "file://attached_assets/Gemini_Generated_Image_i4qc0pi4qc0pi4qc_compressed.jpg"
 type = "image"
 title = "DJZS Image — Compressed (1.01 MB)"
+
+[[outputs]]
+id = "saEzJxW5u642cPHnOcpah"
+uri = "file://attached_assets/Gemini_Generated_Image_y52b40y52b40y52b_compressed.jpg"
+type = "image"
+title = "DJZS Logo — Compressed (0.90 MB)"
