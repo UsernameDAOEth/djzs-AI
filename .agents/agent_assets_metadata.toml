@@ -36,3 +36,9 @@ id = "iDg7xm0a4tBMAEKYG2GUj"
 uri = "file://attached_assets/DJZS_banner_2048x1152.jpg"
 type = "image"
 title = "DJZS Banner — 2048x1152, 0.95 MB"
+
+[[outputs]]
+id = "QgHvCEUCB3WB2O-ovF619"
+uri = "file://attached_assets/DJZS_banner_wide_compressed.jpg"
+type = "image"
+title = "DJZS Wide Banner — 2730x1536, 1.07 MB"
