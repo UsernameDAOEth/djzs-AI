@@ -24,3 +24,9 @@ id = "saEzJxW5u642cPHnOcpah"
 uri = "file://attached_assets/Gemini_Generated_Image_y52b40y52b40y52b_compressed.jpg"
 type = "image"
 title = "DJZS Logo — Compressed (0.90 MB)"
+
+[[outputs]]
+id = "xHoc68WahXvx8CsYcJcFT"
+uri = "file://attached_assets/DJZS_logo_2048x2048_hq.jpg"
+type = "image"
+title = "DJZS Logo — 2048x2048, 1.49 MB (high quality)"
