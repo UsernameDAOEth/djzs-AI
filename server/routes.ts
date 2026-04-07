@@ -16,7 +16,6 @@ async function getGitHubClient() {
 }
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier, escrowAuditRequestSchema } from "@shared/audit-schema";
 import { executeAudit, mapToLegacyAuditLog, postAuditChainWrite } from "./audit-agent";
-import { VeniceClient } from "./venice";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
 import { uploadAuditToIrys } from "./irys";
@@ -62,7 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       components: {
         api: "healthy",
         xmtp_agent: process.env.XMTP_WALLET_KEY ? "configured" : "not_configured",
-        venice_ai: process.env.VENICE_API_KEY ? "configured" : "not_configured",
+        detection_engine: "djzs-trust/rule-engine@v1.0",
         irys_datachain: process.env.IRYS_PRIVATE_KEY ? "configured" : "not_configured",
         trust_score_contract: process.env.TRUST_SCORE_CONTRACT_ADDRESS ? "configured" : "not_configured",
         x402_payments: "active",
@@ -672,7 +671,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const createTierHandler = (tier: AuditTier) => async (req: any, res: any) => {
     try {
-      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
       const walletAddress = req.headers['x-wallet-address'] as string | undefined;
       const schema = createTieredRequestSchema(tier);
       const parsed = schema.safeParse(req.body);
@@ -690,7 +688,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const veniceClient = userVeniceKey ? new VeniceClient(userVeniceKey) : undefined;
       const audit = await executeAudit({
         strategy_memo: parsed.data.strategy_memo,
         audit_type: parsed.data.audit_type || "general",
@@ -698,7 +695,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         intelligence_context: parsed.data.intelligence_context,
         trade_params: parsed.data.trade_params,
         agent_id: parsed.data.agent_id,
-      }, veniceClient);
+      });
 
       const irysPayload: Record<string, any> = {
         ...audit,
@@ -738,9 +735,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(response);
     } catch (error) {
       console.error(`${TIER_CONFIG[tier].name} Audit failed:`, error);
-      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
-        return res.status(503).json({ error: "AI service not configured" });
-      }
       res.status(500).json({
         error: "Audit execution failed",
         zone: TIER_CONFIG[tier].name,
@@ -793,13 +787,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const veniceClient = undefined;
       const audit = await executeAudit({
         strategy_memo: parsed.data.strategy_memo,
         audit_type: parsed.data.audit_type || "general",
         tier: "treasury",
         agent_id: parsed.data.agent_id,
-      }, veniceClient);
+      });
 
       const irysResult = await uploadAuditToIrys(audit);
       const trustScoreResult = await postAuditChainWrite(audit, parsed.data.agent_id, irysResult.irys_tx_id);
@@ -832,9 +825,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(response);
     } catch (error) {
       console.error("Demo audit failed:", error);
-      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
-        return res.status(503).json({ error: "AI service not configured" });
-      }
       res.status(500).json({
         error: "Audit execution failed",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -852,9 +842,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
-      const veniceClient = userVeniceKey ? new VeniceClient(userVeniceKey) : undefined;
-
       const escrowData = req.escrowData;
       const tier: AuditTier = escrowData?.amount
         ? (Number(escrowData.amount) >= 50_000_000 ? "treasury" : Number(escrowData.amount) >= 5_000_000 ? "founder" : "micro")
@@ -869,7 +856,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         agent_id: parsed.data.agent_id,
         escrow_id: parsed.data.escrow_id,
         escrow_tx_hash: parsed.data.escrow_tx_hash,
-      }, veniceClient);
+      });
 
       const irysPayload: Record<string, any> = {
         ...audit,
@@ -949,9 +936,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: "Escrow service not configured",
           code: "DJZS-ESCROW-CONFIG",
         });
-      }
-      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
-        return res.status(503).json({ error: "AI service not configured" });
       }
       res.status(500).json({
         error: "Escrow audit execution failed",

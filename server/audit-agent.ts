@@ -1,12 +1,104 @@
 import crypto from "crypto";
-import { 
-  VeniceClient, 
-  getVeniceClient,
-  type AuditResult,
+import { DJZSEngine, type ToolCall, type Detection, type DetectionResult, type LFCode } from "./engine";
+import {
   type AdversarialPersona,
   type IntelligenceContext,
 } from "./venice";
-import { type AuditTier, SCHEMA_VERSION, WEIGHTS_HASH, MAX_RISK_SCORE, ALL_LF_CODES } from "@shared/audit-schema";
+import { type AuditTier, SCHEMA_VERSION, WEIGHTS_HASH, MAX_RISK_SCORE, ALL_LF_CODES, LOGIC_FAILURE_TAXONOMY } from "@shared/audit-schema";
+
+export interface AuditResult {
+  verdict: "PASS" | "FAIL";
+  risk_score: number;
+  primary_flaw: string;
+  summary: string;
+  flags: {
+    code: string;
+    severity: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO";
+    evidence: string;
+    recommendation: string;
+    description?: string;
+  }[];
+  confidence?: number;
+  primary_bias_detected?: string;
+  logic_flaws?: string[];
+  scenarios?: {
+    name: string;
+    outcome: string;
+    estimated_impact: string;
+  }[];
+  structural_recommendations?: string[];
+  action_items?: string[];
+  model_used: string;
+  persona_used: AdversarialPersona;
+}
+
+const djzsEngine = new DJZSEngine({
+  codeSets: ["djzs"],
+  failThreshold: 30,
+  warnThreshold: 15,
+});
+
+const ENGINE_CODE_TO_DJZS: Record<string, string> = {
+  S01: "DJZS-S01",
+  S02: "DJZS-S02",
+  S03: "DJZS-S03",
+  E01: "DJZS-E01",
+  E02: "DJZS-E02",
+  I01: "DJZS-I01",
+  I02: "DJZS-I02",
+  I03: "DJZS-I03",
+  X01: "DJZS-X01",
+  X02: "DJZS-X02",
+  T01: "DJZS-T01",
+};
+
+function mapEngineResultToAuditResult(
+  engineResult: DetectionResult,
+  persona: AdversarialPersona
+): AuditResult {
+  const firedDetections = engineResult.detections.filter(d => d.fired);
+
+  const flags = firedDetections.map(d => {
+    const djzsCode = ENGINE_CODE_TO_DJZS[d.code] || d.code;
+    const taxonomy = LOGIC_FAILURE_TAXONOMY[djzsCode as keyof typeof LOGIC_FAILURE_TAXONOMY];
+    return {
+      code: djzsCode,
+      severity: (taxonomy?.severity || "MEDIUM") as "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO",
+      evidence: d.evidence,
+      recommendation: `Review and address ${d.label} detection`,
+      description: d.evidence,
+    };
+  });
+
+  const riskScore = engineResult.totalPenalty;
+
+  const verdict: "PASS" | "FAIL" =
+    riskScore >= 60 || flags.some(f => f.severity === "CRITICAL")
+      ? "FAIL"
+      : "PASS";
+
+  const primaryFlaw = firedDetections.length > 0
+    ? firedDetections[0].label
+    : "None";
+
+  const summary = verdict === "PASS"
+    ? firedDetections.length === 0
+      ? "No logic failures detected. Strategy is structurally sound."
+      : `Minor observations detected (${firedDetections.length} code${firedDetections.length > 1 ? "s" : ""}). Strategy passes with observations.`
+    : `${firedDetections.length} logic failure${firedDetections.length > 1 ? "s" : ""} detected (risk_score=${riskScore}). Strategy fails audit.`;
+
+  return {
+    verdict,
+    risk_score: riskScore,
+    primary_flaw: primaryFlaw,
+    summary,
+    flags,
+    model_used: "djzs-trust/rule-engine@v1.0",
+    persona_used: persona,
+    logic_flaws: firedDetections.map(d => `${ENGINE_CODE_TO_DJZS[d.code] || d.code}: ${d.evidence}`),
+    structural_recommendations: firedDetections.map(d => `Review and address ${d.label} detection`),
+  };
+}
 import { writeTrustScore, type ChainWriterResult } from "./chainWriter";
 import {
   verifyTraceHash,
@@ -83,11 +175,8 @@ const TIER_CONFIG: Record<AuditTier, {
 };
 
 export async function executeAudit(
-  input: AuditInput,
-  client?: VeniceClient
+  input: AuditInput
 ): Promise<ProofOfLogicCertificate> {
-  const veniceClient = client || getVeniceClient();
-  
   const {
     strategy_memo,
     audit_type = "general",
@@ -173,11 +262,15 @@ export async function executeAudit(
 
   const startTime = Date.now();
 
-  const result = await veniceClient.audit(
-    strategy_memo,
-    selectedPersona,
-    { tier, auditType: audit_type, targetSystem: target_system, intelligenceContext: intelligence_context, tradeParams: trade_params, escrowContext: resolvedEscrowContext }
-  );
+  const toolCall: ToolCall = {
+    name: audit_type || "general",
+    params: trade_params || {},
+    reasoning: strategy_memo,
+    domain: "financial",
+  };
+
+  const engineResult = djzsEngine.evaluate(toolCall);
+  const result = mapEngineResultToAuditResult(engineResult, selectedPersona);
 
   const duration_ms = Date.now() - startTime;
 
@@ -227,7 +320,7 @@ export async function executeAudit(
     logic_hash,
     max_possible: MAX_RISK_SCORE,
     pass_threshold: 60,
-    detection_model: "venice/llama-3.3-70b@temp=0",
+    detection_model: "djzs-trust/rule-engine@v1.0",
     scoring_engine: "typescript/pure-function",
     anchor_target: "irys-datachain",
     settlement_chain: "base-mainnet",
@@ -290,8 +383,7 @@ export function parseAndRoute(rawMessage: string): {
 }
 
 export async function handleXMTPMessage(
-  rawMessage: string,
-  client?: VeniceClient
+  rawMessage: string
 ): Promise<string> {
   const { content, persona } = parseAndRoute(rawMessage);
   
@@ -299,7 +391,7 @@ export async function handleXMTPMessage(
     strategy_memo: content,
     tier: "micro",
     persona,
-  }, client);
+  });
 
   return JSON.stringify(certificate, null, 2);
 }
@@ -353,9 +445,8 @@ export function mapToLegacyAuditLog(
 export async function runLogicAuditAgent(
   request: { strategy_memo: string; audit_type?: string; intelligence_context?: string | IntelligenceContext; trade_params?: Record<string, unknown>; agent_id?: string },
   tier: AuditTier = "micro",
-  apiKeyOverride?: string
+  _apiKeyOverride?: string
 ): Promise<ProofOfLogicCertificate> {
-  const client = apiKeyOverride ? new VeniceClient(apiKeyOverride) : undefined;
   return executeAudit({
     strategy_memo: request.strategy_memo,
     audit_type: (request.audit_type as AuditInput["audit_type"]) || "general",
@@ -363,7 +454,7 @@ export async function runLogicAuditAgent(
     intelligence_context: request.intelligence_context,
     trade_params: request.trade_params,
     agent_id: request.agent_id,
-  }, client);
+  });
 }
 
 export async function postAuditChainWrite(

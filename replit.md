@@ -40,30 +40,38 @@ Preferred communication style: Simple, everyday language.
 - **Irys Datachain Integration**: Every audit uploads its ProofOfLogic certificate to permanent storage via `@irys/upload` + `@irys/upload-ethereum` (Base Mainnet RPC). Responses include `provenance_provider: "IRYS_DATACHAIN"`, `irys_tx_id`, and `irys_url`. Verification endpoint: `GET /api/audit/verify/:txId`.
 - **Irys Tags (GraphQL-Queryable)**: Uploads include enriched tags: `application-id`, `Content-Type`, `audit-id`, `tier`, `verdict`, `protocol`, `version`, `Risk-Score`, `Audit-Type`, `Timestamp`, `Agent-Id` (conditional), `Trading-Pair` (conditional), `Flag-Codes` (conditional). Queryable via Irys GraphQL endpoint for analytics dashboards and fleet-wide audit reports.
 - **Irys Service**: `server/irys.ts` — `uploadAuditToIrys(auditData)` function. Requires `IRYS_PRIVATE_KEY` env secret (Ethereum wallet private key with ETH on Base for upload fees).
-- **Health Endpoint**: `GET /api/health` returns component-level status (api, xmtp_agent, venice_ai, irys_datachain, x402_payments), uptime, version, and capability flags. Referenced in `agent.json` for A2A fleet orchestrators.
-- **Adversarial Agent**: `server/audit-agent.ts` orchestrates audits via `executeAudit()` producing `ProofOfLogicCertificate`. Tier→persona mapping: micro→`general`, founder→`logic_auditor`, treasury→`risk_hunter`. XMTP message routing via `parseAndRoute()` supports `Risk:`, `Backtest:`, `Regime:`, `Logic:`, `Thinking:`, `Audit:` prefixes. `shouldAutoAbort()` helper for kill-switch logic. All agents implement the Evasion Defense Execution Pipeline (STRIP/INVERT/TRACE/CLASSIFY) from `server/ai-identity.ts`.
+- **Health Endpoint**: `GET /api/health` returns component-level status (api, xmtp_agent, detection_engine, irys_datachain, x402_payments), uptime, version, and capability flags. Referenced in `agent.json` for A2A fleet orchestrators.
+- **Adversarial Agent**: `server/audit-agent.ts` orchestrates audits via `executeAudit()` producing `ProofOfLogicCertificate`. Uses the deterministic `DJZSEngine` rule engine (`server/engine/`) for LF code detection — zero external API calls. Tier→persona mapping: micro→`general`, founder→`logic_auditor`, treasury→`risk_hunter`. XMTP message routing via `parseAndRoute()` supports `Risk:`, `Backtest:`, `Regime:`, `Logic:`, `Thinking:`, `Audit:` prefixes. `shouldAutoAbort()` helper for kill-switch logic. All agents implement the Evasion Defense Execution Pipeline (STRIP/INVERT/TRACE/CLASSIFY) from `server/ai-identity.ts`.
 - **Evasion Defense Pipeline**: Four-stage adversarial analysis baked into every audit:
   - **STRIP**: Extract raw premises, ignore rhetoric and persuasion techniques.
   - **INVERT**: Model catastrophic failure scenario; if thesis doesn't hedge against it, flag as fatal flaw.
   - **TRACE**: Identify who benefits financially/strategically from the proposed action.
   - **CLASSIFY**: Evaluate against 11 DJZS-LF v1.0 codes; output risk_score (0-200, sum of flag weights) + flags array; diagnosis only, no fix advice.
 - **DJZS-LF v1.0 Failure Taxonomy** (defined in `shared/audit-schema.ts`, weights sum to 200):
-  - `DJZS-S01` CIRCULAR_LOGIC (30pts, CRITICAL) — Reasoning chain references its own conclusion as premise.
-  - `DJZS-S02` LAYER_INVERSION (22pts, HIGH) — Verification layer depends on unverified upstream data.
-  - `DJZS-S03` DEPENDENCY_GHOST (14pts, MEDIUM) — References external dependency that cannot be resolved.
+  - `DJZS-S01` CIRCULAR_LOGIC (26pts, CRITICAL) — Reasoning chain references its own conclusion as premise.
+  - `DJZS-S02` LAYER_INVERSION (20pts, HIGH) — Verification layer depends on unverified upstream data.
+  - `DJZS-S03` DEPENDENCY_GHOST (16pts, MEDIUM) — References external dependency that cannot be resolved.
   - `DJZS-E01` ORACLE_UNVERIFIED (22pts, HIGH) — External data source cited without provenance verification.
-  - `DJZS-E02` CONFIDENCE_INFLATION (14pts, MEDIUM) — Stated certainty exceeds evidential basis.
-  - `DJZS-I01` FOMO_LOOP (12pts, MEDIUM) — Decision driven by social signal rather than verified data.
-  - `DJZS-I02` MISALIGNED_REWARD (12pts, MEDIUM) — Optimization target diverges from stated objective.
-  - `DJZS-I03` DATA_UNVERIFIED (12pts, MEDIUM) — Numerical claims lack verifiable source attribution.
+  - `DJZS-E02` CONFIDENCE_INFLATION (16pts, MEDIUM) — Stated certainty exceeds evidential basis.
+  - `DJZS-I01` FOMO_LOOP (16pts, MEDIUM) — Decision driven by social signal rather than verified data.
+  - `DJZS-I02` MISALIGNED_REWARD (14pts, MEDIUM) — Optimization target diverges from stated objective.
+  - `DJZS-I03` DATA_UNVERIFIED (14pts, MEDIUM) — Numerical claims lack verifiable source attribution.
   - `DJZS-X01` EXECUTION_UNBOUND (30pts, CRITICAL) — No halt condition or resource ceiling defined.
   - `DJZS-X02` RACE_CONDITION (20pts, HIGH) — Temporal dependency creates non-deterministic outcome.
-  - `DJZS-T01` STALE_REFERENCE (12pts, LOW) — Data reference exceeds freshness threshold.
-- **Scoring**: Deterministic — LLM detects boolean flags, scoring is pure function of weights. Max score 200. FAIL threshold: risk_score ≥ 60 OR any CRITICAL flag. Pure-JS SHA-256 for browser compatibility.
+  - `DJZS-T01` STALE_REFERENCE (6pts, LOW) — Data reference exceeds freshness threshold.
+- **Deterministic Rule Engine** (`server/engine/`):
+  - `DJZSEngine` class — pure TypeScript pattern-matching rule engine replacing Venice AI for LF code detection. Zero external API calls, fully reproducible inside TEE (Phala CVM).
+  - 11 DJZS detectors (`server/engine/detectors/`) + 5 universal detectors for general MCP tool call safety
+  - `utils/analysis.ts` — text analysis utilities (matchesRegex, matchesAny, extractNumbers, detectSelfReference, paramOverflowRatio, flattenParams)
+  - Engine weights aligned to canonical taxonomy in `shared/audit-schema.ts` (DJZS sum=200, Universal sum=100)
+  - Code prefix mapping: engine uses short codes (S01, E01), integration layer in `audit-agent.ts` maps to prefixed codes (DJZS-S01, DJZS-E01)
+  - `detection_model` field in certificates: `"djzs-trust/rule-engine@v1.0"`
+  - Test suite: `server/engine/__tests__/engine.test.ts` (32 tests covering all 16 detectors + verdict + hash determinism)
+- **Scoring**: Deterministic — rule engine detects boolean flags via pattern matching, scoring is pure function of weights. Max score 200. FAIL threshold: risk_score ≥ 60 OR any CRITICAL flag. Pure-JS SHA-256 for browser compatibility.
 - **Adversarial Audit Module** (`server/adversarial-audit.ts`):
-  - Full `ADVERSARIAL_AUDIT_PROMPT` with expanded DJZS-LF taxonomy, deterministic verdict rules, and risk score calculation
+  - Full `ADVERSARIAL_AUDIT_PROMPT` with expanded DJZS-LF taxonomy, deterministic verdict rules, and risk score calculation (retained for reference/prompt engineering)
   - `buildAuditMessages()` / `buildQuickAuditMessages()` for structured prompt construction with escrow context support
-  - `parseAuditResponse()` for strict JSON validation of Venice responses
+  - `parseAuditResponse()` for strict JSON validation of AI responses (used by journal/agent analysis)
   - `computeTraceHash()` / `verifyTraceHash()` for on-chain keccak256 hash verification via viem
   - `mapToLegacyFormat()` for backward compatibility with legacy audit log shape
   - `shouldAbort()` / `getAbortTriggers()` for deterministic kill-switch logic

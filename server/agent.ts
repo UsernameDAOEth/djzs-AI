@@ -63,9 +63,6 @@ async function handleAgentMessage(sender: string, text: string): Promise<string>
     } catch (err) {
       console.error(`[XMTP] Audit error:`, err);
       const errorMsg = err instanceof Error ? err.message : "Unknown error";
-      if (errorMsg.includes("VENICE_API_KEY")) {
-        return "AI processing is not configured. Please set up your Venice API key.";
-      }
       return `Audit failed: ${errorMsg}`;
     }
   }
