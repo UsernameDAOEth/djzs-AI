@@ -269,7 +269,7 @@ export async function executeAudit(
     domain: "financial",
   };
 
-  const engineResult = djzsEngine.evaluate(toolCall);
+  const engineResult = djzsEngine.audit(toolCall);
   const result = mapEngineResultToAuditResult(engineResult, selectedPersona);
 
   const duration_ms = Date.now() - startTime;
