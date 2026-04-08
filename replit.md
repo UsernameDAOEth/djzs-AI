@@ -67,6 +67,26 @@ Preferred communication style: Simple, everyday language.
   - Code prefix mapping: engine uses short codes (S01, E01), integration layer in `audit-agent.ts` maps to prefixed codes (DJZS-S01, DJZS-E01)
   - `detection_model` field in certificates: `"djzs-trust/rule-engine@v1.0"`
   - Test suite: `server/engine/__tests__/engine.test.ts` (32 tests covering all 16 detectors + verdict + hash determinism)
+- **Payment Gate Abstraction** (`server/payment-gate.ts`):
+  - `PaymentGate` interface with `verify()` method
+  - `X402Gate` — wraps existing `payment-verifier.ts` for on-chain USDC verification
+  - `NoOpGate` — always passes (used for demo/testing)
+  - `CredentialedGate` — API key validation
+  - `DeferredGate` — post-audit billing for MCP proxy tier
+  - 4-tier pricing: Proxy $0.01, Micro $0.10, Founder $1.00, Treasury $10.00
+  - `DJZS_PRICING_MODE` env var: "production" (default) or "demo"
+  - `shouldUploadToIrys()` helper — returns false for proxy tier
+- **Universal LF Codes** (`shared/universal-lf-codes.ts`):
+  - Re-exports 5 universal codes from engine (UNAUTHORIZED_SCOPE=25, PARAMETER_OVERFLOW=20, DESTRUCTIVE_UNGUARDED=25, NO_ROLLBACK_PATH=15, CHAIN_UNVERIFIED=15, sum=100)
+  - `computeUniversalScore()`, `computeUniversalVerdict()`, `computeUniversalHash()`
+  - `DOMAIN_REGISTRY` — module registry for domain (DJZS) and universal code sets
+  - `UNIVERSAL_CODE_DEFINITIONS` — full definitions with severity and description
+- **MCP Proxy Skeleton** (`server/mcp-proxy.ts`):
+  - `MCPProxy` class — EventEmitter-based proxy for MCP `tools/call` interception
+  - Three modes: `passthrough` (default), `audit` (score but don't block), `enforce` (block on FAIL)
+  - Uses `DJZSEngine` with `codeSets: ["universal"]` for tool-call auditing
+  - Emits `audit`, `blocked`, `modeChange` events
+  - Not wired to any route — skeleton only for future MCP proxy deployment
 - **Scoring**: Deterministic — rule engine detects boolean flags via pattern matching, scoring is pure function of weights. Max score 200. FAIL threshold: risk_score ≥ 60 OR any CRITICAL flag. Pure-JS SHA-256 for browser compatibility.
 - **Adversarial Audit Module** (`server/adversarial-audit.ts`):
   - Full `ADVERSARIAL_AUDIT_PROMPT` with expanded DJZS-LF taxonomy, deterministic verdict rules, and risk score calculation (retained for reference/prompt engineering)

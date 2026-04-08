@@ -18,11 +18,9 @@ Think of it as a **cryptographically-attested code review by a hostile second br
 
 **Three pillars:**
 
-- **Adversarial LLM Analysis** — Venice AI stress-tests agent reasoning against the DJZS-LF structured failure taxonomy inside a TEE. Outputs a binary `PASS / FAIL` verdict with machine-parseable failure codes.
+- **Deterministic Rule Engine** — A pure TypeScript pattern-matching engine (`djzs-trust/rule-engine@v1.0`) stress-tests agent reasoning against the DJZS-LF v1.0 structured failure taxonomy. Zero external API calls — fully reproducible inside a TEE. Outputs a binary `PASS / FAIL` verdict with machine-parseable failure codes.
 - **Tamper-Proof Isolation** — The audit runs inside a Phala/Intel SGX enclave. Neither the agent operator nor DJZS itself can alter the verdict after execution.
 - **Immutable Certification** — Every audit result is stored permanently on Irys Datachain with a publicly verifiable, no-auth gateway URL.
-
-> ⚠️ **On Venice AI's "zero data retention" claim:** DJZS's SGX enclave isolates keys and execution from the host operator — it does not enforce Venice's data retention policy. That guarantee is Venice's own claim. Sophisticated operators should evaluate it independently.
 
 ---
 
@@ -38,13 +36,14 @@ Think of it as a **cryptographically-attested code review by a hostile second br
 │              Phala Network TEE (Intel SGX Enclave)           │
 │                                                             │
 │  ┌──────────────┐   ┌───────────────┐   ┌───────────────┐  │
-│  │ x402 Payment │──▶│ Venice AI     │──▶│ Irys Datachain│  │
-│  │ Verification │   │ Adversarial   │   │ Permanent     │  │
-│  │ (Base USDC)  │   │ Analysis      │   │ Upload        │  │
+│  │ x402 Payment │──▶│ DJZS Rule     │──▶│ Irys Datachain│  │
+│  │ Verification │   │ Engine v1.0   │   │ Permanent     │  │
+│  │ (Base USDC)  │   │ (Deterministic│   │ Upload        │  │
+│  │              │   │  LF Detection)│   │               │  │
 │  └──────────────┘   └───────────────┘   └───────┬───────┘  │
 │                                                  │          │
 │  Private keys isolated in hardware enclave       │          │
-│  (Venice API, Irys wallet, x402 keys)            │          │
+│  (Irys wallet, x402 keys)                        │          │
 └──────────────────────────────────────────────────┼──────────┘
                                                    │
                           ┌────────────────────────┘
@@ -53,8 +52,9 @@ Think of it as a **cryptographically-attested code review by a hostile second br
 │              ProofOfLogic Certificate                       │
 │                                                             │
 │  verdict: PASS/FAIL    irys_tx_id: "71oNMzL4hg..."         │
-│  risk_score: 0-100     irys_url: gateway.irys.xyz/...       │
+│  risk_score: 0-200     irys_url: gateway.irys.xyz/...       │
 │  flags: [DJZS-LF]     provenance_provider: IRYS_DATACHAIN  │
+│  model: rule-engine    trust_score_tx_hash: 0x...           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -63,7 +63,7 @@ Think of it as a **cryptographically-attested code review by a hostile second br
 | Layer | Technology | Role |
 |---|---|---|
 | **Compute** | Phala Network (Intel SGX) | Hardware-isolated execution — private keys never touch disk |
-| **Intelligence** | Venice AI (llama-3.3-70b, uncensored) | Adversarial logic analysis with zero data retention |
+| **Intelligence** | DJZS Rule Engine v1.0 | Deterministic pattern-matching LF detection — zero external API calls |
 | **Settlement** | Base Network (USDC) | x402 micropayments — pay-per-audit, no subscriptions |
 | **Memory** | Irys Datachain | Permanent, immutable ProofOfLogic certificate storage |
 | **Messaging** | XMTP MLS | A2A encrypted dark-channel — agents DM the Oracle directly |
@@ -91,12 +91,15 @@ The XMTP agent listener (`server/agent.ts`) runs concurrently with the REST API 
 
 | Tier | Endpoint | Price (USDC) | Memo Limit | Use Case |
 |---|---|---|---|---|
+| Proxy Zone | *(no route — MCP proxy only)* | $0.01 | 500 chars | MCP tool-call interception, universal LF code auditing |
 | Micro-Zone | `POST /api/audit/micro` | $0.10 | 1,000 chars | Operational sanity checks, binary risk scoring |
 | Founder Zone | `POST /api/audit/founder` | $1.00 | 5,000 chars | Strategic roadmap diligence, narrative drift detection |
 | Treasury Zone | `POST /api/audit/treasury` | $10.00 | Unlimited | Exhaustive adversarial stress-test for capital deployment decisions |
 | Escrow Zone | `POST /api/audit/escrow` | Escrow-funded | Per tier | On-chain escrow audit with hash verification + settlement callback |
 
 `POST /api/audit` is a backward-compatible alias for Micro-Zone.
+
+**Proxy Zone** is a future-facing tier for the MCP proxy (`server/mcp-proxy.ts`). It has no frontend UI or route — it only exists in the `PaymentGate` interface for deferred billing when the proxy intercepts MCP tool calls. Proxy-tier audits are NOT uploaded to Irys.
 
 **Treasury Zone** runs an uncapped adversarial analysis designed for high-stakes capital deployment — multiple reasoning passes, full DJZS-LF sweep, and structural recommendations. Appropriate when the cost of a bad decision materially exceeds $50.
 
@@ -171,41 +174,53 @@ Every successful audit returns a deterministic JSON certificate. The verdict is 
 
 ```json
 {
-  "audit_id": "219a7394-0132-4e02-b2cf-00dfdb28a0ec",
-  "timestamp": "2026-03-03T22:33:20.601Z",
+  "audit_id": "88cff034-11c4-437d-9500-ec24eb1f4188",
+  "timestamp": "2026-04-07T03:01:41.444Z",
   "tier": "micro",
   "verdict": "FAIL",
-  "risk_score": 90,
-  "primary_flaw": "DJZS-X01",
-  "summary": "The strategy fails due to critical logic and risk management flaws, including circular logic, authority substitution, and lack of risk bounds.",
+  "risk_score": 71,
+  "primary_flaw": "CIRCULAR_LOGIC",
+  "summary": "Critical logic failures detected (3 codes). Strategy fails audit.",
   "flags": [
     {
       "code": "DJZS-S01",
       "severity": "CRITICAL",
-      "evidence": "The conclusion that ETH will keep going up is based on the premise that it has been going up for 3 days, which is a circular logic.",
-      "recommendation": "Consider multiple factors and historical data to support the conclusion."
+      "evidence": "Conclusion used as its own premise — circular reasoning chain detected",
+      "recommendation": "Review and address CIRCULAR_LOGIC detection",
+      "description": "Conclusion used as its own premise — circular reasoning chain detected"
     },
     {
-      "code": "DJZS-X01",
-      "severity": "CRITICAL",
-      "evidence": "No stop loss is defined, which means there are no risk bounds.",
-      "recommendation": "Define a stop loss and consider position sizing to manage risk."
+      "code": "DJZS-E01",
+      "severity": "HIGH",
+      "evidence": "Authority claim without specific verifiable source",
+      "recommendation": "Review and address ORACLE_UNVERIFIED detection",
+      "description": "Authority claim without specific verifiable source"
+    },
+    {
+      "code": "DJZS-I01",
+      "severity": "MEDIUM",
+      "evidence": "FOMO signal \"act now\" with no cooldown/opt-out offered",
+      "recommendation": "Review and address FOMO_LOOP detection",
+      "description": "FOMO signal \"act now\" with no cooldown/opt-out offered"
     }
   ],
   "should_abort": true,
   "abort_reasons": [
-    "DJZS-S01 (CRITICAL): The conclusion that ETH will keep going up is based on the premise that it has been going up for 3 days.",
-    "DJZS-X01 (CRITICAL): No stop loss is defined, which means there are no risk bounds."
+    "DJZS-S01 (CRITICAL): Conclusion used as its own premise",
+    "DJZS-E01 (HIGH): Authority claim without specific verifiable source"
   ],
-  "cryptographic_hash": "3afb941dabed235a39fcdcaf862153dd6593dfdae6d62f4e1b3b8f55e9e202f8",
-  "keccak256_hash": "0xe10053b20f9bf900329f372951d9d45a9b3e7f8584fb5493fd61549564e3676d",
+  "cryptographic_hash": "dcc0c0cdbf5ecca1924d7ccdfdb51269691b014014bd0732a98f294cfcd68b97",
+  "keccak256_hash": "0x2eb9639cdb5f2f7c5110dce1454aa05bc9f81120b69a2d95b91caf005a17d653",
+  "model_used": "djzs-trust/rule-engine@v1.0",
+  "persona_used": "risk_hunter",
   "provenance_provider": "IRYS_DATACHAIN",
-  "irys_tx_id": "71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
-  "irys_url": "https://gateway.irys.xyz/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH"
+  "irys_tx_id": "vcRAKhYqHCZPkT7FDYbJWuVFMoZ1LGUBeEjGxvDqnkt",
+  "irys_url": "https://gateway.irys.xyz/vcRAKhYqHCZPkT7FDYbJWuVFMoZ1LGUBeEjGxvDqnkt",
+  "trust_score_tx_hash": "0xd1677b3f0291284060ddac4aa0847a0e5a0f047f42d4380d0349948121d14841"
 }
 ```
 
-The `irys_url` is permanent and public — no API key, no auth, no expiration. Anyone can verify the AI's reasoning by visiting the gateway URL directly.
+The `irys_url` is permanent and public — no API key, no auth, no expiration. Anyone can verify the audit by visiting the gateway URL directly. The `trust_score_tx_hash` links to the on-chain trust score write on Base Mainnet.
 
 Escrow audit responses additionally include `settlement_tx_hash`, `escrow_id`, `escrow_creator`, and `escrow_recipient`.
 
@@ -214,7 +229,7 @@ Escrow audit responses additionally include `settlement_tx_hash`, `escrow_id`, `
 | Field | Description |
 |---|---|
 | `verdict` | `PASS` or `FAIL` — deterministic, binary |
-| `risk_score` | 0–100 (0 = flawless logic, 100 = critically compromised) |
+| `risk_score` | 0–200 (sum of fired DJZS-LF weights; 0 = flawless, 200 = all codes fired) |
 | `primary_flaw` | The dominant DJZS-LF failure code, or `"None"` |
 | `summary` | One-sentence natural language summary of the audit result |
 | `flags` | Array of DJZS-LF failure codes with `severity`, `evidence`, and `recommendation` |
@@ -228,23 +243,37 @@ Escrow audit responses additionally include `settlement_tx_hash`, `escrow_id`, `
 
 ---
 
-## DJZS-LF Failure Code Taxonomy
+## DJZS-LF v1.0 Failure Code Taxonomy
 
-All detected reasoning flaws are mapped to strict, machine-parseable codes. **Autonomous agents should halt execution on `CRITICAL` or `HIGH` severity flags.**
+All detected reasoning flaws are mapped to strict, machine-parseable codes. **Autonomous agents should halt execution on `CRITICAL` or `HIGH` severity flags.** Scoring is deterministic — the rule engine detects boolean flags via pattern matching, and the risk score is a pure function of the canonical weights (sum = 200). FAIL threshold: `risk_score ≥ 60` OR any `CRITICAL` flag fired.
 
-| Code | Category | Name | Severity | Auto-Abort | Risk Points |
+### Domain Codes (11 DJZS-LF codes, max score: 200)
+
+| Code | Category | Name | Severity | Auto-Abort | Weight |
 |---|---|---|---|---|---|
-| `DJZS-S01` | Structural | CIRCULAR_LOGIC | Critical | Yes | 30 |
-| `DJZS-S02` | Structural | MISSING_FALSIFIABILITY | Critical | Yes | 25 |
-| `DJZS-E01` | Epistemic | CONFIRMATION_TUNNEL | High | Yes | 20 |
-| `DJZS-E02` | Epistemic | AUTHORITY_SUBSTITUTION | High | Yes | 20 |
-| `DJZS-I01` | Incentive | MISALIGNED_INCENTIVE | Medium | No (Review) | 15 |
-| `DJZS-I02` | Incentive | NARRATIVE_DEPENDENCY | Medium | No (Review) | 15 |
-| `DJZS-X01` | Execution | UNHEDGED_EXECUTION | Critical | Yes | 25 |
-| `DJZS-X02` | Execution | DATA_DEPENDENCY | High | Yes | 15 |
-| `DJZS-X03` | Execution | COMPLEXITY_EXCESS | Medium | No (Review) | 10 |
-| `DJZS-T01` | Temporal | TEMPORAL_ASSUMPTION | High | Yes | 15 |
-| `DJZS-T02` | Temporal | REGIME_BLINDNESS | Medium | No (Review) | 15 |
+| `DJZS-S01` | Structural | CIRCULAR_LOGIC | CRITICAL | Yes | 30 |
+| `DJZS-S02` | Structural | LAYER_INVERSION | HIGH | Yes | 25 |
+| `DJZS-S03` | Structural | DEPENDENCY_GHOST | MEDIUM | Review | 18 |
+| `DJZS-E01` | Epistemic | ORACLE_UNVERIFIED | HIGH | Yes | 25 |
+| `DJZS-E02` | Epistemic | CONFIDENCE_INFLATION | MEDIUM | Review | 18 |
+| `DJZS-I01` | Incentive | FOMO_LOOP | MEDIUM | Review | 16 |
+| `DJZS-I02` | Incentive | MISALIGNED_REWARD | MEDIUM | Review | 16 |
+| `DJZS-I03` | Incentive | DATA_UNVERIFIED | MEDIUM | Review | 16 |
+| `DJZS-X01` | Execution | EXECUTION_UNBOUND | CRITICAL | Yes | 15 |
+| `DJZS-X02` | Execution | RACE_CONDITION | HIGH | Yes | 9 |
+| `DJZS-T01` | Temporal | STALE_REFERENCE | LOW | No | 12 |
+
+### Universal Codes (5 MCP tool-call safety codes, max score: 100)
+
+Used by the MCP proxy (`server/mcp-proxy.ts`) for general tool-call auditing across any MCP server:
+
+| Code | Name | Severity | Weight |
+|---|---|---|---|
+| `UNAUTHORIZED_SCOPE` | Privileged op not authorized by user | CRITICAL | 25 |
+| `PARAMETER_OVERFLOW` | Params exceed declared schema bounds | HIGH | 20 |
+| `DESTRUCTIVE_UNGUARDED` | Destructive op without confirmation | CRITICAL | 25 |
+| `NO_ROLLBACK_PATH` | Irreversible action with no undo | MEDIUM | 15 |
+| `CHAIN_UNVERIFIED` | Tool output piped without verification | MEDIUM | 15 |
 
 ---
 
@@ -338,7 +367,7 @@ The `/chat` page is a wallet-gated audit interface for running paid audits again
 | Pipeline Visualization | Real-time status: signature → hash check → auditing → Irys upload → settlement |
 | ProofOfLogic Certificate | Risk score gauge, DJZS-LF failure codes, Irys certificate link, BaseScan TX link |
 
-BYOK: bring your own Venice API key for full control over AI billing. The Live Demo (`/demo`) provides a free, rate-limited preview with preloaded scenarios.
+The Live Demo (`/demo`) provides a free, rate-limited preview with preloaded scenarios.
 
 ---
 
@@ -357,12 +386,16 @@ BYOK: bring your own Venice API key for full control over AI billing. The Live D
 
 | Component | File | Purpose |
 |---|---|---|
-| Audit Engine | `server/audit-agent.ts` | Venice AI adversarial logic analysis with DJZS-LF taxonomy |
-| Irys Service | `server/irys.ts` | Permanent certificate upload with metadata tags |
+| Rule Engine | `server/engine/` | Deterministic pattern-matching LF detection (11 DJZS + 5 universal codes) |
+| Audit Agent | `server/audit-agent.ts` | Orchestrates audits via `executeAudit()`, maps engine results to certificates |
+| Payment Gate | `server/payment-gate.ts` | Payment abstraction (X402Gate, NoOpGate, CredentialedGate, DeferredGate) |
+| MCP Proxy | `server/mcp-proxy.ts` | EventEmitter-based MCP tool-call interception skeleton |
 | Payment Verifier | `server/payment-verifier.ts` | On-chain USDC verification via viem on Base Mainnet |
+| Irys Service | `server/irys.ts` | Permanent certificate upload with metadata tags |
+| Universal LF Codes | `shared/universal-lf-codes.ts` | 5 universal MCP safety codes with scoring functions |
 | OpenClaw Runner | `server/openclaw.ts` | Unified AI agent dispatcher (JournalInsight, AdversarialOracle) |
 | XMTP Agent | `server/agent.ts` | A2A encrypted listener — routes `Thinking:` / `Journal:` via XMTP MLS |
-| Venice AI Client | `server/venice.ts` | Privacy-first AI processing via Venice API |
+| Venice AI Client | `server/venice.ts` | Privacy-first AI processing for journal analysis |
 | Storage Layer | `server/storage.ts` | PostgreSQL persistence via Drizzle ORM |
 | Audit Schema | `shared/audit-schema.ts` | Tier config, DJZS-LF failure codes, Zod validation |
 | Agent Discovery | `server/routes.ts` | `/.well-known/agent.json` A2A manifest |
@@ -374,7 +407,7 @@ BYOK: bring your own Venice API key for full control over AI billing. The Live D
 | Layer | Technology |
 |---|---|
 | Compute | Phala Network TEE (Intel SGX) |
-| Intelligence | Venice AI (llama-3.3-70b, uncensored) |
+| Intelligence | DJZS Rule Engine v1.0 (deterministic) |
 | Provenance | Irys Datachain |
 | Settlement | USDC on Base Mainnet, x402 protocol |
 | Messaging | XMTP (MLS protocol, quantum-resistant) |
