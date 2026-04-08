@@ -5,7 +5,7 @@ import { detectLogicFlaws, type DetectionEngineConfig } from "./engine/claude-de
 import { DJZS_WEIGHTS } from "./engine/weights";
 import { SCHEMA_VERSION, WEIGHTS_HASH, MAX_RISK_SCORE, ALL_LF_CODES, LOGIC_FAILURE_TAXONOMY } from "@shared/audit-schema";
 import type { ProofOfLogicCertificate } from "./audit-agent";
-import type { DJZSLFCode } from "./engine/types";
+type PredictionLFCode = "S01" | "S02" | "E01" | "E02" | "I01" | "I02" | "I03" | "X01" | "X02" | "T01";
 
 export class PredictionConfigError extends Error {
   constructor(message: string) {
@@ -78,10 +78,10 @@ export async function executePredictionAudit(
       scoring_engine: "typescript/pure-function",
       anchor_target: "irys-datachain",
       settlement_chain: "base-mainnet",
-      verdict: "FAIL",
+      verdict: "INDETERMINATE",
       risk_score: 0,
       primary_flaw: "INDETERMINATE",
-      summary: "Detection engine returned an error. Verdict is INDETERMINATE — defaulting to FAIL for safety. Retry or switch engine.",
+      summary: "Detection engine returned unparseable output. Verdict is INDETERMINATE — no assertion can be made about thesis quality. Retry or switch engine.",
       flags: [{
         code: "DJZS-INDETERMINATE",
         severity: "CRITICAL",
@@ -174,8 +174,8 @@ function scoreDetectionResult(
   riskScore: number;
   firedCodes: string[];
 } {
-  const djzsCodeKeys: DJZSLFCode[] = ["S01", "S02", "E01", "E02", "I01", "I02", "I03", "X01", "X02", "T01"];
-  const fired: Array<{ code: DJZSLFCode; evidence: string }> = [];
+  const djzsCodeKeys: PredictionLFCode[] = ["S01", "S02", "E01", "E02", "I01", "I02", "I03", "X01", "X02", "T01"];
+  const fired: Array<{ code: PredictionLFCode; evidence: string }> = [];
 
   for (const code of djzsCodeKeys) {
     const entry = result[code];
@@ -217,9 +217,9 @@ function scoreDetectionResult(
 function applySourceSignalModifiers(
   result: LFDetectionResult,
   ctx: PredictionContext,
-  fired: Array<{ code: DJZSLFCode; evidence: string }>
+  fired: Array<{ code: PredictionLFCode; evidence: string }>
 ): void {
-  const hasFired = (code: DJZSLFCode) => fired.some(f => f.code === code);
+  const hasFired = (code: PredictionLFCode) => fired.some(f => f.code === code);
 
   if (ctx.source_signal === "UNDISCLOSED" && !hasFired("I01")) {
     fired.push({
