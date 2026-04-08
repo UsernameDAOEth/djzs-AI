@@ -67,6 +67,20 @@ app.use((req, res, next) => {
     console.warn("[startup] Database seeding failed (non-fatal):", (e as Error).message);
     console.warn("[startup] A2A audit endpoints will still work without database");
   }
+  const hasAnthropicKey = !!process.env.ANTHROPIC_API_KEY;
+  const hasVeniceKey = !!process.env.VENICE_API_KEY;
+  if (hasAnthropicKey) {
+    log("[prediction] ANTHROPIC_API_KEY configured — Claude engine available");
+  } else {
+    console.warn("[prediction] ANTHROPIC_API_KEY not set — Claude engine will return 503. Venice fallback available if VENICE_API_KEY is set.");
+  }
+  if (hasVeniceKey) {
+    log("[prediction] VENICE_API_KEY configured — Venice engine available");
+  }
+  if (!hasAnthropicKey && !hasVeniceKey) {
+    console.warn("[prediction] WARNING: Neither ANTHROPIC_API_KEY nor VENICE_API_KEY is set. Prediction audits will return 503 for all engines.");
+  }
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

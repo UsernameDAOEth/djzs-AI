@@ -7,6 +7,13 @@ import { SCHEMA_VERSION, WEIGHTS_HASH, MAX_RISK_SCORE, ALL_LF_CODES, LOGIC_FAILU
 import type { ProofOfLogicCertificate } from "./audit-agent";
 import type { DJZSLFCode } from "./engine/types";
 
+export class PredictionConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PredictionConfigError";
+  }
+}
+
 export interface PredictionAuditInput {
   context: PredictionContext;
   engine?: DetectionEngine;
@@ -19,6 +26,18 @@ export async function executePredictionAudit(
   const validated = PredictionContextSchema.parse(input.context);
 
   const engine: DetectionEngine = input.engine ?? "CLAUDE";
+
+  if (engine === "CLAUDE" && !process.env.ANTHROPIC_API_KEY) {
+    throw new PredictionConfigError(
+      "ANTHROPIC_API_KEY is not configured. Use engine: 'VENICE' for privacy fallback, or set the ANTHROPIC_API_KEY environment variable."
+    );
+  }
+  if (engine === "VENICE" && !process.env.VENICE_API_KEY) {
+    throw new PredictionConfigError(
+      "VENICE_API_KEY is not configured. Use engine: 'CLAUDE' with ANTHROPIC_API_KEY, or set the VENICE_API_KEY environment variable."
+    );
+  }
+
   const engineConfig: DetectionEngineConfig = { engine };
 
   const audit_id = crypto.randomUUID();
@@ -39,7 +58,7 @@ export async function executePredictionAudit(
       ? "anthropic/claude-sonnet-4@prediction-v1"
       : "venice/llama-3.3-70b@prediction-v1";
   } catch (err) {
-    console.error(`[PredictionAudit ${audit_id}] Detection engine failed:`, err);
+    console.error(`[PredictionAudit ${audit_id}] Detection engine returned unparseable result:`, err);
     isIndeterminate = true;
     detectionResult = createEmptyDetectionResult();
     detectionModel = `${engine.toLowerCase()}/error@prediction-v1`;

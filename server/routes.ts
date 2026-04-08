@@ -22,7 +22,7 @@ import { uploadAuditToIrys } from "./irys";
 import { requireEscrowSignature } from "./signature-verifier";
 import { evaluateEscrowGate } from "./escrowGate";
 import { PredictionAuditRequestSchema } from "@shared/prediction-schema";
-import { executePredictionAudit } from "./prediction-audit";
+import { executePredictionAudit, PredictionConfigError } from "./prediction-audit";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -810,6 +810,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         return res.json(response);
       } catch (error) {
+        if (error instanceof PredictionConfigError) {
+          return res.status(503).json({
+            error: "Prediction engine not available",
+            code: "DJZS-ENGINE-UNAVAILABLE",
+            domain: "PREDICTION",
+            message: error.message,
+          });
+        }
         console.error("Prediction audit failed:", error);
         return res.status(500).json({
           error: "Prediction audit execution failed",
@@ -885,6 +893,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         return res.json(response);
       } catch (error) {
+        if (error instanceof PredictionConfigError) {
+          return res.status(503).json({
+            error: "Prediction engine not available",
+            code: "DJZS-ENGINE-UNAVAILABLE",
+            domain: "PREDICTION",
+            message: error.message,
+          });
+        }
         console.error("Demo prediction audit failed:", error);
         return res.status(500).json({
           error: "Prediction audit execution failed",
