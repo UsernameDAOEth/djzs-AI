@@ -231,8 +231,7 @@ export default function Chat() {
 
     try {
       const auditType = tier === "treasury" ? "treasury" : tier === "founder" ? "founder_drift" : "general";
-      const endpoint = tier === "treasury" ? "/api/audit/treasury"
-        : tier === "founder" ? "/api/audit/founder" : "/api/audit/micro";
+      const endpoint = "/api/audit/demo";
       const userVeniceKey = getVeniceApiKey();
       const response = await fetch(endpoint, {
         method: "POST",
