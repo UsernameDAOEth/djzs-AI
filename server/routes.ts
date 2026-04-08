@@ -781,10 +781,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const irysResult = await uploadAuditToIrys(irysPayload);
 
         const agentAddr = parsed.data.agent_id || walletAddress;
-        const trustScoreResult = await postAuditChainWrite(audit as any, agentAddr, irysResult.irys_tx_id);
+        const trustScoreResult = await postAuditChainWrite(audit, agentAddr, irysResult.irys_tx_id);
 
         try {
-          const legacyLog = mapToLegacyAuditLog(audit as any, {
+          const legacyLog = mapToLegacyAuditLog(audit, {
             strategyMemo: parsed.data.context.thesis,
             auditType: "prediction",
             walletAddress: walletAddress || null,
@@ -877,7 +877,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         const irysResult = await uploadAuditToIrys({ ...audit, domain: "PREDICTION" });
-        const trustScoreResult = await postAuditChainWrite(audit as any, parsed.data.agent_id, irysResult.irys_tx_id);
+        const trustScoreResult = await postAuditChainWrite(audit, parsed.data.agent_id, irysResult.irys_tx_id);
 
         const response: any = {
           ...audit,

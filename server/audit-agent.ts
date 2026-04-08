@@ -108,6 +108,7 @@ import {
   formatResultForLog,
   getAbortTriggers,
   type EscrowContext,
+  type AdversarialAuditResult,
 } from "./adversarial-audit";
 import { readAuditPendingEvent } from "./escrow-contract";
 
@@ -418,10 +419,17 @@ export interface LegacyAuditLog {
 }
 
 export function mapToLegacyAuditLog(
-  cert: ProofOfLogicCertificate,
+  cert: Omit<ProofOfLogicCertificate, "verdict"> & { verdict: string },
   extras?: { strategyMemo?: string; auditType?: string; walletAddress?: string | null; irysTxId?: string | null }
 ): LegacyAuditLog {
-  const legacy = mapToLegacyFormat(cert);
+  const legacyInput: AdversarialAuditResult = {
+    verdict: cert.verdict === "PASS" ? "PASS" : "FAIL",
+    risk_score: cert.risk_score,
+    primary_flaw: cert.primary_flaw,
+    summary: cert.summary,
+    flags: cert.flags,
+  };
+  const legacy = mapToLegacyFormat(legacyInput);
 
   return {
     auditId: cert.audit_id,
@@ -458,7 +466,7 @@ export async function runLogicAuditAgent(
 }
 
 export async function postAuditChainWrite(
-  audit: ProofOfLogicCertificate,
+  audit: { verdict: string; risk_score: number; flags: Array<{ code: string; severity: string; [k: string]: unknown }> },
   agentAddress: string | undefined,
   irysTxId: string | null
 ): Promise<ChainWriterResult> {
