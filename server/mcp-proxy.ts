@@ -49,7 +49,6 @@ const DEFAULT_PROXY_CONFIG: MCPProxyConfig = {
 export class MCPProxy extends EventEmitter {
   private config: MCPProxyConfig;
   private engine: DJZSEngine;
-  private _currentRequestId: string | number = 0;
 
   constructor(config: Partial<MCPProxyConfig> = {}) {
     super();
@@ -75,8 +74,7 @@ export class MCPProxy extends EventEmitter {
       return this.forward(request);
     }
 
-    this._currentRequestId = request.id;
-    const auditResult = this.auditToolCall(toolCall);
+    const auditResult = this.auditToolCall(toolCall, request.id);
     this.emit("audit", auditResult);
 
     if (this.config.mode === "enforce" && auditResult.blocked) {
@@ -118,7 +116,7 @@ export class MCPProxy extends EventEmitter {
     };
   }
 
-  private auditToolCall(toolCall: ToolCall): ProxyAuditResult {
+  private auditToolCall(toolCall: ToolCall, requestId: string | number): ProxyAuditResult {
     const engineResult = this.engine.audit(toolCall);
 
     const universalFired = engineResult.firedCodes.filter(
@@ -131,7 +129,7 @@ export class MCPProxy extends EventEmitter {
     const hash = computeUniversalHash(engineResult.detections);
 
     return {
-      requestId: this._currentRequestId ?? 0,
+      requestId,
       toolName: toolCall.name,
       verdict,
       riskScore: score,

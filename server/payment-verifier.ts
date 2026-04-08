@@ -7,9 +7,9 @@ const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" as const;
 const USDC_DECIMALS = 6;
 
 const TIER_PRICES_USDC: Record<AuditTier, bigint> = {
-  micro: 2_500_000n,
-  founder: 5_000_000n,
-  treasury: 50_000_000n,
+  micro: 100_000n,
+  founder: 1_000_000n,
+  treasury: 10_000_000n,
 };
 
 const erc20TransferAbi = [
