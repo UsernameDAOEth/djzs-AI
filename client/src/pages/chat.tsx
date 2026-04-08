@@ -12,6 +12,7 @@ import {
   AlertTriangle, CheckCircle2, Upload, Database, ExternalLink,
   ChevronDown, ChevronUp, Sun, Moon, FlaskConical, BookOpen, Menu, X, Lock, Wallet
 } from "lucide-react";
+import { LOGIC_FAILURE_TAXONOMY } from "@shared/audit-schema";
 
 const DEMO_SCENARIOS = [
   {
@@ -109,9 +110,13 @@ function RiskScoreGauge({ score }: { score: number }) {
 
 function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
   const [expanded, setExpanded] = useState(false);
+  const taxonomy = LOGIC_FAILURE_TAXONOMY[flag.code as keyof typeof LOGIC_FAILURE_TAXONOMY];
   const severityColor = flag.severity === "CRITICAL" ? "text-red-500 dark:text-red-400 border-red-500/30 bg-red-500/10" :
     flag.severity === "HIGH" ? "text-orange-500 dark:text-orange-400 border-orange-500/30 bg-orange-500/10" :
-    "text-yellow-500 dark:text-yellow-400 border-yellow-500/30 bg-yellow-500/10";
+    flag.severity === "MEDIUM" ? "text-yellow-500 dark:text-yellow-400 border-yellow-500/30 bg-yellow-500/10" :
+    "text-green-500 dark:text-green-400 border-green-500/30 bg-green-500/10";
+
+  const catColor: Record<string, string> = { Structural: "text-red-400", Epistemic: "text-violet-400", Incentive: "text-orange-400", Execution: "text-pink-400", Temporal: "text-cyan-400" };
 
   return (
     <motion.div
@@ -131,7 +136,10 @@ function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
             {flag.severity}
           </span>
           <span className="font-mono text-sm text-foreground/80 font-semibold" data-testid={`text-flag-code-${index}`}>{flag.code}</span>
-          <span className="text-sm text-muted-foreground truncate hidden sm:inline">{(flag.message || "").split("—")[0]}</span>
+          <span className="text-xs text-muted-foreground truncate hidden sm:inline font-mono" data-testid={`text-flag-name-${index}`}>{taxonomy?.name || (flag.message || "").split("—")[0]}</span>
+          {taxonomy && (
+            <span className="text-xs font-mono font-bold text-foreground/60 flex-shrink-0 hidden md:inline" data-testid={`text-flag-weight-${index}`}>+{taxonomy.weight}</span>
+          )}
         </div>
         {expanded ? <ChevronUp size={16} className="text-muted-foreground flex-shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground flex-shrink-0" />}
       </button>
@@ -145,10 +153,21 @@ function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 space-y-3 border-t border-border dark:border-gray-800">
-              <div className="pt-3">
-                <div className="text-xs font-mono text-muted-foreground mb-1">MESSAGE</div>
-                <p className="text-sm text-foreground/80">{flag.message}</p>
-              </div>
+              {taxonomy && (
+                <div className="pt-3 flex flex-wrap items-center gap-2">
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-muted ${catColor[taxonomy.category] || "text-muted-foreground"}`} data-testid={`badge-flag-category-${index}`}>
+                    {taxonomy.category.toUpperCase()}
+                  </span>
+                  <span className="text-[10px] font-mono text-muted-foreground" data-testid={`text-flag-weight-detail-${index}`}>
+                    Weight: {taxonomy.weight} / 200
+                  </span>
+                </div>
+              )}
+              {taxonomy && (
+                <div>
+                  <p className="text-sm text-foreground/70" data-testid={`text-flag-description-${index}`}>{taxonomy.description}</p>
+                </div>
+              )}
               {flag.evidence && (
                 <div>
                   <div className="text-xs font-mono text-muted-foreground mb-1">EVIDENCE</div>

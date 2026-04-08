@@ -20,8 +20,6 @@ export interface LFDefinition {
   weight: number;
   severity: Severity;
   description: string;
-  riskPoints: number;
-  autoAbort: boolean;
 }
 
 export interface DetectionFlag {
@@ -49,24 +47,113 @@ export interface AuditCertificate {
   timestamp: string;
 }
 
+
 export const LOGIC_FAILURE_TAXONOMY: Record<LFCode, LFDefinition> = {
-  "DJZS-S01": { code: "DJZS-S01", name: "CIRCULAR_LOGIC",       category: "Structural", weight: 26, severity: "CRITICAL", description: "Reasoning chain references its own conclusion as premise",         riskPoints: 26, autoAbort: true },
-  "DJZS-S02": { code: "DJZS-S02", name: "LAYER_INVERSION",      category: "Structural", weight: 20, severity: "HIGH",     description: "Verification layer depends on unverified upstream data",        riskPoints: 20, autoAbort: true },
-  "DJZS-S03": { code: "DJZS-S03", name: "DEPENDENCY_GHOST",     category: "Structural", weight: 16, severity: "MEDIUM",   description: "References external dependency that cannot be resolved",        riskPoints: 16, autoAbort: false },
-  "DJZS-E01": { code: "DJZS-E01", name: "ORACLE_UNVERIFIED",    category: "Epistemic",  weight: 22, severity: "HIGH",     description: "External data source cited without provenance verification",    riskPoints: 22, autoAbort: true },
-  "DJZS-E02": { code: "DJZS-E02", name: "CONFIDENCE_INFLATION", category: "Epistemic",  weight: 16, severity: "MEDIUM",   description: "Stated certainty exceeds evidential basis",                    riskPoints: 16, autoAbort: false },
-  "DJZS-I01": { code: "DJZS-I01", name: "FOMO_LOOP",            category: "Incentive",  weight: 16, severity: "MEDIUM",   description: "Decision driven by social signal rather than verified data",    riskPoints: 16, autoAbort: false },
-  "DJZS-I02": { code: "DJZS-I02", name: "MISALIGNED_REWARD",    category: "Incentive",  weight: 14, severity: "MEDIUM",   description: "Optimization target diverges from stated objective",            riskPoints: 14, autoAbort: false },
-  "DJZS-I03": { code: "DJZS-I03", name: "DATA_UNVERIFIED",      category: "Incentive",  weight: 14, severity: "MEDIUM",   description: "Numerical claims lack verifiable source attribution",           riskPoints: 14, autoAbort: false },
-  "DJZS-X01": { code: "DJZS-X01", name: "EXECUTION_UNBOUND",    category: "Execution",  weight: 30, severity: "CRITICAL", description: "No halt condition or resource ceiling defined",                 riskPoints: 30, autoAbort: true },
-  "DJZS-X02": { code: "DJZS-X02", name: "RACE_CONDITION",       category: "Execution",  weight: 20, severity: "HIGH",     description: "Temporal dependency creates non-deterministic outcome",         riskPoints: 20, autoAbort: true },
-  "DJZS-T01": { code: "DJZS-T01", name: "STALE_REFERENCE",      category: "Temporal",   weight:  6, severity: "LOW",      description: "Data reference exceeds freshness threshold",                   riskPoints:  6, autoAbort: false },
+  // STRUCTURAL — total: 73
+  "DJZS-S01": {
+    code: "DJZS-S01",
+    name: "CIRCULAR_LOGIC",
+    category: "Structural",
+    weight: 30,
+    severity: "CRITICAL",
+    description: "Reasoning chain references its own conclusion as premise",
+  },
+  "DJZS-S02": {
+    code: "DJZS-S02",
+    name: "LAYER_INVERSION",
+    category: "Structural",
+    weight: 25,
+    severity: "HIGH",
+    description: "Verification layer depends on unverified upstream data",
+  },
+  "DJZS-S03": {
+    code: "DJZS-S03",
+    name: "DEPENDENCY_GHOST",
+    category: "Structural",
+    weight: 18,
+    severity: "MEDIUM",
+    description: "References external dependency that cannot be resolved",
+  },
+
+  // EPISTEMIC — total: 43
+  "DJZS-E01": {
+    code: "DJZS-E01",
+    name: "ORACLE_UNVERIFIED",
+    category: "Epistemic",
+    weight: 25,
+    severity: "HIGH",
+    description: "External data source cited without provenance verification",
+  },
+  "DJZS-E02": {
+    code: "DJZS-E02",
+    name: "CONFIDENCE_INFLATION",
+    category: "Epistemic",
+    weight: 18,
+    severity: "MEDIUM",
+    description: "Stated certainty exceeds evidential basis",
+  },
+
+  // INCENTIVE — total: 48
+  "DJZS-I01": {
+    code: "DJZS-I01",
+    name: "FOMO_LOOP",
+    category: "Incentive",
+    weight: 16,
+    severity: "MEDIUM",
+    description: "Decision driven by social signal rather than verified data",
+  },
+  "DJZS-I02": {
+    code: "DJZS-I02",
+    name: "MISALIGNED_REWARD",
+    category: "Incentive",
+    weight: 16,
+    severity: "MEDIUM",
+    description: "Optimization target diverges from stated objective",
+  },
+  "DJZS-I03": {
+    code: "DJZS-I03",
+    name: "DATA_UNVERIFIED",
+    category: "Incentive",
+    weight: 16,
+    severity: "MEDIUM",
+    description: "Numerical claims lack verifiable source attribution",
+  },
+
+  // EXECUTION — total: 24
+  "DJZS-X01": {
+    code: "DJZS-X01",
+    name: "EXECUTION_UNBOUND",
+    category: "Execution",
+    weight: 15,
+    severity: "CRITICAL",
+    description: "No halt condition or resource ceiling defined",
+  },
+  "DJZS-X02": {
+    code: "DJZS-X02",
+    name: "RACE_CONDITION",
+    category: "Execution",
+    weight: 9,
+    severity: "HIGH",
+    description: "Temporal dependency creates non-deterministic outcome",
+  },
+
+  // TEMPORAL — total: 12
+  "DJZS-T01": {
+    code: "DJZS-T01",
+    name: "STALE_REFERENCE",
+    category: "Temporal",
+    weight: 12,
+    severity: "LOW",
+    description: "Data reference exceeds freshness threshold",
+  },
 } as const;
 
+
 export const MAX_RISK_SCORE = Object.values(LOGIC_FAILURE_TAXONOMY)
-  .reduce((sum, def) => sum + def.weight, 0);
+  .reduce((sum, def) => sum + def.weight, 0); // = 200 — DO NOT CHANGE without governance
 
 export const ALL_LF_CODES = Object.keys(LOGIC_FAILURE_TAXONOMY) as LFCode[];
+
 export const VALID_FAILURE_CODES = ALL_LF_CODES;
 
 export const SCHEMA_VERSION = "DJZS-LF-v1.0";
@@ -78,9 +165,6 @@ if (MAX_RISK_SCORE !== 200) {
   );
 }
 
-export const AUTO_ABORT_CODES = VALID_FAILURE_CODES.filter(
-  code => LOGIC_FAILURE_TAXONOMY[code].autoAbort
-);
 
 function sha256(input: string): string {
   const K = [
@@ -152,6 +236,7 @@ export const WEIGHTS_HASH: string = sha256(
   )
 );
 
+
 export function calculateRiskScore(flags: DetectionResult): number {
   return Object.entries(flags)
     .filter(([_, v]) => (v as DetectionFlag).present)
@@ -183,6 +268,7 @@ export function computeVerdictHash(
   return sha256(hashInput);
 }
 
+
 export interface VerdictInput {
   flags: DetectionResult;
   threshold: number;
@@ -197,7 +283,7 @@ export function computeVerdict(input: VerdictInput): AuditCertificate {
   const verdict = determineVerdict(riskScore, threshold);
   const logicHash = computeVerdictHash(flags, riskScore);
 
-  const failureFlags = ALL_LF_CODES.filter((code) => flags[code]?.present);
+  const failureFlags = ALL_LF_CODES.filter((code) => flags[code]?.present).sort();
 
   return {
     audit_id: auditId,
@@ -217,6 +303,7 @@ export function computeVerdict(input: VerdictInput): AuditCertificate {
     timestamp: new Date().toISOString(),
   };
 }
+
 
 export const detectionFlagSchema = z.object({
   present: z.boolean(),
@@ -246,6 +333,7 @@ export const auditCertificateSchema = z.object({
   timestamp: z.string(),
 });
 
+
 export const auditTierSchema = z.enum(["micro", "founder", "treasury"]);
 export type AuditTier = z.infer<typeof auditTierSchema>;
 
@@ -273,76 +361,6 @@ export const TIER_CONFIG = {
   },
 } as const;
 
-export type SeverityType = Severity;
-
-export const Verdict = {
-  PASS: "PASS",
-  FAIL: "FAIL",
-} as const;
-
-export type VerdictType = typeof Verdict[keyof typeof Verdict];
-
-export const logicFailureCodeSchema = z.enum(ALL_LF_CODES as [string, ...string[]]);
-
-export const auditFlagSeveritySchema = z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL", "INFO"]);
-export type AuditFlagSeverity = z.infer<typeof auditFlagSeveritySchema>;
-
-export const auditFlagSchema = z.object({
-  code: z.string(),
-  severity: auditFlagSeveritySchema,
-  message: z.string().optional(),
-  evidence: z.string().optional(),
-  recommendation: z.string().optional(),
-  description: z.string().optional(),
-});
-export type AuditFlag = z.infer<typeof auditFlagSchema>;
-
-export const verdictSchema = z.enum(["PASS", "FAIL"]);
-
-export const auditResultSchema = z.object({
-  verdict: verdictSchema,
-  risk_score: z.number().min(0).max(200),
-  flags: z.array(auditFlagSchema),
-  primary_flaw: z.string(),
-  summary: z.string(),
-});
-
-export const escrowContextSchema = z.object({
-  escrow_id: z.number().int().positive(),
-  amount: z.number(),
-  tier: z.string(),
-  creator: z.string().optional(),
-  recipient: z.string().optional(),
-});
-
-export const djzsLogicAuditSchema = z.object({
-  audit_id: z.string().uuid(),
-  timestamp: z.string().datetime(),
-  tier: auditTierSchema,
-  risk_score: z.number().min(0).max(200),
-  verdict: verdictSchema,
-  primary_bias_detected: z.enum([
-    "FOMO",
-    "Sunk_Cost",
-    "Narrative_Reaction",
-    "Authority_Bias",
-    "Confirmation_Bias",
-    "Recency_Bias",
-    "None",
-  ]).optional(),
-  primary_flaw: z.string().optional(),
-  summary: z.string().optional(),
-  flags: z.array(auditFlagSchema).default([]),
-  logic_flaws: z.array(z.object({
-    flaw_type: z.string(),
-    severity: z.enum(["low", "medium", "high", "critical"]),
-    explanation: z.string(),
-  })).optional(),
-  structural_recommendations: z.array(z.string()).optional(),
-  cryptographic_hash: z.string(),
-});
-
-export type DJZSLogicAudit = z.infer<typeof djzsLogicAuditSchema>;
 
 export const tradeParamsSchema = z.object({
   protocol: z.string().optional(),
@@ -356,6 +374,14 @@ export const tradeParamsSchema = z.object({
   timeframe: z.string().optional(),
 });
 export type TradeParams = z.infer<typeof tradeParamsSchema>;
+
+export const escrowContextSchema = z.object({
+  escrow_id: z.number().int().positive(),
+  amount: z.number(),
+  tier: z.string(),
+  creator: z.string().optional(),
+  recipient: z.string().optional(),
+});
 
 export const auditRequestSchema = z.object({
   strategy_memo: z.string().min(20, "Strategy memo must be at least 20 characters"),
@@ -392,38 +418,6 @@ export function createTieredRequestSchema(tier: AuditTier) {
   return base;
 }
 
-export function shouldAutoAbort(code: string): boolean {
-  return AUTO_ABORT_CODES.includes(code as LogicFailureCode);
-}
-
-export function hasAutoAbortFlags(flags: AuditFlag[]): boolean {
-  return flags.some(flag => shouldAutoAbort(flag.code));
-}
-
-export function getRiskPoints(code: string): number {
-  const def = LOGIC_FAILURE_TAXONOMY[code as LogicFailureCode];
-  return def?.weight ?? 0;
-}
-
-export function calculateLegacyRiskScore(flags: AuditFlag[]): number {
-  if (flags.length === 0) return 0;
-  return flags.reduce((sum, flag) => sum + getRiskPoints(flag.code), 0);
-}
-
-export function determineLegacyVerdict(flags: AuditFlag[], riskScore: number): VerdictType {
-  if (hasAutoAbortFlags(flags)) return Verdict.FAIL;
-  if (riskScore >= 60) return Verdict.FAIL;
-  const hasCriticalOrHigh = flags.some(f =>
-    f.severity === "CRITICAL" || f.severity === "HIGH"
-  );
-  if (hasCriticalOrHigh) return Verdict.FAIL;
-  return Verdict.PASS;
-}
-
-export function getFailureDefinition(code: string) {
-  return LOGIC_FAILURE_TAXONOMY[code as LogicFailureCode] ?? null;
-}
-
 export const escrowAuditRequestSchema = z.object({
   escrow_id: z.number().int().positive(),
   escrow_tx_hash: z.string().regex(/^0x[0-9a-fA-F]+$/, "Must be a valid hex string"),
@@ -441,3 +435,56 @@ export function validateMemoLength(memo: string, tier: AuditTier): boolean {
   if (config.maxMemoLength === Infinity) return true;
   return memo.length <= config.maxMemoLength;
 }
+
+
+export const auditFlagSeveritySchema = z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL", "INFO"]);
+export type AuditFlagSeverity = z.infer<typeof auditFlagSeveritySchema>;
+
+export const auditFlagSchema = z.object({
+  code: z.string(),
+  severity: auditFlagSeveritySchema,
+  message: z.string().optional(),
+  evidence: z.string().optional(),
+  recommendation: z.string().optional(),
+  description: z.string().optional(),
+});
+export type AuditFlag = z.infer<typeof auditFlagSchema>;
+
+export const verdictSchema = z.enum(["PASS", "FAIL"]);
+
+export const auditResultSchema = z.object({
+  verdict: verdictSchema,
+  risk_score: z.number().min(0).max(200),
+  flags: z.array(auditFlagSchema),
+  primary_flaw: z.string(),
+  summary: z.string(),
+});
+
+export const djzsLogicAuditSchema = z.object({
+  audit_id: z.string().uuid(),
+  timestamp: z.string().datetime(),
+  tier: auditTierSchema,
+  risk_score: z.number().min(0).max(200),
+  verdict: verdictSchema,
+  primary_bias_detected: z.enum([
+    "FOMO",
+    "Sunk_Cost",
+    "Narrative_Reaction",
+    "Authority_Bias",
+    "Confirmation_Bias",
+    "Recency_Bias",
+    "None",
+  ]).optional(),
+  primary_flaw: z.string().optional(),
+  summary: z.string().optional(),
+  flags: z.array(auditFlagSchema).default([]),
+  logic_flaws: z.array(z.object({
+    flaw_type: z.string(),
+    severity: z.enum(["low", "medium", "high", "critical"]),
+    explanation: z.string(),
+  })).optional(),
+  structural_recommendations: z.array(z.string()).optional(),
+  cryptographic_hash: z.string(),
+});
+
+export type DJZSLogicAudit = z.infer<typeof djzsLogicAuditSchema>;

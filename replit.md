@@ -48,17 +48,17 @@ Preferred communication style: Simple, everyday language.
   - **TRACE**: Identify who benefits financially/strategically from the proposed action.
   - **CLASSIFY**: Evaluate against 11 DJZS-LF v1.0 codes; output risk_score (0-200, sum of flag weights) + flags array; diagnosis only, no fix advice.
 - **DJZS-LF v1.0 Failure Taxonomy** (defined in `shared/audit-schema.ts`, weights sum to 200):
-  - `DJZS-S01` CIRCULAR_LOGIC (26pts, CRITICAL) — Reasoning chain references its own conclusion as premise.
-  - `DJZS-S02` LAYER_INVERSION (20pts, HIGH) — Verification layer depends on unverified upstream data.
-  - `DJZS-S03` DEPENDENCY_GHOST (16pts, MEDIUM) — References external dependency that cannot be resolved.
-  - `DJZS-E01` ORACLE_UNVERIFIED (22pts, HIGH) — External data source cited without provenance verification.
-  - `DJZS-E02` CONFIDENCE_INFLATION (16pts, MEDIUM) — Stated certainty exceeds evidential basis.
+  - `DJZS-S01` CIRCULAR_LOGIC (30pts, CRITICAL) — Reasoning chain references its own conclusion as premise.
+  - `DJZS-S02` LAYER_INVERSION (25pts, HIGH) — Verification layer depends on unverified upstream data.
+  - `DJZS-S03` DEPENDENCY_GHOST (18pts, MEDIUM) — References external dependency that cannot be resolved.
+  - `DJZS-E01` ORACLE_UNVERIFIED (25pts, HIGH) — External data source cited without provenance verification.
+  - `DJZS-E02` CONFIDENCE_INFLATION (18pts, MEDIUM) — Stated certainty exceeds evidential basis.
   - `DJZS-I01` FOMO_LOOP (16pts, MEDIUM) — Decision driven by social signal rather than verified data.
-  - `DJZS-I02` MISALIGNED_REWARD (14pts, MEDIUM) — Optimization target diverges from stated objective.
-  - `DJZS-I03` DATA_UNVERIFIED (14pts, MEDIUM) — Numerical claims lack verifiable source attribution.
-  - `DJZS-X01` EXECUTION_UNBOUND (30pts, CRITICAL) — No halt condition or resource ceiling defined.
-  - `DJZS-X02` RACE_CONDITION (20pts, HIGH) — Temporal dependency creates non-deterministic outcome.
-  - `DJZS-T01` STALE_REFERENCE (6pts, LOW) — Data reference exceeds freshness threshold.
+  - `DJZS-I02` MISALIGNED_REWARD (16pts, MEDIUM) — Optimization target diverges from stated objective.
+  - `DJZS-I03` DATA_UNVERIFIED (16pts, MEDIUM) — Numerical claims lack verifiable source attribution.
+  - `DJZS-X01` EXECUTION_UNBOUND (15pts, CRITICAL) — No halt condition or resource ceiling defined.
+  - `DJZS-X02` RACE_CONDITION (9pts, HIGH) — Temporal dependency creates non-deterministic outcome.
+  - `DJZS-T01` STALE_REFERENCE (12pts, LOW) — Data reference exceeds freshness threshold.
 - **Deterministic Rule Engine** (`server/engine/`):
   - `DJZSEngine` class — pure TypeScript pattern-matching rule engine replacing Venice AI for LF code detection. Zero external API calls, fully reproducible inside TEE (Phala CVM).
   - 11 DJZS detectors (`server/engine/detectors/`) + 5 universal detectors for general MCP tool call safety

@@ -15,13 +15,14 @@ import {
   type VerdictInput,
 } from "../shared/audit-schema";
 
+
 function makeFlags(presentCodes: LFCode[]): DetectionResult {
   const flags: Partial<DetectionResult> = {};
   for (const code of ALL_LF_CODES) {
     flags[code] = {
       present: presentCodes.includes(code),
       evidence: presentCodes.includes(code)
-        ? `Evidence for ${code} — run ${Math.random()}`
+        ? `Evidence for ${code} — run ${Math.random()}`  // intentionally randomized
         : null,
     };
   }
@@ -37,15 +38,19 @@ function makeInput(presentCodes: LFCode[], threshold = 60): VerdictInput {
   };
 }
 
+// Generate 50 distinct flag combinations
 function generateTestCases(): { label: string; codes: LFCode[] }[] {
   const cases: { label: string; codes: LFCode[] }[] = [];
 
+  // Case 0: no flags
   cases.push({ label: "empty — no flags", codes: [] });
 
+  // Cases 1-11: each individual code
   for (const code of ALL_LF_CODES) {
     cases.push({ label: `single — ${code}`, codes: [code] });
   }
 
+  // Cases 12-16: category groups
   const categories: Record<string, LFCode[]> = {};
   for (const [code, def] of Object.entries(LOGIC_FAILURE_TAXONOMY)) {
     if (!categories[def.category]) categories[def.category] = [];
@@ -55,8 +60,10 @@ function generateTestCases(): { label: string; codes: LFCode[] }[] {
     cases.push({ label: `category — all ${cat}`, codes });
   }
 
+  // Case 17: all flags
   cases.push({ label: "all flags present", codes: [...ALL_LF_CODES] });
 
+  // Cases 18-30: random pairs
   for (let i = 0; i < 13; i++) {
     const a = ALL_LF_CODES[i % ALL_LF_CODES.length];
     const b = ALL_LF_CODES[(i + 3) % ALL_LF_CODES.length];
@@ -65,6 +72,7 @@ function generateTestCases(): { label: string; codes: LFCode[] }[] {
     }
   }
 
+  // Cases 31-40: random triples
   for (let i = 0; i < 10; i++) {
     const a = ALL_LF_CODES[i % ALL_LF_CODES.length];
     const b = ALL_LF_CODES[(i + 2) % ALL_LF_CODES.length];
@@ -73,6 +81,7 @@ function generateTestCases(): { label: string; codes: LFCode[] }[] {
     cases.push({ label: `triple — ${unique.join(" + ")}`, codes: unique });
   }
 
+  // Cases 41-45: severity-based groups
   const bySeverity: Record<string, LFCode[]> = {};
   for (const [code, def] of Object.entries(LOGIC_FAILURE_TAXONOMY)) {
     if (!bySeverity[def.severity]) bySeverity[def.severity] = [];
@@ -82,12 +91,13 @@ function generateTestCases(): { label: string; codes: LFCode[] }[] {
     cases.push({ label: `severity — all ${sev}`, codes });
   }
 
-  cases.push({ label: "below-threshold combo (I01+I02+I03+T01=50 PASS)", codes: ["DJZS-I01", "DJZS-I02", "DJZS-I03", "DJZS-T01"] });
-  cases.push({ label: "well-below-threshold combo (S01+X02=46 PASS)", codes: ["DJZS-S01", "DJZS-X02"] });
-  cases.push({ label: "below-threshold combo (S01+S02+T01=52 PASS)", codes: ["DJZS-S01", "DJZS-S02", "DJZS-T01"] });
-  cases.push({ label: "above-threshold combo (S01+S02+S03=62 FAIL)", codes: ["DJZS-S01", "DJZS-S02", "DJZS-S03"] });
+  // Cases 46-49: threshold edge cases
+  cases.push({ label: "just-under-threshold combo", codes: ["DJZS-T01", "DJZS-I01"] }); // 12+16=28 < 60
+  cases.push({ label: "execution-pair combo", codes: ["DJZS-X02", "DJZS-X01"] }); // 9+15=24
+  cases.push({ label: "just-over-threshold combo", codes: ["DJZS-S01", "DJZS-S02", "DJZS-T01"] }); // 30+25+12=67
   cases.push({ label: "max-minus-one code", codes: ALL_LF_CODES.slice(0, -1) });
 
+  // Pad to exactly 50
   while (cases.length < 50) {
     const idx = cases.length;
     const c1 = ALL_LF_CODES[idx % ALL_LF_CODES.length];
@@ -97,6 +107,7 @@ function generateTestCases(): { label: string; codes: LFCode[] }[] {
 
   return cases.slice(0, 50);
 }
+
 
 describe("DJZS-LF Taxonomy Invariants", () => {
   it("weights sum to exactly 200", () => {
@@ -130,10 +141,11 @@ describe("DJZS-LF Taxonomy Invariants", () => {
       catTotals[def.category] = (catTotals[def.category] || 0) + def.weight;
     }
     const sorted = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
-    expect(sorted[0][0]).toBe("Structural");
-    expect(sorted[sorted.length - 1][0]).toBe("Temporal");
+    expect(sorted[0][0]).toBe("Structural"); // 73
+    expect(sorted[sorted.length - 1][0]).toBe("Temporal"); // 12
   });
 });
+
 
 describe("calculateRiskScore — pure", () => {
   it("returns 0 for no flags", () => {
@@ -172,6 +184,7 @@ describe("determineVerdict — pure", () => {
   });
 });
 
+
 describe("computeVerdict — determinism across runs", () => {
   const testCases = generateTestCases();
   const RUNS = 10;
@@ -202,6 +215,7 @@ describe("computeVerdict — determinism across runs", () => {
     });
   }
 });
+
 
 describe("computeVerdictHash — evidence excluded", () => {
   it("same flags with different evidence produce same hash", () => {
@@ -234,6 +248,7 @@ describe("computeVerdictHash — evidence excluded", () => {
     expect(hash).toMatch(/^0x[0-9a-f]{64}$/);
   });
 });
+
 
 describe("computeVerdict — certificate fields", () => {
   it("includes all provenance fields", () => {
