@@ -21,6 +21,8 @@ import { verifyUsdcPayment } from "./payment-verifier";
 import { uploadAuditToIrys } from "./irys";
 import { requireEscrowSignature } from "./signature-verifier";
 import { evaluateEscrowGate } from "./escrowGate";
+import { PredictionAuditRequestSchema } from "@shared/prediction-schema";
+import { executePredictionAudit } from "./prediction-audit";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -743,10 +745,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  app.post("/api/audit/micro", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
+  const predictionMicroHandler = async (req: any, res: any) => {
+    if (req.body?.domain === "PREDICTION") {
+      try {
+        const walletAddress = req.headers['x-wallet-address'] as string | undefined;
+        const parsed = PredictionAuditRequestSchema.safeParse(req.body);
+
+        if (!parsed.success) {
+          return res.status(400).json({
+            error: "Invalid prediction audit request",
+            zone: "The Micro-Zone",
+            domain: "PREDICTION",
+            details: parsed.error.errors,
+          });
+        }
+
+        const audit = await executePredictionAudit({
+          context: parsed.data.context,
+          engine: parsed.data.engine,
+          agent_id: parsed.data.agent_id,
+        });
+
+        const irysPayload: Record<string, any> = {
+          ...audit,
+          domain: "PREDICTION",
+          prediction_context: {
+            market_question: parsed.data.context.market_question,
+            market_id: parsed.data.context.market_id,
+            category: parsed.data.context.category,
+            position: parsed.data.context.position,
+            entry_price: parsed.data.context.entry_price,
+            source_signal: parsed.data.context.source_signal,
+          },
+        };
+        const irysResult = await uploadAuditToIrys(irysPayload);
+
+        const agentAddr = parsed.data.agent_id || walletAddress;
+        const trustScoreResult = await postAuditChainWrite(audit, agentAddr, irysResult.irys_tx_id);
+
+        try {
+          const legacyLog = mapToLegacyAuditLog(audit, {
+            strategyMemo: parsed.data.context.thesis,
+            auditType: "prediction",
+            walletAddress: walletAddress || null,
+            irysTxId: irysResult.irys_tx_id,
+          });
+          await storage.createAuditLog(legacyLog);
+        } catch (dbError) {
+          console.error("Failed to persist prediction audit log:", dbError);
+        }
+
+        const response: Record<string, any> = {
+          ...audit,
+          domain: "PREDICTION",
+          provenance_provider: "IRYS_DATACHAIN",
+          irys_tx_id: irysResult.irys_tx_id,
+          irys_url: irysResult.irys_url,
+          ...(trustScoreResult.trust_score_tx_hash && { trust_score_tx_hash: trustScoreResult.trust_score_tx_hash }),
+          ...(trustScoreResult.trust_score_error && { trust_score_error: trustScoreResult.trust_score_error }),
+        };
+        if (irysResult.irys_error) {
+          response.irys_error = irysResult.irys_error;
+        }
+
+        return res.json(response);
+      } catch (error) {
+        console.error("Prediction audit failed:", error);
+        return res.status(500).json({
+          error: "Prediction audit execution failed",
+          zone: "The Micro-Zone",
+          domain: "PREDICTION",
+          message: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    return createTierHandler("micro")(req, res);
+  };
+
+  app.post("/api/audit/micro", createVerifiedPaymentGate("micro"), predictionMicroHandler);
   app.post("/api/audit/founder", createVerifiedPaymentGate("founder"), createTierHandler("founder"));
   app.post("/api/audit/treasury", createVerifiedPaymentGate("treasury"), createTierHandler("treasury"));
-  app.post("/api/audit", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
+  app.post("/api/audit", createVerifiedPaymentGate("micro"), predictionMicroHandler);
 
   const demoRateLimit = new Map<string, number>();
   app.post("/api/audit/demo", async (req: any, res) => {
@@ -769,6 +849,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const DEMO_AGENT_ADDRESS = "0x000000000000000000000000000000000000dea0";
     if (!req.body.agent_id) {
       req.body.agent_id = DEMO_AGENT_ADDRESS;
+    }
+
+    if (req.body?.domain === "PREDICTION") {
+      const parsed = PredictionAuditRequestSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          error: "Invalid prediction audit request",
+          domain: "PREDICTION",
+          details: parsed.error.errors,
+        });
+      }
+
+      try {
+        const audit = await executePredictionAudit({
+          context: parsed.data.context,
+          engine: parsed.data.engine,
+          agent_id: parsed.data.agent_id,
+        });
+
+        const irysResult = await uploadAuditToIrys({ ...audit, domain: "PREDICTION" });
+        const trustScoreResult = await postAuditChainWrite(audit, parsed.data.agent_id, irysResult.irys_tx_id);
+
+        const response: any = {
+          ...audit,
+          domain: "PREDICTION",
+          provenance_provider: "IRYS_DATACHAIN",
+          irys_tx_id: irysResult.irys_tx_id,
+          irys_url: irysResult.irys_url,
+          ...(trustScoreResult.trust_score_tx_hash && { trust_score_tx_hash: trustScoreResult.trust_score_tx_hash }),
+          ...(trustScoreResult.trust_score_error && { trust_score_error: trustScoreResult.trust_score_error }),
+        };
+        if (irysResult.irys_error) {
+          response.irys_error = irysResult.irys_error;
+        }
+        return res.json(response);
+      } catch (error) {
+        console.error("Demo prediction audit failed:", error);
+        return res.status(500).json({
+          error: "Prediction audit execution failed",
+          domain: "PREDICTION",
+          message: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
     }
 
     const demoSchema = z.object({

@@ -87,6 +87,17 @@ Preferred communication style: Simple, everyday language.
   - Uses `DJZSEngine` with `codeSets: ["universal"]` for tool-call auditing
   - Emits `audit`, `blocked`, `modeChange` events
   - Not wired to any route — skeleton only for future MCP proxy deployment
+- **Prediction Market Vertical** (`shared/prediction-schema.ts`, `server/prediction-audit.ts`, `server/engine/claude-detector.ts`):
+  - Domain: `"PREDICTION"` discriminator on `/api/audit/micro` and `/api/audit/demo` endpoints
+  - NOT a new tier — extends Micro Zone with prediction-specific context (`PredictionContext`: market_question, thesis, position, entry_price, size_usdc, source_signal, category, market_id, evidence_urls)
+  - Detection engine: Claude Sonnet 4 via Anthropic API (primary), Venice LLM as privacy fallback (`engine: "CLAUDE" | "VENICE"`)
+  - Claude/Venice return boolean LF flags per code; scoring remains fully deterministic in TypeScript
+  - Source signal modifiers: `UNDISCLOSED`/`PAID_SIGNAL_GROUP` auto-flag I01, `WHALE_TRACKING` auto-flags S01, extreme entry prices (>0.90/<0.10) trigger I03 check
+  - INDETERMINATE handling: if detection engine fails/returns invalid JSON, verdict defaults to FAIL (never false PASS) with `DJZS-INDETERMINATE` flag
+  - `PredictionAuditRequestSchema` validates incoming requests; rejects malformed payloads with detailed Zod errors
+  - Output: standard `ProofOfLogicCertificate` with `domain: "PREDICTION"` tag, uploaded to Irys with prediction_context metadata
+  - Polymarket CLOB proxy interceptor interface defined but not wired (future task)
+  - Requires `ANTHROPIC_API_KEY` env var for Claude engine; Venice fallback uses existing `VENICE_API_KEY`
 - **Scoring**: Deterministic — rule engine detects boolean flags via pattern matching, scoring is pure function of weights. Max score 200. FAIL threshold: risk_score ≥ 60 OR any CRITICAL flag. Pure-JS SHA-256 for browser compatibility.
 - **Adversarial Audit Module** (`server/adversarial-audit.ts`):
   - Full `ADVERSARIAL_AUDIT_PROMPT` with expanded DJZS-LF taxonomy, deterministic verdict rules, and risk score calculation (retained for reference/prompt engineering)
@@ -183,7 +194,8 @@ Preferred communication style: Simple, everyday language.
 - **Config File**: `.djzs.json` (created by `djzs init`) stores agent_id, api_url, default_tier, default_channel
 
 ## External Dependencies
-- **Venice AI**: Privacy-first AI processing via `VeniceClient` class (`server/venice.ts`). Supports 5 adversarial personas (`logic_auditor`, `regime_detector`, `backtest_skeptic`, `risk_hunter`, `general`) with per-persona model routing: `regime_detector` → `qwen3-235b`, `backtest_skeptic` → `deepseek-r1`, others → `llama-3.3-70b`. Singleton via `getVeniceClient()`, per-request API key override supported. Journal analysis (`analyzeJournalEntry`) preserved for backward compat. Base URL configurable via VENICE_BASE_URL.
+- **Venice AI**: Privacy-first AI processing via `VeniceClient` class (`server/venice.ts`). Supports 5 adversarial personas (`logic_auditor`, `regime_detector`, `backtest_skeptic`, `risk_hunter`, `general`) with per-persona model routing: `regime_detector` → `qwen3-235b`, `backtest_skeptic` → `deepseek-r1`, others → `llama-3.3-70b`. Singleton via `getVeniceClient()`, per-request API key override supported. Journal analysis (`analyzeJournalEntry`) preserved for backward compat. Base URL configurable via VENICE_BASE_URL. Also serves as privacy fallback for prediction market audits.
+- **Anthropic SDK** (`@anthropic-ai/sdk`): Used by prediction market vertical for Claude Sonnet LF detection. Requires `ANTHROPIC_API_KEY` env var.
 - **RainbowKit**: Wallet connection UI.
 - **wagmi/viem**: Blockchain interactions.
 - **Zod**: Schema validation.
