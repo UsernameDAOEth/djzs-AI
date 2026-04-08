@@ -5,7 +5,12 @@ import { detectLogicFlaws, type DetectionEngineConfig } from "./engine/claude-de
 import { DJZS_WEIGHTS } from "./engine/weights";
 import { SCHEMA_VERSION, WEIGHTS_HASH, MAX_RISK_SCORE, ALL_LF_CODES, LOGIC_FAILURE_TAXONOMY } from "@shared/audit-schema";
 import type { ProofOfLogicCertificate } from "./audit-agent";
+
 type PredictionLFCode = "S01" | "S02" | "E01" | "E02" | "I01" | "I02" | "I03" | "X01" | "X02" | "T01";
+
+export type PredictionCertificate = Omit<ProofOfLogicCertificate, "verdict"> & {
+  verdict: "PASS" | "FAIL" | "INDETERMINATE";
+};
 
 export class PredictionConfigError extends Error {
   constructor(message: string) {
@@ -22,7 +27,7 @@ export interface PredictionAuditInput {
 
 export async function executePredictionAudit(
   input: PredictionAuditInput
-): Promise<ProofOfLogicCertificate> {
+): Promise<PredictionCertificate> {
   const validated = PredictionContextSchema.parse(input.context);
 
   const engine: DetectionEngine = input.engine ?? "CLAUDE";
@@ -65,7 +70,7 @@ export async function executePredictionAudit(
   }
 
   if (isIndeterminate) {
-    const certificate: ProofOfLogicCertificate = {
+    const certificate: PredictionCertificate = {
       audit_id,
       timestamp,
       tier: "micro",
@@ -129,7 +134,7 @@ export async function executePredictionAudit(
       : `Minor observations detected (${firedCodes.length} code${firedCodes.length > 1 ? "s" : ""}). Thesis passes with observations.`
     : `${firedCodes.length} logic failure${firedCodes.length > 1 ? "s" : ""} detected (risk_score=${riskScore}). Thesis fails audit.`;
 
-  const certificate: ProofOfLogicCertificate = {
+  const certificate: PredictionCertificate = {
     audit_id,
     timestamp,
     tier: "micro",

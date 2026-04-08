@@ -7,7 +7,7 @@ import {
 import { type AuditTier, SCHEMA_VERSION, WEIGHTS_HASH, MAX_RISK_SCORE, ALL_LF_CODES, LOGIC_FAILURE_TAXONOMY } from "@shared/audit-schema";
 
 export interface AuditResult {
-  verdict: "PASS" | "FAIL" | "INDETERMINATE";
+  verdict: "PASS" | "FAIL";
   risk_score: number;
   primary_flaw: string;
   summary: string;

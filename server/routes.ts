@@ -22,7 +22,7 @@ import { uploadAuditToIrys } from "./irys";
 import { requireEscrowSignature } from "./signature-verifier";
 import { evaluateEscrowGate } from "./escrowGate";
 import { PredictionAuditRequestSchema } from "@shared/prediction-schema";
-import { executePredictionAudit, PredictionConfigError } from "./prediction-audit";
+import { executePredictionAudit, PredictionConfigError, type PredictionCertificate } from "./prediction-audit";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -781,10 +781,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const irysResult = await uploadAuditToIrys(irysPayload);
 
         const agentAddr = parsed.data.agent_id || walletAddress;
-        const trustScoreResult = await postAuditChainWrite(audit, agentAddr, irysResult.irys_tx_id);
+        const trustScoreResult = await postAuditChainWrite(audit as any, agentAddr, irysResult.irys_tx_id);
 
         try {
-          const legacyLog = mapToLegacyAuditLog(audit, {
+          const legacyLog = mapToLegacyAuditLog(audit as any, {
             strategyMemo: parsed.data.context.thesis,
             auditType: "prediction",
             walletAddress: walletAddress || null,
@@ -877,7 +877,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         const irysResult = await uploadAuditToIrys({ ...audit, domain: "PREDICTION" });
-        const trustScoreResult = await postAuditChainWrite(audit, parsed.data.agent_id, irysResult.irys_tx_id);
+        const trustScoreResult = await postAuditChainWrite(audit as any, parsed.data.agent_id, irysResult.irys_tx_id);
 
         const response: any = {
           ...audit,
