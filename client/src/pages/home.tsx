@@ -249,9 +249,7 @@ function TypewriterHeadline({ text }: { text: string }) {
 function Hero({ bootDone }: { bootDone: boolean }) {
   return (
     <section style={{ padding: "80px 0 60px", maxWidth: 1000 }} data-testid="section-hero">
-      {!bootDone ? (
-        <BootSequence onComplete={() => {}} />
-      ) : (
+      {bootDone && (
         <div style={{ animation: "fadeIn 0.6s ease" }}>
           <TypewriterHeadline text="Audit-Before-Act." />
           <h2
@@ -961,6 +959,8 @@ function Footer() {
 }
 
 export default function Home() {
+  const [bootDone, setBootDone] = useState(false);
+
   return (
     <>
       <style>{`
@@ -991,8 +991,8 @@ export default function Home() {
         }}
       >
         <Nav />
-        <BootSequence onComplete={() => {}} />
-        <Hero bootDone={true} />
+        {!bootDone && <BootSequence onComplete={() => setBootDone(true)} />}
+        <Hero bootDone={bootDone} />
         <LFTaxonomy />
         <InteractiveDemo />
         <Pricing />
