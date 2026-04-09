@@ -92,10 +92,13 @@ Preferred communication style: Simple, everyday language.
   - NOT a new tier — extends Micro Zone with prediction-specific context (`PredictionContext`: market_question, thesis, position, entry_price, size_usdc, source_signal, category, market_id, evidence_urls)
   - Detection engine: Claude Sonnet 4 via Anthropic API (primary), Venice LLM as privacy fallback (`engine: "CLAUDE" | "VENICE"`)
   - Claude/Venice return boolean LF flags per code; scoring remains fully deterministic in TypeScript
-  - Source signal modifiers: `UNDISCLOSED`/`PAID_SIGNAL_GROUP` auto-flag I01, `WHALE_TRACKING` auto-flags S01, extreme entry prices (>0.90/<0.10) trigger I03 check
-  - INDETERMINATE handling: if detection engine fails/returns invalid JSON, verdict defaults to FAIL (never false PASS) with `DJZS-INDETERMINATE` flag
+  - Source signal modifiers: `UNDISCLOSED`/`PAID_SIGNAL_GROUP` auto-flag I01, `WHALE_TRACKING` auto-flags S01, extreme entry prices (>0.90/<0.10) trigger I03 check with tail-risk term detection
+  - Hard-fail rules (prediction-specific, fire after scoring, override verdict): `E02_REQUIRED` (thesis must state falsification criteria — E02 detected → forced FAIL), `I01_UNDISCLOSED` (UNDISCLOSED source + I01 detected → forced FAIL). Certificate includes `hard_fail_rules: string[]` and `verdict_source: "HARD_FAIL" | "SCORE"`
+  - E02 guardrail: deterministically flags any thesis missing falsification terms (falsif, prove me wrong, invalidat, disprove, would fail if, thesis breaks if, wrong if) regardless of evidence URLs or thesis length
+  - INDETERMINATE handling: if detection engine fails/returns invalid JSON, verdict defaults to INDETERMINATE (never false PASS) with `DJZS-INDETERMINATE` flag
   - `PredictionAuditRequestSchema` validates incoming requests; rejects malformed payloads with detailed Zod errors
-  - Output: standard `ProofOfLogicCertificate` with `domain: "PREDICTION"` tag, uploaded to Irys with prediction_context metadata
+  - Output: `PredictionCertificate` (extends `ProofOfLogicCertificate` with INDETERMINATE verdict + hard-fail fields) with `domain: "PREDICTION"` tag, uploaded to Irys with prediction_context metadata
+  - 12-case deterministic test suite (`server/engine/__tests__/prediction-tests.ts`): 6 MUST_FAIL, 2 MUST_PASS, 4 EDGE cases. Validates hard-fail rules, guardrails, and scoring. Run via `npx tsx server/engine/__tests__/prediction-tests.ts` (requires VENICE_API_KEY or ANTHROPIC_API_KEY)
   - Polymarket CLOB proxy interceptor interface defined but not wired (future task)
   - Requires `ANTHROPIC_API_KEY` env var for Claude engine; Venice fallback uses existing `VENICE_API_KEY`
 - **Scoring**: Deterministic — rule engine detects boolean flags via pattern matching, scoring is pure function of weights. Max score 200. FAIL threshold: risk_score ≥ 60 OR any CRITICAL flag. Pure-JS SHA-256 for browser compatibility.

@@ -10,6 +10,8 @@ type PredictionLFCode = "S01" | "S02" | "E01" | "E02" | "I01" | "I02" | "I03" | 
 
 export type PredictionCertificate = Omit<ProofOfLogicCertificate, "verdict"> & {
   verdict: "PASS" | "FAIL" | "INDETERMINATE";
+  hard_fail_rules: string[];
+  verdict_source: "HARD_FAIL" | "SCORE";
 };
 
 export class PredictionConfigError extends Error {
@@ -17,6 +19,52 @@ export class PredictionConfigError extends Error {
     super(message);
     this.name = "PredictionConfigError";
   }
+}
+
+interface HardFailRule {
+  id: string;
+  description: string;
+  lf_code: PredictionLFCode;
+  evaluate: (ctx: PredictionContext, firedCodes: string[]) => boolean;
+}
+
+export const PREDICTION_HARD_FAILS: HardFailRule[] = [
+  {
+    id: "E02_REQUIRED",
+    description:
+      "Prediction market thesis must include falsification criteria. " +
+      "A thesis that cannot state what would prove it wrong is not a thesis.",
+    lf_code: "E02",
+    evaluate: (_ctx, firedCodes) => firedCodes.includes("E02"),
+  },
+  {
+    id: "I01_UNDISCLOSED",
+    description:
+      "Agents must disclose their signal source. Refusal to disclose " +
+      "when placing a prediction market position is an automatic block. " +
+      "If the thesis is strong, disclose the source.",
+    lf_code: "I01",
+    evaluate: (ctx, firedCodes) =>
+      ctx.source_signal === "UNDISCLOSED" && firedCodes.includes("I01"),
+  },
+];
+
+export function checkHardFails(
+  ctx: PredictionContext,
+  firedCodes: string[]
+): { any_hard_fail: boolean; triggered_rules: string[] } {
+  const triggered: string[] = [];
+
+  for (const rule of PREDICTION_HARD_FAILS) {
+    if (rule.evaluate(ctx, firedCodes)) {
+      triggered.push(rule.id);
+    }
+  }
+
+  return {
+    any_hard_fail: triggered.length > 0,
+    triggered_rules: triggered,
+  };
 }
 
 export interface PredictionAuditInput {
@@ -95,6 +143,8 @@ export async function executePredictionAudit(
       }],
       model_used: detectionModel,
       persona_used: "general",
+      hard_fail_rules: [],
+      verdict_source: "SCORE",
     };
     return certificate;
   }
@@ -103,10 +153,21 @@ export async function executePredictionAudit(
 
   const { flags, riskScore, firedCodes } = scoreDetectionResult(detectionResult, validated);
 
-  const verdict: "PASS" | "FAIL" =
-    riskScore >= 60 || flags.some(f => f.severity === "CRITICAL")
-      ? "FAIL"
-      : "PASS";
+  const hardFails = checkHardFails(validated, firedCodes);
+
+  let verdict: "PASS" | "FAIL";
+  let verdictSource: PredictionCertificate["verdict_source"];
+
+  if (hardFails.any_hard_fail) {
+    verdict = "FAIL";
+    verdictSource = "HARD_FAIL";
+  } else if (riskScore >= 60 || flags.some(f => f.severity === "CRITICAL")) {
+    verdict = "FAIL";
+    verdictSource = "SCORE";
+  } else {
+    verdict = "PASS";
+    verdictSource = "SCORE";
+  }
 
   const detectedCodes = new Set(flags.map(f => f.code));
   const flagVector: Record<string, boolean> = {};
@@ -128,11 +189,17 @@ export async function executePredictionAudit(
 
   const primaryFlaw = firedCodes.length > 0 ? firedCodes[0] : "None";
 
-  const summary = verdict === "PASS"
-    ? firedCodes.length === 0
+  let summary: string;
+  if (verdictSource === "HARD_FAIL") {
+    summary = `Hard-fail rule${hardFails.triggered_rules.length > 1 ? "s" : ""} triggered: [${hardFails.triggered_rules.join(", ")}]. ` +
+      `${firedCodes.length} logic failure${firedCodes.length > 1 ? "s" : ""} detected (risk_score=${riskScore}). Verdict forced to FAIL.`;
+  } else if (verdict === "PASS") {
+    summary = firedCodes.length === 0
       ? "No logic failures detected. Thesis is structurally sound."
-      : `Minor observations detected (${firedCodes.length} code${firedCodes.length > 1 ? "s" : ""}). Thesis passes with observations.`
-    : `${firedCodes.length} logic failure${firedCodes.length > 1 ? "s" : ""} detected (risk_score=${riskScore}). Thesis fails audit.`;
+      : `Minor observations detected (${firedCodes.length} code${firedCodes.length > 1 ? "s" : ""}). Thesis passes with observations.`;
+  } else {
+    summary = `${firedCodes.length} logic failure${firedCodes.length > 1 ? "s" : ""} detected (risk_score=${riskScore}). Thesis fails audit.`;
+  }
 
   const certificate: PredictionCertificate = {
     audit_id,
@@ -166,6 +233,8 @@ export async function executePredictionAudit(
         : `Review detection for ${code}`;
     }),
     primary_bias_detected: derivePrimaryBias(firedCodes),
+    hard_fail_rules: hardFails.triggered_rules,
+    verdict_source: verdictSource,
   };
 
   return certificate;
@@ -249,7 +318,14 @@ function applySourceSignalModifiers(
 
   if ((ctx.entry_price > 0.90 || ctx.entry_price < 0.10) && !hasFired("I03")) {
     const extreme = ctx.entry_price > 0.90 ? "above 0.90" : "below 0.10";
-    if (!result.I03.detected) {
+    const tailRiskTerms = [
+      "tail risk", "black swan", "what if", "unlikely but",
+      "downside", "worst case", "invalidate", "falsif",
+    ];
+    const hasExplicitTailRisk = tailRiskTerms.some(term =>
+      ctx.thesis.toLowerCase().includes(term)
+    );
+    if (!hasExplicitTailRisk) {
       fired.push({
         code: "I03",
         evidence: `Entry price ${ctx.entry_price} is ${extreme} without explicit tail-risk analysis in thesis.`,
@@ -294,14 +370,10 @@ function applyDeterministicGuardrails(
   const falsificationTerms = ["falsif", "prove me wrong", "invalidat", "disprove", "would fail if", "thesis breaks if", "wrong if"];
   const hasFalsificationCriteria = falsificationTerms.some(t => thesisLower.includes(t));
   if (!hasFalsificationCriteria && !result.E02.detected) {
-    const hasEvidenceUrls = ctx.evidence_urls && ctx.evidence_urls.length > 0;
-    const thesisWordCount = ctx.thesis.split(/\s+/).length;
-    if (!hasEvidenceUrls && thesisWordCount < 200) {
-      result.E02 = {
-        detected: true,
-        evidence: "No evidence URLs provided and no falsification criteria stated. Guardrail auto-flag.",
-      };
-    }
+    result.E02 = {
+      detected: true,
+      evidence: "No falsification criteria stated in thesis. Every prediction thesis must answer: 'What would prove me wrong?' Guardrail auto-flag.",
+    };
   }
 
   const allClear = Object.values(result).every(v => !v.detected);
