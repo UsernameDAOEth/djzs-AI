@@ -19,7 +19,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend
 - **Technology Stack**: React 18 with TypeScript and Vite.
-- **UI/UX**: Radix UI components with Tailwind CSS, supporting dark/light modes (dark by default). The design features a futuristic dark palette (charcoal, orange, teal, purple, gold) and a warm light palette, characterized by sharp corners and subtle borders. Fonts used are Merriweather (headings) and Nunito (body).
+- **UI/UX**: Landing page (`/`) uses "Terminal Brutalism" design — JetBrains Mono, inline styles, green-on-black (#0a0a0a) palette with amber/red accents. No Tailwind/shadcn on homepage. Other pages (`/demo`, `/chat`, `/docs`) still use Radix UI + Tailwind CSS with dark/light modes.
 - **Routing**: Wouter for client-side navigation.
 - **State Management**: React hooks for local state, TanStack Query for server state.
 
