@@ -101,7 +101,8 @@ Preferred communication style: Simple, everyday language.
   - 12-case deterministic test suite (`server/engine/__tests__/prediction-tests.ts`): 6 MUST_FAIL, 2 MUST_PASS, 4 EDGE cases. Validates hard-fail rules, guardrails, and scoring. Run via `npx tsx server/engine/__tests__/prediction-tests.ts` (requires VENICE_API_KEY or ANTHROPIC_API_KEY)
   - Polymarket CLOB proxy interceptor interface defined but not wired (future task)
   - Requires `ANTHROPIC_API_KEY` env var for Claude engine; Venice fallback uses existing `VENICE_API_KEY`
-- **Claude Audit Client** (`server/claude-client.ts`): `shouldUseClaude()` checks for `ANTHROPIC_API_KEY`, `getClaudeAuditClient()` returns a client that calls Claude Sonnet for adversarial LF detection. Intended for Treasury-tier upgrades.
+- **Claude Audit Client** (`server/claude-client.ts`): `shouldUseClaude()` checks for `ANTHROPIC_API_KEY`, `getClaudeAuditClient()` returns a client that calls Claude Sonnet for adversarial LF detection. System prompt dynamically built from `LOGIC_FAILURE_TAXONOMY`. Wired into `executeAudit()` in `audit-agent.ts` — Treasury tier routes to Claude when API key is available, with automatic fallback to rule engine on failure. Micro/Founder tiers always use deterministic rule engine.
+- **Agent Discovery** (`/.well-known/agent.json`): Machine-readable A2A agent manifest served from `server/routes.ts`. Includes capabilities, integration channels (Light/Dark), tier pricing, and endpoint references.
 - **Scoring**: Deterministic — rule engine detects boolean flags via pattern matching, scoring is pure function of weights. Max score 200. FAIL threshold: risk_score ≥ 60 OR any CRITICAL flag. Pure-JS SHA-256 for browser compatibility.
 - **Adversarial Audit Module** (`server/adversarial-audit.ts`):
   - Full `ADVERSARIAL_AUDIT_PROMPT` with expanded DJZS-LF taxonomy, deterministic verdict rules, and risk score calculation (retained for reference/prompt engineering)

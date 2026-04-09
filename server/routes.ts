@@ -50,6 +50,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
 </urlset>`);
   });
 
+  app.get("/.well-known/agent.json", (_req, res) => {
+    res.json({
+      name: "DJZS Logic Oracle",
+      description: "Adversarial Logic Auditor for the A2A Economy. Deterministic reasoning-flaw detection using DJZS-LF v1.0 taxonomy.",
+      url: "https://djzs.ai",
+      version: "2.0",
+      capabilities: {
+        audit: true,
+        x402_payments: true,
+        irys_provenance: true,
+        nft_minting: !!process.env.NFT_CONTRACT_ADDRESS,
+        escrow: !!process.env.ESCROW_CONTRACT_ADDRESS,
+      },
+      integration_channels: {
+        light: {
+          protocol: "REST",
+          base_url: "https://djzs.ai/api",
+          payment: "x402 USDC on Base Mainnet",
+          endpoints: [
+            { method: "POST", path: "/api/audit/micro", price: "$0.10 USDC" },
+            { method: "POST", path: "/api/audit/founder", price: "$1.00 USDC" },
+            { method: "POST", path: "/api/audit/treasury", price: "$10.00 USDC" },
+          ],
+        },
+        dark: {
+          protocol: "XMTP",
+          encryption: "MLS (E2E)",
+          address: "0xC5Ab9496233c1e51eD21c712e8abc86a3F434fc5",
+        },
+      },
+      schema: "/api/audit/schema",
+      health: "/api/health",
+    });
+  });
+
   const startTime = Date.now();
 
   app.get("/api/health", (_req, res) => {

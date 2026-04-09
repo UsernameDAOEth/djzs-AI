@@ -5,6 +5,7 @@ import {
   type IntelligenceContext,
 } from "./venice";
 import { type AuditTier, SCHEMA_VERSION, WEIGHTS_HASH, MAX_RISK_SCORE, ALL_LF_CODES, LOGIC_FAILURE_TAXONOMY } from "@shared/audit-schema";
+import { shouldUseClaude, getClaudeAuditClient } from "./claude-client";
 
 export interface AuditResult {
   verdict: "PASS" | "FAIL";
@@ -263,15 +264,43 @@ export async function executeAudit(
 
   const startTime = Date.now();
 
-  const toolCall: ToolCall = {
-    name: audit_type || "general",
-    params: trade_params || {},
-    reasoning: strategy_memo,
-    domain: "financial",
-  };
+  let result: AuditResult;
 
-  const engineResult = djzsEngine.audit(toolCall);
-  const result = mapEngineResultToAuditResult(engineResult, selectedPersona);
+  if (tier === "treasury" && shouldUseClaude()) {
+    try {
+      console.log(`[Audit ${audit_id}] Treasury tier — routing to Claude`);
+      const claudeClient = getClaudeAuditClient();
+      const claudeResult = await claudeClient.audit(strategy_memo, tier);
+      result = {
+        ...claudeResult,
+        confidence: undefined,
+        primary_bias_detected: undefined,
+        logic_flaws: claudeResult.flags.map(f => f.code),
+        scenarios: undefined,
+        structural_recommendations: undefined,
+        action_items: undefined,
+      };
+    } catch (claudeError) {
+      console.error(`[Audit ${audit_id}] Claude fallback — ${(claudeError as Error).message}`);
+      const toolCall: ToolCall = {
+        name: audit_type || "general",
+        params: trade_params || {},
+        reasoning: strategy_memo,
+        domain: "financial",
+      };
+      const engineResult = djzsEngine.audit(toolCall);
+      result = mapEngineResultToAuditResult(engineResult, selectedPersona);
+    }
+  } else {
+    const toolCall: ToolCall = {
+      name: audit_type || "general",
+      params: trade_params || {},
+      reasoning: strategy_memo,
+      domain: "financial",
+    };
+    const engineResult = djzsEngine.audit(toolCall);
+    result = mapEngineResultToAuditResult(engineResult, selectedPersona);
+  }
 
   const duration_ms = Date.now() - startTime;
 
