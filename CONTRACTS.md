@@ -144,9 +144,42 @@ No parameters. Deployer becomes owner.
 
 ---
 
+## 5. DJZSProofOfLogicNFT
+
+**Purpose**: Fully on-chain ERC-721 NFT that stores the complete ProofOfLogic certificate. The NFT IS the certificate — not a pointer to it. On-chain SVG in Terminal Brutalism style. Minted only on PASS verdicts (enforced on-chain via keccak256 check).
+
+**Deployed Address**: Not yet deployed. Set `NFT_CONTRACT_ADDRESS` after deployment.
+
+### Key Functions
+
+| Function | Access | Description |
+|---|---|---|
+| `mint(recipient, auditId, timestamp, tier, riskScore, verdict, flagsJson, cryptographicHash, irysTxId, irysUrl, certificateJson)` | Minter / Owner | Mints NFT with full certificate stored on-chain. Requires verdict="PASS" |
+| `tokenURI(tokenId)` | View | Returns fully on-chain ERC-721 metadata with SVG image as base64 data-URI |
+| `getRawCertificate(tokenId)` | View | Returns the raw certificate JSON stored on-chain |
+| `getTokenByIrys(irysTxId)` | View | Returns tokenId for a given Irys TX ID (0 if not minted) |
+| `totalMinted()` | View | Returns total number of NFTs minted |
+| `authorizeMinter(minter)` | Owner | Grants minting permission |
+| `revokeMinter(minter)` | Owner | Revokes minting permission |
+
+### Events
+
+- `ProofMinted(tokenId, recipient, auditId, irysTxId, tier, riskScore)` — emitted on every mint
+- `MinterAuthorized(minter)` — emitted when a minter is authorized
+- `MinterRevoked(minter)` — emitted when a minter is revoked
+
+### Errors
+
+- `AlreadyMinted(irysTxId)` — prevents double-minting for same Irys certificate
+- `VerdictNotPass()` — enforces on-chain PASS-only minting
+- `NotAuthorizedMinter()` — caller is not an authorized minter
+- `EmptyField()` — required field is empty
+
+---
+
 ## Deployment
 
-Contracts are deployed externally using Hardhat. See `hardhat.config.cjs` and `scripts/deploy.cjs` for the deployment configuration.
+Contracts are deployed externally using Hardhat. See `hardhat.config.cjs` and `scripts/deploy.cjs` for the deployment configuration. See `scripts/deploy-proof-of-logic.cjs` for NFT contract deployment.
 
 ### Required Environment Variables for Deployment
 
@@ -156,11 +189,20 @@ BASE_RPC_URL=https://mainnet.base.org
 BASE_USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913  # USDC on Base
 ```
 
+### Required Environment Variables for NFT Minting (Runtime)
+
+```bash
+NFT_CONTRACT_ADDRESS=0x...     # Deployed ProofOfLogicNFT contract address
+SETTLEMENT_PRIVATE_KEY=0x...   # Server wallet authorized as minter (pays gas)
+BASE_RPC_URL=https://mainnet.base.org
+```
+
 ### Deployment Order
 
 1. `DJZSAgentRegistry` (no dependencies)
 2. `DJZSLogicTrustScore` (no dependencies)
 3. `DJZSStaking` (requires USDC address)
 4. `DJZSEscrowLock` (requires USDC address)
+5. `DJZSProofOfLogicNFT` (no dependencies; authorize settlement wallet as minter post-deploy)
 
-After deployment, authorize the settlement wallet as a writer on `DJZSLogicTrustScore` and as the settlement agent on `DJZSEscrowLock`.
+After deployment, authorize the settlement wallet as a writer on `DJZSLogicTrustScore`, as the settlement agent on `DJZSEscrowLock`, and as a minter on `DJZSProofOfLogicNFT`.

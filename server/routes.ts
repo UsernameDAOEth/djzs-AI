@@ -16,7 +16,6 @@ async function getGitHubClient() {
 }
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier, escrowAuditRequestSchema } from "@shared/audit-schema";
 import { executeAudit, mapToLegacyAuditLog, postAuditChainWrite } from "./audit-agent";
-import { VeniceClient } from "./venice";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
 import { uploadAuditToIrys } from "./irys";
@@ -110,7 +109,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sort: "updated",
         per_page: 20,
       });
-      res.json(repos.map(r => ({
+      res.json(repos.map((r: any) => ({
         id: r.id,
         name: r.name,
         fullName: r.full_name,
@@ -691,7 +690,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const veniceClient = userVeniceKey ? new VeniceClient(userVeniceKey) : undefined;
       const audit = await executeAudit({
         strategy_memo: parsed.data.strategy_memo,
         audit_type: parsed.data.audit_type || "general",
@@ -699,7 +697,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         intelligence_context: parsed.data.intelligence_context,
         trade_params: parsed.data.trade_params,
         agent_id: parsed.data.agent_id,
-      }, veniceClient);
+      });
 
       const irysPayload: Record<string, any> = {
         ...audit,
@@ -719,7 +717,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           walletAddress: walletAddress || null,
           irysTxId: irysResult.irys_tx_id,
         });
-        await storage.createAuditLog(legacyLog);
+        await storage.createAuditLog({ ...legacyLog, strategyMemo: legacyLog.strategyMemo || parsed.data.strategy_memo } as any);
       } catch (dbError) {
         console.error("Failed to persist audit log:", dbError);
       }
@@ -920,13 +918,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const veniceClient = undefined;
       const audit = await executeAudit({
         strategy_memo: parsed.data.strategy_memo,
         audit_type: parsed.data.audit_type || "general",
         tier: "treasury",
         agent_id: parsed.data.agent_id,
-      }, veniceClient);
+      });
 
       const irysResult = await uploadAuditToIrys(audit);
       const trustScoreResult = await postAuditChainWrite(audit, parsed.data.agent_id, irysResult.irys_tx_id);
@@ -979,9 +976,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
-      const veniceClient = userVeniceKey ? new VeniceClient(userVeniceKey) : undefined;
-
       const escrowData = req.escrowData;
       const tier: AuditTier = escrowData?.amount
         ? (Number(escrowData.amount) >= 50_000_000 ? "treasury" : Number(escrowData.amount) >= 5_000_000 ? "founder" : "micro")
@@ -996,7 +990,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         agent_id: parsed.data.agent_id,
         escrow_id: parsed.data.escrow_id,
         escrow_tx_hash: parsed.data.escrow_tx_hash,
-      }, veniceClient);
+      });
 
       const irysPayload: Record<string, any> = {
         ...audit,
@@ -1029,7 +1023,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           walletAddress: escrowData?.recipient || null,
           irysTxId: irysResult.irys_tx_id,
         });
-        await storage.createAuditLog(legacyLog);
+        await storage.createAuditLog({ ...legacyLog, strategyMemo: legacyLog.strategyMemo || parsed.data.strategy_memo } as any);
       } catch (dbError) {
         console.error("Failed to persist escrow audit log:", dbError);
       }
