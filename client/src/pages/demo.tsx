@@ -269,7 +269,9 @@ export default function Demo() {
 
       <style>{RESPONSIVE_STYLE}</style>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-        <Nav />
+        <div data-testid="link-demo-home-logo">
+          <Nav />
+        </div>
 
         <main style={{ paddingTop: 32, paddingBottom: 48 }}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 40 }}>
@@ -664,7 +666,9 @@ export default function Demo() {
           </div>
         </main>
 
-        <TerminalFooter />
+        <div data-testid="text-demo-footer-tagline">
+          <TerminalFooter />
+        </div>
       </div>
     </div>
   );
