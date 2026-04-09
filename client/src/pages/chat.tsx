@@ -200,8 +200,8 @@ export default function Chat() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Mint failed");
       setNftMintResult({ nft_tx_hash: data.nft_tx_hash, nft_token_id: data.nft_token_id });
-    } catch (err: any) {
-      setError(err.message || "NFT mint failed");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "NFT mint failed");
     } finally {
       setNftMinting(false);
     }
@@ -276,9 +276,9 @@ export default function Chat() {
       await new Promise(r => setTimeout(r, 300));
 
       setResult(data);
-    } catch (err: any) {
-      if (err.name === "AbortError") return;
-      setError(err.message || "Audit request failed");
+    } catch (err: unknown) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Audit request failed");
       setCurrentStep(-1);
     } finally {
       setRunning(false);

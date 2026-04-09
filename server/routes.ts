@@ -717,7 +717,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           walletAddress: walletAddress || null,
           irysTxId: irysResult.irys_tx_id,
         });
-        await storage.createAuditLog({ ...legacyLog, strategyMemo: legacyLog.strategyMemo || parsed.data.strategy_memo } as any);
+        await storage.createAuditLog({ ...legacyLog, strategyMemo: legacyLog.strategyMemo || parsed.data.strategy_memo });
       } catch (dbError) {
         console.error("Failed to persist audit log:", dbError);
       }
@@ -829,7 +829,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const eligible = nftMintEligible.get(irys_tx_id);
-      if (eligible && eligible.wallet !== wallet_address.toLowerCase()) {
+      if (!eligible) {
+        return res.status(403).json({ error: "No mint eligibility found for this certificate. Run a Micro audit with your wallet first." });
+      }
+      if (eligible.wallet !== wallet_address.toLowerCase()) {
         return res.status(403).json({ error: "Wallet address does not match the original audit requester" });
       }
 
@@ -1038,7 +1041,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           walletAddress: escrowData?.recipient || null,
           irysTxId: irysResult.irys_tx_id,
         });
-        await storage.createAuditLog({ ...legacyLog, strategyMemo: legacyLog.strategyMemo || parsed.data.strategy_memo } as any);
+        await storage.createAuditLog({ ...legacyLog, strategyMemo: legacyLog.strategyMemo || parsed.data.strategy_memo });
       } catch (dbError) {
         console.error("Failed to persist escrow audit log:", dbError);
       }

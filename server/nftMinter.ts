@@ -240,7 +240,9 @@ export function buildNftMintInput(
     risk_score: number;
     flags: Array<{ code: string; severity?: string; message?: string }>;
     cryptographic_hash: string;
-    [key: string]: any;
+    logic_flaws?: unknown;
+    structural_recommendations?: unknown;
+    primary_bias_detected?: unknown;
   },
   irys: { irys_tx_id: string; irys_url: string },
   tier: string,
@@ -258,9 +260,9 @@ export function buildNftMintInput(
     provenance_provider: "IRYS_DATACHAIN",
     irys_tx_id: irys.irys_tx_id,
     irys_url: irys.irys_url,
-    ...(audit.logic_flaws && { logic_flaws: audit.logic_flaws }),
-    ...(audit.structural_recommendations && { structural_recommendations: audit.structural_recommendations }),
-    ...(audit.primary_bias_detected && { primary_bias_detected: audit.primary_bias_detected }),
+    ...(audit.logic_flaws ? { logic_flaws: audit.logic_flaws } : {}),
+    ...(audit.structural_recommendations ? { structural_recommendations: audit.structural_recommendations } : {}),
+    ...(audit.primary_bias_detected ? { primary_bias_detected: audit.primary_bias_detected } : {}),
   });
 
   return {
@@ -270,7 +272,7 @@ export function buildNftMintInput(
     tier,
     riskScore: audit.risk_score,
     verdict: audit.verdict,
-    flags: audit.flags.map((f: any) => f.code || "").filter(Boolean),
+    flags: audit.flags.map((f) => f.code || "").filter(Boolean),
     cryptographicHash: audit.cryptographic_hash,
     irysTxId: irys.irys_tx_id,
     irysUrl: irys.irys_url,
