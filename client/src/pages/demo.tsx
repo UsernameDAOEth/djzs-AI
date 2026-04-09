@@ -1,11 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Helmet } from "react-helmet";
-import { C, MONO, Nav, TerminalFooter } from "@/lib/terminal-theme";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { Link } from "wouter";
 import {
   ArrowRight, Play, Terminal, ShieldCheck, ShieldAlert,
   AlertTriangle, CheckCircle2, Upload, Database, ExternalLink,
-  ChevronDown, ChevronUp, FlaskConical, Lock
+  ChevronDown, ChevronRight, Menu, X, Lock
 } from "lucide-react";
 
 const DEMO_SCENARIOS = [
@@ -69,111 +67,73 @@ interface AuditResult {
 const PIPELINE_STEPS = [
   { id: "signature", label: "Signature", icon: Lock, description: "Verifying request signature" },
   { id: "hash-check", label: "Hash Check", icon: ShieldAlert, description: "Validating payload integrity" },
-  { id: "auditing", label: "Auditing", icon: FlaskConical, description: "Adversarial analysis in TEE" },
-  { id: "uploading", label: "Irys Upload", icon: Upload, description: "Certificate stored on Datachain" },
-  { id: "settlement", label: "Settlement", icon: Database, description: "On-chain settlement on Base" },
-  { id: "complete", label: "Complete", icon: CheckCircle2, description: "ProofOfLogic certificate ready" },
+  { id: "auditing", label: "Auditing", icon: Terminal, description: "Adversarial analysis in TEE" },
+  { id: "uploading", label: "Irys Upload", icon: Upload, description: "Certificate → Datachain" },
+  { id: "settlement", label: "Settlement", icon: Database, description: "On-chain settlement" },
+  { id: "complete", label: "Complete", icon: CheckCircle2, description: "Certificate ready" },
 ];
 
 const TIER_OPTIONS = [
-  { value: "micro", label: "Micro-Zone", price: "$0.10", description: "Binary risk scoring" },
-  { value: "founder", label: "Founder Zone", price: "$1.00", description: "Strategic diligence" },
-  { value: "treasury", label: "Treasury Zone", price: "$10.00", description: "Exhaustive stress-test" },
+  { value: "micro", label: "MICRO", price: "$0.10", description: "Binary risk scoring" },
+  { value: "founder", label: "FOUNDER", price: "$1.00", description: "Strategic diligence" },
+  { value: "treasury", label: "TREASURY", price: "$10.00", description: "Exhaustive stress-test" },
 ];
 
-function RiskScoreGauge({ score }: { score: number }) {
-  const color = score >= 70 ? C.red : score >= 40 ? C.amber : C.green;
-  const circumference = 2 * Math.PI * 45;
-  const offset = circumference - (score / 100) * circumference;
-
-  return (
-    <div style={{ position: "relative", width: 112, height: 112, flexShrink: 0 }}>
-      <svg style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }} viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="45" fill="none" stroke={C.border} strokeWidth="6" />
-        <motion.circle
-          cx="50" cy="50" r="45" fill="none" stroke={color} strokeWidth="6"
-          strokeLinecap="round" strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-        />
-      </svg>
-      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontSize: 24, fontWeight: 700, fontFamily: MONO, color }} data-testid="text-risk-score-value">{score}</span>
-        <span style={{ fontSize: 10, color: C.textMuted, fontFamily: MONO }}>/ 100</span>
-      </div>
-    </div>
-  );
+function severityColor(sev: string) {
+  switch (sev) {
+    case "CRITICAL": return "text-red-400 border-red-400/30 bg-red-400/5";
+    case "HIGH": return "text-amber-400 border-amber-400/30 bg-amber-400/5";
+    case "MEDIUM": return "text-yellow-300 border-yellow-300/30 bg-yellow-300/5";
+    default: return "text-zinc-400 border-zinc-700 bg-zinc-900";
+  }
 }
 
 function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
   const [expanded, setExpanded] = useState(false);
-  const sevColor = flag.severity === "CRITICAL" ? C.red : flag.severity === "HIGH" ? C.amber : "#eab308";
+  const msg = flag.message || flag.description || "";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}
-      data-testid={`card-flag-${flag.code.toLowerCase()}`}
-    >
+    <div className="border border-zinc-800" data-testid={`card-flag-${flag.code.toLowerCase()}`}>
       <button
         onClick={() => setExpanded(!expanded)}
-        style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: 16, textAlign: "left", background: "transparent", border: "none", cursor: "pointer", color: C.text }}
+        className="w-full flex items-center justify-between p-3 text-left hover:bg-zinc-900/50 transition-colors"
         data-testid={`button-expand-flag-${flag.code.toLowerCase()}`}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
-          <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, padding: "2px 8px", border: `1px solid ${sevColor}40`, background: `${sevColor}15`, color: sevColor }} data-testid={`badge-flag-severity-${index}`}>
+        <div className="flex items-center gap-3 min-w-0">
+          <span className={`text-[10px] font-mono font-bold px-2 py-0.5 border ${severityColor(flag.severity)}`} data-testid={`badge-flag-severity-${index}`}>
             {flag.severity}
           </span>
-          <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: C.text }} data-testid={`text-flag-code-${index}`}>{flag.code}</span>
-          <span style={{ fontFamily: MONO, fontSize: 12, color: C.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{(flag.message || flag.description || "").split("—")[0]}</span>
+          <span className="font-mono text-xs text-zinc-300 font-bold" data-testid={`text-flag-code-${index}`}>{flag.code}</span>
+          <span className="text-xs text-zinc-500 truncate hidden sm:inline">{msg.split("—")[0]}</span>
         </div>
-        {expanded ? <ChevronUp size={16} style={{ color: C.textMuted, flexShrink: 0 }} /> : <ChevronDown size={16} style={{ color: C.textMuted, flexShrink: 0 }} />}
+        {expanded ? <ChevronDown size={14} className="text-zinc-600" /> : <ChevronRight size={14} className="text-zinc-600" />}
       </button>
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            style={{ overflow: "hidden" }}
-          >
-            <div style={{ padding: "0 16px 16px", display: "flex", flexDirection: "column", gap: 12, borderTop: `1px solid ${C.border}` }}>
-              <div style={{ paddingTop: 12 }}>
-                <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 4, letterSpacing: "0.1em" }}>MESSAGE</div>
-                <p style={{ fontFamily: MONO, fontSize: 12, color: C.textDim }}>{flag.message || flag.description}</p>
-              </div>
-              {flag.evidence && (
-                <div>
-                  <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 4, letterSpacing: "0.1em" }}>EVIDENCE</div>
-                  <p style={{ fontFamily: MONO, fontSize: 12, color: C.textDim, fontStyle: "italic" }}>{flag.evidence}</p>
-                </div>
-              )}
-              {flag.recommendation && (
-                <div>
-                  <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 4, letterSpacing: "0.1em" }}>RECOMMENDATION</div>
-                  <p style={{ fontFamily: MONO, fontSize: 12, color: C.green }}>{flag.recommendation}</p>
-                </div>
-              )}
+      {expanded && (
+        <div className="px-3 pb-3 space-y-2 border-t border-zinc-800">
+          <div className="pt-2">
+            <div className="text-[10px] font-mono text-zinc-600 mb-1">MESSAGE</div>
+            <p className="text-xs text-zinc-400">{msg}</p>
+          </div>
+          {flag.evidence && (
+            <div>
+              <div className="text-[10px] font-mono text-zinc-600 mb-1">EVIDENCE</div>
+              <p className="text-xs text-zinc-500 italic">{flag.evidence}</p>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+          )}
+          {flag.recommendation && (
+            <div>
+              <div className="text-[10px] font-mono text-zinc-600 mb-1">RECOMMENDATION</div>
+              <p className="text-xs text-green-400">{flag.recommendation}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
-const RESPONSIVE_STYLE = `
-  @media (max-width: 768px) {
-    .demo-grid { grid-template-columns: 1fr !important; }
-    .demo-provenance-grid { grid-template-columns: 1fr !important; }
-  }
-`;
-
 export default function Demo() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [memo, setMemo] = useState("");
   const [tier, setTier] = useState("micro");
   const [running, setRunning] = useState(false);
@@ -216,11 +176,7 @@ export default function Demo() {
       const response = await fetch("/api/audit/demo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          strategy_memo: memo,
-          audit_type: auditType,
-          tier,
-        }),
+        body: JSON.stringify({ strategy_memo: memo, audit_type: auditType, tier }),
         signal: controller.signal,
       });
 
@@ -242,9 +198,9 @@ export default function Demo() {
       await new Promise(r => setTimeout(r, 300));
 
       setResult(data);
-    } catch (err: unknown) {
-      if (err instanceof DOMException && err.name === "AbortError") return;
-      setError(err instanceof Error ? err.message : "Audit request failed");
+    } catch (err: any) {
+      if (err.name === "AbortError") return;
+      setError(err.message || "Audit request failed");
       setCurrentStep(-1);
     } finally {
       setRunning(false);
@@ -253,423 +209,331 @@ export default function Demo() {
   }, [memo, tier, running]);
 
   useEffect(() => {
-    return () => {
-      abortRef.current?.abort();
-    };
+    return () => { abortRef.current?.abort(); };
   }, []);
 
   return (
-    <div style={{ background: C.bg, color: C.text, fontFamily: MONO, minHeight: "100vh" }}>
-      <Helmet>
-        <title>Live Demo | DJZS Protocol — Audit-to-Certificate Pipeline</title>
-        <meta name="description" content="Try the DJZS Zero-Trust Oracle live. Paste a reasoning memo, run an audit, and see the full pipeline: signature, hash check, audit, Irys upload, and on-chain settlement." />
-        <meta property="og:title" content="DJZS Live Demo — Audit-to-Certificate Pipeline" />
-        <meta property="og:description" content="See the full DJZS audit pipeline in action. Paste a memo, select a tier, and watch the ProofOfLogic certificate get generated." />
-      </Helmet>
+    <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+        ::selection { background: rgba(74, 222, 128, 0.3); }
+      `}</style>
 
-      <style>{RESPONSIVE_STYLE}</style>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-        <div data-testid="link-demo-home-logo">
-          <Nav />
+      <header className="sticky top-0 z-50 border-b border-zinc-800 bg-black/95 backdrop-blur-md">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+          <Link href="/">
+            <span className="font-mono text-lg font-bold tracking-tight text-white" data-testid="link-demo-home-logo">
+              DJZS<span className="text-green-400">.ai</span>
+            </span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-1">
+            <Link href="/" className="px-3 py-1.5 font-mono text-xs text-zinc-500 hover:text-green-400 transition-colors" data-testid="link-demo-header-home">Home</Link>
+            <Link href="/docs" className="px-3 py-1.5 font-mono text-xs text-zinc-500 hover:text-green-400 transition-colors" data-testid="link-demo-header-docs">Docs</Link>
+            <Link href="/chat" className="px-3 py-1.5 font-mono text-xs text-zinc-500 hover:text-green-400 transition-colors" data-testid="link-demo-header-chat">Live Audit</Link>
+          </nav>
+          <div className="flex items-center gap-3">
+            <Link href="/chat">
+              <button className="font-mono text-xs px-4 py-2 border border-green-400/50 text-green-400 hover:bg-green-400/10 transition-colors" data-testid="link-demo-header-go-live">
+                GO LIVE →
+              </button>
+            </Link>
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white" data-testid="button-demo-mobile-menu" aria-label="Menu">
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </div>
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-zinc-800 bg-black/98 px-4 py-3">
+            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-mono text-xs text-zinc-400 hover:text-green-400">Home</Link>
+            <Link href="/docs" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-mono text-xs text-zinc-400 hover:text-green-400">Docs</Link>
+            <Link href="/chat" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-mono text-xs text-zinc-400 hover:text-green-400">Live Audit</Link>
+          </div>
+        )}
+      </header>
+
+      <main className="max-w-5xl mx-auto px-4 py-8 sm:py-12">
+        <div className="mb-8">
+          <div className="font-mono text-xs text-zinc-600 mb-2" data-testid="badge-demo-mode">// DEMO MODE — FREE, RATE-LIMITED (1 req / 15s)</div>
+          <h1 className="font-mono text-2xl sm:text-4xl font-bold text-white mb-2" data-testid="text-demo-page-title">
+            Test the Oracle
+          </h1>
+          <p className="font-mono text-sm text-zinc-500" data-testid="text-demo-page-subtitle">
+            Free preview of the DJZS adversarial audit pipeline. No wallet required.
+          </p>
         </div>
 
-        <main style={{ paddingTop: 32, paddingBottom: 48 }}>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 40 }}>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "4px 16px", fontSize: 12, fontFamily: MONO, marginBottom: 16, border: `1px solid ${C.green}40`, background: `${C.green}10`, color: C.green }}>
-              <FlaskConical size={14} />
-              <span>Live Demo — Real Audit Engine</span>
-            </div>
-            <h1 style={{ fontFamily: MONO, fontSize: 32, fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 12, color: C.white }} data-testid="text-demo-page-title">
-              Audit-to-Certificate Pipeline
-            </h1>
-            <p style={{ fontFamily: MONO, fontSize: 14, color: C.textDim, maxWidth: 640, lineHeight: 1.7 }} data-testid="text-demo-page-subtitle">
-              Paste a reasoning memo, select a scenario, and watch the real Oracle execute: adversarial analysis via Venice AI, Irys Datachain upload, and on-chain trust score settlement.
-            </p>
-          </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="border border-zinc-800 bg-zinc-950">
+              <div className="px-4 py-3 border-b border-zinc-800 flex items-center gap-2">
+                <Terminal size={14} className="text-green-400" />
+                <span className="font-mono text-xs text-zinc-300 font-bold" data-testid="text-demo-input-title">Agent Payload Injector</span>
+              </div>
 
-          <div className="demo-grid" style={{ display: "grid", gridTemplateColumns: "2fr 3fr", gap: 24 }}>
-            {/* Left column: input */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}>
-                <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, background: C.bg, display: "flex", alignItems: "center", gap: 8 }}>
-                  <Terminal size={16} style={{ color: C.green }} />
-                  <h2 style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: C.text }} data-testid="text-demo-input-title">Agent Payload Injector</h2>
+              <div className="p-4 space-y-4">
+                <div>
+                  <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-demo-scenarios">PRELOADED SCENARIOS</div>
+                  {DEMO_SCENARIOS.map((scenario) => (
+                    <button
+                      key={scenario.key}
+                      onClick={() => loadScenario(scenario.key)}
+                      className={`w-full text-left px-3 py-2 mb-1 border font-mono text-xs transition-colors ${
+                        memo === scenario.memo
+                          ? "border-green-400/50 bg-green-400/10 text-green-400"
+                          : "border-zinc-800 text-zinc-400 hover:border-zinc-600"
+                      }`}
+                      data-testid={`button-scenario-${scenario.key}`}
+                    >
+                      <div className="font-bold">{scenario.label}</div>
+                      <div className="text-[10px] text-zinc-600 mt-0.5">{scenario.description}</div>
+                    </button>
+                  ))}
                 </div>
 
-                <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 20 }}>
-                  <div>
-                    <label style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 8, display: "block", letterSpacing: "0.1em" }} data-testid="label-demo-scenarios">PRELOADED SCENARIOS</label>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      {DEMO_SCENARIOS.map((scenario) => {
-                        const isActive = memo === scenario.memo;
-                        return (
-                          <button
-                            key={scenario.key}
-                            onClick={() => loadScenario(scenario.key)}
-                            style={{
-                              width: "100%",
-                              textAlign: "left",
-                              padding: "10px 12px",
-                              border: `1px solid ${isActive ? C.green : C.border}`,
-                              background: isActive ? `${C.green}10` : "transparent",
-                              color: isActive ? C.green : C.textDim,
-                              fontFamily: MONO,
-                              fontSize: 12,
-                              cursor: "pointer",
-                              transition: "all 0.15s",
-                            }}
-                            onMouseEnter={(e) => { if (!isActive) { (e.currentTarget as HTMLElement).style.borderColor = `${C.green}50`; } }}
-                            onMouseLeave={(e) => { if (!isActive) { (e.currentTarget as HTMLElement).style.borderColor = C.border; } }}
-                            data-testid={`button-scenario-${scenario.key}`}
-                          >
-                            <div style={{ fontWeight: 600, color: isActive ? C.green : C.text, marginBottom: 2 }}>{scenario.label}</div>
-                            <div style={{ fontSize: 10, color: C.textMuted }}>{scenario.description}</div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 8, display: "block", letterSpacing: "0.1em" }} data-testid="label-demo-memo">"strategy_memo":</label>
-                    <textarea
-                      value={memo}
-                      onChange={(e) => setMemo(e.target.value)}
-                      placeholder="Paste your reasoning memo here or select a scenario above..."
-                      style={{
-                        width: "100%",
-                        padding: 16,
-                        background: C.bg,
-                        border: `1px solid ${C.border}`,
-                        fontFamily: MONO,
-                        fontSize: 12,
-                        color: C.text,
-                        height: 144,
-                        resize: "none",
-                        outline: "none",
-                        boxSizing: "border-box",
-                      }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = C.green; }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = C.border; }}
-                      data-testid="textarea-demo-memo"
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 8, display: "block", letterSpacing: "0.1em" }} data-testid="label-demo-tier">AUDIT TIER</label>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                      {TIER_OPTIONS.map((t) => {
-                        const isActive = tier === t.value;
-                        return (
-                          <button
-                            key={t.value}
-                            onClick={() => setTier(t.value)}
-                            style={{
-                              padding: "10px 12px",
-                              border: `1px solid ${isActive ? C.green : C.border}`,
-                              background: isActive ? `${C.green}10` : "transparent",
-                              color: isActive ? C.green : C.textDim,
-                              textAlign: "center",
-                              fontFamily: MONO,
-                              cursor: "pointer",
-                              transition: "all 0.15s",
-                            }}
-                            data-testid={`button-tier-${t.value}`}
-                          >
-                            <div style={{ fontSize: 11, fontWeight: 700 }}>{t.label}</div>
-                            <div style={{ fontSize: 10, marginTop: 2, opacity: 0.7 }}>{t.price}</div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={runAudit}
-                    disabled={!memo.trim() || running}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 8,
-                      padding: "16px 0",
-                      fontFamily: MONO,
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: C.bg,
-                      background: C.green,
-                      border: "none",
-                      cursor: (!memo.trim() || running) ? "not-allowed" : "pointer",
-                      opacity: (!memo.trim() || running) ? 0.5 : 1,
-                      boxShadow: memo.trim() && !running ? `0 4px 20px ${C.green}30` : "none",
-                      transition: "all 0.15s",
-                    }}
-                    data-testid="button-run-audit"
-                  >
-                    {running ? (
-                      <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
-                        <Terminal size={18} />
-                      </motion.div>
-                    ) : (
-                      <Play size={18} />
-                    )}
-                    <span>{running ? "ORACLE SCANNING — may take up to 90s..." : "Run DJZS Audit"}</span>
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Right column: pipeline + results */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-              {/* Pipeline progress */}
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}>
-                <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, background: C.bg, display: "flex", alignItems: "center", gap: 8 }}>
-                  <ShieldCheck size={16} style={{ color: C.green }} />
-                  <h2 style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: C.text }} data-testid="text-demo-pipeline-title">Pipeline Progress</h2>
+                <div>
+                  <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-demo-memo">STRATEGY_MEMO:</div>
+                  <textarea
+                    value={memo}
+                    onChange={(e) => setMemo(e.target.value)}
+                    placeholder="Paste your reasoning memo here or select a scenario above..."
+                    className="w-full p-3 bg-black border border-zinc-800 font-mono text-xs text-zinc-300 h-32 resize-none focus:outline-none focus:border-green-400/50 transition-colors placeholder:text-zinc-700"
+                    data-testid="textarea-demo-memo"
+                  />
                 </div>
 
-                <div style={{ padding: 20 }}>
-                  <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 8 }}>
-                    {PIPELINE_STEPS.map((step, i) => {
-                      const StepIcon = step.icon;
-                      const isActive = i === currentStep;
-                      const isComplete = i < currentStep || (i === PIPELINE_STEPS.length - 1 && result !== null);
-
-                      const iconBg = isComplete ? `${C.green}20` : isActive ? `${C.amber}20` : C.bg;
-                      const iconBorder = isComplete ? `${C.green}40` : isActive ? `${C.amber}40` : C.border;
-                      const iconColor = isComplete ? C.green : isActive ? C.amber : C.textMuted;
-                      const labelColor = isComplete ? C.green : isActive ? C.amber : C.textMuted;
-
-                      return (
-                        <div key={step.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flex: 1, minWidth: 60 }}>
-                          <div
-                            style={{
-                              width: 28,
-                              height: 28,
-                              borderRadius: "50%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              border: `1px solid ${iconBorder}`,
-                              background: iconBg,
-                              color: iconColor,
-                              transition: "all 0.2s",
-                              animation: isActive ? "pulse 2s infinite" : "none",
-                            }}
-                            data-testid={`step-icon-${step.id}`}
-                          >
-                            {isComplete ? <CheckCircle2 size={14} /> : <StepIcon size={14} />}
-                          </div>
-                          <div style={{ textAlign: "center" }}>
-                            <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: labelColor }} data-testid={`step-label-${step.id}`}>{step.label}</div>
-                            <div style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted }}>{step.description}</div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                <div>
+                  <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-demo-tier">AUDIT TIER</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {TIER_OPTIONS.map((t) => (
+                      <button
+                        key={t.value}
+                        onClick={() => setTier(t.value)}
+                        className={`px-2 py-2 border text-center font-mono transition-colors ${
+                          tier === t.value
+                            ? "border-green-400/50 bg-green-400/10 text-green-400"
+                            : "border-zinc-800 text-zinc-500 hover:border-zinc-600"
+                        }`}
+                        data-testid={`button-tier-${t.value}`}
+                      >
+                        <div className="text-[10px] font-bold">{t.label}</div>
+                        <div className="text-xs font-bold mt-0.5">{t.price}</div>
+                      </button>
+                    ))}
                   </div>
                 </div>
-              </motion.div>
 
-              {/* Results / Error / Empty */}
-              <AnimatePresence mode="wait">
-                {error ? (
-                  <motion.div
-                    key="error"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    style={{ border: `1px solid ${C.red}40`, background: `${C.red}08`, padding: 24 }}
-                    data-testid="demo-error-container"
-                  >
-                    <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                      <AlertTriangle size={20} style={{ color: C.red, marginTop: 2, flexShrink: 0 }} />
-                      <div>
-                        <div style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: C.red, marginBottom: 4 }}>Audit Failed</div>
-                        <p style={{ fontFamily: MONO, fontSize: 12, color: C.textDim }}>{error}</p>
-                        <p style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginTop: 8 }}>The Oracle may be temporarily unavailable. Try again in a few seconds.</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : result ? (
-                  <motion.div
-                    key="result"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}
-                    data-testid="demo-result-container"
-                  >
-                    <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, background: C.bg, display: "flex", alignItems: "center", gap: 8 }}>
-                      <Terminal size={16} style={{ color: C.green }} />
-                      <h2 style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: C.text }} data-testid="text-demo-result-title">ProofOfLogic Certificate</h2>
-                    </div>
-
-                    <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 24 }}>
-                      {/* Verdict + score */}
-                      <div style={{ display: "flex", alignItems: "flex-start", gap: 24, flexWrap: "wrap" }}>
-                        <RiskScoreGauge score={result.risk_score} />
-                        <div style={{ display: "flex", flexDirection: "column", gap: 12, flex: 1, minWidth: 0 }}>
-                          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-                            {result.verdict === "FAIL" ? (
-                              <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, padding: "6px 12px", background: `${C.red}20`, color: C.red, border: `1px solid ${C.red}40`, display: "flex", alignItems: "center", gap: 6 }} data-testid="badge-result-verdict">
-                                <AlertTriangle size={14} /> VERDICT: FAIL
-                              </span>
-                            ) : (
-                              <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, padding: "6px 12px", background: `${C.green}20`, color: C.green, border: `1px solid ${C.green}40`, display: "flex", alignItems: "center", gap: 6 }} data-testid="badge-result-verdict">
-                                <ShieldCheck size={14} /> VERDICT: PASS
-                              </span>
-                            )}
-                            <span style={{ fontFamily: MONO, fontSize: 10, padding: "4px 10px", background: C.bg, color: C.textMuted, border: `1px solid ${C.border}` }} data-testid="text-result-tier">
-                              TIER: {result.tier.toUpperCase()}
-                            </span>
-                            <span style={{ fontFamily: MONO, fontSize: 9, fontWeight: 700, padding: "3px 8px", background: `${C.green}10`, color: C.green, border: `1px solid ${C.green}30` }} data-testid="badge-live-audit">
-                              LIVE
-                            </span>
-                          </div>
-                          <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, display: "flex", flexDirection: "column", gap: 4 }}>
-                            <div data-testid="text-result-audit-id">ID: {result.audit_id}</div>
-                            <div data-testid="text-result-timestamp">TIME: {new Date(result.timestamp).toLocaleString()}</div>
-                            {result.primary_bias_detected && result.primary_bias_detected !== "None" && (
-                              <div data-testid="text-result-bias">BIAS: <span style={{ color: C.amber }}>{result.primary_bias_detected}</span></div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Flags */}
-                      {result.flags && result.flags.length > 0 && (
-                        <div>
-                          <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 12, letterSpacing: "0.1em" }} data-testid="label-result-flags">FAILURE CODES ({result.flags.length})</div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                            {result.flags.map((flag, i) => (
-                              <FlagCard key={i} flag={flag} index={i} />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Recommendations */}
-                      {result.structural_recommendations && result.structural_recommendations.length > 0 && (
-                        <div>
-                          <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 8, letterSpacing: "0.1em" }} data-testid="label-result-recommendations">RECOMMENDATIONS</div>
-                          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-                            {result.structural_recommendations.map((rec, i) => (
-                              <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontFamily: MONO, fontSize: 12, color: C.textDim }}>
-                                <ArrowRight size={14} style={{ marginTop: 2, color: C.green, flexShrink: 0 }} />
-                                <span data-testid={`text-recommendation-${i}`}>{rec}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {/* Provenance */}
-                      <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
-                        <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, letterSpacing: "0.1em" }} data-testid="label-result-provenance">ON-CHAIN PROVENANCE</div>
-                        <div className="demo-provenance-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                          {result.irys_url ? (
-                            <a
-                              href={result.irys_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 16px", border: `1px solid ${C.green}30`, background: `${C.green}08`, textDecoration: "none", transition: "background 0.15s" }}
-                              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = `${C.green}15`; }}
-                              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = `${C.green}08`; }}
-                              data-testid="link-result-irys"
-                            >
-                              <Database size={16} style={{ color: C.green }} />
-                              <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: C.green }}>Irys Certificate</div>
-                                <div style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{result.irys_tx_id}</div>
-                              </div>
-                              <ExternalLink size={14} style={{ color: C.textMuted, flexShrink: 0 }} />
-                            </a>
-                          ) : (
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 16px", border: `1px solid ${C.border}`, background: C.bg }}>
-                              <Database size={16} style={{ color: C.textMuted }} />
-                              <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: C.textMuted }}>Irys Certificate</div>
-                                <div style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted }}>{result.irys_error || "Not configured in this environment"}</div>
-                              </div>
-                            </div>
-                          )}
-                          {result.trust_score_tx_hash ? (
-                            <a
-                              href={`https://basescan.org/tx/${result.trust_score_tx_hash}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 16px", border: `1px solid ${C.green}30`, background: `${C.green}08`, textDecoration: "none", transition: "background 0.15s" }}
-                              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = `${C.green}15`; }}
-                              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = `${C.green}08`; }}
-                              data-testid="link-result-basescan"
-                            >
-                              <ShieldCheck size={16} style={{ color: C.green }} />
-                              <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: C.green }}>BaseScan TX</div>
-                                <div style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{result.trust_score_tx_hash}</div>
-                              </div>
-                              <ExternalLink size={14} style={{ color: C.textMuted, flexShrink: 0 }} />
-                            </a>
-                          ) : (
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 16px", border: `1px solid ${C.border}`, background: C.bg }}>
-                              <ShieldCheck size={16} style={{ color: C.textMuted }} />
-                              <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: C.textMuted }}>Trust Score TX</div>
-                                <div style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted }}>{result.trust_score_error || "Contract not configured in this environment"}</div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* NFT */}
-                        {result.verdict === "PASS" && (
-                          <div style={{ marginTop: 4 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 16px", border: `1px solid ${C.green}30`, background: `${C.green}05` }}>
-                              <ShieldCheck size={16} style={{ color: C.green }} />
-                              <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: C.green }}>
-                                  ProofOfLogic NFT
-                                  <span style={{ marginLeft: 8, fontSize: 9, fontWeight: 400, padding: "2px 6px", background: `${C.green}10`, color: C.green, border: `1px solid ${C.green}20` }}>SIMULATED</span>
-                                </div>
-                                <div style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted }}>Full certificate stored on-chain as ERC-721 on Base Mainnet</div>
-                                <div style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted, marginTop: 4 }} data-testid="text-simulated-nft-tx">
-                                  TX: 0x{result.cryptographic_hash?.slice(0, 40) || "00".repeat(20)}...
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        <div style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted, wordBreak: "break-all" }} data-testid="text-result-hash">
-                          SHA-256: {result.cryptographic_hash}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : !running ? (
-                  <motion.div
-                    key="empty"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    style={{ border: `1px dashed ${C.border}`, background: `${C.surface}80`, padding: 48, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}
-                    data-testid="demo-empty-state"
-                  >
-                    <ShieldAlert size={48} style={{ color: C.textMuted, opacity: 0.3, marginBottom: 16 }} />
-                    <p style={{ fontFamily: MONO, fontSize: 12, color: C.textMuted, marginBottom: 4 }}>No audit running</p>
-                    <p style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, opacity: 0.6 }}>Select a scenario or paste a memo, then click "Run DJZS Audit"</p>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
+                <button
+                  onClick={runAudit}
+                  disabled={!memo.trim() || running}
+                  className={`w-full flex items-center justify-center gap-2 py-3 font-mono text-xs font-bold transition-all ${
+                    !memo.trim() || running
+                      ? "bg-zinc-800 text-zinc-600 cursor-not-allowed"
+                      : "bg-green-400 text-black hover:bg-green-300"
+                  }`}
+                  data-testid="button-run-audit"
+                >
+                  {running ? <Terminal size={16} className="animate-spin" /> : <Play size={16} />}
+                  <span>{running ? "SCANNING — may take up to 90s..." : "RUN DEMO AUDIT"}</span>
+                </button>
+              </div>
             </div>
           </div>
-        </main>
 
-        <div data-testid="text-demo-footer-tagline">
-          <TerminalFooter />
+          <div className="lg:col-span-3 space-y-4">
+            <div className="border border-zinc-800 bg-zinc-950">
+              <div className="px-4 py-3 border-b border-zinc-800 flex items-center gap-2">
+                <ShieldCheck size={14} className="text-green-400" />
+                <span className="font-mono text-xs text-zinc-300 font-bold" data-testid="text-demo-pipeline-title">Pipeline Progress</span>
+              </div>
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  {PIPELINE_STEPS.map((step, i) => {
+                    const StepIcon = step.icon;
+                    const isActive = i === currentStep;
+                    const isComplete = i < currentStep || (i === PIPELINE_STEPS.length - 1 && result !== null);
+                    return (
+                      <div key={step.id} className="flex flex-col items-center gap-1 flex-1">
+                        <div
+                          className={`w-7 h-7 flex items-center justify-center transition-all ${
+                            isComplete ? "text-green-400" :
+                            isActive ? "text-green-400 animate-pulse" :
+                            "text-zinc-700"
+                          }`}
+                          data-testid={`step-icon-${step.id}`}
+                        >
+                          {isComplete ? <CheckCircle2 size={16} /> : <StepIcon size={16} />}
+                        </div>
+                        <div className={`text-[9px] font-mono text-center ${
+                          isComplete ? "text-green-400" : isActive ? "text-green-400" : "text-zinc-700"
+                        }`} data-testid={`step-label-${step.id}`}>
+                          {step.label}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div className="border border-red-400/30 bg-red-400/5 p-4" data-testid="demo-error-message">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle size={16} className="text-red-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <div className="font-mono text-xs font-bold text-red-400 mb-1">AUDIT FAILED</div>
+                    <p className="font-mono text-xs text-zinc-400">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {result ? (
+              <div className="border border-zinc-800 bg-zinc-950" data-testid="demo-result-card">
+                <div className={`px-4 py-4 border-b border-zinc-800 ${
+                  result.verdict === "FAIL" ? "bg-red-400/5" : "bg-green-400/5"
+                }`}>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        {result.verdict === "FAIL" ? (
+                          <span className="font-mono text-sm font-bold text-red-400 flex items-center gap-1.5" data-testid="badge-result-verdict">
+                            <AlertTriangle size={16} /> VERDICT: FAIL
+                          </span>
+                        ) : (
+                          <span className="font-mono text-sm font-bold text-green-400 flex items-center gap-1.5" data-testid="badge-result-verdict">
+                            <ShieldCheck size={16} /> VERDICT: PASS
+                          </span>
+                        )}
+                        <span className="font-mono text-[10px] px-2 py-0.5 border border-zinc-700 text-zinc-500" data-testid="text-result-tier">
+                          {result.tier.toUpperCase()}
+                        </span>
+                        <span className="font-mono text-[10px] px-2 py-0.5 border border-amber-400/30 text-amber-400" data-testid="badge-demo-audit">
+                          DEMO
+                        </span>
+                      </div>
+                      <div className="font-mono text-[10px] text-zinc-600 space-y-0.5">
+                        <div data-testid="text-result-audit-id">ID: {result.audit_id}</div>
+                        <div data-testid="text-result-timestamp">TIME: {new Date(result.timestamp).toLocaleString()}</div>
+                        {result.primary_bias_detected && result.primary_bias_detected !== "None" && (
+                          <div data-testid="text-result-bias">BIAS: <span className="text-amber-400">{result.primary_bias_detected}</span></div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-mono text-[10px] text-zinc-600">RISK SCORE</div>
+                      <div className={`font-mono text-3xl font-bold ${
+                        result.risk_score > 60 ? "text-red-400" : result.risk_score > 30 ? "text-amber-400" : "text-green-400"
+                      }`} data-testid="text-risk-score-value">
+                        {result.risk_score}
+                      </div>
+                      <div className="font-mono text-[10px] text-zinc-700">/ 100</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 space-y-4">
+                  {result.flags && result.flags.length > 0 && (
+                    <div>
+                      <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-result-flags">FAILURE_FLAGS ({result.flags.length})</div>
+                      <div className="space-y-1">
+                        {result.flags.map((flag, i) => (
+                          <FlagCard key={i} flag={flag} index={i} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {result.structural_recommendations && result.structural_recommendations.length > 0 && (
+                    <div>
+                      <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-result-recommendations">RECOMMENDATIONS</div>
+                      {result.structural_recommendations.map((rec, i) => (
+                        <div key={i} className="flex items-start gap-2 font-mono text-xs text-zinc-400 mb-1">
+                          <span className="text-green-400 mt-0.5">→</span>
+                          <span data-testid={`text-recommendation-${i}`}>{rec}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="border-t border-zinc-800 pt-4 space-y-2">
+                    <div className="font-mono text-[10px] text-zinc-600" data-testid="label-result-provenance">ON-CHAIN PROVENANCE</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {result.irys_url ? (
+                        <a href={result.irys_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2.5 border border-green-400/20 bg-green-400/5 hover:bg-green-400/10 transition-colors group" data-testid="link-result-irys">
+                          <Database size={14} className="text-green-400" />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-mono text-[10px] font-bold text-green-400">Irys Certificate</div>
+                            <div className="font-mono text-[9px] text-zinc-600 truncate">{result.irys_tx_id}</div>
+                          </div>
+                          <ExternalLink size={12} className="text-zinc-600 group-hover:text-green-400 flex-shrink-0" />
+                        </a>
+                      ) : (
+                        <div className="flex items-center gap-2 px-3 py-2.5 border border-zinc-800">
+                          <Database size={14} className="text-zinc-700" />
+                          <div className="font-mono text-[10px] text-zinc-600">{result.irys_error || "Not configured"}</div>
+                        </div>
+                      )}
+                      {result.trust_score_tx_hash ? (
+                        <a href={`https://basescan.org/tx/${result.trust_score_tx_hash}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2.5 border border-green-400/20 bg-green-400/5 hover:bg-green-400/10 transition-colors group" data-testid="link-result-basescan">
+                          <ShieldCheck size={14} className="text-green-400" />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-mono text-[10px] font-bold text-green-400">BaseScan TX</div>
+                            <div className="font-mono text-[9px] text-zinc-600 truncate">{result.trust_score_tx_hash}</div>
+                          </div>
+                          <ExternalLink size={12} className="text-zinc-600 group-hover:text-green-400 flex-shrink-0" />
+                        </a>
+                      ) : (
+                        <div className="flex items-center gap-2 px-3 py-2.5 border border-zinc-800">
+                          <ShieldCheck size={14} className="text-zinc-700" />
+                          <div className="font-mono text-[10px] text-zinc-600">{result.trust_score_error || "Not configured"}</div>
+                        </div>
+                      )}
+                    </div>
+
+                    {result.verdict === "PASS" && (
+                      <div className="flex items-center gap-2 px-3 py-2.5 border border-green-400/20 bg-green-400/5">
+                        <ShieldCheck size={14} className="text-green-400" />
+                        <div className="min-w-0 flex-1">
+                          <div className="font-mono text-[10px] font-bold text-green-400">
+                            ProofOfLogic NFT
+                            <span className="ml-2 text-[9px] font-normal px-1.5 py-0.5 border border-amber-400/30 text-amber-400 bg-amber-400/5">SIMULATED</span>
+                          </div>
+                          <div className="font-mono text-[9px] text-zinc-600">Full certificate stored on-chain as ERC-721 on Base Mainnet</div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="font-mono text-[9px] text-zinc-700 break-all pt-1" data-testid="text-result-hash">
+                      SHA-256: {result.cryptographic_hash}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : !running ? (
+              <div className="border border-dashed border-zinc-800 p-12 flex flex-col items-center justify-center text-center" data-testid="demo-empty-state">
+                <ShieldAlert size={36} className="text-zinc-800 mb-3" />
+                <p className="font-mono text-xs text-zinc-500 mb-1">No audit running</p>
+                <p className="font-mono text-[10px] text-zinc-700">
+                  Select a scenario or paste a memo, then click "Run Demo Audit"
+                </p>
+              </div>
+            ) : null}
+          </div>
         </div>
-      </div>
+      </main>
+
+      <footer className="border-t border-zinc-800 py-6 mt-12">
+        <div className="max-w-5xl mx-auto px-4 flex flex-col items-center gap-2">
+          <div className="flex gap-4">
+            <Link href="/" className="font-mono text-[10px] text-zinc-600 hover:text-green-400 transition-colors" data-testid="link-demo-footer-home">Home</Link>
+            <Link href="/docs" className="font-mono text-[10px] text-zinc-600 hover:text-green-400 transition-colors" data-testid="link-demo-footer-docs">Docs</Link>
+            <Link href="/chat" className="font-mono text-[10px] text-zinc-600 hover:text-green-400 transition-colors" data-testid="link-demo-footer-chat">Live Audit</Link>
+          </div>
+          <p className="font-mono text-[10px] text-zinc-800" data-testid="text-demo-footer-tagline">
+            djzsx.eth | No agent acts without audit. &copy; 2026
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
