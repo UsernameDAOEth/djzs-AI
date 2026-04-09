@@ -3,6 +3,7 @@ import {
   executePredictionAudit,
   PREDICTION_HARD_FAILS,
   type PredictionCertificate,
+  type PredictionFlag,
 } from "../../prediction-audit";
 import { DJZS_WEIGHTS } from "../weights";
 
@@ -427,6 +428,20 @@ async function runTests() {
       for (const actualHF of auditResult.hard_fail_rules) {
         if (!test.expected_hard_fails.includes(actualHF)) {
           violations.push(`UNEXPECTED HARD-FAIL: ${actualHF} triggered but not expected`);
+        }
+      }
+
+      if (test.expected_hard_fails.length > 0) {
+        for (const expectedHF of test.expected_hard_fails) {
+          const rule = PREDICTION_HARD_FAILS.find(r => r.id === expectedHF);
+          if (rule) {
+            const targetFlag = auditResult.flags.find(f => stripDJZSPrefix(f.code) === rule.lf_code);
+            if (targetFlag && !targetFlag.hard_fail) {
+              violations.push(
+                `MISSING hard_fail MARKER: flag ${rule.lf_code} should have hard_fail=true for rule ${expectedHF}`
+              );
+            }
+          }
         }
       }
 
