@@ -371,18 +371,18 @@ The Live Demo (`/demo`) provides a free, rate-limited preview with preloaded sce
 
 ---
 
-## Frontend Design
+## Frontend Design: Terminal Brutalism
 
-The web interface uses a **Terminal Brutalism** design system — dark, monospaced, zero-decoration. Every element is built to feel like a hardened audit terminal.
+The landing page follows a **Terminal Brutalism** aesthetic — monospace-first (`JetBrains Mono`), black backgrounds (`#0a0a0a`), green-400 accents (`#4ade80`), and scan-line overlays. Every section opens with a `//` comment-style header reminiscent of a system boot log.
 
-| Element | Detail |
+| Element | Implementation |
 |---|---|
-| Typography | JetBrains Mono monospace throughout — no sans-serif anywhere |
-| Palette | `#0a0a0a` background, `#22c55e` green accents, `#ef4444` fail red, `#f59e0b` warning amber |
-| Hero | Typewriter animation types "Audit-Before-Act." character by character with a persistent blinking cursor |
-| Layout | Full-width containers (up to 1400px) with responsive collapse on mobile |
-| Animations | CSS-only — no animation libraries. Boot sequence, typewriter, and blink-cursor keyframes |
-| Components | Shared design primitives (`C`, `MONO`, `Nav`, `Badge`, `GlowDot`, `TerminalPage`) in `terminal-theme.tsx` |
+| Boot Sequence | Animated 8-line terminal startup on page load |
+| LF Taxonomy | Interactive accordion displaying all 11 DJZS-LF codes with severity badges and auto-abort indicators |
+| Interactive Demo | Three preloaded scenarios (FOMO, Hallucinated Data, Valid Strategy) with scanning animation and hard FAIL/PASS verdicts |
+| Pricing | Micro ($0.10), Founder ($1.00), Treasury ($10.00) — x402 USDC on Base Mainnet |
+| Certificates | Sample ProofOfLogic JSON block with Irys Datachain provenance link |
+| Wallet | RainbowKit `ConnectButton.Custom` integration preserved across all pages |
 
 ---
 
@@ -426,7 +426,7 @@ The web interface uses a **Terminal Brutalism** design system — dark, monospac
 | Provenance | Irys Datachain |
 | Settlement | USDC on Base Mainnet, x402 protocol |
 | Messaging | XMTP (MLS protocol, quantum-resistant) |
-| Frontend | React 18, TypeScript, Vite, Terminal Brutalism design system (JetBrains Mono) |
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS — Terminal Brutalism design (JetBrains Mono, green-400 accents on black) |
 | Backend | Express.js, TypeScript |
 | Database | PostgreSQL, Drizzle ORM |
 | Wallet | RainbowKit, wagmi, viem |
