@@ -192,8 +192,8 @@ export default function Chat() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Mint failed");
       setNftMintResult({ nft_tx_hash: data.nft_tx_hash, nft_token_id: data.nft_token_id });
-    } catch (err: any) {
-      setError(err.message || "NFT mint failed");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "NFT mint failed");
     } finally {
       setNftMinting(false);
     }
@@ -220,6 +220,10 @@ export default function Chat() {
     }
     if (chainId !== 8453) {
       setError("Please switch your wallet to Base Mainnet (chain 8453) to pay for audits.");
+      return;
+    }
+    if (!/^0x[0-9a-fA-F]{40}$/.test(treasuryWallet)) {
+      setError("Invalid treasury wallet address. Please refresh and try again.");
       return;
     }
 
@@ -297,13 +301,13 @@ export default function Chat() {
       await new Promise(r => setTimeout(r, 300));
 
       setResult(data);
-    } catch (err: any) {
-      if (err.name === "AbortError") return;
-      // User rejected wallet transaction
-      if (err.message?.includes("User rejected") || err.message?.includes("User denied")) {
+    } catch (err: unknown) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("User rejected") || msg.includes("User denied")) {
         setError("Transaction cancelled by user.");
       } else {
-        setError(err.message || "Audit request failed");
+        setError(msg || "Audit request failed");
       }
       setCurrentStep(-1);
     } finally {
