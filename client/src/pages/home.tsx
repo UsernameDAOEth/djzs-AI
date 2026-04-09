@@ -238,9 +238,33 @@ function Header() {
 
 // ─── Hero ────────────────────────────────────────────────────────────
 
+function useTypewriter(text: string, start: boolean, speed = 90) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!start) return;
+    setDisplayed("");
+    setDone(false);
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) {
+        clearInterval(id);
+        setDone(true);
+      }
+    }, speed);
+    return () => clearInterval(id);
+  }, [text, start, speed]);
+
+  return { displayed, done };
+}
+
 function Hero() {
   const [bootDone, setBootDone] = useState(false);
   const onBootComplete = useCallback(() => setBootDone(true), []);
+  const { displayed } = useTypewriter("Audit-Before-Act", bootDone, 90);
 
   return (
     <section className="relative py-16 sm:py-24 px-4">
@@ -251,7 +275,7 @@ function Hero() {
 
         <div className={`transition-all duration-700 ${bootDone ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
           <h1 className="font-mono text-3xl sm:text-5xl font-bold text-white leading-tight mb-4">
-            Audit-Before-Act
+            {displayed}<span className="inline-block w-[3px] h-[0.9em] bg-green-400 ml-1 align-baseline" style={{ animation: "cursor-blink 1s step-end infinite" }} />
           </h1>
           <p className="font-mono text-base sm:text-lg text-zinc-400 leading-relaxed mb-8 max-w-2xl">
             The adversarial logic firewall for autonomous agents. Every reasoning trace is stress-tested against 11 failure codes before execution. Every verdict is permanently verifiable on Irys Datachain.
@@ -637,6 +661,7 @@ export default function Home() {
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #333; }
         @keyframes scan-bar { 0% { width: 0%; } 100% { width: 100%; } }
+        @keyframes cursor-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
       `}</style>
 
       {/* Scan lines overlay */}
