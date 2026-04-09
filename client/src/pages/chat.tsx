@@ -1,16 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAccount } from "wagmi";
+import { writeContract, waitForTransactionReceipt } from "@wagmi/core";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Link } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
-import { Helmet } from "react-helmet";
 import { getVeniceApiKey } from "@/lib/queryClient";
-import { C, MONO, GlowDot } from "@/lib/terminal-theme";
+import { wagmiConfig, USDC_ADDRESS, ERC20_ABI } from "@/lib/wagmi-config";
 import {
-  ArrowLeft, ArrowRight, Play, Terminal, ShieldCheck, ShieldAlert,
+  ArrowRight, Play, Terminal, ShieldCheck, ShieldAlert,
   AlertTriangle, CheckCircle2, Upload, Database, ExternalLink,
-  ChevronDown, ChevronUp, FlaskConical, BookOpen, Menu, X, Lock, Wallet
+  ChevronDown, ChevronRight, Menu, X, Lock, Wallet, Coins
 } from "lucide-react";
+
+// ─── Scenarios ───────────────────────────────────────────────────────
 
 const DEMO_SCENARIOS = [
   {
@@ -38,6 +39,8 @@ const DEMO_SCENARIOS = [
     memo: "Arbitrage opportunity: ETH is $2,845 on DEX-A and $2,860 on DEX-B. Executing simultaneous buy/sell across both venues. Expected profit: 0.53% after gas. Slippage tolerance: 0.1%.",
   },
 ];
+
+// ─── Types ───────────────────────────────────────────────────────────
 
 interface AuditFlag {
   code: string;
@@ -71,108 +74,89 @@ interface AuditResult {
   nft_error?: string;
 }
 
+// ─── Payment Config ──────────────────────────────────────────────────
+
+const TIER_AMOUNTS: Record<string, bigint> = {
+  micro: 100_000n,       // $0.10 USDC (6 decimals)
+  founder: 1_000_000n,   // $1.00 USDC
+  treasury: 10_000_000n, // $10.00 USDC
+};
+
 const PIPELINE_STEPS = [
-  { id: "signature", label: "Signature", icon: Lock, description: "Verifying request signature" },
-  { id: "hash-check", label: "Hash Check", icon: ShieldAlert, description: "Validating payload integrity" },
-  { id: "auditing", label: "Auditing", icon: FlaskConical, description: "Adversarial analysis in TEE" },
-  { id: "uploading", label: "Irys Upload", icon: Upload, description: "Certificate stored on Datachain" },
-  { id: "settlement", label: "Settlement", icon: Database, description: "On-chain settlement on Base" },
-  { id: "complete", label: "Complete", icon: CheckCircle2, description: "ProofOfLogic certificate ready" },
+  { id: "payment", label: "Payment", icon: Coins, description: "USDC transfer to treasury" },
+  { id: "confirming", label: "Confirming", icon: Lock, description: "Waiting for on-chain confirmation" },
+  { id: "auditing", label: "Auditing", icon: Terminal, description: "Adversarial analysis in TEE" },
+  { id: "uploading", label: "Irys Upload", icon: Upload, description: "Certificate → Datachain" },
+  { id: "settlement", label: "Settlement", icon: Database, description: "On-chain settlement" },
+  { id: "complete", label: "Complete", icon: CheckCircle2, description: "Certificate ready" },
 ];
 
 const TIER_OPTIONS = [
-  { value: "micro", label: "Micro-Zone", price: "$0.10", description: "Binary risk scoring" },
-  { value: "founder", label: "Founder Zone", price: "$1.00", description: "Strategic diligence" },
-  { value: "treasury", label: "Treasury Zone", price: "$10.00", description: "Exhaustive stress-test" },
+  { value: "micro", label: "MICRO", price: "$0.10", engine: "Venice AI" },
+  { value: "founder", label: "FOUNDER", price: "$1.00", engine: "Venice AI" },
+  { value: "treasury", label: "TREASURY", price: "$10.00", engine: "Claude Opus" },
 ];
 
-function RiskScoreGauge({ score }: { score: number }) {
-  const color = score >= 70 ? C.red : score >= 40 ? C.amber : C.green;
-  const circumference = 2 * Math.PI * 45;
-  const offset = circumference - (score / 100) * circumference;
+// ─── Severity Helpers ────────────────────────────────────────────────
+
+function severityColor(sev: string) {
+  switch (sev) {
+    case "CRITICAL": return "text-red-400 border-red-400/30 bg-red-400/5";
+    case "HIGH": return "text-amber-400 border-amber-400/30 bg-amber-400/5";
+    case "MEDIUM": return "text-yellow-300 border-yellow-300/30 bg-yellow-300/5";
+    default: return "text-zinc-400 border-zinc-700 bg-zinc-900";
+  }
+}
+
+// ─── Flag Card ───────────────────────────────────────────────────────
+
+function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <div style={{ position: "relative", width: 112, height: 112, flexShrink: 0 }}>
-      <svg style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }} viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="45" fill="none" stroke={C.border} strokeWidth="6" />
-        <motion.circle
-          cx="50" cy="50" r="45" fill="none" stroke={color} strokeWidth="6"
-          strokeLinecap="round" strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-        />
-      </svg>
-      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontFamily: MONO, fontSize: 24, fontWeight: 700, color }} data-testid="text-risk-score-value">{score}</span>
-        <span style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted }}>/ 100</span>
-      </div>
+    <div className="border border-zinc-800" data-testid={`card-flag-${flag.code.toLowerCase()}`}>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between p-3 text-left hover:bg-zinc-900/50 transition-colors"
+        data-testid={`button-expand-flag-${flag.code.toLowerCase()}`}
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <span className={`text-[10px] font-mono font-bold px-2 py-0.5 border ${severityColor(flag.severity)}`} data-testid={`badge-flag-severity-${index}`}>
+            {flag.severity}
+          </span>
+          <span className="font-mono text-xs text-zinc-300 font-bold" data-testid={`text-flag-code-${index}`}>{flag.code}</span>
+          <span className="text-xs text-zinc-500 truncate hidden sm:inline">{(flag.message || "").split("—")[0]}</span>
+        </div>
+        {expanded ? <ChevronDown size={14} className="text-zinc-600" /> : <ChevronRight size={14} className="text-zinc-600" />}
+      </button>
+      {expanded && (
+        <div className="px-3 pb-3 space-y-2 border-t border-zinc-800">
+          <div className="pt-2">
+            <div className="text-[10px] font-mono text-zinc-600 mb-1">MESSAGE</div>
+            <p className="text-xs text-zinc-400">{flag.message}</p>
+          </div>
+          {flag.evidence && (
+            <div>
+              <div className="text-[10px] font-mono text-zinc-600 mb-1">EVIDENCE</div>
+              <p className="text-xs text-zinc-500 italic">{flag.evidence}</p>
+            </div>
+          )}
+          {flag.recommendation && (
+            <div>
+              <div className="text-[10px] font-mono text-zinc-600 mb-1">RECOMMENDATION</div>
+              <p className="text-xs text-green-400">{flag.recommendation}</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
-  const [expanded, setExpanded] = useState(false);
-  const sevColor = flag.severity === "CRITICAL" ? C.red : flag.severity === "HIGH" ? C.amber : "#eab308";
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}
-      data-testid={`card-flag-${flag.code.toLowerCase()}`}
-    >
-      <button
-        onClick={() => setExpanded(!expanded)}
-        style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: 16, textAlign: "left", background: "transparent", border: "none", cursor: "pointer", color: C.text }}
-        data-testid={`button-expand-flag-${flag.code.toLowerCase()}`}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
-          <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, padding: "2px 8px", border: `1px solid ${sevColor}40`, background: `${sevColor}15`, color: sevColor }} data-testid={`badge-flag-severity-${index}`}>
-            {flag.severity}
-          </span>
-          <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: C.text }} data-testid={`text-flag-code-${index}`}>{flag.code}</span>
-          <span className="hidden sm:inline" style={{ fontFamily: MONO, fontSize: 12, color: C.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{(flag.message || "").split("—")[0]}</span>
-        </div>
-        {expanded ? <ChevronUp size={16} style={{ color: C.textMuted, flexShrink: 0 }} /> : <ChevronDown size={16} style={{ color: C.textMuted, flexShrink: 0 }} />}
-      </button>
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            style={{ overflow: "hidden" }}
-          >
-            <div style={{ padding: "0 16px 16px", display: "flex", flexDirection: "column", gap: 12, borderTop: `1px solid ${C.border}` }}>
-              <div style={{ paddingTop: 12 }}>
-                <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 4, letterSpacing: "0.1em" }}>MESSAGE</div>
-                <p style={{ fontFamily: MONO, fontSize: 12, color: C.textDim }}>{flag.message}</p>
-              </div>
-              {flag.evidence && (
-                <div>
-                  <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 4, letterSpacing: "0.1em" }}>EVIDENCE</div>
-                  <p style={{ fontFamily: MONO, fontSize: 12, color: C.textDim, fontStyle: "italic" }}>{flag.evidence}</p>
-                </div>
-              )}
-              {flag.recommendation && (
-                <div>
-                  <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 4, letterSpacing: "0.1em" }}>RECOMMENDATION</div>
-                  <p style={{ fontFamily: MONO, fontSize: 12, color: C.green }}>{flag.recommendation}</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
+// ─── Main Component ──────────────────────────────────────────────────
 
 export default function Chat() {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [memo, setMemo] = useState("");
   const [tier, setTier] = useState("micro");
@@ -182,7 +166,19 @@ export default function Chat() {
   const [error, setError] = useState<string | null>(null);
   const [nftMinting, setNftMinting] = useState(false);
   const [nftMintResult, setNftMintResult] = useState<{ nft_tx_hash: string; nft_token_id: number | null } | null>(null);
+  const [treasuryWallet, setTreasuryWallet] = useState<string | null>(null);
+  const [paymentTxHash, setPaymentTxHash] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Fetch treasury wallet on mount
+  useEffect(() => {
+    fetch("/api/audit/schema")
+      .then(r => r.json())
+      .then(data => {
+        if (data?.payment?.payTo) setTreasuryWallet(data.payment.payTo);
+      })
+      .catch(() => {});
+  }, []);
 
   const mintNft = useCallback(async () => {
     if (!result?.irys_tx_id || !address || nftMinting) return;
@@ -196,8 +192,8 @@ export default function Chat() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Mint failed");
       setNftMintResult({ nft_tx_hash: data.nft_tx_hash, nft_token_id: data.nft_token_id });
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "NFT mint failed");
+    } catch (err: any) {
+      setError(err.message || "NFT mint failed");
     } finally {
       setNftMinting(false);
     }
@@ -211,38 +207,67 @@ export default function Chat() {
     setResult(null);
     setError(null);
     setNftMintResult(null);
+    setPaymentTxHash(null);
     setCurrentStep(-1);
     setRunning(false);
   };
 
   const runAudit = useCallback(async () => {
-    if (!memo.trim() || running || !isConnected) return;
+    if (!memo.trim() || running || !isConnected || !address) return;
+    if (!treasuryWallet) {
+      setError("Treasury wallet not configured. Cannot process payment.");
+      return;
+    }
+    if (chainId !== 8453) {
+      setError("Please switch your wallet to Base Mainnet (chain 8453) to pay for audits.");
+      return;
+    }
+
     abortRef.current?.abort();
     setRunning(true);
     setResult(null);
     setError(null);
     setNftMintResult(null);
-    setCurrentStep(0);
+    setPaymentTxHash(null);
+    setCurrentStep(0); // Payment step
 
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const stepTimers = [600, 600];
-    for (const delay of stepTimers) {
-      await new Promise(r => setTimeout(r, delay));
-      if (controller.signal.aborted) return;
-      setCurrentStep(prev => prev + 1);
-    }
-
     try {
+      // ─── Step 0: Send USDC payment ─────────────────────────────
+      const usdcAddress = USDC_ADDRESS[8453];
+      const amount = TIER_AMOUNTS[tier];
+      if (!amount) throw new Error("Invalid tier");
+
+      const txHash = await writeContract(wagmiConfig, {
+        address: usdcAddress,
+        abi: ERC20_ABI,
+        functionName: "transfer",
+        args: [treasuryWallet as `0x${string}`, amount],
+      });
+
+      if (controller.signal.aborted) return;
+      setPaymentTxHash(txHash);
+      setCurrentStep(1); // Confirming
+
+      // ─── Step 1: Wait for confirmation ─────────────────────────
+      await waitForTransactionReceipt(wagmiConfig, { hash: txHash });
+
+      if (controller.signal.aborted) return;
+      setCurrentStep(2); // Auditing
+
+      // ─── Step 2: Send audit request with payment proof ─────────
       const auditType = tier === "treasury" ? "treasury" : tier === "founder" ? "founder_drift" : "general";
       const endpoint = tier === "treasury" ? "/api/audit/treasury"
         : tier === "founder" ? "/api/audit/founder" : "/api/audit/micro";
       const userVeniceKey = getVeniceApiKey();
+
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-payment-proof": txHash,
           ...(userVeniceKey && { "x-venice-api-key": userVeniceKey }),
           ...(address && { "x-wallet-address": address }),
         },
@@ -255,7 +280,7 @@ export default function Chat() {
       });
 
       if (controller.signal.aborted) return;
-      setCurrentStep(3);
+      setCurrentStep(3); // Irys Upload
       await new Promise(r => setTimeout(r, 400));
 
       if (!response.ok) {
@@ -266,486 +291,435 @@ export default function Chat() {
       const data: AuditResult = await response.json();
 
       if (controller.signal.aborted) return;
-      setCurrentStep(4);
+      setCurrentStep(4); // Settlement
       await new Promise(r => setTimeout(r, 400));
-      setCurrentStep(5);
+      setCurrentStep(5); // Complete
       await new Promise(r => setTimeout(r, 300));
 
       setResult(data);
-    } catch (err: unknown) {
-      if (err instanceof DOMException && err.name === "AbortError") return;
-      setError(err instanceof Error ? err.message : "Audit request failed");
+    } catch (err: any) {
+      if (err.name === "AbortError") return;
+      // User rejected wallet transaction
+      if (err.message?.includes("User rejected") || err.message?.includes("User denied")) {
+        setError("Transaction cancelled by user.");
+      } else {
+        setError(err.message || "Audit request failed");
+      }
       setCurrentStep(-1);
     } finally {
       setRunning(false);
       abortRef.current = null;
     }
-  }, [memo, tier, running, isConnected, address]);
+  }, [memo, tier, running, isConnected, address, chainId, treasuryWallet]);
 
   useEffect(() => {
-    return () => {
-      abortRef.current?.abort();
-    };
+    return () => { abortRef.current?.abort(); };
   }, []);
 
-  return (
-    <div style={{ background: C.bg, color: C.text, fontFamily: MONO, minHeight: "100vh" }}>
-      <Helmet>
-        <title>x402 Audit Console — Live | DJZS Protocol</title>
-        <meta name="description" content="Route your reasoning trace through the x402 Oracle. Real USDC payments on Base Mainnet. Adversarial analysis, Irys Datachain upload, and on-chain trust score settlement." />
-        <meta property="og:title" content="DJZS x402 Audit Console" />
-        <meta property="og:description" content="Wallet-gated audit console. Pay with USDC on Base Mainnet via x402 protocol. Full ProofOfLogic certificate pipeline." />
-      </Helmet>
+  const selectedTier = TIER_OPTIONS.find(t => t.value === tier);
 
-      <header style={{ position: "sticky", top: 0, zIndex: 50, borderBottom: `1px solid ${C.border}`, background: C.bg, padding: "0 24px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0" }}>
+  return (
+    <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+        ::selection { background: rgba(74, 222, 128, 0.3); }
+      `}</style>
+
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-zinc-800 bg-black/95 backdrop-blur-md">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/">
-            <span style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} data-testid="link-chat-home-logo">
-              <GlowDot color={C.green} size={8} />
-              <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: C.white }}>DJZS.ai</span>
+            <span className="font-mono text-lg font-bold tracking-tight text-white" data-testid="link-chat-home-logo">
+              DJZS<span className="text-green-400">.ai</span>
             </span>
           </Link>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <nav className="hidden md:flex" style={{ alignItems: "center", gap: 16 }}>
-              <Link href="/" data-testid="link-chat-header-home">
-                <span style={{ fontFamily: MONO, fontSize: 12, color: C.textDim, cursor: "pointer" }}>Home</span>
-              </Link>
-              <Link href="/docs" data-testid="link-chat-header-docs">
-                <span style={{ fontFamily: MONO, fontSize: 12, color: C.textDim, cursor: "pointer" }}>Documents</span>
-              </Link>
-            </nav>
+          <nav className="hidden md:flex items-center gap-1">
+            <Link href="/" className="px-3 py-1.5 font-mono text-xs text-zinc-500 hover:text-green-400 transition-colors" data-testid="link-chat-header-home">Home</Link>
+            <Link href="/docs" className="px-3 py-1.5 font-mono text-xs text-zinc-500 hover:text-green-400 transition-colors" data-testid="link-chat-header-docs">Docs</Link>
+            <Link href="/demo" className="px-3 py-1.5 font-mono text-xs text-zinc-500 hover:text-green-400 transition-colors">Demo</Link>
+          </nav>
+          <div className="flex items-center gap-3">
             <div className="hidden sm:block" data-testid="wallet-connect-button">
               <ConnectButton chainStatus="icon" showBalance={false} />
             </div>
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden" style={{ width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", border: "none", color: C.textDim, cursor: "pointer" }} data-testid="button-chat-mobile-menu" aria-label="Menu">
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white" data-testid="button-chat-mobile-menu" aria-label="Menu">
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div key="mobile-menu" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="md:hidden" style={{ borderTop: `1px solid ${C.border}`, overflow: "hidden", background: C.bg }}>
-              <nav style={{ display: "flex", flexDirection: "column", padding: "12px 16px", gap: 4 }}>
-                <Link href="/" onClick={() => setMobileMenuOpen(false)} data-testid="link-chat-mobile-home">
-                  <span style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", fontFamily: MONO, fontSize: 13, color: C.textDim, cursor: "pointer" }}>
-                    <ArrowLeft size={16} />Home
-                  </span>
-                </Link>
-                <Link href="/docs" onClick={() => setMobileMenuOpen(false)} data-testid="link-chat-mobile-docs">
-                  <span style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", fontFamily: MONO, fontSize: 13, color: C.textDim, cursor: "pointer" }}>
-                    <BookOpen size={16} />Documents
-                  </span>
-                </Link>
-                <div style={{ padding: "10px 16px" }} className="sm:hidden" data-testid="wallet-connect-mobile">
-                  <ConnectButton chainStatus="icon" showBalance={false} />
-                </div>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-zinc-800 bg-black/98 px-4 py-3">
+            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-mono text-xs text-zinc-400 hover:text-green-400">Home</Link>
+            <Link href="/docs" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-mono text-xs text-zinc-400 hover:text-green-400">Docs</Link>
+            <div className="py-2 sm:hidden" data-testid="wallet-connect-mobile"><ConnectButton chainStatus="icon" showBalance={false} /></div>
+          </div>
+        )}
       </header>
 
-      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px" }}>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 32 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "4px 12px", border: `1px solid ${C.green}40`, background: C.greenGlow, color: C.green, fontFamily: MONO, fontSize: 12, marginBottom: 16 }}>
-            <GlowDot color={C.green} size={6} />
-            <span data-testid="badge-chat-mode">x402 Audit Console — Live</span>
-          </div>
-          <h1 style={{ fontFamily: MONO, fontSize: 28, fontWeight: 800, color: C.white, marginBottom: 8, letterSpacing: "-0.02em" }} data-testid="text-chat-page-title">
+      <main className="max-w-5xl mx-auto px-4 py-8 sm:py-12">
+        {/* Title */}
+        <div className="mb-8">
+          <div className="font-mono text-xs text-zinc-600 mb-2" data-testid="badge-chat-mode">// x402 AUDIT CONSOLE — LIVE</div>
+          <h1 className="font-mono text-2xl sm:text-4xl font-bold text-white mb-2" data-testid="text-chat-page-title">
             Audit-to-Certificate Pipeline
           </h1>
-          <p style={{ fontFamily: MONO, fontSize: 13, color: C.textDim, maxWidth: 600 }} data-testid="text-chat-page-subtitle">
+          <p className="font-mono text-sm text-zinc-500" data-testid="text-chat-page-subtitle">
             Route your reasoning trace through the x402 Oracle. Real USDC payments on Base Mainnet.
           </p>
-        </motion.div>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}>
-              <div style={{ padding: "12px 20px", borderBottom: `1px solid ${C.border}`, background: "#0d0d0d", display: "flex", alignItems: "center", gap: 8 }}>
-                <Terminal size={16} style={{ color: C.green }} />
-                <h2 style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: C.text }} data-testid="text-chat-input-title">Agent Payload Injector</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Left: Input Panel */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="border border-zinc-800 bg-zinc-950">
+              <div className="px-4 py-3 border-b border-zinc-800 flex items-center gap-2">
+                <Terminal size={14} className="text-green-400" />
+                <span className="font-mono text-xs text-zinc-300 font-bold">Agent Payload Injector</span>
               </div>
 
-              <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 20 }}>
+              <div className="p-4 space-y-4">
+                {/* Scenarios */}
                 <div>
-                  <label style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: C.textMuted, display: "block", marginBottom: 8 }} data-testid="label-chat-scenarios">PRELOADED SCENARIOS</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
-                    {DEMO_SCENARIOS.map((scenario) => (
-                      <button
-                        key={scenario.key}
-                        onClick={() => loadScenario(scenario.key)}
-                        style={{
-                          width: "100%", textAlign: "left", padding: "10px 12px",
-                          border: `1px solid ${memo === scenario.memo ? C.green : C.border}`,
-                          background: memo === scenario.memo ? C.greenGlow : "transparent",
-                          color: memo === scenario.memo ? C.green : C.textDim,
-                          fontFamily: MONO, fontSize: 12, cursor: "pointer",
-                          transition: "all 0.2s",
-                        }}
-                        data-testid={`button-scenario-${scenario.key}`}
-                      >
-                        <div style={{ fontWeight: 600, color: memo === scenario.memo ? C.green : C.text, fontSize: 12 }}>{scenario.label}</div>
-                        <div style={{ fontSize: 10, color: C.textMuted, marginTop: 2 }}>{scenario.description}</div>
-                      </button>
-                    ))}
-                  </div>
+                  <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-chat-scenarios">PRELOADED SCENARIOS</div>
+                  {DEMO_SCENARIOS.map((scenario) => (
+                    <button
+                      key={scenario.key}
+                      onClick={() => loadScenario(scenario.key)}
+                      className={`w-full text-left px-3 py-2 mb-1 border font-mono text-xs transition-colors ${
+                        memo === scenario.memo
+                          ? "border-green-400/50 bg-green-400/10 text-green-400"
+                          : "border-zinc-800 text-zinc-400 hover:border-zinc-600"
+                      }`}
+                      data-testid={`button-scenario-${scenario.key}`}
+                    >
+                      <div className="font-bold">{scenario.label}</div>
+                      <div className="text-[10px] text-zinc-600 mt-0.5">{scenario.description}</div>
+                    </button>
+                  ))}
                 </div>
 
+                {/* Memo */}
                 <div>
-                  <label style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: C.textMuted, display: "block", marginBottom: 8 }} data-testid="label-chat-memo">"strategy_memo":</label>
+                  <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-chat-memo">STRATEGY_MEMO:</div>
                   <textarea
                     value={memo}
                     onChange={(e) => setMemo(e.target.value)}
                     placeholder="Paste your reasoning memo here or select a scenario above..."
-                    style={{
-                      width: "100%", padding: 16, background: C.bg, border: `1px solid ${C.border}`,
-                      fontFamily: MONO, fontSize: 12, color: C.text, height: 144, resize: "none",
-                      outline: "none",
-                    }}
+                    className="w-full p-3 bg-black border border-zinc-800 font-mono text-xs text-zinc-300 h-32 resize-none focus:outline-none focus:border-green-400/50 transition-colors placeholder:text-zinc-700"
                     data-testid="textarea-chat-memo"
                   />
                 </div>
 
+                {/* Tier */}
                 <div>
-                  <label style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: C.textMuted, display: "block", marginBottom: 8 }} data-testid="label-chat-tier">AUDIT TIER</label>
+                  <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-chat-tier">AUDIT TIER</div>
                   <div className="grid grid-cols-3 gap-2">
                     {TIER_OPTIONS.map((t) => (
                       <button
                         key={t.value}
                         onClick={() => setTier(t.value)}
-                        style={{
-                          padding: "10px 12px", textAlign: "center", cursor: "pointer",
-                          border: `1px solid ${tier === t.value ? C.green : C.border}`,
-                          background: tier === t.value ? C.greenGlow : "transparent",
-                          color: tier === t.value ? C.green : C.textDim,
-                          fontFamily: MONO, transition: "all 0.2s",
-                        }}
+                        className={`px-2 py-2 border text-center font-mono transition-colors ${
+                          tier === t.value
+                            ? "border-green-400/50 bg-green-400/10 text-green-400"
+                            : "border-zinc-800 text-zinc-500 hover:border-zinc-600"
+                        }`}
                         data-testid={`button-tier-${t.value}`}
                       >
-                        <div style={{ fontSize: 11, fontWeight: 700 }}>{t.label}</div>
-                        <div style={{ fontSize: 10, marginTop: 2, opacity: 0.7 }}>{t.price}</div>
+                        <div className="text-[10px] font-bold">{t.label}</div>
+                        <div className="text-xs font-bold mt-0.5">{t.price}</div>
+                        <div className="text-[9px] text-zinc-600 mt-0.5">{t.engine}</div>
                       </button>
                     ))}
                   </div>
                 </div>
 
+                {/* Run Button */}
                 <button
                   onClick={runAudit}
                   disabled={!memo.trim() || running || !isConnected}
-                  style={{
-                    width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                    padding: "14px 0", fontFamily: MONO, fontWeight: 700, fontSize: 13,
-                    background: (!memo.trim() || running || !isConnected) ? C.greenDim : C.green,
-                    color: C.bg, border: "none", cursor: (!memo.trim() || running || !isConnected) ? "not-allowed" : "pointer",
-                    opacity: (!memo.trim() || running || !isConnected) ? 0.5 : 1,
-                    boxShadow: memo.trim() && !running && isConnected ? `0 0 20px ${C.green}40` : "none",
-                    transition: "all 0.2s",
-                  }}
+                  className={`w-full flex items-center justify-center gap-2 py-3 font-mono text-xs font-bold transition-all ${
+                    !memo.trim() || running || !isConnected
+                      ? "bg-zinc-800 text-zinc-600 cursor-not-allowed"
+                      : "bg-green-400 text-black hover:bg-green-300"
+                  }`}
                   data-testid="button-run-audit"
                 >
                   {running ? (
-                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
-                      <Terminal size={18} />
-                    </motion.div>
+                    <Terminal size={16} className="animate-spin" />
                   ) : !isConnected ? (
-                    <Wallet size={18} />
+                    <Wallet size={16} />
                   ) : (
-                    <Play size={18} />
+                    <Coins size={16} />
                   )}
                   <span>{
-                    !isConnected ? "Connect Wallet to Audit"
-                    : running ? "ORACLE SCANNING — may take up to 90s..."
-                    : "Run DJZS Audit"
+                    !isConnected ? "CONNECT WALLET TO AUDIT"
+                    : running ? (currentStep === 0 ? "APPROVE USDC TRANSFER..." : "SCANNING — may take up to 90s...")
+                    : `PAY ${selectedTier?.price} USDC & RUN AUDIT`
                   }</span>
                 </button>
+
+                {/* Payment TX link */}
+                {paymentTxHash && (
+                  <a
+                    href={`https://basescan.org/tx/${paymentTxHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 font-mono text-[10px] text-zinc-600 hover:text-green-400 transition-colors"
+                  >
+                    <Coins size={12} /> Payment TX: {paymentTxHash.slice(0, 10)}...{paymentTxHash.slice(-8)}
+                    <ExternalLink size={10} />
+                  </a>
+                )}
               </div>
-            </motion.div>
+            </div>
           </div>
 
-          <div className="lg:col-span-3 space-y-6">
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}>
-              <div style={{ padding: "12px 20px", borderBottom: `1px solid ${C.border}`, background: "#0d0d0d", display: "flex", alignItems: "center", gap: 8 }}>
-                <ShieldCheck size={16} style={{ color: C.green }} />
-                <h2 style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: C.text }} data-testid="text-chat-pipeline-title">Pipeline Progress</h2>
+          {/* Right: Pipeline + Results */}
+          <div className="lg:col-span-3 space-y-4">
+            {/* Pipeline Steps */}
+            <div className="border border-zinc-800 bg-zinc-950">
+              <div className="px-4 py-3 border-b border-zinc-800 flex items-center gap-2">
+                <ShieldCheck size={14} className="text-green-400" />
+                <span className="font-mono text-xs text-zinc-300 font-bold" data-testid="text-chat-pipeline-title">Pipeline Progress</span>
               </div>
-
-              <div style={{ padding: 20 }}>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:justify-between">
+              <div className="p-4">
+                <div className="flex items-center justify-between">
                   {PIPELINE_STEPS.map((step, i) => {
                     const StepIcon = step.icon;
                     const isActive = i === currentStep;
                     const isComplete = i < currentStep || (i === PIPELINE_STEPS.length - 1 && result !== null);
-
                     return (
-                      <div key={step.id} className="flex sm:flex-col items-center gap-2 sm:gap-1 sm:flex-1 relative">
-                        {i > 0 && (
-                          <div className="hidden sm:block absolute -left-1/2 top-[14px] w-full h-[2px] -z-10" style={{ background: C.border }}>
-                            {isComplete && (
-                              <motion.div
-                                style={{ height: "100%", background: C.green }}
-                                initial={{ width: "0%" }}
-                                animate={{ width: "100%" }}
-                                transition={{ duration: 0.3 }}
-                              />
-                            )}
-                          </div>
-                        )}
+                      <div key={step.id} className="flex flex-col items-center gap-1 flex-1">
                         <div
-                          style={{
-                            width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                            background: isComplete ? `${C.green}20` : isActive ? `${C.amber}20` : C.surface,
-                            color: isComplete ? C.green : isActive ? C.amber : C.textMuted,
-                            border: `1px solid ${isComplete ? `${C.green}40` : isActive ? `${C.amber}40` : C.border}`,
-                          }}
+                          className={`w-7 h-7 flex items-center justify-center transition-all ${
+                            isComplete ? "text-green-400" :
+                            isActive ? "text-green-400 animate-pulse" :
+                            "text-zinc-700"
+                          }`}
                           data-testid={`step-icon-${step.id}`}
                         >
-                          {isComplete ? <CheckCircle2 size={14} /> : <StepIcon size={14} />}
+                          {isComplete ? <CheckCircle2 size={16} /> : <StepIcon size={16} />}
                         </div>
-                        <div className="sm:text-center">
-                          <div style={{
-                            fontFamily: MONO, fontSize: 11, fontWeight: 600,
-                            color: isComplete ? C.green : isActive ? C.amber : C.textMuted,
-                          }} data-testid={`step-label-${step.id}`}>
-                            {step.label}
-                          </div>
-                          <div className="hidden sm:block" style={{ fontSize: 9, color: C.textMuted }}>{step.description}</div>
+                        <div className={`text-[9px] font-mono text-center ${
+                          isComplete ? "text-green-400" : isActive ? "text-green-400" : "text-zinc-700"
+                        }`} data-testid={`step-label-${step.id}`}>
+                          {step.label}
                         </div>
                       </div>
                     );
                   })}
                 </div>
               </div>
-            </motion.div>
+            </div>
 
-            <AnimatePresence mode="wait">
-              {error && (
-                <motion.div
-                  key="error"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  style={{ border: `1px solid ${C.red}40`, background: `${C.red}08`, padding: 24 }}
-                  data-testid="chat-error-message"
-                >
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                    <AlertTriangle size={20} style={{ color: C.red, marginTop: 2, flexShrink: 0 }} />
+            {/* Error */}
+            {error && (
+              <div className="border border-red-400/30 bg-red-400/5 p-4" data-testid="chat-error-message">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle size={16} className="text-red-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <div className="font-mono text-xs font-bold text-red-400 mb-1">AUDIT FAILED</div>
+                    <p className="font-mono text-xs text-zinc-400">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Result */}
+            {result ? (
+              <div className="border border-zinc-800 bg-zinc-950" data-testid="chat-result-card">
+                {/* Verdict Header */}
+                <div className={`px-4 py-4 border-b border-zinc-800 ${
+                  result.verdict === "FAIL" ? "bg-red-400/5" : "bg-green-400/5"
+                }`}>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        {result.verdict === "FAIL" ? (
+                          <span className="font-mono text-sm font-bold text-red-400 flex items-center gap-1.5" data-testid="badge-result-verdict">
+                            <AlertTriangle size={16} /> VERDICT: FAIL
+                          </span>
+                        ) : (
+                          <span className="font-mono text-sm font-bold text-green-400 flex items-center gap-1.5" data-testid="badge-result-verdict">
+                            <ShieldCheck size={16} /> VERDICT: PASS
+                          </span>
+                        )}
+                        <span className="font-mono text-[10px] px-2 py-0.5 border border-zinc-700 text-zinc-500" data-testid="text-result-tier">
+                          {result.tier.toUpperCase()}
+                        </span>
+                        <span className="font-mono text-[10px] px-2 py-0.5 border border-green-400/30 text-green-400" data-testid="badge-live-audit">
+                          LIVE
+                        </span>
+                      </div>
+                      <div className="font-mono text-[10px] text-zinc-600 space-y-0.5">
+                        <div data-testid="text-result-audit-id">ID: {result.audit_id}</div>
+                        <div data-testid="text-result-timestamp">TIME: {new Date(result.timestamp).toLocaleString()}</div>
+                        {result.primary_bias_detected && result.primary_bias_detected !== "None" && (
+                          <div data-testid="text-result-bias">BIAS: <span className="text-amber-400">{result.primary_bias_detected}</span></div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-mono text-[10px] text-zinc-600">RISK SCORE</div>
+                      <div className={`font-mono text-3xl font-bold ${
+                        result.risk_score > 60 ? "text-red-400" : result.risk_score > 30 ? "text-amber-400" : "text-green-400"
+                      }`} data-testid="text-risk-score-value">
+                        {result.risk_score}
+                      </div>
+                      <div className="font-mono text-[10px] text-zinc-700">/ 100</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 space-y-4">
+                  {/* Flags */}
+                  {result.flags && result.flags.length > 0 && (
                     <div>
-                      <div style={{ fontFamily: MONO, fontWeight: 700, color: C.red, fontSize: 13, marginBottom: 4 }}>Audit Failed</div>
-                      <p style={{ fontFamily: MONO, fontSize: 12, color: C.textDim }}>{error}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {result ? (
-                <motion.div
-                  key="result"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}
-                  data-testid="chat-result-card"
-                >
-                  <div style={{ padding: "12px 20px", borderBottom: `1px solid ${C.border}`, background: "#0d0d0d", display: "flex", alignItems: "center", gap: 8 }}>
-                    <ShieldCheck size={16} style={{ color: C.green }} />
-                    <h2 style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: C.text }} data-testid="text-result-title">ProofOfLogic Certificate</h2>
-                  </div>
-
-                  <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 24 }}>
-                    <div style={{ display: "flex", alignItems: "flex-start", gap: 20 }}>
-                      <RiskScoreGauge score={result.risk_score} />
-                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
-                        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-                          {result.verdict === "FAIL" ? (
-                            <span style={{ padding: "4px 12px", background: `${C.red}20`, color: C.red, border: `1px solid ${C.red}40`, fontFamily: MONO, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }} data-testid="badge-result-verdict">
-                              <AlertTriangle size={14} /> VERDICT: FAIL
-                            </span>
-                          ) : (
-                            <span style={{ padding: "4px 12px", background: C.greenGlow, color: C.green, border: `1px solid ${C.green}40`, fontFamily: MONO, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }} data-testid="badge-result-verdict">
-                              <ShieldCheck size={14} /> VERDICT: PASS
-                            </span>
-                          )}
-                          <span style={{ padding: "4px 12px", background: C.surface, color: C.textDim, border: `1px solid ${C.border}`, fontFamily: MONO, fontSize: 11 }} data-testid="text-result-tier">
-                            TIER: {result.tier.toUpperCase()}
-                          </span>
-                          <span style={{ padding: "2px 8px", background: C.greenGlow, color: C.green, border: `1px solid ${C.green}30`, fontFamily: MONO, fontSize: 10, fontWeight: 700 }} data-testid="badge-live-audit">
-                            LIVE
-                          </span>
-                        </div>
-                        <div style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted, display: "flex", flexDirection: "column", gap: 4 }}>
-                          <div data-testid="text-result-audit-id">ID: {result.audit_id}</div>
-                          <div data-testid="text-result-timestamp">TIME: {new Date(result.timestamp).toLocaleString()}</div>
-                          {result.primary_bias_detected && result.primary_bias_detected !== "None" && (
-                            <div data-testid="text-result-bias">BIAS: <span style={{ color: C.amber }}>{result.primary_bias_detected}</span></div>
-                          )}
-                        </div>
+                      <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-result-flags">FAILURE_FLAGS ({result.flags.length})</div>
+                      <div className="space-y-1">
+                        {result.flags.map((flag, i) => (
+                          <FlagCard key={i} flag={flag} index={i} />
+                        ))}
                       </div>
                     </div>
+                  )}
 
-                    {result.flags && result.flags.length > 0 && (
-                      <div>
-                        <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 12, letterSpacing: "0.15em", textTransform: "uppercase" }} data-testid="label-result-flags">FAILURE CODES ({result.flags.length})</div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                          {result.flags.map((flag, i) => (
-                            <FlagCard key={i} flag={flag} index={i} />
-                          ))}
+                  {/* Recommendations */}
+                  {result.structural_recommendations && result.structural_recommendations.length > 0 && (
+                    <div>
+                      <div className="font-mono text-[10px] text-zinc-600 mb-2" data-testid="label-result-recommendations">RECOMMENDATIONS</div>
+                      {result.structural_recommendations.map((rec, i) => (
+                        <div key={i} className="flex items-start gap-2 font-mono text-xs text-zinc-400 mb-1">
+                          <span className="text-green-400 mt-0.5">→</span>
+                          <span data-testid={`text-recommendation-${i}`}>{rec}</span>
                         </div>
-                      </div>
-                    )}
+                      ))}
+                    </div>
+                  )}
 
-                    {result.structural_recommendations && result.structural_recommendations.length > 0 && (
-                      <div>
-                        <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginBottom: 8, letterSpacing: "0.15em", textTransform: "uppercase" }} data-testid="label-result-recommendations">RECOMMENDATIONS</div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                          {result.structural_recommendations.map((rec, i) => (
-                            <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontFamily: MONO, fontSize: 12, color: C.textDim }}>
-                              <ArrowRight size={14} style={{ marginTop: 2, color: C.green, flexShrink: 0 }} />
-                              <span data-testid={`text-recommendation-${i}`}>{rec}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                  {/* Provenance */}
+                  <div className="border-t border-zinc-800 pt-4 space-y-2">
+                    <div className="font-mono text-[10px] text-zinc-600" data-testid="label-result-provenance">ON-CHAIN PROVENANCE</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {/* Payment TX */}
+                      {paymentTxHash && (
+                        <a href={`https://basescan.org/tx/${paymentTxHash}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2.5 border border-green-400/20 bg-green-400/5 hover:bg-green-400/10 transition-colors group">
+                          <Coins size={14} className="text-green-400" />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-mono text-[10px] font-bold text-green-400">USDC Payment</div>
+                            <div className="font-mono text-[9px] text-zinc-600 truncate">{paymentTxHash}</div>
+                          </div>
+                          <ExternalLink size={12} className="text-zinc-600 group-hover:text-green-400 flex-shrink-0" />
+                        </a>
+                      )}
 
-                    <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
-                      <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, letterSpacing: "0.15em", textTransform: "uppercase" }} data-testid="label-result-provenance">ON-CHAIN PROVENANCE</div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {result.irys_url ? (
-                          <a
-                            href={result.irys_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", border: `1px solid ${C.green}30`, background: C.greenGlow, textDecoration: "none" }}
-                            data-testid="link-result-irys"
-                          >
-                            <Database size={16} style={{ color: C.green }} />
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                              <div style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: C.green }}>Irys Certificate</div>
-                              <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{result.irys_tx_id}</div>
-                            </div>
-                            <ExternalLink size={14} style={{ color: C.textMuted, flexShrink: 0 }} />
-                          </a>
-                        ) : (
-                          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", border: `1px solid ${C.border}`, background: C.surface }}>
-                            <Database size={16} style={{ color: C.textMuted }} />
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                              <div style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: C.textMuted }}>Irys Certificate</div>
-                              <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted }}>{result.irys_error || "Not configured in this environment"}</div>
-                            </div>
+                      {/* Irys */}
+                      {result.irys_url ? (
+                        <a href={result.irys_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2.5 border border-green-400/20 bg-green-400/5 hover:bg-green-400/10 transition-colors group" data-testid="link-result-irys">
+                          <Database size={14} className="text-green-400" />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-mono text-[10px] font-bold text-green-400">Irys Certificate</div>
+                            <div className="font-mono text-[9px] text-zinc-600 truncate">{result.irys_tx_id}</div>
                           </div>
-                        )}
-                        {result.trust_score_tx_hash ? (
-                          <a
-                            href={`https://basescan.org/tx/${result.trust_score_tx_hash}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", border: `1px solid ${C.green}30`, background: C.greenGlow, textDecoration: "none" }}
-                            data-testid="link-result-basescan"
-                          >
-                            <ShieldCheck size={16} style={{ color: C.green }} />
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                              <div style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: C.green }}>BaseScan TX</div>
-                              <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{result.trust_score_tx_hash}</div>
-                            </div>
-                            <ExternalLink size={14} style={{ color: C.textMuted, flexShrink: 0 }} />
-                          </a>
-                        ) : (
-                          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", border: `1px solid ${C.border}`, background: C.surface }}>
-                            <ShieldCheck size={16} style={{ color: C.textMuted }} />
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                              <div style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: C.textMuted }}>Trust Score TX</div>
-                              <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted }}>{result.trust_score_error || "Contract not configured in this environment"}</div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      {result.verdict === "PASS" && (
-                        <div style={{ marginTop: 12 }}>
-                          {(result.nft_tx_hash || nftMintResult) ? (
-                            <a
-                              href={`https://basescan.org/tx/${nftMintResult?.nft_tx_hash || result.nft_tx_hash}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", border: `1px solid ${C.green}30`, background: C.greenGlow, textDecoration: "none" }}
-                              data-testid="link-result-nft"
-                            >
-                              <ShieldCheck size={16} style={{ color: C.green }} />
-                              <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: C.green }}>
-                                  ProofOfLogic NFT Minted
-                                  {(nftMintResult?.nft_token_id || result.nft_token_id) && (
-                                    <span style={{ color: C.textMuted, fontWeight: 400, marginLeft: 8 }}>#{nftMintResult?.nft_token_id || result.nft_token_id}</span>
-                                  )}
-                                </div>
-                                <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{nftMintResult?.nft_tx_hash || result.nft_tx_hash}</div>
-                              </div>
-                              <ExternalLink size={14} style={{ color: C.textMuted, flexShrink: 0 }} />
-                            </a>
-                          ) : result.nft_mint_available ? (
-                            <button
-                              onClick={mintNft}
-                              disabled={nftMinting}
-                              style={{
-                                width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "10px 16px",
-                                border: `1px solid ${C.green}30`, background: C.greenGlow, cursor: nftMinting ? "wait" : "pointer",
-                                opacity: nftMinting ? 0.5 : 1,
-                              }}
-                              data-testid="button-mint-nft"
-                            >
-                              <ShieldCheck size={16} style={{ color: C.green }} />
-                              <div style={{ minWidth: 0, flex: 1, textAlign: "left" }}>
-                                <div style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: C.green }}>
-                                  {nftMinting ? "Minting NFT..." : "Mint ProofOfLogic NFT"}
-                                </div>
-                                <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted }}>
-                                  {nftMinting ? "Treasury wallet paying gas on Base Mainnet" : "Full certificate stored on-chain. Treasury pays gas."}
-                                </div>
-                              </div>
-                            </button>
-                          ) : result.nft_error ? (
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", border: `1px solid ${C.border}`, background: C.surface }}>
-                              <ShieldCheck size={16} style={{ color: C.textMuted }} />
-                              <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: C.textMuted }}>ProofOfLogic NFT</div>
-                                <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted }}>{result.nft_error}</div>
-                              </div>
-                            </div>
-                          ) : null}
+                          <ExternalLink size={12} className="text-zinc-600 group-hover:text-green-400 flex-shrink-0" />
+                        </a>
+                      ) : (
+                        <div className="flex items-center gap-2 px-3 py-2.5 border border-zinc-800">
+                          <Database size={14} className="text-zinc-700" />
+                          <div className="font-mono text-[10px] text-zinc-600">{result.irys_error || "Not configured"}</div>
                         </div>
                       )}
-                      <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, wordBreak: "break-all" }} data-testid="text-result-hash">
-                        SHA-256: {result.cryptographic_hash}
+
+                      {/* Trust Score */}
+                      {result.trust_score_tx_hash ? (
+                        <a href={`https://basescan.org/tx/${result.trust_score_tx_hash}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2.5 border border-green-400/20 bg-green-400/5 hover:bg-green-400/10 transition-colors group" data-testid="link-result-basescan">
+                          <ShieldCheck size={14} className="text-green-400" />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-mono text-[10px] font-bold text-green-400">Trust Score TX</div>
+                            <div className="font-mono text-[9px] text-zinc-600 truncate">{result.trust_score_tx_hash}</div>
+                          </div>
+                          <ExternalLink size={12} className="text-zinc-600 group-hover:text-green-400 flex-shrink-0" />
+                        </a>
+                      ) : (
+                        <div className="flex items-center gap-2 px-3 py-2.5 border border-zinc-800">
+                          <ShieldCheck size={14} className="text-zinc-700" />
+                          <div className="font-mono text-[10px] text-zinc-600">{result.trust_score_error || "Not configured"}</div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* NFT */}
+                    {result.verdict === "PASS" && (
+                      <div>
+                        {(result.nft_tx_hash || nftMintResult) ? (
+                          <a
+                            href={`https://basescan.org/tx/${nftMintResult?.nft_tx_hash || result.nft_tx_hash}`}
+                            target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-3 py-2.5 border border-green-400/30 bg-green-400/5 hover:bg-green-400/10 transition-colors group"
+                            data-testid="link-result-nft"
+                          >
+                            <ShieldCheck size={14} className="text-green-400" />
+                            <div className="min-w-0 flex-1">
+                              <div className="font-mono text-[10px] font-bold text-green-400">
+                                ProofOfLogic NFT
+                                {(nftMintResult?.nft_token_id || result.nft_token_id) && (
+                                  <span className="text-zinc-500 font-normal ml-1">#{nftMintResult?.nft_token_id || result.nft_token_id}</span>
+                                )}
+                              </div>
+                              <div className="font-mono text-[9px] text-zinc-600 truncate">{nftMintResult?.nft_tx_hash || result.nft_tx_hash}</div>
+                            </div>
+                            <ExternalLink size={12} className="text-zinc-600 group-hover:text-green-400 flex-shrink-0" />
+                          </a>
+                        ) : result.nft_mint_available ? (
+                          <button
+                            onClick={mintNft} disabled={nftMinting}
+                            className="w-full flex items-center gap-2 px-3 py-2.5 border border-green-400/30 bg-green-400/5 hover:bg-green-400/10 transition-colors disabled:opacity-50 disabled:cursor-wait"
+                            data-testid="button-mint-nft"
+                          >
+                            <ShieldCheck size={14} className="text-green-400" />
+                            <div className="min-w-0 flex-1 text-left">
+                              <div className="font-mono text-[10px] font-bold text-green-400">
+                                {nftMinting ? "MINTING..." : "MINT PROOFOFLOGIC NFT"}
+                              </div>
+                              <div className="font-mono text-[9px] text-zinc-600">
+                                {nftMinting ? "Treasury paying gas on Base" : "Full certificate on-chain. Treasury pays gas."}
+                              </div>
+                            </div>
+                          </button>
+                        ) : null}
                       </div>
+                    )}
+
+                    <div className="font-mono text-[9px] text-zinc-700 break-all pt-1" data-testid="text-result-hash">
+                      SHA-256: {result.cryptographic_hash}
                     </div>
                   </div>
-                </motion.div>
-              ) : !running ? (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  style={{ border: `1px dashed ${C.border}`, background: `${C.surface}80`, padding: 48, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}
-                  data-testid="chat-empty-state"
-                >
-                  <ShieldAlert size={48} style={{ color: C.textMuted, opacity: 0.3, marginBottom: 16 }} />
-                  <p style={{ fontFamily: MONO, fontSize: 13, color: C.textMuted, marginBottom: 4 }}>No audit running</p>
-                  <p style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted, opacity: 0.6 }}>
-                    {isConnected
-                      ? 'Select a scenario or paste a memo, then click "Run DJZS Audit"'
-                      : "Connect your wallet to start an audit"}
-                  </p>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
+                </div>
+              </div>
+            ) : !running ? (
+              <div className="border border-dashed border-zinc-800 p-12 flex flex-col items-center justify-center text-center" data-testid="chat-empty-state">
+                <ShieldAlert size={36} className="text-zinc-800 mb-3" />
+                <p className="font-mono text-xs text-zinc-500 mb-1">No audit running</p>
+                <p className="font-mono text-[10px] text-zinc-700">
+                  {isConnected
+                    ? 'Select a scenario or paste a memo, then click the button to pay & audit'
+                    : "Connect your wallet to start an audit"}
+                </p>
+              </div>
+            ) : null}
           </div>
         </div>
       </main>
 
-      <footer style={{ borderTop: `1px solid ${C.border}`, padding: "32px 0", fontFamily: MONO, marginTop: 48 }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", justifyContent: "space-between", fontSize: 12, color: C.textMuted }}>
-          <span data-testid="text-chat-footer-tagline">&copy; 2026 DJZS Protocol — djzs.ai</span>
-          <span>No agent acts without audit.</span>
+      <footer className="border-t border-zinc-800 py-6 mt-12">
+        <div className="max-w-5xl mx-auto px-4 flex flex-col items-center gap-2">
+          <div className="flex gap-4">
+            <Link href="/" className="font-mono text-[10px] text-zinc-600 hover:text-green-400 transition-colors" data-testid="link-chat-footer-home">Home</Link>
+            <Link href="/docs" className="font-mono text-[10px] text-zinc-600 hover:text-green-400 transition-colors" data-testid="link-chat-footer-docs">Docs</Link>
+          </div>
+          <p className="font-mono text-[10px] text-zinc-800" data-testid="text-chat-footer-tagline">
+            djzsx.eth | No agent acts without audit. &copy; 2026
+          </p>
         </div>
       </footer>
     </div>
