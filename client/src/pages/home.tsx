@@ -240,31 +240,26 @@ function Header() {
 
 function useTypewriter(text: string, start: boolean, speed = 90) {
   const [displayed, setDisplayed] = useState("");
-  const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (!start) return;
     setDisplayed("");
-    setDone(false);
     let i = 0;
     const id = setInterval(() => {
       i++;
       setDisplayed(text.slice(0, i));
-      if (i >= text.length) {
-        clearInterval(id);
-        setDone(true);
-      }
+      if (i >= text.length) clearInterval(id);
     }, speed);
     return () => clearInterval(id);
   }, [text, start, speed]);
 
-  return { displayed, done };
+  return displayed;
 }
 
 function Hero() {
   const [bootDone, setBootDone] = useState(false);
   const onBootComplete = useCallback(() => setBootDone(true), []);
-  const { displayed } = useTypewriter("Audit-Before-Act", bootDone, 90);
+  const displayed = useTypewriter("Audit-Before-Act", bootDone, 90);
 
   return (
     <section className="relative py-16 sm:py-24 px-4">
