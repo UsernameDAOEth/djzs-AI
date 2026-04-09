@@ -187,6 +187,65 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
 }
 
 
+function TypewriterHeadline({ text }: { text: string }) {
+  const [displayed, setDisplayed] = useState("");
+  const [showCursor, setShowCursor] = useState(true);
+  const indexRef = useRef(0);
+  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    indexRef.current = 0;
+    setDisplayed("");
+    setShowCursor(true);
+    if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+
+    const interval = setInterval(() => {
+      indexRef.current += 1;
+      if (indexRef.current <= text.length) {
+        setDisplayed(text.slice(0, indexRef.current));
+      } else {
+        clearInterval(interval);
+        fadeTimerRef.current = setTimeout(() => setShowCursor(false), 2000);
+      }
+    }, 80);
+
+    return () => {
+      clearInterval(interval);
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+    };
+  }, [text]);
+
+  return (
+    <h1
+      style={{
+        fontFamily: MONO,
+        fontSize: "clamp(36px, 6vw, 72px)",
+        fontWeight: 700,
+        color: C.white,
+        lineHeight: 1.15,
+        margin: 0,
+        letterSpacing: "-0.02em",
+      }}
+      data-testid="text-hero-headline"
+    >
+      {displayed}
+      <span
+        style={{
+          display: "inline-block",
+          width: "0.55em",
+          height: "1em",
+          background: C.green,
+          marginLeft: 2,
+          verticalAlign: "baseline",
+          animation: showCursor ? "blink-cursor 0.7s step-end infinite" : "none",
+          opacity: showCursor ? 1 : 0,
+          transition: "opacity 0.3s",
+        }}
+      />
+    </h1>
+  );
+}
+
 function Hero({ bootDone }: { bootDone: boolean }) {
   return (
     <section style={{ padding: "80px 0 60px", maxWidth: 1000 }} data-testid="section-hero">
@@ -194,20 +253,7 @@ function Hero({ bootDone }: { bootDone: boolean }) {
         <BootSequence onComplete={() => {}} />
       ) : (
         <div style={{ animation: "fadeIn 0.6s ease" }}>
-          <h1
-            style={{
-              fontFamily: MONO,
-              fontSize: "clamp(28px, 5vw, 48px)",
-              fontWeight: 700,
-              color: C.white,
-              lineHeight: 1.15,
-              margin: 0,
-              letterSpacing: "-0.02em",
-            }}
-            data-testid="text-hero-headline"
-          >
-            Audit-Before-Act.
-          </h1>
+          <TypewriterHeadline text="Audit-Before-Act." />
           <h2
             style={{
               fontFamily: MONO,
