@@ -177,7 +177,9 @@ export default function Chat() {
       .then(data => {
         if (data?.payment?.payTo) setTreasuryWallet(data.payment.payTo);
       })
-      .catch(() => {});
+      .catch((err: unknown) => {
+        console.warn("[chat] Failed to fetch treasury wallet:", err instanceof Error ? err.message : err);
+      });
   }, []);
 
   const mintNft = useCallback(async () => {
