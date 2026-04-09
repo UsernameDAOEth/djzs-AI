@@ -72,7 +72,7 @@ export function Badge({ children, color = C.green, filled = false }: { children:
   );
 }
 
-export function Nav() {
+export function Nav({ rightSlot }: { rightSlot?: React.ReactNode } = {}) {
   return (
     <nav
       style={{
@@ -124,34 +124,36 @@ export function Nav() {
             </span>
           </Link>
         ))}
-        <Link href="/chat">
-          <span
-            style={{
-              fontFamily: MONO,
-              fontSize: 11,
-              fontWeight: 600,
-              padding: "6px 14px",
-              borderRadius: 4,
-              border: `1px solid ${C.green}`,
-              backgroundColor: C.greenGlow,
-              color: C.green,
-              textDecoration: "none",
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.backgroundColor = C.green;
-              (e.target as HTMLElement).style.color = C.bg;
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.backgroundColor = C.greenGlow;
-              (e.target as HTMLElement).style.color = C.green;
-            }}
-            data-testid="link-nav-connect-wallet"
-          >
-            Connect Wallet
-          </span>
-        </Link>
+        {rightSlot || (
+          <Link href="/chat">
+            <span
+              style={{
+                fontFamily: MONO,
+                fontSize: 11,
+                fontWeight: 600,
+                padding: "6px 14px",
+                borderRadius: 4,
+                border: `1px solid ${C.green}`,
+                backgroundColor: C.greenGlow,
+                color: C.green,
+                textDecoration: "none",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.backgroundColor = C.green;
+                (e.target as HTMLElement).style.color = C.bg;
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.backgroundColor = C.greenGlow;
+                (e.target as HTMLElement).style.color = C.green;
+              }}
+              data-testid="link-nav-connect-wallet"
+            >
+              Connect Wallet
+            </span>
+          </Link>
+        )}
       </div>
     </nav>
   );

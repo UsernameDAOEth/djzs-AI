@@ -5,7 +5,7 @@ import { Link } from "wouter";
 import { Helmet } from "react-helmet";
 import { getVeniceApiKey } from "@/lib/queryClient";
 import { LOGIC_FAILURE_TAXONOMY } from "@shared/audit-schema";
-import { C, MONO, GlowDot, TerminalFooter } from "@/lib/terminal-theme";
+import { C, MONO, Nav, GlowDot, TerminalFooter } from "@/lib/terminal-theme";
 
 const DEMO_SCENARIOS = [
   {
@@ -250,39 +250,7 @@ export default function Chat() {
       </Helmet>
 
       <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px" }}>
-        <nav
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "16px 0",
-            borderBottom: `1px solid ${C.border}`,
-            position: "sticky",
-            top: 0,
-            backgroundColor: C.bg,
-            zIndex: 100,
-            marginBottom: 8,
-          }}
-          data-testid="nav-terminal"
-        >
-          <Link href="/">
-            <span style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", textDecoration: "none" }}>
-              <GlowDot color={C.green} size={8} />
-              <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: C.white }}>DJZS.ai</span>
-            </span>
-          </Link>
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-            <Link href="/demo">
-              <span style={{ fontFamily: MONO, fontSize: 12, color: C.textDim, textDecoration: "none", cursor: "pointer" }} data-testid="link-nav-live-demo">Live Demo</span>
-            </Link>
-            <Link href="/docs">
-              <span style={{ fontFamily: MONO, fontSize: 12, color: C.textDim, textDecoration: "none", cursor: "pointer" }} data-testid="link-nav-documents">Documents</span>
-            </Link>
-            <div data-testid="wallet-connect-button">
-              <ConnectButton chainStatus="icon" showBalance={false} />
-            </div>
-          </div>
-        </nav>
+        <Nav rightSlot={<div data-testid="wallet-connect-button"><ConnectButton chainStatus="icon" showBalance={false} /></div>} />
 
         <div style={{ padding: "24px 0 8px" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "4px 12px", border: `1px solid ${C.amber}33`, background: `${C.amber}14`, borderRadius: 2, marginBottom: 16 }}>

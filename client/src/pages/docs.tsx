@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import {
   Shield,
@@ -24,7 +25,9 @@ import {
   Cpu,
   MessageSquare,
   Layers,
-  Link2
+  Link2,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { C, MONO, TerminalPage, TerminalHeading, TerminalFooter, GlowDot, Badge } from "@/lib/terminal-theme";
 
@@ -203,7 +206,41 @@ function TechStackItem({ icon: Icon, category, items, color }: { icon: typeof Sh
   );
 }
 
+function AccordionSection({ num, title, open, onToggle, children }: {
+  num: string; title: string; open: boolean; onToggle: () => void; children: React.ReactNode;
+}) {
+  return (
+    <section style={S.sectionGap}>
+      <button
+        onClick={onToggle}
+        style={{
+          display: "flex", alignItems: "center", gap: 8, width: "100%",
+          background: "none", border: "none", cursor: "pointer", padding: 0,
+          textAlign: "left",
+        }}
+        aria-expanded={open}
+        data-testid={`accordion-toggle-${num}`}
+      >
+        {open ? <ChevronDown size={16} color={C.green} /> : <ChevronRight size={16} color={C.textMuted} />}
+        <div style={{ flex: 1 }}>
+          <TerminalHeading num={num}>{title}</TerminalHeading>
+        </div>
+      </button>
+      {open && <div style={{ marginTop: 8 }}>{children}</div>}
+    </section>
+  );
+}
+
 export default function Docs() {
+  const [openSections, setOpenSections] = useState<Set<string>>(() => new Set(["01", "02"]));
+  function toggleSection(num: string) {
+    setOpenSections(prev => {
+      const next = new Set(prev);
+      next.has(num) ? next.delete(num) : next.add(num);
+      return next;
+    });
+  }
+
   return (
     <TerminalPage maxWidth={960}>
 
@@ -211,30 +248,34 @@ export default function Docs() {
         <h1 style={{ fontFamily: MONO, fontSize: 28, fontWeight: 800, color: C.green, letterSpacing: "0.05em", marginBottom: 12 }}>
           DJZS Documentation
         </h1>
-        <Link href="/chat">
-          <span
+        <div style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
+          <Link href="/chat">
+            <span
+              style={{
+                fontFamily: MONO, fontSize: 12, fontWeight: 600, padding: "10px 24px",
+                border: `1px solid ${C.green}`, backgroundColor: C.greenGlow, color: C.green,
+                cursor: "pointer", display: "inline-block", textDecoration: "none",
+              }}
+              data-testid="button-open-app-docs"
+            >
+              Open Architect Console
+            </span>
+          </Link>
+          <button
+            onClick={() => setOpenSections(prev => prev.size === 14 ? new Set() : new Set(Array.from({ length: 14 }, (_, i) => String(i + 1).padStart(2, "0"))))}
             style={{
-              fontFamily: MONO,
-              fontSize: 12,
-              fontWeight: 600,
-              padding: "10px 24px",
-              border: `1px solid ${C.green}`,
-              backgroundColor: C.greenGlow,
-              color: C.green,
+              fontFamily: MONO, fontSize: 11, fontWeight: 600, padding: "10px 16px",
+              border: `1px solid ${C.border}`, backgroundColor: C.surface, color: C.textDim,
               cursor: "pointer",
-              display: "inline-block",
-              textDecoration: "none",
             }}
-            data-testid="button-open-app-docs"
+            data-testid="button-toggle-all-sections"
           >
-            Open Architect Console
-          </span>
-        </Link>
+            {openSections.size === 14 ? "Collapse All" : "Expand All"}
+          </button>
+        </div>
       </div>
 
-      {/* What is DJZS.AI */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="01">What is DJZS.AI</TerminalHeading>
+      <AccordionSection num="01" title="What is DJZS.AI" open={openSections.has("01")} onToggle={() => toggleSection("01")}>
         <div style={{ ...S.card, borderColor: `${C.green}30` }}>
           <div style={S.paragraph}>
             <p style={{ marginBottom: 16 }}>
@@ -248,11 +289,10 @@ export default function Docs() {
             </p>
           </div>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* API Reference */}
-      <section style={S.sectionGap} data-testid="section-api-reference">
-        <TerminalHeading num="02">API Reference</TerminalHeading>
+      <AccordionSection num="02" title="API Reference" open={openSections.has("02")} onToggle={() => toggleSection("02")}>
         <div style={{ ...S.card, borderColor: `${C.green}30` }}>
           <p style={{ ...S.paragraph, marginBottom: 16 }}>
             The deterministic kill switch for autonomous trading agents. Submit reasoning, receive a permanent <strong style={{ color: C.text }}>ProofOfLogic</strong> verdict.
@@ -606,11 +646,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             </div>
           </div>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Data Transparency */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="03">Data Transparency</TerminalHeading>
+      <AccordionSection num="03" title="Data Transparency" open={openSections.has("03")} onToggle={() => toggleSection("03")}>
         <p style={{ ...S.paragraph, marginBottom: 20 }}>Where your data goes — and where it doesn't. No fine print.</p>
         <div style={S.grid3} data-testid="card-why-privacy-docs">
           <div style={{ ...S.card, borderColor: `${C.amber}30` }}>
@@ -650,11 +689,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             <p style={{ ...S.paragraph, fontSize: 12 }}>Audit certificates generated via the A2A API — including the strategy memo, verdict, risk score, and failure codes — are permanently uploaded to Irys Datachain. Any reasoning trace submitted through the API becomes a permanent, publicly accessible record. Local vault data is never uploaded.</p>
           </div>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Integration Channels */}
-      <section style={S.sectionGap} data-testid="section-integration-channels">
-        <TerminalHeading num="04">Integration Channels</TerminalHeading>
+      <AccordionSection num="04" title="Integration Channels" open={openSections.has("04")} onToggle={() => toggleSection("04")}>
         <p style={{ ...S.paragraph, marginBottom: 20 }}>Two paths for autonomous agents — choose the channel that fits your threat model.</p>
         <div style={S.grid2} data-testid="grid-integration-channels">
           <div style={{ ...S.card, borderColor: `#a855f730` }} data-testid="card-dark-channel">
@@ -737,11 +775,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             Dark Channel agents get the verdict privately. Light Channel agents get the verdict publicly with an immutable provenance certificate. Both channels enforce the same <strong style={{ color: C.text }}>Audit-Before-Act</strong> loop — the only difference is whether the trace is encrypted or permanently on-chain.
           </p>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Core Principles */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="05">Core Principles</TerminalHeading>
+      <AccordionSection num="05" title="Core Principles" open={openSections.has("05")} onToggle={() => toggleSection("05")}>
         <p style={{ ...S.paragraph, marginBottom: 20 }}>The non-negotiable rules that govern every Oracle interaction.</p>
         <div style={S.grid3}>
           <FeatureCard icon={HardDrive} title="Audit-Before-Act" description="Every reasoning trace must pass through the Oracle before execution. No audit, no action. This is the core enforcement loop for the A2A economy." color={C.amber} />
@@ -751,11 +788,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
           <FeatureCard icon={Zap} title="DJZS-LF Taxonomy" description="7 deterministic failure codes across Structural, Epistemic, Incentive, and Execution categories. Machine-readable error handling for autonomous agents." color={C.amber} />
           <FeatureCard icon={Key} title="x402 Pay-to-Verify" description="No API keys or subscriptions. Access gated by on-chain USDC micropayments on Base. Your wallet is your identity." color="#a855f7" />
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Architect Console */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="06">Architect Console</TerminalHeading>
+      <AccordionSection num="06" title="Architect Console" open={openSections.has("06")} onToggle={() => toggleSection("06")}>
         <p style={{ ...S.paragraph, marginBottom: 20 }}>Four governance zones for the Sovereign Principal: forensic audit review, adversarial reasoning, protocol monitoring, and x402 fee governance.</p>
         <div style={S.grid2}>
           {[
@@ -820,11 +856,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             </div>
           ))}
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Execution Zones */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="07">Execution Zones</TerminalHeading>
+      <AccordionSection num="07" title="Execution Zones" open={openSections.has("07")} onToggle={() => toggleSection("07")}>
         <p style={{ ...S.paragraph, marginBottom: 20 }}>Paid adversarial audits via x402 USDC on Base. Deploy your work when the stakes are high.</p>
         <div style={S.grid3}>
           {[
@@ -853,11 +888,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             All Execution Zone audits are saved locally in your <strong style={{ color: C.text }}>Audit Ledger</strong> with SHA-256 hashes, verdict badges, and DJZS-LF failure codes. Review past results, compare risk scores across zones, and re-deploy memos at any time.
           </p>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Proof of Logic Certificate */}
-      <section style={S.sectionGap} data-testid="section-proof-of-logic">
-        <TerminalHeading num="08">Proof of Logic Certificate</TerminalHeading>
+      <AccordionSection num="08" title="Proof of Logic Certificate" open={openSections.has("08")} onToggle={() => toggleSection("08")}>
         <p style={{ ...S.paragraph, marginBottom: 20 }}>Deterministic verification primitive for autonomous agents</p>
         <div style={{ ...S.card, borderColor: `${C.red}30`, marginBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
@@ -955,11 +989,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             </p>
           </div>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* OpenClaw Agent Runner */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="09">OpenClaw Agent Runner</TerminalHeading>
+      <AccordionSection num="09" title="OpenClaw Agent Runner" open={openSections.has("09")} onToggle={() => toggleSection("09")}>
         <div style={{ ...S.card, borderColor: `#a855f730`, marginBottom: 20 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
             <div style={S.iconBoxLg("#a855f7")}>
@@ -1026,11 +1059,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             </ul>
           </div>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Vault Encryption */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="10">Vault Encryption</TerminalHeading>
+      <AccordionSection num="10" title="Vault Encryption" open={openSections.has("10")} onToggle={() => toggleSection("10")}>
         <div style={{ ...S.card, borderColor: `${C.green}30` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
             <div style={S.iconBoxLg(C.green)}>
@@ -1084,11 +1116,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             </p>
           </div>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* BYOK */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="11">Bring Your Own Key (BYOK)</TerminalHeading>
+      <AccordionSection num="11" title="Bring Your Own Key (BYOK)" open={openSections.has("11")} onToggle={() => toggleSection("11")}>
         <div style={{ ...S.card, borderColor: "#FFB84D30" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
             <div style={S.iconBoxLg("#FFB84D")}>
@@ -1121,11 +1152,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             </p>
           </div>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Technical Stack */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="12">Technical Stack</TerminalHeading>
+      <AccordionSection num="12" title="Technical Stack" open={openSections.has("12")} onToggle={() => toggleSection("12")}>
         <p style={{ ...S.paragraph, marginBottom: 20 }}>The protocols, frameworks, and infrastructure behind the Oracle.</p>
         <div style={S.grid3}>
           <TechStackItem icon={Code2} color={C.amber} category="Frontend" items={["React 18", "TypeScript", "Vite", "Tailwind CSS", "Radix UI", "Framer Motion"]} />
@@ -1139,11 +1169,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
           <TechStackItem icon={Database} color="#2dd4bf" category="Provenance" items={["Irys Datachain", "Permanent Certificates", "Gateway Verification", "GraphQL Discovery"]} />
           <TechStackItem icon={Cpu} color="#a855f7" category="Secure Execution" items={["Phala Cloud TEE", "Hardware Enclave", "Dual-Process Boot", "concurrently"]} />
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Deployed Contracts */}
-      <section style={S.sectionGap} data-testid="section-deployed-contracts">
-        <TerminalHeading num="13">Deployed Contracts</TerminalHeading>
+      <AccordionSection num="13" title="Deployed Contracts" open={openSections.has("13")} onToggle={() => toggleSection("13")}>
         <p style={{ ...S.paragraph, marginBottom: 20 }}>All DJZS Protocol contracts are live on Base Mainnet. Click any address to verify on BaseScan.</p>
         <div style={{ overflowX: "auto", border: `1px solid ${C.border}` }}>
           <table style={S.table}>
@@ -1193,11 +1222,10 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
           </a>
           <p style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, marginTop: 8 }}>On-chain agent identity minted on Base Mainnet via the Synthesis hackathon registration contract.</p>
         </div>
-      </section>
+      </AccordionSection>
 
       {/* Quick Links */}
-      <section style={S.sectionGap}>
-        <TerminalHeading num="14">Quick Links</TerminalHeading>
+      <AccordionSection num="14" title="Quick Links" open={openSections.has("14")} onToggle={() => toggleSection("14")}>
         <p style={{ ...S.paragraph, marginBottom: 20 }}>Jump to the tools, docs, and endpoints you need.</p>
         <div style={S.grid3}>
           <QuickLink href="/chat" title="Architect Console" description="Governance interface for the Sovereign Principal — audit ledger, Oracle, terminal, and x402 controls" testId="link-architect-console" />
@@ -1209,10 +1237,9 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
           <QuickLink href="/guide" title="MCP User Guide" description="How to connect djzs-trust MCP tool to Claude Desktop and query ProofOfLogic certificates" testId="link-guide" />
           <QuickLink href="/test-suite" title="Test Audit Suite" description="Nine strategy memos exercising all 11 DJZS-LF failure codes across all three audit tiers" testId="link-test-suite" />
         </div>
-      </section>
+      </AccordionSection>
 
-      {/* About */}
-      <section style={S.sectionGap}>
+      <div style={S.sectionGap}>
         <div style={{ ...S.card, borderColor: `${C.green}30` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
             <div style={S.iconBoxLg(C.green)}>
@@ -1229,7 +1256,7 @@ async function `}<span style={{ color: C.amber }}>executeA2ATrade</span>{`(strat
             <p>If the logic fractures, the transaction dies. No exceptions. The Logic Oracle for the decentralized web. Honest, not helpful.</p>
           </div>
         </div>
-      </section>
+      </div>
 
       <TerminalFooter />
     </TerminalPage>

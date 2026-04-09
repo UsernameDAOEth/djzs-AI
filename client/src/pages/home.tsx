@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { C, MONO, GlowDot, SectionLabel, Badge } from "@/lib/terminal-theme";
+import { C, MONO, GlowDot, SectionLabel, Badge, Nav } from "@/lib/terminal-theme";
 
 const LF_CATEGORIES = [
   {
@@ -944,6 +944,7 @@ export default function Home() {
           margin: "0 auto",
         }}
       >
+        <Nav />
         <BootSequence onComplete={() => {}} />
         <Hero bootDone={true} />
         <LFTaxonomy />
