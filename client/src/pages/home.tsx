@@ -69,6 +69,29 @@ const DEMO_TEST_CASES = {
       irys_tx_id: "71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
       irys_url: "https://gateway.irys.xyz/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH"
     }
+  },
+  predictionFomo: {
+    label: "Prediction Market FOMO",
+    memo: "BUY YES on 'Will Bitcoin exceed $150,000 by June 2026?' at $0.72. CommandPrint Telegram group just sent a signal. Everyone in the group is buying YES. Price moved from 0.55 to 0.72 in the last hour. Multiple whales are accumulating. Need to get in before 0.90.",
+    response: {
+      audit_id: "c3d5e7f9-a1b2-4c6d-8e0f-1a3b5c7d9e2f",
+      timestamp: "2026-04-09T00:30:00.000Z",
+      tier: "micro",
+      verdict: "FAIL" as const,
+      risk_score: 64,
+      primary_bias_detected: "FOMO",
+      flags: [
+        { code: "DJZS-I01", severity: "HIGH", message: "FOMO Loop detected. Thesis is 'group says buy' — no independent reasoning." },
+        { code: "DJZS-S01", severity: "CRITICAL", message: "Circular Logic. Price movement cited as evidence for position." },
+        { code: "DJZS-E02", severity: "CRITICAL", message: "Missing Evidence. No falsification criteria. HARD-FAIL: E02_REQUIRED." }
+      ],
+      logic_flaws: [{ flaw_type: "FOMO + Circular + No Falsification", severity: "critical", explanation: "Thesis relies on paid signal group sentiment and market price movement with zero falsification criteria." }],
+      structural_recommendations: ["State explicit falsification criteria", "Provide independent reasoning beyond signal group consensus", "Disclose signal source for transparency"],
+      cryptographic_hash: "7f3a91c4d2e8b5a0f6c1d9e3b7a4f2c8d5e0a1b6c3f9d2e7a4b8c5f0e3d6a9b1",
+      provenance_provider: "IRYS_DATACHAIN",
+      irys_tx_id: "Hk7mN2xRqLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
+      irys_url: "https://gateway.irys.xyz/Hk7mN2xRqLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH"
+    }
   }
 } as const;
 
@@ -280,9 +303,13 @@ export default function Home() {
                 <Coins size={12} className="text-cyan-500" />
                 Base Mainnet
               </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border border-border bg-muted/50 text-muted-foreground" data-testid="badge-claude-sonnet">
+                <FlaskConical size={12} className="text-violet-500" />
+                Claude Sonnet
+              </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border border-border bg-muted/50 text-muted-foreground" data-testid="badge-venice-ai">
                 <FlaskConical size={12} className="text-teal-500" />
-                Venice AI
+                Venice AI (Fallback)
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border border-border bg-muted/50 text-muted-foreground" data-testid="badge-xmtp">
                 <Lock size={12} className="text-blue-500" />
@@ -326,10 +353,14 @@ export default function Home() {
                   {"\n      "}<span style={{ color: '#7B6B8D' }}>"message"</span>: <span style={{ color: '#2E8B8B' }}>"FOMO Loop detected. Aborting."</span>
                   {"\n    "}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
                   {"\n  "}<span style={{ color: '#2E8B8B' }}>{"]"}</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"verdict_source"</span>: <span style={{ color: '#ef4444' }}>"HARD_FAIL"</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"hard_fail_rules"</span>: <span style={{ color: '#2E8B8B' }}>{"["}</span><span style={{ color: '#ef4444' }}>"E02_REQUIRED"</span><span style={{ color: '#2E8B8B' }}>{"]"}</span>,
                   {"\n  "}<span style={{ color: '#7B6B8D' }}>"cryptographic_hash"</span>: <span style={{ color: '#2E8B8B' }}>"4a9b2c..."</span>,
                   {"\n  "}<span style={{ color: '#7B6B8D' }}>"provenance_provider"</span>: <span style={{ color: '#2E8B8B' }}>"IRYS_DATACHAIN"</span>,
                   {"\n  "}<span style={{ color: '#7B6B8D' }}>"irys_tx_id"</span>: <span style={{ color: '#2E8B8B' }}>"8kNMzL4hg..."</span>,
-                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"irys_url"</span>: <span style={{ color: '#2E8B8B' }}>"https://gateway.irys.xyz/8kNMzL4hg..."</span>
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"irys_url"</span>: <span style={{ color: '#2E8B8B' }}>"https://gateway.irys.xyz/8kNMzL4hg..."</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"nft"</span>: <span style={{ color: '#2E8B8B' }}>{"{"}</span> <span style={{ color: '#7B6B8D' }}>"status"</span>: <span style={{ color: '#ef4444' }}>"NO_MINT — FAIL verdicts do not mint"</span> <span style={{ color: '#2E8B8B' }}>{"}"}</span>,
+                  {"\n  "}<span style={{ color: '#7B6B8D' }}>"x402"</span>: <span style={{ color: '#2E8B8B' }}>{"{"}</span> <span style={{ color: '#7B6B8D' }}>"status"</span>: <span style={{ color: '#FFB84D' }}>"DEFERRED"</span>, <span style={{ color: '#7B6B8D' }}>"amount_usdc"</span>: <span style={{ color: '#FFB84D' }}>0.10</span> <span style={{ color: '#2E8B8B' }}>{"}"}</span>
                   {"\n"}<span style={{ color: '#2E8B8B' }}>{"}"}</span>
                 </code>
               </motion.pre>
@@ -631,6 +662,36 @@ export default function Home() {
                 </motion.div>
               ))}
             </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6 }}
+              className="mt-8 p-5 rounded-xl border border-red-500/20 bg-red-500/[0.04] dark:bg-red-500/[0.06]"
+              data-testid="callout-hard-fail-rules"
+            >
+              <div className="text-xs font-bold font-mono tracking-widest uppercase text-red-500 dark:text-red-400 mb-3">
+                Hard-Fail Rules — Prediction Markets
+              </div>
+              <div className="flex flex-col sm:flex-row gap-6">
+                <div className="flex-1 min-w-[240px]">
+                  <div className="text-sm font-semibold text-foreground mb-1">E02_REQUIRED</div>
+                  <div className="text-[13px] text-muted-foreground leading-relaxed">
+                    Every prediction thesis must state falsification criteria. No falsification = automatic FAIL regardless of risk score.
+                  </div>
+                </div>
+                <div className="flex-1 min-w-[240px]">
+                  <div className="text-sm font-semibold text-foreground mb-1">I01_UNDISCLOSED</div>
+                  <div className="text-[13px] text-muted-foreground leading-relaxed">
+                    Agents must disclose their signal source. Undisclosed source with I01 flag = automatic FAIL. If the thesis is strong, disclose the source.
+                  </div>
+                </div>
+              </div>
+              <div className="text-[11px] text-muted-foreground/60 mt-3">
+                Hard-fails fire after scoring — the risk score still appears in the certificate for transparency, but it cannot override the verdict.
+              </div>
+            </motion.div>
           </div>
         </section>
       </RevealSection>

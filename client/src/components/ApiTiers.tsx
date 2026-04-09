@@ -19,7 +19,7 @@ const tiers = [
       "DJZS-LF failure codes",
       "< 3s response time",
     ],
-    cta: "Best for: Trading bots, DeFi agents",
+    cta: "Best for: Trading bots, DeFi agents, Prediction markets",
   },
   {
     name: "Founder",
