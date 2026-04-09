@@ -198,9 +198,9 @@ export default function Demo() {
       await new Promise(r => setTimeout(r, 300));
 
       setResult(data);
-    } catch (err: any) {
-      if (err.name === "AbortError") return;
-      setError(err.message || "Audit request failed");
+    } catch (err: unknown) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Audit request failed");
       setCurrentStep(-1);
     } finally {
       setRunning(false);
