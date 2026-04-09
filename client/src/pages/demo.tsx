@@ -88,6 +88,24 @@ const SCENARIOS: Record<string, { label: string; desc: string; memo: string; fla
       "DJZS-X02": { present: true,  evidence: "Spot buy and Aave long have no atomicity guarantee" },
       "DJZS-T01": { present: true,  evidence: "Funding rate snapshot may be stale by execution time" },
     }
+  },
+  custom: {
+    label: "Custom Scenario",
+    desc: "Write your own strategy memo",
+    memo: "",
+    flags: {
+      "DJZS-S01": { present: false, evidence: null },
+      "DJZS-S02": { present: false, evidence: null },
+      "DJZS-S03": { present: false, evidence: null },
+      "DJZS-E01": { present: false, evidence: null },
+      "DJZS-E02": { present: false, evidence: null },
+      "DJZS-I01": { present: false, evidence: null },
+      "DJZS-I02": { present: false, evidence: null },
+      "DJZS-I03": { present: false, evidence: null },
+      "DJZS-X01": { present: false, evidence: null },
+      "DJZS-X02": { present: false, evidence: null },
+      "DJZS-T01": { present: false, evidence: null },
+    }
   }
 };
 
@@ -219,8 +237,10 @@ export default function Demo() {
   const [pStep, setPStep] = useState("done");
   const [result, setResult] = useState<ReturnType<typeof demoComputeVerdict> | null>(null);
   const [tier, setTier] = useState("micro");
+  const [customMemo, setCustomMemo] = useState("");
 
   const sc = SCENARIOS[scenario];
+  const activeMemo = scenario === "custom" ? customMemo : sc.memo;
   const verdict = result || demoComputeVerdict(sc.flags);
   const failed = Object.entries(sc.flags).filter(([_, v]) => v.present).sort((a, b) => (LF_TAXONOMY[b[0]]?.weight || 0) - (LF_TAXONOMY[a[0]]?.weight || 0));
 
@@ -282,7 +302,17 @@ export default function Demo() {
 
             <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4, padding: 12 }}>
               <div style={{ fontSize: 7.5, color: C.textMuted, letterSpacing: "0.1em", marginBottom: 5, fontFamily: MONO }} data-testid="label-demo-memo">"strategy_memo":</div>
-              <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 3, padding: 9, fontSize: 10, color: C.text, lineHeight: 1.65, fontFamily: MONO }} data-testid="textarea-demo-memo">{sc.memo}</div>
+              {scenario === "custom" ? (
+                <textarea
+                  value={customMemo}
+                  onChange={(e) => setCustomMemo(e.target.value)}
+                  placeholder="Enter your strategy memo here..."
+                  style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 3, padding: 9, fontSize: 10, color: C.text, lineHeight: 1.65, fontFamily: MONO, width: "100%", minHeight: 80, resize: "vertical", outline: "none" }}
+                  data-testid="textarea-demo-memo"
+                />
+              ) : (
+                <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 3, padding: 9, fontSize: 10, color: C.text, lineHeight: 1.65, fontFamily: MONO }} data-testid="textarea-demo-memo">{activeMemo}</div>
+              )}
             </div>
 
             <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4, padding: 12 }}>

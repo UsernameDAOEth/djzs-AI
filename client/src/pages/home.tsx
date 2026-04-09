@@ -1,24 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-
-const MONO = "'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace";
-
-const C = {
-  bg: "#0a0a0a",
-  surface: "#111111",
-  surfaceHover: "#1a1a1a",
-  border: "#1e1e1e",
-  borderActive: "#22c55e",
-  green: "#22c55e",
-  greenDim: "#166534",
-  greenGlow: "rgba(34,197,94,0.15)",
-  red: "#ef4444",
-  redDim: "#991b1b",
-  amber: "#f59e0b",
-  text: "#e5e5e5",
-  textDim: "#737373",
-  textMuted: "#525252",
-  white: "#ffffff",
-};
+import { C, MONO, GlowDot, SectionLabel, Badge } from "@/lib/terminal-theme";
 
 const LF_CATEGORIES = [
   {
@@ -205,57 +186,6 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-function GlowDot({ color = C.green, size = 8 }: { color?: string; size?: number }) {
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        width: size,
-        height: size,
-        borderRadius: "50%",
-        backgroundColor: color,
-        boxShadow: `0 0 ${size}px ${color}, 0 0 ${size * 2}px ${color}40`,
-      }}
-    />
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        fontFamily: MONO,
-        fontSize: 11,
-        letterSpacing: "0.15em",
-        textTransform: "uppercase",
-        color: C.textMuted,
-        marginBottom: 12,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function Badge({ children, color = C.green, filled = false }: { children: React.ReactNode; color?: string; filled?: boolean }) {
-  return (
-    <span
-      style={{
-        fontFamily: MONO,
-        fontSize: 11,
-        padding: "3px 8px",
-        borderRadius: 4,
-        border: `1px solid ${color}40`,
-        backgroundColor: filled ? `${color}20` : "transparent",
-        color: color,
-        letterSpacing: "0.05em",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {children}
-    </span>
-  );
-}
 
 function Hero({ bootDone }: { bootDone: boolean }) {
   return (

@@ -5,7 +5,7 @@ import { Link } from "wouter";
 import { Helmet } from "react-helmet";
 import { getVeniceApiKey } from "@/lib/queryClient";
 import { LOGIC_FAILURE_TAXONOMY } from "@shared/audit-schema";
-import { C, MONO, Nav, GlowDot, TerminalFooter } from "@/lib/terminal-theme";
+import { C, MONO, GlowDot, TerminalFooter } from "@/lib/terminal-theme";
 
 const DEMO_SCENARIOS = [
   {
@@ -226,9 +226,9 @@ export default function Chat() {
       await new Promise(r => setTimeout(r, 300));
 
       setResult(data);
-    } catch (err: any) {
-      if (err.name === "AbortError") return;
-      setError(err.message || "Audit request failed");
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Audit request failed");
       setCurrentStep(-1);
     } finally {
       setRunning(false);
