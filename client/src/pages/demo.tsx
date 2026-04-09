@@ -166,6 +166,13 @@ function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
   );
 }
 
+const RESPONSIVE_STYLE = `
+  @media (max-width: 768px) {
+    .demo-grid { grid-template-columns: 1fr !important; }
+    .demo-provenance-grid { grid-template-columns: 1fr !important; }
+  }
+`;
+
 export default function Demo() {
   const [memo, setMemo] = useState("");
   const [tier, setTier] = useState("micro");
@@ -260,6 +267,7 @@ export default function Demo() {
         <meta property="og:description" content="See the full DJZS audit pipeline in action. Paste a memo, select a tier, and watch the ProofOfLogic certificate get generated." />
       </Helmet>
 
+      <style>{RESPONSIVE_STYLE}</style>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
         <Nav />
 
@@ -277,7 +285,7 @@ export default function Demo() {
             </p>
           </motion.div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 3fr", gap: 24 }}>
+          <div className="demo-grid" style={{ display: "grid", gridTemplateColumns: "2fr 3fr", gap: 24 }}>
             {/* Left column: input */}
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}>
@@ -558,7 +566,7 @@ export default function Demo() {
                       {/* Provenance */}
                       <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
                         <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, letterSpacing: "0.1em" }} data-testid="label-result-provenance">ON-CHAIN PROVENANCE</div>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                        <div className="demo-provenance-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                           {result.irys_url ? (
                             <a
                               href={result.irys_url}
