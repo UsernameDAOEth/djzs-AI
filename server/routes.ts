@@ -765,6 +765,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (audit.verdict === "PASS" && tier === "micro" && process.env.NFT_CONTRACT_ADDRESS && irysResult.irys_tx_id && !nftResult) {
         response.nft_mint_available = true;
         response.nft_contract_address = process.env.NFT_CONTRACT_ADDRESS;
+        const mintWallet = walletAddress || agentAddr;
+        if (mintWallet && irysResult.irys_tx_id) {
+          nftMintEligible.set(irysResult.irys_tx_id, { wallet: mintWallet.toLowerCase(), ts: Date.now() });
+          for (const [k, v] of nftMintEligible) {
+            if (Date.now() - v.ts > 3600000) nftMintEligible.delete(k);
+          }
+        }
       }
 
       res.json(response);
@@ -780,6 +787,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   };
+
+  const nftMintEligible = new Map<string, { wallet: string; ts: number }>();
 
   app.post("/api/audit/micro", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
   app.post("/api/audit/founder", createVerifiedPaymentGate("founder"), createTierHandler("founder"));
@@ -819,7 +828,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (now - ts > 300000) mintRateLimit.delete(key);
       }
 
-      // Fetch the certificate from Irys to verify it's a real PASS
+      const eligible = nftMintEligible.get(irys_tx_id);
+      if (eligible && eligible.wallet !== wallet_address.toLowerCase()) {
+        return res.status(403).json({ error: "Wallet address does not match the original audit requester" });
+      }
+
       const irysResponse = await fetch(`https://gateway.irys.xyz/${irys_tx_id}`);
       if (!irysResponse.ok) {
         return res.status(404).json({ error: "Certificate not found on Irys Datachain" });
@@ -866,6 +879,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (nftResult.nft_error) {
         return res.status(500).json({ error: "NFT mint failed", nft_error: nftResult.nft_error });
       }
+
+      nftMintEligible.delete(irys_tx_id);
 
       res.json({
         nft_tx_hash: nftResult.nft_tx_hash,
