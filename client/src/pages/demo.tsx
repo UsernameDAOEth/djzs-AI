@@ -617,6 +617,9 @@ export default function Demo() {
                                 <span className="ml-2 text-[10px] font-normal px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">SIMULATED</span>
                               </div>
                               <div className="text-[10px] font-mono text-muted-foreground">Full certificate stored on-chain as ERC-721 on Base Mainnet</div>
+                              <div className="text-[10px] font-mono text-muted-foreground/60 mt-1" data-testid="text-simulated-nft-tx">
+                                TX: 0x{result.cryptographic_hash?.slice(0, 40) || "00".repeat(20)}...
+                              </div>
                             </div>
                           </div>
                         </div>

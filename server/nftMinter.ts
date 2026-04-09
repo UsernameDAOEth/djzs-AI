@@ -169,8 +169,8 @@ export async function mintProofOfLogicNft(input: NftMintInput): Promise<NftMintR
               data: log.data,
               topics: log.topics,
             });
-            if (decoded.eventName === "ProofMinted" && decoded.args) {
-              tokenId = Number((decoded.args as any).tokenId);
+            if (decoded.eventName === "ProofMinted" && decoded.args && "tokenId" in decoded.args) {
+              tokenId = Number(decoded.args.tokenId);
               break;
             }
           } catch (_) {}
