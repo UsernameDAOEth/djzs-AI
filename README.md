@@ -371,6 +371,21 @@ The Live Demo (`/demo`) provides a free, rate-limited preview with preloaded sce
 
 ---
 
+## Frontend Design
+
+The web interface uses a **Terminal Brutalism** design system — dark, monospaced, zero-decoration. Every element is built to feel like a hardened audit terminal.
+
+| Element | Detail |
+|---|---|
+| Typography | JetBrains Mono monospace throughout — no sans-serif anywhere |
+| Palette | `#0a0a0a` background, `#22c55e` green accents, `#ef4444` fail red, `#f59e0b` warning amber |
+| Hero | Typewriter animation types "Audit-Before-Act." character by character with a persistent blinking cursor |
+| Layout | Full-width containers (up to 1400px) with responsive collapse on mobile |
+| Animations | CSS-only — no animation libraries. Boot sequence, typewriter, and blink-cursor keyframes |
+| Components | Shared design primitives (`C`, `MONO`, `Nav`, `Badge`, `GlowDot`, `TerminalPage`) in `terminal-theme.tsx` |
+
+---
+
 ## Security Design
 
 - **TEE Isolation** — Oracle runs inside a Phala Cloud CVM (Intel SGX). Private keys for Venice AI, Irys wallet, and x402 are managed in hardware — inaccessible to the host operator
@@ -411,7 +426,7 @@ The Live Demo (`/demo`) provides a free, rate-limited preview with preloaded sce
 | Provenance | Irys Datachain |
 | Settlement | USDC on Base Mainnet, x402 protocol |
 | Messaging | XMTP (MLS protocol, quantum-resistant) |
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Radix UI |
+| Frontend | React 18, TypeScript, Vite, Terminal Brutalism design system (JetBrains Mono) |
 | Backend | Express.js, TypeScript |
 | Database | PostgreSQL, Drizzle ORM |
 | Wallet | RainbowKit, wagmi, viem |
