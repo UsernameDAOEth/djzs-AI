@@ -1,11 +1,11 @@
 {
-  "name": "DJZS - Private AI Journal",
+  "name": "DJZS - Autonomous Auditing System",
   "short_name": "DJZS",
-  "description": "Privacy-first AI journal with wallet-based authentication and Venice AI insights",
+  "description": "Autonomous auditing system for the A2A economy. Adversarial logic audits via x402 on Base Mainnet.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",
-  "theme_color": "#9333ea",
+  "theme_color": "#0a0a0a",
   "orientation": "portrait-primary",
   "icons": [
     {
