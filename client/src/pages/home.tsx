@@ -259,7 +259,7 @@ function useTypewriter(text: string, start: boolean, speed = 90) {
 function Hero() {
   const [bootDone, setBootDone] = useState(false);
   const onBootComplete = useCallback(() => setBootDone(true), []);
-  const displayed = useTypewriter("Audit-Before-Act", bootDone, 90);
+  const displayed = useTypewriter("Audit-Before-Act.", bootDone, 90);
 
   return (
     <section className="relative py-16 sm:py-24 px-4">
