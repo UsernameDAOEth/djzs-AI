@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { Helmet } from "react-helmet";
 import { LOGIC_FAILURE_TAXONOMY, VALID_FAILURE_CODES, type LogicFailureCode } from "@shared/audit-schema";
+import { C, MONO, TerminalPage, TerminalHeading, TerminalFooter, GlowDot } from "@/lib/terminal-theme";
 
 interface TestCase {
   id: number;
@@ -84,170 +85,139 @@ const COVERAGE_MATRIX = [
 ];
 
 const TIER_COLORS: Record<string, string> = {
-  micro: "#60f0a0",
-  founder: "#c8f060",
-  treasury: "#ffaa60",
+  micro: C.green,
+  founder: C.amber,
+  treasury: C.red,
 };
 
 export default function TestSuite() {
   const [expandedTest, setExpandedTest] = useState<number | null>(null);
 
   return (
-    <div style={{
-      background: "#0a0a0a",
-      color: "#e8e4dc",
-      fontFamily: "'Fraunces', Georgia, serif",
-      fontSize: 17,
-      lineHeight: 1.75,
-      minHeight: "100vh",
-      position: "relative",
-    }}>
+    <TerminalPage>
       <Helmet>
         <title>DJZS Oracle — Test Audit Suite</title>
         <meta name="description" content="Nine strategy memos exercising all 11 DJZS-LF failure codes across all three audit tiers." />
       </Helmet>
 
-      <style>{`
-        .test-grain::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-          pointer-events: none;
-          z-index: 0;
-          opacity: 0.4;
-        }
-        @keyframes testFadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .test-section { animation: testFadeUp 0.6s ease both; }
-        @keyframes testPulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.3; }
-        }
-      `}</style>
+      <header style={{ padding: "60px 0 40px", borderBottom: `1px solid ${C.border}`, marginBottom: 48 }}>
+        <div
+          style={{
+            display: "inline-block", fontFamily: MONO, fontSize: 11, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: C.green, border: `1px solid ${C.green}33`,
+            background: C.greenGlow, padding: "4px 12px", borderRadius: 2, marginBottom: 24,
+          }}
+          data-testid="tag-test-suite-header"
+        >
+          DJZS Protocol — Test Suite
+        </div>
+        <h1 style={{ fontSize: "clamp(28px, 5vw, 44px)", fontWeight: 700, lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 12, color: C.white }}>
+          Test <span style={{ color: C.green }}>Audit Suite</span>
+        </h1>
+        <p style={{ fontSize: 14, color: C.textDim, maxWidth: 520 }}>
+          Nine strategy memos exercising all {VALID_FAILURE_CODES.length} DJZS-LF failure codes across all three tiers. Submit each to the DJZS oracle at djzs.ai.
+        </p>
+        <div style={{ marginTop: 24, display: "flex", gap: 24, alignItems: "center", fontSize: 12, color: C.textDim }}>
+          <GlowDot color={C.green} size={6} />
+          <span>9 Tests</span>
+          <span style={{ color: C.textMuted }}>·</span>
+          <span>3 Tiers</span>
+          <span style={{ color: C.textMuted }}>·</span>
+          <span>{VALID_FAILURE_CODES.length} LF Codes</span>
+        </div>
+      </header>
 
-      <div className="test-grain" style={{ maxWidth: 760, margin: "0 auto", padding: "0 24px", position: "relative", zIndex: 1 }}>
-
-        <header style={{ padding: "80px 0 60px", borderBottom: "1px solid #1e1e1e", marginBottom: 64, animation: "testFadeUp 0.8s ease both" }}>
-          <div style={{
-            display: "inline-block", fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: "0.12em",
-            textTransform: "uppercase", color: "#c8f060", border: "1px solid rgba(200, 240, 96, 0.2)",
-            background: "rgba(200, 240, 96, 0.08)", padding: "4px 12px", borderRadius: 2, marginBottom: 28,
-          }} data-testid="tag-test-suite-header">
-            DJZS Protocol — Test Suite
-          </div>
-          <h1 style={{ fontSize: "clamp(32px, 6vw, 54px)", fontWeight: 300, lineHeight: 1.15, letterSpacing: "-0.02em", marginBottom: 20, color: "#e8e4dc" }}>
-            Test <em style={{ fontStyle: "italic", color: "#c8f060" }}>Audit Suite</em>
-          </h1>
-          <p style={{ fontSize: 18, color: "#666", fontWeight: 300, maxWidth: 520, lineHeight: 1.6 }}>
-            Nine strategy memos exercising all {VALID_FAILURE_CODES.length} DJZS-LF failure codes across all three tiers. Submit each to the DJZS oracle at djzs.ai.
-          </p>
-          <div style={{ marginTop: 32, display: "flex", gap: 24, alignItems: "center", fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#666" }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8f060", animation: "testPulse 2s ease infinite" }} />
-            <span>9 Tests</span>
-            <span>·</span>
-            <span>3 Tiers</span>
-            <span>·</span>
-            <span>{VALID_FAILURE_CODES.length} LF Codes</span>
-          </div>
-        </header>
-
-        <section className="test-section" style={{ marginBottom: 72 }}>
-          <h2 style={{ fontSize: 13, fontFamily: "'DM Mono', monospace", fontWeight: 400, letterSpacing: "0.1em", textTransform: "uppercase", color: "#c8f060", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }} data-testid="heading-test-cases">
-            Test Cases
-            <span style={{ flex: 1, height: 1, background: "#2a2a2a" }} />
-          </h2>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 48, marginBottom: 64 }}>
+        <section>
+          <TerminalHeading num="01">Test Cases</TerminalHeading>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {TEST_CASES.map((tc) => {
               const isExpanded = expandedTest === tc.id;
               const tierColor = TIER_COLORS[tc.tier];
               return (
                 <div key={tc.id} style={{
-                  border: "1px solid #1e1e1e", borderRadius: 6, overflow: "hidden",
-                  background: isExpanded ? "#111111" : "transparent",
-                  transition: "background 0.2s",
+                  border: `1px solid ${C.border}`, borderRadius: 4, overflow: "hidden",
+                  background: isExpanded ? C.surface : "transparent",
                 }} data-testid={`card-test-${tc.id}`}>
                   <button
                     onClick={() => setExpandedTest(isExpanded ? null : tc.id)}
                     aria-expanded={isExpanded}
                     aria-controls={`test-detail-${tc.id}`}
                     style={{
-                      width: "100%", padding: "20px 24px", background: "none", border: "none",
-                      cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 16,
+                      width: "100%", padding: "14px 16px", background: "none", border: "none",
+                      cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 12,
+                      fontFamily: MONO,
                     }}
                     data-testid={`button-toggle-test-${tc.id}`}
                   >
                     <div style={{
-                      fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#c8f060",
-                      background: "rgba(200, 240, 96, 0.08)", border: "1px solid rgba(200, 240, 96, 0.2)",
+                      fontFamily: MONO, fontSize: 11, color: C.green,
+                      background: C.greenGlow, border: `1px solid ${C.green}33`,
                       width: 28, height: 28, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
                     }}>
                       {tc.id}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 16, fontWeight: 300, color: "#e8e4dc", fontFamily: "'Fraunces', Georgia, serif" }}>{tc.title}</div>
-                      <div style={{ display: "flex", gap: 8, marginTop: 6, flexWrap: "wrap" }}>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: tierColor, background: `${tierColor}12`, border: `1px solid ${tierColor}33`, padding: "1px 6px", borderRadius: 2, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: C.white }}>{tc.title}</div>
+                      <div style={{ display: "flex", gap: 6, marginTop: 4, flexWrap: "wrap" }}>
+                        <span style={{ fontFamily: MONO, fontSize: 10, color: tierColor, background: `${tierColor}14`, border: `1px solid ${tierColor}33`, padding: "1px 6px", borderRadius: 2, textTransform: "uppercase", letterSpacing: "0.08em" }}>
                           {tc.tier}
                         </span>
                         <span style={{
-                          fontFamily: "'DM Mono', monospace", fontSize: 10, padding: "1px 6px", borderRadius: 2,
+                          fontFamily: MONO, fontSize: 10, padding: "1px 6px", borderRadius: 2,
                           letterSpacing: "0.08em",
-                          color: tc.expectedVerdict === "PASS" ? "#60f0a0" : "#ff5f5f",
-                          background: tc.expectedVerdict === "PASS" ? "rgba(96,240,160,0.08)" : "rgba(255,95,95,0.08)",
-                          border: `1px solid ${tc.expectedVerdict === "PASS" ? "rgba(96,240,160,0.2)" : "rgba(255,95,95,0.2)"}`,
+                          color: tc.expectedVerdict === "PASS" ? C.green : C.red,
+                          background: tc.expectedVerdict === "PASS" ? `${C.green}14` : `${C.red}14`,
+                          border: `1px solid ${tc.expectedVerdict === "PASS" ? `${C.green}33` : `${C.red}33`}`,
                         }}>
                           {tc.expectedVerdict}
                         </span>
                         {tc.expectedCodes.map(c => (
-                          <span key={c} style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#8ab4f8", background: "rgba(138,180,248,0.08)", border: "1px solid rgba(138,180,248,0.15)", padding: "1px 6px", borderRadius: 2 }}>
+                          <span key={c} style={{ fontFamily: MONO, fontSize: 10, color: "#8ab4f8", background: "rgba(138,180,248,0.08)", border: "1px solid rgba(138,180,248,0.15)", padding: "1px 6px", borderRadius: 2 }}>
                             {c}
                           </span>
                         ))}
                       </div>
                     </div>
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ transform: isExpanded ? "rotate(180deg)" : "none", transition: "transform 0.2s", flexShrink: 0 }}>
-                      <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#666" strokeWidth="1.5" strokeLinecap="round" />
+                      <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke={C.textMuted} strokeWidth="1.5" strokeLinecap="round" />
                     </svg>
                   </button>
 
                   {isExpanded && (
-                    <div id={`test-detail-${tc.id}`} style={{ padding: "0 24px 24px", borderTop: "1px solid #1e1e1e" }}>
-                      <div style={{ marginTop: 20, marginBottom: 16 }}>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>
+                    <div id={`test-detail-${tc.id}`} style={{ padding: "0 16px 16px", borderTop: `1px solid ${C.border}` }}>
+                      <div style={{ marginTop: 12, marginBottom: 12 }}>
+                        <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>
                           Target System
                         </div>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 13, color: "#c8f060" }}>
+                        <div style={{ fontFamily: MONO, fontSize: 13, color: C.green }}>
                           {tc.targetSystem}
                         </div>
                       </div>
 
-                      <div style={{ marginBottom: 16 }}>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>
+                      <div style={{ marginBottom: 12 }}>
+                        <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>
                           Strategy Memo
                         </div>
                         <div style={{
-                          background: "#161616", border: "1px solid #2a2a2a", borderRadius: 4,
-                          padding: "14px 18px", fontFamily: "'DM Mono', monospace", fontSize: 13,
-                          color: "#d4cfbe", lineHeight: 1.65,
+                          background: C.bg, border: `1px solid ${C.border}`, borderRadius: 4,
+                          padding: "10px 14px", fontFamily: MONO, fontSize: 12,
+                          color: C.text, lineHeight: 1.65,
                         }} data-testid={`text-memo-${tc.id}`}>
                           {tc.memo}
                         </div>
                       </div>
 
                       <div style={{
-                        background: tc.expectedVerdict === "PASS" ? "rgba(96,240,160,0.04)" : "rgba(255,95,95,0.04)",
-                        border: `1px solid ${tc.expectedVerdict === "PASS" ? "rgba(96,240,160,0.15)" : "rgba(255,95,95,0.15)"}`,
-                        borderLeft: `3px solid ${tc.expectedVerdict === "PASS" ? "#60f0a0" : "#ff5f5f"}`,
-                        borderRadius: 4, padding: "14px 18px",
+                        background: tc.expectedVerdict === "PASS" ? `${C.green}08` : `${C.red}08`,
+                        border: `1px solid ${tc.expectedVerdict === "PASS" ? `${C.green}25` : `${C.red}25`}`,
+                        borderLeft: `3px solid ${tc.expectedVerdict === "PASS" ? C.green : C.red}`,
+                        borderRadius: 4, padding: "10px 14px",
                       }}>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>
+                        <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>
                           Expected Result
                         </div>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 13, color: tc.expectedVerdict === "PASS" ? "#60f0a0" : "#ff5f5f", fontWeight: 500 }}>
+                        <div style={{ fontFamily: MONO, fontSize: 12, color: tc.expectedVerdict === "PASS" ? C.green : C.red, fontWeight: 600 }}>
                           {tc.expectedVerdict} — {tc.rationale}
                         </div>
                       </div>
@@ -259,21 +229,17 @@ export default function TestSuite() {
           </div>
         </section>
 
-        <section className="test-section" style={{ marginBottom: 72, animationDelay: "0.2s" }}>
-          <h2 style={{ fontSize: 13, fontFamily: "'DM Mono', monospace", fontWeight: 400, letterSpacing: "0.1em", textTransform: "uppercase", color: "#c8f060", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }} data-testid="heading-coverage-matrix">
-            Coverage Matrix
-            <span style={{ flex: 1, height: 1, background: "#2a2a2a" }} />
-          </h2>
-
+        <section>
+          <TerminalHeading num="02">Coverage Matrix</TerminalHeading>
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0 4px" }} data-testid="table-coverage-matrix">
               <thead>
                 <tr>
                   {["Test", "Tier", "Expected", "Target Codes"].map(h => (
                     <th key={h} style={{
-                      textAlign: "left", padding: "8px 16px", fontFamily: "'DM Mono', monospace",
-                      fontSize: 11, color: "#666", textTransform: "uppercase", letterSpacing: "0.08em",
-                      fontWeight: 400, borderBottom: "1px solid #2a2a2a",
+                      textAlign: "left", padding: "6px 12px", fontFamily: MONO,
+                      fontSize: 10, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.08em",
+                      fontWeight: 400, borderBottom: `1px solid ${C.border}`,
                     }}>
                       {h}
                     </th>
@@ -283,16 +249,16 @@ export default function TestSuite() {
               <tbody>
                 {COVERAGE_MATRIX.map((row) => (
                   <tr key={row.test} data-testid={`row-coverage-${row.test}`}>
-                    <td style={{ padding: "10px 16px", fontFamily: "'DM Mono', monospace", fontSize: 13, color: "#c8f060", background: "#111111", borderRadius: "4px 0 0 4px" }}>
+                    <td style={{ padding: "8px 12px", fontFamily: MONO, fontSize: 12, color: C.green, background: C.surface, borderRadius: "4px 0 0 4px" }}>
                       {row.test}
                     </td>
-                    <td style={{ padding: "10px 16px", fontFamily: "'DM Mono', monospace", fontSize: 12, color: TIER_COLORS[row.tier], background: "#111111" }}>
+                    <td style={{ padding: "8px 12px", fontFamily: MONO, fontSize: 12, color: TIER_COLORS[row.tier], background: C.surface }}>
                       {row.tier}
                     </td>
-                    <td style={{ padding: "10px 16px", fontFamily: "'DM Mono', monospace", fontSize: 12, background: "#111111", color: row.expected === "PASS" ? "#60f0a0" : "#ff5f5f" }}>
+                    <td style={{ padding: "8px 12px", fontFamily: MONO, fontSize: 12, background: C.surface, color: row.expected === "PASS" ? C.green : C.red }}>
                       {row.expected}
                     </td>
-                    <td style={{ padding: "10px 16px", fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#8ab4f8", background: "#111111", borderRadius: "0 4px 4px 0" }}>
+                    <td style={{ padding: "8px 12px", fontFamily: MONO, fontSize: 12, color: "#8ab4f8", background: C.surface, borderRadius: "0 4px 4px 0" }}>
                       {row.codes}
                     </td>
                   </tr>
@@ -300,38 +266,30 @@ export default function TestSuite() {
               </tbody>
             </table>
           </div>
-
-          <p style={{ color: "#666", fontSize: 14, marginTop: 20, fontFamily: "'DM Mono', monospace" }}>
+          <p style={{ color: C.textMuted, fontSize: 12, marginTop: 16, fontFamily: MONO }}>
             All {VALID_FAILURE_CODES.length} canonical LF codes covered. Three tiers covered. One clean pass baseline.
           </p>
         </section>
-
-        <div style={{
-          background: "#111111", border: "1px solid #2a2a2a", borderTop: "3px solid #c8f060",
-          borderRadius: 4, padding: 36, textAlign: "center", margin: "64px 0 80px",
-        }} data-testid="section-test-cta">
-          <h3 style={{ fontSize: 26, marginBottom: 12, color: "#e8e4dc", fontWeight: 300 }}>Run these tests</h3>
-          <p style={{ marginBottom: 28, fontSize: 16, color: "#b0aa9e" }}>Copy any strategy memo above and paste it into the DJZS oracle demo to see the audit in action.</p>
-          <Link href="/demo" data-testid="button-cta-open-demo">
-            <span style={{
-              display: "inline-block", background: "#c8f060", color: "#0a0a0a", fontFamily: "'DM Mono', monospace",
-              fontSize: 13, fontWeight: 500, letterSpacing: "0.05em", padding: "12px 28px", borderRadius: 3,
-              textDecoration: "none", cursor: "pointer",
-            }}>
-              Open Live Demo →
-            </span>
-          </Link>
-        </div>
-
-        <footer style={{
-          borderTop: "1px solid #1e1e1e", padding: "32px 0", fontFamily: "'DM Mono', monospace",
-          fontSize: 12, color: "#666", display: "flex", justifyContent: "space-between", marginBottom: 40,
-        }}>
-          <span>DJZS Protocol — djzs.ai</span>
-          <span>No agent acts without audit.</span>
-        </footer>
-
       </div>
-    </div>
+
+      <div style={{
+        background: C.surface, border: `1px solid ${C.border}`, borderTop: `3px solid ${C.green}`,
+        borderRadius: 4, padding: 28, textAlign: "center", marginBottom: 48,
+      }} data-testid="section-test-cta">
+        <h3 style={{ fontSize: 20, marginBottom: 8, color: C.white, fontWeight: 600 }}>Run these tests</h3>
+        <p style={{ marginBottom: 20, fontSize: 13, color: C.textDim }}>Copy any strategy memo above and paste it into the DJZS oracle demo to see the audit in action.</p>
+        <Link href="/demo" data-testid="button-cta-open-demo">
+          <span style={{
+            display: "inline-block", background: C.green, color: C.bg, fontFamily: MONO,
+            fontSize: 12, fontWeight: 600, letterSpacing: "0.05em", padding: "10px 24px", borderRadius: 3,
+            textDecoration: "none", cursor: "pointer",
+          }}>
+            Open Live Demo →
+          </span>
+        </Link>
+      </div>
+
+      <TerminalFooter />
+    </TerminalPage>
   );
 }
