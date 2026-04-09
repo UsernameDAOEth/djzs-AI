@@ -16,13 +16,13 @@ async function getGitHubClient() {
 }
 import { auditRequestSchema, createTieredRequestSchema, TIER_CONFIG, type AuditTier, escrowAuditRequestSchema } from "@shared/audit-schema";
 import { executeAudit, mapToLegacyAuditLog, postAuditChainWrite } from "./audit-agent";
+import { VeniceClient } from "./venice";
 import { intelligenceRequestSchema, generateServerIntelligenceBrief } from "./intelligence-engine";
 import { verifyUsdcPayment } from "./payment-verifier";
 import { uploadAuditToIrys } from "./irys";
 import { requireEscrowSignature } from "./signature-verifier";
 import { evaluateEscrowGate } from "./escrowGate";
-import { PredictionAuditRequestSchema } from "@shared/prediction-schema";
-import { executePredictionAudit, PredictionConfigError, type PredictionCertificate } from "./prediction-audit";
+import { mintProofOfLogicNft, buildNftMintInput } from "./nftMinter";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -63,7 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       components: {
         api: "healthy",
         xmtp_agent: process.env.XMTP_WALLET_KEY ? "configured" : "not_configured",
-        detection_engine: "djzs-trust/rule-engine@v1.0",
+        venice_ai: process.env.VENICE_API_KEY ? "configured" : "not_configured",
         irys_datachain: process.env.IRYS_PRIVATE_KEY ? "configured" : "not_configured",
         trust_score_contract: process.env.TRUST_SCORE_CONTRACT_ADDRESS ? "configured" : "not_configured",
         x402_payments: "active",
@@ -536,7 +536,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "POST /api/audit/micro": {
               accepts: {
                 scheme: "exact",
-                price: "$0.10",
+                price: "$2.50",
                 network: X402_NETWORK,
                 payTo: TREASURY_WALLET,
               },
@@ -545,7 +545,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "POST /api/audit/founder": {
               accepts: {
                 scheme: "exact",
-                price: "$1.00",
+                price: "$5.00",
                 network: X402_NETWORK,
                 payTo: TREASURY_WALLET,
               },
@@ -554,7 +554,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "POST /api/audit/treasury": {
               accepts: {
                 scheme: "exact",
-                price: "$10.00",
+                price: "$50.00",
                 network: X402_NETWORK,
                 payTo: TREASURY_WALLET,
               },
@@ -563,7 +563,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "POST /api/audit": {
               accepts: {
                 scheme: "exact",
-                price: "$0.10",
+                price: "$2.50",
                 network: X402_NETWORK,
                 payTo: TREASURY_WALLET,
               },
@@ -576,9 +576,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       x402Initialized = true;
       console.log(`x402 payment middleware initialized for 3 Zone tiers on Base Mainnet via Coinbase CDP`);
-      console.log(`  Micro-Zone:    POST /api/audit/micro    ($0.10 USDC)`);
-      console.log(`  Founder Zone:  POST /api/audit/founder  ($1.00 USDC)`);
-      console.log(`  Treasury Zone: POST /api/audit/treasury ($10.00 USDC)`);
+      console.log(`  Micro-Zone:    POST /api/audit/micro    ($2.50 USDC)`);
+      console.log(`  Founder Zone:  POST /api/audit/founder  ($5.00 USDC)`);
+      console.log(`  Treasury Zone: POST /api/audit/treasury ($50.00 USDC)`);
     } catch (error) {
       console.warn("x402 middleware not initialized (non-blocking):", error instanceof Error ? error.message : error);
       console.warn("Audit endpoint will operate without payment gate");
@@ -673,6 +673,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const createTierHandler = (tier: AuditTier) => async (req: any, res: any) => {
     try {
+      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
       const walletAddress = req.headers['x-wallet-address'] as string | undefined;
       const schema = createTieredRequestSchema(tier);
       const parsed = schema.safeParse(req.body);
@@ -690,6 +691,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      const veniceClient = userVeniceKey ? new VeniceClient(userVeniceKey) : undefined;
       const audit = await executeAudit({
         strategy_memo: parsed.data.strategy_memo,
         audit_type: parsed.data.audit_type || "general",
@@ -697,7 +699,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         intelligence_context: parsed.data.intelligence_context,
         trade_params: parsed.data.trade_params,
         agent_id: parsed.data.agent_id,
-      });
+      }, veniceClient);
 
       const irysPayload: Record<string, any> = {
         ...audit,
@@ -722,6 +724,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Failed to persist audit log:", dbError);
       }
 
+      // ─── ProofOfLogic NFT mint (PASS verdicts only) ───────────────
+      let nftResult: { nft_tx_hash: string | null; nft_token_id: number | null; nft_error?: string } | null = null;
+      if (
+        audit.verdict === "PASS" &&
+        process.env.NFT_CONTRACT_ADDRESS &&
+        irysResult.irys_tx_id
+      ) {
+        const mintRecipient = walletAddress || agentAddr;
+        if (mintRecipient && (tier === "founder" || tier === "treasury")) {
+          // Auto-mint for Founder/Treasury — full certificate stored on-chain
+          const mintInput = buildNftMintInput(
+            audit,
+            { irys_tx_id: irysResult.irys_tx_id, irys_url: irysResult.irys_url || `https://gateway.irys.xyz/${irysResult.irys_tx_id}` },
+            tier,
+            mintRecipient
+          );
+          nftResult = await mintProofOfLogicNft(mintInput);
+        }
+        // Micro tier: mint available via POST /api/audit/mint-nft
+      }
+
       const response: Record<string, any> = {
         ...audit,
         provenance_provider: "IRYS_DATACHAIN",
@@ -733,10 +756,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (irysResult.irys_error) {
         response.irys_error = irysResult.irys_error;
       }
+      // NFT mint results
+      if (nftResult?.nft_tx_hash) {
+        response.nft_tx_hash = nftResult.nft_tx_hash;
+        response.nft_token_id = nftResult.nft_token_id;
+      }
+      if (nftResult?.nft_error) {
+        response.nft_error = nftResult.nft_error;
+      }
+      if (audit.verdict === "PASS" && tier === "micro" && process.env.NFT_CONTRACT_ADDRESS && irysResult.irys_tx_id && !nftResult) {
+        response.nft_mint_available = true;
+        response.nft_contract_address = process.env.NFT_CONTRACT_ADDRESS;
+      }
 
       res.json(response);
     } catch (error) {
       console.error(`${TIER_CONFIG[tier].name} Audit failed:`, error);
+      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
+        return res.status(503).json({ error: "AI service not configured" });
+      }
       res.status(500).json({
         error: "Audit execution failed",
         zone: TIER_CONFIG[tier].name,
@@ -745,96 +783,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  const predictionMicroHandler = async (req: any, res: any) => {
-    if (req.body?.domain === "PREDICTION") {
-      try {
-        const walletAddress = req.headers['x-wallet-address'] as string | undefined;
-        const parsed = PredictionAuditRequestSchema.safeParse(req.body);
-
-        if (!parsed.success) {
-          return res.status(400).json({
-            error: "Invalid prediction audit request",
-            zone: "The Micro-Zone",
-            domain: "PREDICTION",
-            details: parsed.error.errors,
-          });
-        }
-
-        const audit = await executePredictionAudit({
-          context: parsed.data.context,
-          engine: parsed.data.engine,
-          agent_id: parsed.data.agent_id,
-        });
-
-        const irysPayload: Record<string, any> = {
-          ...audit,
-          domain: "PREDICTION",
-          prediction_context: {
-            market_question: parsed.data.context.market_question,
-            market_id: parsed.data.context.market_id,
-            category: parsed.data.context.category,
-            position: parsed.data.context.position,
-            entry_price: parsed.data.context.entry_price,
-            source_signal: parsed.data.context.source_signal,
-          },
-        };
-        const irysResult = await uploadAuditToIrys(irysPayload);
-
-        const agentAddr = parsed.data.agent_id || walletAddress;
-        const trustScoreResult = await postAuditChainWrite(audit, agentAddr, irysResult.irys_tx_id);
-
-        try {
-          const legacyLog = mapToLegacyAuditLog(audit, {
-            strategyMemo: parsed.data.context.thesis,
-            auditType: "prediction",
-            walletAddress: walletAddress || null,
-            irysTxId: irysResult.irys_tx_id,
-          });
-          await storage.createAuditLog(legacyLog);
-        } catch (dbError) {
-          console.error("Failed to persist prediction audit log:", dbError);
-        }
-
-        const response: Record<string, any> = {
-          ...audit,
-          domain: "PREDICTION",
-          provenance_provider: "IRYS_DATACHAIN",
-          irys_tx_id: irysResult.irys_tx_id,
-          irys_url: irysResult.irys_url,
-          ...(trustScoreResult.trust_score_tx_hash && { trust_score_tx_hash: trustScoreResult.trust_score_tx_hash }),
-          ...(trustScoreResult.trust_score_error && { trust_score_error: trustScoreResult.trust_score_error }),
-        };
-        if (irysResult.irys_error) {
-          response.irys_error = irysResult.irys_error;
-        }
-
-        return res.json(response);
-      } catch (error) {
-        if (error instanceof PredictionConfigError) {
-          return res.status(503).json({
-            error: "Prediction engine not available",
-            code: "DJZS-ENGINE-UNAVAILABLE",
-            domain: "PREDICTION",
-            message: error.message,
-          });
-        }
-        console.error("Prediction audit failed:", error);
-        return res.status(500).json({
-          error: "Prediction audit execution failed",
-          zone: "The Micro-Zone",
-          domain: "PREDICTION",
-          message: error instanceof Error ? error.message : "Unknown error",
-        });
-      }
-    }
-
-    return createTierHandler("micro")(req, res);
-  };
-
-  app.post("/api/audit/micro", createVerifiedPaymentGate("micro"), predictionMicroHandler);
+  app.post("/api/audit/micro", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
   app.post("/api/audit/founder", createVerifiedPaymentGate("founder"), createTierHandler("founder"));
   app.post("/api/audit/treasury", createVerifiedPaymentGate("treasury"), createTierHandler("treasury"));
-  app.post("/api/audit", createVerifiedPaymentGate("micro"), predictionMicroHandler);
+  app.post("/api/audit", createVerifiedPaymentGate("micro"), createTierHandler("micro"));
+
+  // ─── Micro-tier NFT Mint Endpoint ──────────────────────────────────
+  // After a Micro PASS, the client calls this to mint the NFT.
+  // Server relays the mint (treasury pays gas).
+  app.post("/api/audit/mint-nft", async (req: any, res) => {
+    try {
+      if (!process.env.NFT_CONTRACT_ADDRESS) {
+        return res.status(503).json({ error: "NFT minting not configured" });
+      }
+
+      const { irys_tx_id, wallet_address } = req.body;
+      if (!irys_tx_id || !wallet_address) {
+        return res.status(400).json({ error: "irys_tx_id and wallet_address required" });
+      }
+
+      // Fetch the certificate from Irys to verify it's a real PASS
+      const irysResponse = await fetch(`https://gateway.irys.xyz/${irys_tx_id}`);
+      if (!irysResponse.ok) {
+        return res.status(404).json({ error: "Certificate not found on Irys Datachain" });
+      }
+      const certificate = await irysResponse.json();
+
+      if (certificate.verdict !== "PASS") {
+        return res.status(403).json({ error: "NFT minting is only available for PASS verdicts" });
+      }
+
+      // Check not already minted
+      try {
+        const { getTokenByIrys } = await import("./nftMinter");
+        const existingToken = await getTokenByIrys(irys_tx_id);
+        if (existingToken > 0) {
+          return res.status(409).json({
+            error: "NFT already minted for this certificate",
+            nft_token_id: existingToken,
+          });
+        }
+      } catch (_) {
+        // getTokenByIrys may fail if contract not deployed yet — continue
+      }
+
+      const mintInput = buildNftMintInput(
+        {
+          audit_id: certificate.audit_id,
+          timestamp: certificate.timestamp,
+          verdict: certificate.verdict,
+          risk_score: certificate.risk_score,
+          flags: certificate.flags || [],
+          cryptographic_hash: certificate.cryptographic_hash,
+          ...(certificate.logic_flaws && { logic_flaws: certificate.logic_flaws }),
+          ...(certificate.structural_recommendations && { structural_recommendations: certificate.structural_recommendations }),
+          ...(certificate.primary_bias_detected && { primary_bias_detected: certificate.primary_bias_detected }),
+        },
+        { irys_tx_id, irys_url: `https://gateway.irys.xyz/${irys_tx_id}` },
+        certificate.tier || "micro",
+        wallet_address
+      );
+
+      const nftResult = await mintProofOfLogicNft(mintInput);
+
+      if (nftResult.nft_error) {
+        return res.status(500).json({ error: "NFT mint failed", nft_error: nftResult.nft_error });
+      }
+
+      res.json({
+        nft_tx_hash: nftResult.nft_tx_hash,
+        nft_token_id: nftResult.nft_token_id,
+        irys_tx_id,
+        certificate_stored_on_chain: true,
+      });
+    } catch (error) {
+      console.error("[mint-nft] Failed:", error);
+      res.status(500).json({ error: "NFT mint failed", message: error instanceof Error ? error.message : "Unknown" });
+    }
+  });
 
   const demoRateLimit = new Map<string, number>();
   app.post("/api/audit/demo", async (req: any, res) => {
@@ -859,57 +885,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       req.body.agent_id = DEMO_AGENT_ADDRESS;
     }
 
-    if (req.body?.domain === "PREDICTION") {
-      const parsed = PredictionAuditRequestSchema.safeParse(req.body);
-      if (!parsed.success) {
-        return res.status(400).json({
-          error: "Invalid prediction audit request",
-          domain: "PREDICTION",
-          details: parsed.error.errors,
-        });
-      }
-
-      try {
-        const audit = await executePredictionAudit({
-          context: parsed.data.context,
-          engine: parsed.data.engine,
-          agent_id: parsed.data.agent_id,
-        });
-
-        const irysResult = await uploadAuditToIrys({ ...audit, domain: "PREDICTION" });
-        const trustScoreResult = await postAuditChainWrite(audit, parsed.data.agent_id, irysResult.irys_tx_id);
-
-        const response: any = {
-          ...audit,
-          domain: "PREDICTION",
-          provenance_provider: "IRYS_DATACHAIN",
-          irys_tx_id: irysResult.irys_tx_id,
-          irys_url: irysResult.irys_url,
-          ...(trustScoreResult.trust_score_tx_hash && { trust_score_tx_hash: trustScoreResult.trust_score_tx_hash }),
-          ...(trustScoreResult.trust_score_error && { trust_score_error: trustScoreResult.trust_score_error }),
-        };
-        if (irysResult.irys_error) {
-          response.irys_error = irysResult.irys_error;
-        }
-        return res.json(response);
-      } catch (error) {
-        if (error instanceof PredictionConfigError) {
-          return res.status(503).json({
-            error: "Prediction engine not available",
-            code: "DJZS-ENGINE-UNAVAILABLE",
-            domain: "PREDICTION",
-            message: error.message,
-          });
-        }
-        console.error("Demo prediction audit failed:", error);
-        return res.status(500).json({
-          error: "Prediction audit execution failed",
-          domain: "PREDICTION",
-          message: error instanceof Error ? error.message : "Unknown error",
-        });
-      }
-    }
-
     const demoSchema = z.object({
       strategy_memo: z.string().min(20, "Strategy memo must be at least 20 characters"),
       audit_type: z.enum(["treasury", "founder_drift", "strategy", "general"]).default("general"),
@@ -926,12 +901,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
+      const veniceClient = undefined;
       const audit = await executeAudit({
         strategy_memo: parsed.data.strategy_memo,
         audit_type: parsed.data.audit_type || "general",
         tier: "treasury",
         agent_id: parsed.data.agent_id,
-      });
+      }, veniceClient);
 
       const irysResult = await uploadAuditToIrys(audit);
       const trustScoreResult = await postAuditChainWrite(audit, parsed.data.agent_id, irysResult.irys_tx_id);
@@ -964,6 +940,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(response);
     } catch (error) {
       console.error("Demo audit failed:", error);
+      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
+        return res.status(503).json({ error: "AI service not configured" });
+      }
       res.status(500).json({
         error: "Audit execution failed",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -981,6 +960,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      const userVeniceKey = req.headers['x-venice-api-key'] as string | undefined;
+      const veniceClient = userVeniceKey ? new VeniceClient(userVeniceKey) : undefined;
+
       const escrowData = req.escrowData;
       const tier: AuditTier = escrowData?.amount
         ? (Number(escrowData.amount) >= 50_000_000 ? "treasury" : Number(escrowData.amount) >= 5_000_000 ? "founder" : "micro")
@@ -995,7 +977,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         agent_id: parsed.data.agent_id,
         escrow_id: parsed.data.escrow_id,
         escrow_tx_hash: parsed.data.escrow_tx_hash,
-      });
+      }, veniceClient);
 
       const irysPayload: Record<string, any> = {
         ...audit,
@@ -1075,6 +1057,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: "Escrow service not configured",
           code: "DJZS-ESCROW-CONFIG",
         });
+      }
+      if (error instanceof Error && error.message.includes("VENICE_API_KEY")) {
+        return res.status(503).json({ error: "AI service not configured" });
       }
       res.status(500).json({
         error: "Escrow audit execution failed",
@@ -1157,19 +1142,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       zones: {
         micro: {
           endpoint: "POST /api/audit/micro",
-          price: "$0.10 USDC",
+          price: "$2.50 USDC",
           description: TIER_CONFIG.micro.description,
           memo_limit: "1000 chars",
         },
         founder: {
           endpoint: "POST /api/audit/founder",
-          price: "$1.00 USDC",
+          price: "$5.00 USDC",
           description: TIER_CONFIG.founder.description,
           memo_limit: "5000 chars",
         },
         treasury: {
           endpoint: "POST /api/audit/treasury",
-          price: "$10.00 USDC",
+          price: "$50.00 USDC",
           description: TIER_CONFIG.treasury.description,
           memo_limit: "unlimited",
         },
@@ -1194,31 +1179,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       },
       backward_compatible: {
         endpoint: "POST /api/audit",
-        price: "$0.10 USDC",
+        price: "$2.50 USDC",
         note: "Alias for Micro-Zone. Use tiered endpoints for full control.",
       },
       request: {
         strategy_memo: "string (required, min 20 chars) - The strategy, proposal, or thesis to audit",
         audit_type: "string (optional) - treasury | founder_drift | strategy | general",
       },
-      taxonomy: {
-        schema_version: "DJZS-LF-v1.0",
-        total_codes: 11,
-        max_risk_score: 200,
-        pass_threshold: 60,
-        categories: ["Structural", "Epistemic", "Incentive", "Execution", "Temporal"],
-        codes: "DJZS-S01, DJZS-S02, DJZS-S03, DJZS-E01, DJZS-E02, DJZS-I01, DJZS-I02, DJZS-I03, DJZS-X01, DJZS-X02, DJZS-T01",
-        scoring: "Deterministic — LLM detects boolean flags, scoring is pure function of weights",
-      },
       response: {
         audit_id: "UUID - unique identifier for this audit",
         timestamp: "ISO 8601 datetime",
         tier: "micro | founder | treasury",
-        risk_score: "number 0-200 (0 = flawless logic, 200 = all 11 failure codes detected)",
-        audit_verdict: "PASS | FAIL (threshold: risk_score >= 60 or CRITICAL flag)",
-        failure_flags: "LFCode[] - array of detected DJZS-LF codes",
-        logic_hash: "SHA-256 hash of boolean flag vector + risk_score",
-        weights_hash: "SHA-256 hash of weight table (for integrity verification)",
+        risk_score: "number 0-100 (0 = flawless logic, 100 = critically compromised)",
+        primary_bias_detected: "FOMO | Sunk_Cost | Narrative_Reaction | Authority_Bias | Confirmation_Bias | Recency_Bias | None",
+        logic_flaws: "[{flaw_type, severity (low|medium|critical), explanation}]",
+        structural_recommendations: "string[] - concrete steps to fix the logic",
         cryptographic_hash: "SHA-256 hash of the input memo (for ERC-8004 verification)",
         provenance_provider: "IRYS_DATACHAIN - permanent storage provider",
         irys_tx_id: "string | null - Irys Datachain transaction ID for permanent certificate",

@@ -1,994 +1,659 @@
-import { useState, useEffect, useRef } from "react";
-import { C, MONO, GlowDot, SectionLabel, Badge, Nav } from "@/lib/terminal-theme";
+import { useState, useEffect, useCallback } from "react";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Link } from "wouter";
+import {
+  ChevronDown,
+  ChevronRight,
+  Shield,
+  Zap,
+  Lock,
+  Database,
+  CheckCircle2,
+  XCircle,
+  ExternalLink,
+  Menu,
+  X,
+} from "lucide-react";
 
-const LF_CATEGORIES = [
-  {
-    id: "S",
-    name: "Structural",
-    color: C.green,
-    codes: [
-      { code: "S01", name: "CIRCULAR_LOGIC", desc: "Conclusion embedded in premise. Price used as evidence for price." },
-      { code: "S02", name: "FALSE_EQUIVALENCE", desc: "Unrelated precedents equated without accounting for material differences." },
-      { code: "S03", name: "DEPENDENCY_CHAIN", desc: "Strategy depends on unverified upstream output or unresolvable contract reference." },
-    ],
-  },
-  {
-    id: "E",
-    name: "Epistemic",
-    color: C.amber,
-    codes: [
-      { code: "E01", name: "CHERRY_PICKING", desc: "Selective evidence citation. Contradicting data omitted or ignored." },
-      { code: "E02", name: "MISSING_EVIDENCE", desc: "No falsification criteria stated. No verifiable claims sourced." },
-    ],
-  },
-  {
-    id: "I",
-    name: "Incentive",
-    color: C.red,
-    codes: [
-      { code: "I01", name: "FOMO_LOOP", desc: "Social pressure or herd behavior driving position. No independent thesis." },
-      { code: "I02", name: "SUNK_COST", desc: "Prior losses used to justify current position. Averaging down without new data." },
-      { code: "I03", name: "ANCHORING_BIAS", desc: "Fixation on entry price, break-even, or reference point without justification." },
-    ],
-  },
-  {
-    id: "X",
-    name: "Execution",
-    color: "#8b5cf6",
-    codes: [
-      { code: "X01", name: "EXECUTION_DRIFT", desc: "Proposed action contradicts stated thesis or confidence level." },
-      { code: "X02", name: "SCOPE_CREEP", desc: "Thesis argues adjacent issues rather than resolution criteria." },
-    ],
-  },
-  {
-    id: "T",
-    name: "Temporal",
-    color: "#06b6d4",
-    codes: [
-      { code: "T01", name: "STALE_DATA", desc: "Evidence predates material changes. Data older than market time horizon." },
-    ],
-  },
+// ─── Boot Sequence ───────────────────────────────────────────────────
+
+const BOOT_LINES = [
+  { text: "// SYS_ID: DJZS-MAINNET-01", delay: 0 },
+  { text: "// PROTOCOL: Adversarial Logic Firewall v1.0", delay: 120 },
+  { text: "// CHAIN: Base Mainnet (EIP-155:8453)", delay: 240 },
+  { text: "// ORACLE: Venice AI — zero data retention", delay: 360 },
+  { text: "// LEDGER: Irys Datachain — immutable certificates", delay: 480 },
+  { text: "// PAYMENT: x402 USDC micropayments", delay: 600 },
+  { text: "// TAXONOMY: 11 DJZS-LF failure codes loaded", delay: 720 },
+  { text: "// STATUS: OPERATIONAL", delay: 860 },
 ];
-
-const DEMO_SCENARIOS = [
-  {
-    label: "FOMO Signal (FAIL)",
-    market: "Will Bitcoin exceed $150,000 by June 30, 2026?",
-    thesis: "CommandPrint Telegram just sent a signal saying BTC will moon. Everyone in the group is buying YES. The price moved from 0.55 to 0.72 in the last hour so we need to get in before it hits 0.90.",
-    source: "PAID_SIGNAL_GROUP",
-    position: "YES",
-    price: 0.72,
-    result: {
-      verdict: "FAIL" as const,
-      verdict_source: "HARD_FAIL",
-      risk_score: 64,
-      hard_fail_rules: ["E02_REQUIRED"],
-      flags: [
-        { code: "I01", name: "FOMO_LOOP", severity: "HIGH", evidence: "Thesis is 'group says buy' — no independent reasoning chain.", hard_fail: false },
-        { code: "S01", name: "CIRCULAR_LOGIC", severity: "CRITICAL", evidence: "Price movement cited as thesis: '0.55 to 0.72 so get in before 0.90'", hard_fail: false },
-        { code: "E02", name: "MISSING_EVIDENCE", severity: "HIGH", evidence: "No falsification criteria. No statement of what would invalidate position.", hard_fail: true },
-      ],
-    },
-  },
-  {
-    label: "Strong Thesis (PASS)",
-    market: "Will the Federal Reserve cut rates at the June 2026 FOMC meeting?",
-    thesis: "Three independent signals: Core PCE below 2.3% for three months, CME FedWatch at 68% driven by futures positioning, two voting members signaled openness. Invalidated if May CPI > 3.0% or unemployment drops below 3.5%.",
-    source: "INDEPENDENT_RESEARCH",
-    position: "YES",
-    price: 0.62,
-    result: {
-      verdict: "PASS" as const,
-      verdict_source: "SCORE",
-      risk_score: 0,
-      hard_fail_rules: [] as string[],
-      flags: [] as { code: string; name: string; severity: string; evidence: string; hard_fail: boolean }[],
-    },
-  },
-  {
-    label: "Whale Mimicry (FAIL)",
-    market: "Will OpenAI release GPT-5 before September 2026?",
-    thesis: "Three wallets that were early on the last five correctly-resolved markets just bought large YES positions. These wallets have a combined 78% accuracy rate. Following their lead.",
-    source: "WHALE_TRACKING",
-    position: "YES",
-    price: 0.60,
-    result: {
-      verdict: "FAIL" as const,
-      verdict_source: "HARD_FAIL",
-      risk_score: 48,
-      hard_fail_rules: ["E02_REQUIRED"],
-      flags: [
-        { code: "S01", name: "CIRCULAR_LOGIC", severity: "CRITICAL", evidence: "Wallet activity is mimicry, not independent reasoning.", hard_fail: false },
-        { code: "E02", name: "MISSING_EVIDENCE", severity: "HIGH", evidence: "No falsification criteria stated.", hard_fail: true },
-      ],
-    },
-  },
-];
-
-const SAMPLE_CERT = {
-  audit_id: "djzs-pred-0x7f3a..b912",
-  timestamp: "2026-04-08T22:14:33.000Z",
-  tier: "MICRO",
-  domain: "PREDICTION",
-  verdict: "FAIL",
-  verdict_source: "HARD_FAIL",
-  risk_score: 64,
-  hard_fail_rules: ["E02_REQUIRED"],
-  logic_hash: "0x9c1d8f...a4e2b7",
-  irys_tx_id: "Hk7mN2xR...vQ3pL",
-  irys_url: "https://gateway.irys.xyz/Hk7mN2xR...vQ3pL",
-  nft: {
-    chain: "Base Mainnet",
-    contract: "0x3E79...aFB",
-    token_id: null,
-    status: "FAIL — no mint (only PASS verdicts mint)",
-  },
-  x402_payment: {
-    status: "DEFERRED — no charge on FAIL",
-    amount_usdc: 0.10,
-    chain: "base-mainnet",
-  },
-};
 
 function BootSequence({ onComplete }: { onComplete: () => void }) {
-  const [lines, setLines] = useState<string[]>([]);
-  const idx = useRef(0);
-  const allLines = useRef([
-    "// SYS_ID: DJZS-PROTOCOL-v1.0",
-    "// ENGINE: CLAUDE_SONNET → VENICE_FALLBACK",
-    "// PAYMENT: x402 USDC / BASE_MAINNET",
-    "// PROVENANCE: IRYS_DATACHAIN",
-    "// LOGIC_TAXONOMY: 11 LF-CODES / 5 CATEGORIES",
-    "// DOMAIN: PREDICTION_MARKET_VERTICAL",
-    "// STATUS: OPERATIONAL",
-    " ",
-    "▸ Adversarial Logic Firewall initialized.",
-  ]);
+  const [visibleLines, setVisibleLines] = useState(0);
 
   useEffect(() => {
-    idx.current = 0;
-    setLines([]);
-    const interval = setInterval(() => {
-      if (idx.current < allLines.current.length) {
-        const line = allLines.current[idx.current];
-        idx.current++;
-        setLines((prev) => [...prev, line]);
-      } else {
-        clearInterval(interval);
-        setTimeout(onComplete, 600);
-      }
-    }, 120);
-    return () => clearInterval(interval);
-  }, []);
+    const timers = BOOT_LINES.map((line, i) =>
+      setTimeout(() => setVisibleLines(i + 1), line.delay)
+    );
+    const done = setTimeout(onComplete, 1400);
+    return () => {
+      timers.forEach(clearTimeout);
+      clearTimeout(done);
+    };
+  }, [onComplete]);
 
   return (
-    <div style={{ fontFamily: MONO, fontSize: 13, lineHeight: 1.8, color: C.textDim, padding: "40px 0" }} data-testid="section-boot-sequence">
-      {lines.map((line, i) => {
-        const text = line || " ";
-        const isArrow = typeof text === "string" && text.startsWith("▸");
-        const isEmpty = typeof text === "string" && text.trim() === "";
-        return (
-          <div
-            key={i}
-            style={{
-              opacity: 0,
-              animation: "fadeIn 0.3s ease forwards",
-              animationDelay: `${i * 0.05}s`,
-              color: isArrow ? C.green : isEmpty ? "transparent" : C.textDim,
-              fontWeight: isArrow ? 600 : 400,
-            }}
-          >
-            {isEmpty ? "\u00A0" : text}
-          </div>
-        );
-      })}
+    <div className="font-mono text-xs sm:text-sm leading-relaxed text-zinc-600">
+      {BOOT_LINES.slice(0, visibleLines).map((line, i) => (
+        <div
+          key={i}
+          className={`transition-colors duration-300 ${
+            i === visibleLines - 1 ? "text-green-400" : "text-zinc-600"
+          } ${line.text.includes("STATUS") ? "text-green-400 font-bold" : ""}`}
+        >
+          {line.text}
+          {i === visibleLines - 1 && (
+            <span className="inline-block w-2 h-4 bg-green-400 ml-1 animate-pulse" />
+          )}
+        </div>
+      ))}
     </div>
   );
 }
 
+// ─── LF Taxonomy Data ────────────────────────────────────────────────
 
-function TypewriterHeadline({ text }: { text: string }) {
-  const [displayed, setDisplayed] = useState("");
-  const indexRef = useRef(0);
+const LF_CODES = [
+  { code: "DJZS-S01", name: "CIRCULAR_LOGIC", category: "Structural", severity: "CRITICAL", autoAbort: true, weight: 40, description: "Conclusion is used as a premise. The reasoning loop references itself without external validation." },
+  { code: "DJZS-S02", name: "MISSING_FALSIFIABILITY", category: "Structural", severity: "CRITICAL", autoAbort: true, weight: 40, description: "No failure condition defined. The thesis cannot be disproven, making it unfalsifiable and therefore unauditable." },
+  { code: "DJZS-E01", name: "CONFIRMATION_TUNNEL", category: "Epistemic", severity: "HIGH", autoAbort: true, weight: 25, description: "Evidence selection is asymmetric. Only confirming data is cited; disconfirming signals are absent or dismissed." },
+  { code: "DJZS-E02", name: "AUTHORITY_SUBSTITUTION", category: "Epistemic", severity: "HIGH", autoAbort: true, weight: 25, description: "Argument depends on authority or reputation rather than structural evidence. Removes the reasoning from audit." },
+  { code: "DJZS-I01", name: "MISALIGNED_INCENTIVE", category: "Incentive", severity: "MEDIUM", autoAbort: false, weight: 10, description: "The proposed action benefits the proposer disproportionately relative to stated stakeholders." },
+  { code: "DJZS-I02", name: "NARRATIVE_DEPENDENCY", category: "Incentive", severity: "MEDIUM", autoAbort: false, weight: 10, description: "Strategy survival depends on a specific narrative remaining true. No hedge against narrative collapse." },
+  { code: "DJZS-X01", name: "UNHEDGED_EXECUTION", category: "Execution", severity: "CRITICAL", autoAbort: true, weight: 40, description: "No risk bounds defined. Unlimited downside exposure. No stop-loss, position sizing, or max drawdown." },
+  { code: "DJZS-X02", name: "LIQUIDITY_RISK", category: "Execution", severity: "HIGH", autoAbort: true, weight: 25, description: "Strategy assumes liquidity that may not exist. Position may not be exitable at stated price." },
+  { code: "DJZS-X03", name: "SLIPPAGE_EXPOSURE", category: "Execution", severity: "MEDIUM", autoAbort: false, weight: 10, description: "Strategy ignores execution costs that could erode returns." },
+  { code: "DJZS-T01", name: "STALE_DATA_DEPENDENCY", category: "Temporal", severity: "HIGH", autoAbort: true, weight: 25, description: "Strategy relies on data that may no longer be current." },
+  { code: "DJZS-T02", name: "RACE_CONDITION_RISK", category: "Temporal", severity: "MEDIUM", autoAbort: false, weight: 10, description: "Assumes sequential execution but could be front-run." },
+] as const;
+
+// ─── Demo Scenarios ──────────────────────────────────────────────────
+
+const DEMO_SCENARIOS = {
+  fomo: {
+    label: "FOMO Momentum Buy",
+    memo: "EXECUTE IMMEDIATE BUY: 500 SOL of $SHILL. 1-minute volume is spiking and Crypto Twitter implies a tier-1 exchange listing today. Cannot miss this pump.",
+    verdict: "FAIL" as const,
+    riskScore: 98,
+    flags: [
+      { code: "DJZS-I01", message: "FOMO Loop — execution driven by social momentum and unverified Twitter sentiment." },
+      { code: "DJZS-X01", message: "No stop-loss, no position sizing. Unlimited downside on unverified rumor." },
+      { code: "DJZS-E01", message: "Only confirming signals cited (volume spike, CT rumor). Zero contradicting evidence." },
+    ],
+    irysUrl: "https://gateway.irys.xyz/8kNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
+  },
+  hallucination: {
+    label: "Hallucinated Data",
+    memo: "Routing 50k USDC into Yield Protocol V4 based on their latest audit report from yesterday.",
+    verdict: "FAIL" as const,
+    riskScore: 85,
+    flags: [
+      { code: "DJZS-E02", message: "Yield Protocol V4 does not exist. Audit report cannot be verified." },
+      { code: "DJZS-S02", message: "No falsifiable evidence provided. Claim is unverifiable." },
+      { code: "DJZS-T01", message: "Referenced audit report timestamp cannot be validated." },
+    ],
+    irysUrl: "https://gateway.irys.xyz/5rPQzM7kfHnWp9TNDrtgQRK9pBDUt26kXxjplf4W3tUI",
+  },
+  valid: {
+    label: "Valid Strategy",
+    memo: "Executing DCA of 2 ETH. Structural support verified at $2800. Liquidity depth is sufficient. Max slippage set to 0.5%.",
+    verdict: "PASS" as const,
+    riskScore: 12,
+    flags: [],
+    irysUrl: "https://gateway.irys.xyz/71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
+  },
+} as const;
+
+type DemoKey = keyof typeof DEMO_SCENARIOS;
+
+// ─── Severity Helpers ────────────────────────────────────────────────
+
+function severityColor(sev: string) {
+  switch (sev) {
+    case "CRITICAL": return "text-red-400 border-red-400/30 bg-red-400/5";
+    case "HIGH": return "text-amber-400 border-amber-400/30 bg-amber-400/5";
+    case "MEDIUM": return "text-yellow-300 border-yellow-300/30 bg-yellow-300/5";
+    default: return "text-zinc-400 border-zinc-700 bg-zinc-900";
+  }
+}
+
+function severityDot(sev: string) {
+  switch (sev) {
+    case "CRITICAL": return "bg-red-400";
+    case "HIGH": return "bg-amber-400";
+    case "MEDIUM": return "bg-yellow-300";
+    default: return "bg-zinc-500";
+  }
+}
+
+// ─── Header ──────────────────────────────────────────────────────────
+
+function Header() {
+  const { isConnected } = useAccount();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    indexRef.current = 0;
-    setDisplayed("");
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-    const interval = setInterval(() => {
-      indexRef.current += 1;
-      if (indexRef.current <= text.length) {
-        setDisplayed(text.slice(0, indexRef.current));
-      } else {
-        clearInterval(interval);
-      }
-    }, 80);
-
-    return () => clearInterval(interval);
-  }, [text]);
+  const navItems = [
+    { href: "#taxonomy", label: "LF Codes" },
+    { href: "#demo", label: "Demo" },
+    { href: "#pricing", label: "Pricing" },
+    { href: "/docs", label: "Docs", isRoute: true },
+    { href: "/demo", label: "Live Audit", isRoute: true },
+  ];
 
   return (
-    <h1
-      style={{
-        fontFamily: MONO,
-        fontSize: "clamp(36px, 6vw, 72px)",
-        fontWeight: 700,
-        color: C.white,
-        lineHeight: 1.15,
-        margin: 0,
-        letterSpacing: "-0.02em",
-      }}
-      data-testid="text-hero-headline"
+    <header
+      className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+        scrolled ? "border-zinc-800 bg-black/95 backdrop-blur-md" : "border-transparent bg-transparent"
+      }`}
     >
-      {displayed}
-      <span
-        style={{
-          display: "inline-block",
-          width: "0.55em",
-          height: "1em",
-          background: C.green,
-          marginLeft: 2,
-          verticalAlign: "baseline",
-          animation: "blink-cursor 0.7s step-end infinite",
-        }}
-      />
-    </h1>
-  );
-}
+      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+        <Link href="/">
+          <span className="font-mono text-lg font-bold tracking-tight text-white">
+            DJZS<span className="text-green-400">.ai</span>
+          </span>
+        </Link>
 
-function Hero({ bootDone }: { bootDone: boolean }) {
-  return (
-    <section style={{ padding: "80px 0 60px", maxWidth: 1000 }} data-testid="section-hero">
-      {bootDone && (
-        <div style={{ animation: "fadeIn 0.6s ease" }}>
-          <TypewriterHeadline text="Audit-Before-Act." />
-          <h2
-            style={{
-              fontFamily: MONO,
-              fontSize: "clamp(18px, 3vw, 28px)",
-              fontWeight: 400,
-              color: C.green,
-              lineHeight: 1.3,
-              margin: "12px 0 0",
-            }}
-            data-testid="text-hero-subheadline"
-          >
-            Every agent's logic gets verified
-            <br />
-            before money moves.
-          </h2>
-          <p
-            style={{
-              fontFamily: MONO,
-              fontSize: 14,
-              color: C.textDim,
-              lineHeight: 1.7,
-              marginTop: 24,
-              maxWidth: 760,
-            }}
-            data-testid="text-hero-description"
-          >
-            DJZS Protocol is an adversarial logic firewall for autonomous AI agents.
-            11 failure codes. Deterministic verdicts. Immutable certificates on Irys.
-            Proof-of-Logic NFTs on Base. Pay per audit — $0.10 USDC via x402.
-          </p>
-          <div style={{ display: "flex", gap: 12, marginTop: 32, flexWrap: "wrap" }} data-testid="badges-hero">
-            <Badge color={C.green}>x402 USDC</Badge>
-            <Badge color={C.green}>Base Mainnet</Badge>
-            <Badge color={C.green}>Irys Datachain</Badge>
-            <Badge color={C.green}>Claude Sonnet</Badge>
-            <Badge color={C.amber}>Venice Fallback</Badge>
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
+        <nav className="hidden md:flex items-center gap-1">
+          {navItems.map((item) =>
+            item.isRoute ? (
+              <Link key={item.label} href={item.href} className="px-3 py-1.5 font-mono text-xs text-zinc-500 hover:text-green-400 transition-colors">
+                {item.label}
+              </Link>
+            ) : (
+              <a key={item.label} href={item.href} className="px-3 py-1.5 font-mono text-xs text-zinc-500 hover:text-green-400 transition-colors">
+                {item.label}
+              </a>
+            )
+          )}
+        </nav>
 
-function LFTaxonomy() {
-  const [expanded, setExpanded] = useState<string | null>(null);
-
-  return (
-    <section style={{ padding: "60px 0" }} data-testid="section-taxonomy">
-      <SectionLabel>// DJZS-LF FAILURE TAXONOMY</SectionLabel>
-      <h2 style={{ fontFamily: MONO, fontSize: 24, color: C.white, margin: "0 0 8px", fontWeight: 600 }} data-testid="text-taxonomy-headline">
-        11 codes. 5 categories. Zero vibes.
-      </h2>
-      <p style={{ fontFamily: MONO, fontSize: 13, color: C.textDim, marginBottom: 32, maxWidth: 720 }}>
-        Every audit evaluates the agent's reasoning against the full taxonomy.
-        Flags are boolean. Scoring is deterministic TypeScript. The LLM detects — it never decides.
-      </p>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {LF_CATEGORIES.map((cat) => (
-          <div key={cat.id}>
-            <button
-              onClick={() => setExpanded(expanded === cat.id ? null : cat.id)}
-              data-testid={`button-category-${cat.id.toLowerCase()}`}
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "14px 16px",
-                background: expanded === cat.id ? C.surfaceHover : C.surface,
-                border: `1px solid ${expanded === cat.id ? cat.color + "40" : C.border}`,
-                borderRadius: expanded === cat.id ? "6px 6px 0 0" : 6,
-                cursor: "pointer",
-                fontFamily: MONO,
-                fontSize: 13,
-                color: C.text,
-                transition: "all 0.2s ease",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <GlowDot color={cat.color} size={6} />
-                <span style={{ fontWeight: 600 }}>{cat.name}</span>
-                <span style={{ color: C.textMuted, fontSize: 11 }}>
-                  ({cat.codes.length} code{cat.codes.length > 1 ? "s" : ""})
-                </span>
-              </div>
-              <span style={{ color: C.textMuted, fontSize: 16, transform: expanded === cat.id ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.2s" }}>
-                ▾
-              </span>
-            </button>
-
-            {expanded === cat.id && (
-              <div
-                style={{
-                  border: `1px solid ${cat.color}40`,
-                  borderTop: "none",
-                  borderRadius: "0 0 6px 6px",
-                  background: C.surface,
-                  overflow: "hidden",
-                }}
-              >
-                {cat.codes.map((code, i) => (
-                  <div
-                    key={code.code}
-                    data-testid={`text-lf-code-${code.code.toLowerCase()}`}
-                    style={{
-                      padding: "12px 16px",
-                      borderTop: i > 0 ? `1px solid ${C.border}` : "none",
-                      display: "flex",
-                      gap: 12,
-                      alignItems: "flex-start",
-                    }}
+        <div className="flex items-center gap-3">
+          {isConnected ? (
+            <Link href="/chat">
+              <button className="font-mono text-xs px-4 py-2 bg-green-400 text-black font-bold hover:bg-green-300 transition-colors">
+                ENTER ZONE
+              </button>
+            </Link>
+          ) : (
+            <ConnectButton.Custom>
+              {({ openConnectModal, account, mounted }) => {
+                const connected = mounted && account;
+                return connected ? (
+                  <Link href="/chat">
+                    <button className="font-mono text-xs px-4 py-2 bg-green-400 text-black font-bold hover:bg-green-300 transition-colors">
+                      ENTER ZONE
+                    </button>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={openConnectModal}
+                    className="font-mono text-xs px-4 py-2 border border-green-400/50 text-green-400 hover:bg-green-400/10 transition-colors"
                   >
-                    <span
-                      style={{
-                        fontFamily: MONO,
-                        fontSize: 11,
-                        color: cat.color,
-                        fontWeight: 700,
-                        minWidth: 32,
-                        paddingTop: 2,
-                      }}
-                    >
-                      {code.code}
-                    </span>
-                    <div>
-                      <div style={{ fontFamily: MONO, fontSize: 12, color: C.text, fontWeight: 600 }}>
-                        {code.name}
-                      </div>
-                      <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, marginTop: 4, lineHeight: 1.6 }}>
-                        {code.desc}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div
-        style={{
-          marginTop: 20,
-          padding: "12px 16px",
-          background: `${C.red}10`,
-          border: `1px solid ${C.red}30`,
-          borderRadius: 6,
-          fontFamily: MONO,
-          fontSize: 11,
-          color: C.red,
-          lineHeight: 1.6,
-        }}
-        data-testid="callout-hard-fail-rules"
-      >
-        <strong>HARD-FAIL RULES (Prediction Markets):</strong> E02 (missing falsification) and I01 from UNDISCLOSED source
-        force FAIL regardless of risk score. These are prerequisites, not factors to weigh.
-      </div>
-    </section>
-  );
-}
-
-function InteractiveDemo() {
-  const [selected, setSelected] = useState(0);
-  const [running, setRunning] = useState(false);
-  const [showResult, setShowResult] = useState(false);
-  const scenario = DEMO_SCENARIOS[selected];
-
-  function runAudit() {
-    setShowResult(false);
-    setRunning(true);
-    setTimeout(() => {
-      setRunning(false);
-      setShowResult(true);
-    }, 1800);
-  }
-
-  return (
-    <section style={{ padding: "60px 0" }} data-testid="section-demo">
-      <SectionLabel>// LIVE DEMO — PREDICTION MARKET AUDIT</SectionLabel>
-      <h2 style={{ fontFamily: MONO, fontSize: 24, color: C.white, margin: "0 0 24px", fontWeight: 600 }} data-testid="text-demo-headline">
-        Try it. Paste a thesis. Get a verdict.
-      </h2>
-
-      <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
-        {DEMO_SCENARIOS.map((s, i) => (
+                    CONNECT
+                  </button>
+                );
+              }}
+            </ConnectButton.Custom>
+          )}
           <button
-            key={i}
-            onClick={() => { setSelected(i); setShowResult(false); setRunning(false); }}
-            data-testid={`button-scenario-${i}`}
-            style={{
-              fontFamily: MONO,
-              fontSize: 11,
-              padding: "6px 12px",
-              borderRadius: 4,
-              border: `1px solid ${selected === i ? C.green : C.border}`,
-              background: selected === i ? C.greenGlow : "transparent",
-              color: selected === i ? C.green : C.textDim,
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white"
+            aria-label="Menu"
           >
-            {s.label}
+            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
-        ))}
-      </div>
-
-      <div
-        style={{
-          background: C.surface,
-          border: `1px solid ${C.border}`,
-          borderRadius: 8,
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            padding: "12px 16px",
-            borderBottom: `1px solid ${C.border}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <GlowDot color={running ? C.amber : showResult ? (scenario.result.verdict === "PASS" ? C.green : C.red) : C.textMuted} />
-            <span style={{ fontFamily: MONO, fontSize: 11, color: C.textDim }}>
-              /api/audit/micro • domain: PREDICTION
-            </span>
-          </div>
-          <span style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted }}>$0.10 USDC</span>
-        </div>
-
-        <div style={{ padding: 16, borderBottom: `1px solid ${C.border}` }}>
-          <div style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted, marginBottom: 8 }}>MARKET QUESTION</div>
-          <div style={{ fontFamily: MONO, fontSize: 12, color: C.text, marginBottom: 16 }} data-testid="text-demo-market">{scenario.market}</div>
-
-          <div style={{ display: "flex", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
-            <div>
-              <div style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted, marginBottom: 4 }}>POSITION</div>
-              <Badge color={C.green} filled>{scenario.position} @ {scenario.price}</Badge>
-            </div>
-            <div>
-              <div style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted, marginBottom: 4 }}>SOURCE</div>
-              <Badge
-                color={
-                  scenario.source === "PAID_SIGNAL_GROUP" || scenario.source === "UNDISCLOSED"
-                    ? C.red
-                    : scenario.source === "WHALE_TRACKING"
-                    ? C.amber
-                    : C.green
-                }
-                filled
-              >
-                {scenario.source}
-              </Badge>
-            </div>
-          </div>
-
-          <div style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted, marginBottom: 4 }}>THESIS</div>
-          <div
-            style={{
-              fontFamily: MONO,
-              fontSize: 12,
-              color: C.text,
-              background: C.bg,
-              padding: 12,
-              borderRadius: 4,
-              border: `1px solid ${C.border}`,
-              lineHeight: 1.7,
-            }}
-            data-testid="text-demo-thesis"
-          >
-            "{scenario.thesis}"
-          </div>
-        </div>
-
-        <div style={{ padding: 16 }}>
-          {!showResult && !running && (
-            <button
-              onClick={runAudit}
-              data-testid="button-run-audit"
-              style={{
-                fontFamily: MONO,
-                fontSize: 13,
-                fontWeight: 600,
-                padding: "10px 24px",
-                borderRadius: 6,
-                border: `1px solid ${C.green}`,
-                background: C.greenGlow,
-                color: C.green,
-                cursor: "pointer",
-                transition: "all 0.2s",
-              }}
-            >
-              ▸ Run Audit
-            </button>
-          )}
-
-          {running && (
-            <div style={{ fontFamily: MONO, fontSize: 12, color: C.amber }} data-testid="text-demo-scanning">
-              <span style={{ animation: "pulse 1s infinite" }}>⟳</span> Evaluating thesis against 11 LF codes...
-            </div>
-          )}
-
-          {showResult && (
-            <div style={{ animation: "fadeIn 0.4s ease" }} data-testid="section-demo-result">
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "12px 16px",
-                  borderRadius: 6,
-                  background: scenario.result.verdict === "PASS" ? `${C.green}15` : `${C.red}15`,
-                  border: `1px solid ${scenario.result.verdict === "PASS" ? C.green : C.red}40`,
-                  marginBottom: 16,
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <span
-                    style={{
-                      fontFamily: MONO,
-                      fontSize: 18,
-                      fontWeight: 800,
-                      color: scenario.result.verdict === "PASS" ? C.green : C.red,
-                    }}
-                    data-testid="text-demo-verdict"
-                  >
-                    {scenario.result.verdict}
-                  </span>
-                  {scenario.result.verdict_source === "HARD_FAIL" && (
-                    <Badge color={C.red} filled>HARD-FAIL: {scenario.result.hard_fail_rules[0]}</Badge>
-                  )}
-                </div>
-                <span style={{ fontFamily: MONO, fontSize: 12, color: C.textDim }} data-testid="text-demo-risk-score">
-                  risk: {scenario.result.risk_score}/100
-                </span>
-              </div>
-
-              {scenario.result.flags.length > 0 ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {scenario.result.flags.map((flag) => (
-                    <div
-                      key={flag.code}
-                      data-testid={`card-flag-${flag.code.toLowerCase()}`}
-                      style={{
-                        display: "flex",
-                        gap: 10,
-                        padding: "8px 12px",
-                        background: flag.hard_fail ? `${C.red}10` : C.bg,
-                        border: `1px solid ${flag.hard_fail ? C.red + "30" : C.border}`,
-                        borderRadius: 4,
-                        alignItems: "flex-start",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontFamily: MONO,
-                          fontSize: 11,
-                          fontWeight: 700,
-                          color: flag.severity === "CRITICAL" ? C.red : C.amber,
-                          minWidth: 28,
-                          paddingTop: 1,
-                        }}
-                      >
-                        {flag.code}
-                      </span>
-                      <div>
-                        <div style={{ fontFamily: MONO, fontSize: 11, color: C.text }}>
-                          {flag.name}
-                          {flag.hard_fail && (
-                            <span style={{ color: C.red, marginLeft: 8, fontSize: 10 }}>⬤ HARD-FAIL</span>
-                          )}
-                        </div>
-                        <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, marginTop: 2, lineHeight: 1.5 }}>
-                          {flag.evidence}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ fontFamily: MONO, fontSize: 12, color: C.green, padding: "8px 0" }} data-testid="text-demo-all-clear">
-                  ✓ No logic flaws detected. All 11 codes CLEAR.
-                </div>
-              )}
-
-              <div
-                style={{
-                  marginTop: 16,
-                  padding: "10px 12px",
-                  background: C.bg,
-                  border: `1px solid ${C.border}`,
-                  borderRadius: 4,
-                  fontFamily: MONO,
-                  fontSize: 10,
-                  color: C.textMuted,
-                  lineHeight: 1.6,
-                }}
-                data-testid="text-demo-certificate-preview"
-              >
-                <span style={{ color: C.textDim }}>certificate →</span>{" "}
-                logic_hash: 0x9c1d...a4e2 • irys_tx: Hk7mN2...vQ3pL •{" "}
-                {scenario.result.verdict === "PASS" ? (
-                  <span style={{ color: C.green }}>NFT minted to agent wallet</span>
-                ) : (
-                  <span style={{ color: C.textMuted }}>no mint (FAIL)</span>
-                )}
-                {" "}•{" "}
-                {scenario.result.verdict === "PASS" ? (
-                  <span style={{ color: C.green }}>$0.10 charged</span>
-                ) : (
-                  <span style={{ color: C.textMuted }}>$0.00 (deferred — no charge on FAIL)</span>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </div>
-    </section>
-  );
-}
 
-const TIERS = [
-  {
-    name: "Micro Zone",
-    endpoint: "/api/audit/micro",
-    price: "$0.10",
-    desc: "Fast, constrained operational audits for autonomous agents making real-time decisions.",
-    payload: "1,000 char",
-    features: ["Binary PASS/FAIL verdict", "Risk score (0–100)", "DJZS-LF failure codes", "< 3s response time"],
-    bestFor: "Trading bots, DeFi agents, Prediction markets",
-    popular: false,
-    icon: "⚡",
-  },
-  {
-    name: "Founder Zone",
-    endpoint: "/api/audit/founder",
-    price: "$1.00",
-    desc: "Deep roadmap diligence for founders deploying capital or strategy against a thesis.",
-    payload: "5,000 char",
-    features: ["Everything in Micro", "Bias pattern detection", "Narrative drift analysis", "Counter-thesis generation"],
-    bestFor: "Founders, DAO proposals",
-    popular: true,
-    icon: "🏛",
-  },
-  {
-    name: "Treasury Zone",
-    endpoint: "/api/audit/treasury",
-    price: "$10.00",
-    desc: "Exhaustive adversarial governance audits for treasuries and high-stakes execution.",
-    payload: "Unlimited",
-    features: ["Everything in Founder", "Multi-vector attack surface", "Governance risk modeling", "Proof of Logic certificate"],
-    bestFor: "DAO treasuries, protocols",
-    popular: false,
-    icon: "◇",
-  },
-];
-
-function Pricing() {
-  return (
-    <section style={{ padding: "60px 0" }} data-testid="section-pricing">
-      <SectionLabel>// PRICING</SectionLabel>
-      <h2 style={{ fontFamily: MONO, fontSize: 24, color: C.white, margin: "0 0 4px", fontWeight: 600 }} data-testid="text-pricing-headline">
-        Pay-per-Verify. No subscriptions.
-      </h2>
-      <p style={{ fontFamily: MONO, fontSize: 13, color: C.textDim, marginBottom: 32 }}>
-        Every audit is a single atomic transaction. Send USDC on Base, receive a deterministic verdict.
-      </p>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 12 }}>
-        {TIERS.map((tier) => (
-          <div
-            key={tier.name}
-            data-testid={`card-tier-${tier.name.toLowerCase().replace(/\s/g, "-")}`}
-            style={{
-              background: C.surface,
-              border: `1px solid ${tier.popular ? C.green + "50" : C.border}`,
-              borderRadius: 8,
-              padding: 20,
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            {tier.popular && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: -10,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  fontFamily: MONO,
-                  fontSize: 10,
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  color: C.bg,
-                  background: C.green,
-                  padding: "3px 12px",
-                  borderRadius: 10,
-                  fontWeight: 700,
-                }}
-              >
-                Most Popular
-              </div>
-            )}
-
-            <div style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: C.white, marginBottom: 2 }}>
-              <span style={{ marginRight: 8 }}>{tier.icon}</span>{tier.name}
-            </div>
-            <div style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted, marginBottom: 12 }}>
-              {tier.endpoint}
-            </div>
-
-            <div style={{ marginBottom: 12 }}>
-              <span style={{ fontFamily: MONO, fontSize: 32, fontWeight: 800, color: C.white }}>{tier.price}</span>
-              <span style={{ fontFamily: MONO, fontSize: 12, color: C.textDim, marginLeft: 6 }}>USDC / audit</span>
-            </div>
-
-            <p style={{ fontFamily: MONO, fontSize: 12, color: C.textDim, lineHeight: 1.6, marginBottom: 16 }}>
-              {tier.desc}
-            </p>
-
-            <Badge color={C.textMuted}>{tier.payload} payload</Badge>
-
-            <div style={{ margin: "16px 0", flex: 1 }}>
-              {tier.features.map((f) => (
-                <div key={f} style={{ fontFamily: MONO, fontSize: 11, color: C.text, padding: "4px 0", display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ color: C.green, fontSize: 10 }}>✓</span> {f}
-                </div>
-              ))}
-            </div>
-
-            <div
-              style={{
-                fontFamily: MONO,
-                fontSize: 11,
-                color: C.green,
-                borderTop: `1px solid ${C.border}`,
-                paddingTop: 12,
-                marginTop: "auto",
-              }}
-            >
-              Best for: {tier.bestFor}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function CertificateSection() {
-  return (
-    <section style={{ padding: "60px 0" }} data-testid="section-certificate">
-      <SectionLabel>// PROOF-OF-LOGIC CERTIFICATE + NFT</SectionLabel>
-      <h2 style={{ fontFamily: MONO, fontSize: 24, color: C.white, margin: "0 0 8px", fontWeight: 600 }} data-testid="text-certificate-headline">
-        Immutable. Verifiable. On-chain.
-      </h2>
-      <p style={{ fontFamily: MONO, fontSize: 13, color: C.textDim, marginBottom: 24, maxWidth: 720 }}>
-        Every audit produces a certificate anchored to Irys Datachain. PASS verdicts mint a
-        Proof-of-Logic NFT on Base Mainnet to the agent's wallet. FAIL verdicts don't mint —
-        you don't reward bad logic.
-      </p>
-
-      <div
-        style={{
-          background: C.surface,
-          border: `1px solid ${C.border}`,
-          borderRadius: 8,
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            padding: "10px 16px",
-            borderBottom: `1px solid ${C.border}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <span style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted }}>
-            Proof-of-Logic Certificate
-          </span>
-          <span style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted }}>
-            ERC-721 on Base
-          </span>
-        </div>
-
-        <pre
-          style={{
-            margin: 0,
-            padding: 16,
-            fontFamily: MONO,
-            fontSize: 11,
-            lineHeight: 1.7,
-            color: C.textDim,
-            overflowX: "auto",
-          }}
-          data-testid="text-certificate-json"
-        >
-{`{
-  `}<span style={{ color: C.textMuted }}>"audit_id"</span>{`:     `}<span style={{ color: C.text }}>"{SAMPLE_CERT.audit_id}"</span>{`,
-  `}<span style={{ color: C.textMuted }}>"verdict"</span>{`:      `}<span style={{ color: C.red, fontWeight: 700 }}>"{SAMPLE_CERT.verdict}"</span>{`,
-  `}<span style={{ color: C.textMuted }}>"verdict_source"</span>{`: `}<span style={{ color: C.red }}>"{SAMPLE_CERT.verdict_source}"</span>{`,
-  `}<span style={{ color: C.textMuted }}>"risk_score"</span>{`:      `}<span style={{ color: C.amber }}>{SAMPLE_CERT.risk_score}</span>{`,
-  `}<span style={{ color: C.textMuted }}>"hard_fail_rules"</span>{`: `}<span style={{ color: C.red }}>["{SAMPLE_CERT.hard_fail_rules[0]}"]</span>{`,
-  `}<span style={{ color: C.textMuted }}>"logic_hash"</span>{`:   `}<span style={{ color: C.text }}>"{SAMPLE_CERT.logic_hash}"</span>{`,
-  `}<span style={{ color: C.textMuted }}>"irys_tx_id"</span>{`:   `}<span style={{ color: C.green }}>"{SAMPLE_CERT.irys_tx_id}"</span>{`,
-  `}<span style={{ color: C.textMuted }}>"nft"</span>{`:          `}<span style={{ color: C.textMuted }}>"{SAMPLE_CERT.nft.status}"</span>{`,
-  `}<span style={{ color: C.textMuted }}>"x402"</span>{`:         `}<span style={{ color: C.textMuted }}>"{SAMPLE_CERT.x402_payment.status}"</span>{`
-}`}
-        </pre>
-      </div>
-
-      <div style={{ marginTop: 16, display: "flex", gap: 16, flexWrap: "wrap" }}>
-        <div
-          style={{
-            flex: 1,
-            minWidth: 200,
-            padding: 16,
-            background: C.surface,
-            border: `1px solid ${C.green}30`,
-            borderRadius: 6,
-          }}
-          data-testid="card-pass-flow"
-        >
-          <div style={{ fontFamily: MONO, fontSize: 11, color: C.green, fontWeight: 600, marginBottom: 6 }}>
-            ✓ PASS Verdict
-          </div>
-          <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, lineHeight: 1.6 }}>
-            Certificate anchored on Irys → ERC-721 minted to agent wallet on Base →
-            $0.10 USDC charged via x402 → Order forwarded to Polymarket CLOB
-          </div>
-        </div>
-        <div
-          style={{
-            flex: 1,
-            minWidth: 200,
-            padding: 16,
-            background: C.surface,
-            border: `1px solid ${C.red}30`,
-            borderRadius: 6,
-          }}
-          data-testid="card-fail-flow"
-        >
-          <div style={{ fontFamily: MONO, fontSize: 11, color: C.red, fontWeight: 600, marginBottom: 6 }}>
-            ✗ FAIL Verdict
-          </div>
-          <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, lineHeight: 1.6 }}>
-            Certificate anchored on Irys → No NFT minted → $0.00 charged (deferred) →
-            Order blocked — never reaches Polymarket
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer style={{ padding: "40px 0", borderTop: `1px solid ${C.border}`, marginTop: 40 }} data-testid="section-footer">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-        <div>
-          <div style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: C.white }}>DJZS Protocol</div>
-          <div style={{ fontFamily: MONO, fontSize: 11, color: C.textMuted, marginTop: 4 }}>
-            djzsx.eth • Base Mainnet • 0x3E79...aFB
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 16 }}>
-          {[
-            { label: "X", href: "https://x.com/djzs_ai" },
-            { label: "GitHub", href: "https://github.com/djzsx" },
-            { label: "Farcaster", href: "#" },
-            { label: "Paragraph", href: "#" },
-          ].map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noopener"
-              data-testid={`link-footer-${link.label.toLowerCase()}`}
-              style={{
-                fontFamily: MONO,
-                fontSize: 11,
-                color: C.textDim,
-                textDecoration: "none",
-                transition: "color 0.2s",
-              }}
-              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = C.green)}
-              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = C.textDim)}
-            >
-              {link.label}
+      {mobileOpen && (
+        <div className="md:hidden border-t border-zinc-800 bg-black/98 px-4 py-3">
+          {navItems.map((item) => (
+            <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)} className="block py-2 font-mono text-xs text-zinc-400 hover:text-green-400">
+              {item.label}
             </a>
           ))}
         </div>
+      )}
+    </header>
+  );
+}
+
+// ─── Hero ────────────────────────────────────────────────────────────
+
+function Hero() {
+  const [bootDone, setBootDone] = useState(false);
+  const onBootComplete = useCallback(() => setBootDone(true), []);
+
+  return (
+    <section className="relative py-16 sm:py-24 px-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="border border-zinc-800 bg-zinc-950 p-6 sm:p-8 mb-8">
+          <BootSequence onComplete={onBootComplete} />
+        </div>
+
+        <div className={`transition-all duration-700 ${bootDone ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+          <h1 className="font-mono text-3xl sm:text-5xl font-bold text-white leading-tight mb-4">
+            Audit-Before-Act
+          </h1>
+          <p className="font-mono text-base sm:text-lg text-zinc-400 leading-relaxed mb-8 max-w-2xl">
+            The adversarial logic firewall for autonomous agents. Every reasoning trace is stress-tested against 11 failure codes before execution. Every verdict is permanently verifiable on Irys Datachain.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a href="#demo" className="font-mono text-xs px-5 py-2.5 bg-green-400 text-black font-bold hover:bg-green-300 transition-colors">
+              TRY DEMO
+            </a>
+            <Link href="/docs" className="font-mono text-xs px-5 py-2.5 border border-zinc-700 text-zinc-300 hover:border-zinc-500 transition-colors">
+              READ DOCS
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mt-12 pt-8 border-t border-zinc-800">
+            {[
+              { value: "11", label: "Failure Codes" },
+              { value: "$0.10", label: "Per Audit" },
+              { value: "∞", label: "Certificate TTL" },
+            ].map((s) => (
+              <div key={s.label}>
+                <div className="font-mono text-2xl sm:text-3xl font-bold text-green-400">{s.value}</div>
+                <div className="font-mono text-xs text-zinc-500 mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginTop: 20 }}>
-        Audit-Before-Act. The LLM detects — it never decides.
+    </section>
+  );
+}
+
+// ─── LF Taxonomy Accordion ───────────────────────────────────────────
+
+function TaxonomySection() {
+  const [openCode, setOpenCode] = useState<string | null>(null);
+
+  const categories = [
+    { name: "Structural", prefix: "S", color: "text-red-400" },
+    { name: "Epistemic", prefix: "E", color: "text-amber-400" },
+    { name: "Incentive", prefix: "I", color: "text-yellow-300" },
+    { name: "Execution", prefix: "X", color: "text-orange-400" },
+    { name: "Temporal", prefix: "T", color: "text-blue-400" },
+  ];
+
+  return (
+    <section id="taxonomy" className="py-16 sm:py-24 px-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="font-mono text-xs text-zinc-600 mb-2">// LOGIC_TAXONOMY: DJZS-LF v1.0</div>
+        <h2 className="font-mono text-2xl sm:text-3xl font-bold text-white mb-2">Failure Code Taxonomy</h2>
+        <p className="font-mono text-sm text-zinc-500 mb-8">11 machine-parseable codes across 5 domains. Agents halt on CRITICAL or HIGH.</p>
+
+        <div className="space-y-1">
+          {categories.map((cat) => {
+            const codes = LF_CODES.filter((c) => c.category === cat.name);
+            return (
+              <div key={cat.name}>
+                <div className="font-mono text-xs text-zinc-600 py-2 border-b border-zinc-900">
+                  {cat.name.toUpperCase()} ({cat.prefix})
+                </div>
+                {codes.map((lf) => {
+                  const isOpen = openCode === lf.code;
+                  return (
+                    <div key={lf.code} className="border-b border-zinc-900">
+                      <button
+                        onClick={() => setOpenCode(isOpen ? null : lf.code)}
+                        className="w-full flex items-center justify-between py-3 px-2 hover:bg-zinc-900/50 transition-colors text-left"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className={`w-2 h-2 rounded-full flex-shrink-0 ${severityDot(lf.severity)}`} />
+                          <span className="font-mono text-sm text-zinc-300">
+                            <span className={cat.color}>{lf.code}</span>
+                            <span className="text-zinc-600 mx-2">—</span>
+                            {lf.name}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <span className={`font-mono text-[10px] px-2 py-0.5 border rounded ${severityColor(lf.severity)}`}>
+                            {lf.severity}
+                          </span>
+                          {isOpen ? <ChevronDown size={14} className="text-zinc-600" /> : <ChevronRight size={14} className="text-zinc-600" />}
+                        </div>
+                      </button>
+                      {isOpen && (
+                        <div className="px-2 pb-4 pl-7">
+                          <p className="font-mono text-xs text-zinc-400 leading-relaxed mb-2">{lf.description}</p>
+                          <div className="flex gap-4 font-mono text-[10px] text-zinc-600">
+                            <span>Weight: <span className="text-zinc-400">{lf.weight}/260</span></span>
+                            <span>Auto-Abort: <span className={lf.autoAbort ? "text-red-400" : "text-zinc-500"}>{lf.autoAbort ? "YES" : "NO"}</span></span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Interactive Demo ────────────────────────────────────────────────
+
+function DemoSection() {
+  const [activeKey, setActiveKey] = useState<DemoKey>("fomo");
+  const [scanning, setScanning] = useState(false);
+  const [result, setResult] = useState<(typeof DEMO_SCENARIOS)[DemoKey] | null>(null);
+
+  const runAudit = useCallback(() => {
+    setScanning(true);
+    setResult(null);
+    setTimeout(() => {
+      setScanning(false);
+      setResult(DEMO_SCENARIOS[activeKey]);
+    }, 1200);
+  }, [activeKey]);
+
+  return (
+    <section id="demo" className="py-16 sm:py-24 px-4 bg-zinc-950">
+      <div className="max-w-3xl mx-auto">
+        <div className="font-mono text-xs text-zinc-600 mb-2">// INTERACTIVE_DEMO: Prediction Market Scenarios</div>
+        <h2 className="font-mono text-2xl sm:text-3xl font-bold text-white mb-2">Test the Oracle</h2>
+        <p className="font-mono text-sm text-zinc-500 mb-8">Submit a strategy memo. Watch it get stress-tested against the DJZS-LF taxonomy in real time.</p>
+
+        {/* Scenario Tabs */}
+        <div className="flex flex-wrap gap-1 mb-6">
+          {(Object.keys(DEMO_SCENARIOS) as DemoKey[]).map((key) => (
+            <button
+              key={key}
+              onClick={() => { setActiveKey(key); setResult(null); }}
+              className={`font-mono text-xs px-4 py-2 border transition-colors ${
+                activeKey === key
+                  ? "border-green-400/50 bg-green-400/10 text-green-400"
+                  : "border-zinc-800 text-zinc-500 hover:text-zinc-300"
+              }`}
+            >
+              {DEMO_SCENARIOS[key].label}
+            </button>
+          ))}
+        </div>
+
+        {/* Memo */}
+        <div className="border border-zinc-800 bg-black p-4 mb-4">
+          <div className="font-mono text-[10px] text-zinc-600 mb-2">STRATEGY_MEMO:</div>
+          <p className="font-mono text-sm text-zinc-300 leading-relaxed">{DEMO_SCENARIOS[activeKey].memo}</p>
+        </div>
+
+        {/* Run */}
+        <button
+          onClick={runAudit}
+          disabled={scanning}
+          className={`font-mono text-xs px-6 py-2.5 font-bold transition-all mb-6 ${
+            scanning ? "bg-zinc-800 text-zinc-500 cursor-wait" : "bg-green-400 text-black hover:bg-green-300"
+          }`}
+        >
+          {scanning ? "SCANNING..." : "RUN AUDIT"}
+        </button>
+
+        {/* Scanning */}
+        {scanning && (
+          <div className="border border-zinc-800 bg-black p-4 mb-4">
+            <div className="font-mono text-xs text-green-400 animate-pulse">▌ Venice AI adversarial analysis in progress...</div>
+            <div className="mt-2 h-1 bg-zinc-900 overflow-hidden">
+              <div className="h-full bg-green-400" style={{ animation: "scan-bar 1.2s ease-in-out forwards" }} />
+            </div>
+          </div>
+        )}
+
+        {/* Result */}
+        {result && !scanning && (
+          <div className="border border-zinc-800 bg-black">
+            <div className={`flex items-center justify-between p-4 border-b border-zinc-800 ${
+              result.verdict === "FAIL" ? "bg-red-400/5" : "bg-green-400/5"
+            }`}>
+              <div className="flex items-center gap-3">
+                {result.verdict === "FAIL" ? (
+                  <XCircle size={20} className="text-red-400" />
+                ) : (
+                  <CheckCircle2 size={20} className="text-green-400" />
+                )}
+                <span className={`font-mono text-lg font-bold ${
+                  result.verdict === "FAIL" ? "text-red-400" : "text-green-400"
+                }`}>
+                  {result.verdict}
+                </span>
+              </div>
+              <div className="font-mono text-right">
+                <div className="text-xs text-zinc-500">RISK SCORE</div>
+                <div className={`text-xl font-bold ${
+                  result.riskScore > 60 ? "text-red-400" : result.riskScore > 30 ? "text-amber-400" : "text-green-400"
+                }`}>
+                  {result.riskScore}/100
+                </div>
+              </div>
+            </div>
+
+            {result.flags.length > 0 ? (
+              <div className="p-4 space-y-2">
+                <div className="font-mono text-[10px] text-zinc-600 mb-2">FAILURE_FLAGS:</div>
+                {result.flags.map((flag, i) => (
+                  <div key={i} className="flex gap-3 p-3 border border-zinc-800 bg-zinc-950">
+                    <span className="font-mono text-xs text-red-400 font-bold whitespace-nowrap">{flag.code}</span>
+                    <span className="font-mono text-xs text-zinc-400">{flag.message}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4">
+                <div className="font-mono text-xs text-green-400/60">No failure codes triggered. Logic structure verified.</div>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between p-4 border-t border-zinc-800">
+              <div className="font-mono text-[10px] text-zinc-600">PROVENANCE: IRYS_DATACHAIN</div>
+              <a href={result.irysUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] text-green-400 hover:text-green-300 flex items-center gap-1">
+                Verify Certificate <ExternalLink size={10} />
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ─── Pricing ─────────────────────────────────────────────────────────
+
+function PricingSection() {
+  const tiers = [
+    {
+      name: "MICRO",
+      price: "$0.10",
+      unit: "per audit",
+      description: "Operational sanity checks",
+      features: ["1,000 char memo limit", "Binary PASS/FAIL verdict", "Irys Datachain certificate", "Prediction market verification", "11 LF code scan"],
+      accent: "border-green-400/30 hover:border-green-400/60",
+      badge: null,
+    },
+    {
+      name: "FOUNDER",
+      price: "$1.00",
+      unit: "per audit",
+      description: "Strategic roadmap diligence",
+      features: ["5,000 char memo limit", "Full adversarial analysis", "Narrative drift detection", "Irys Datachain certificate", "11 LF code scan + recommendations"],
+      accent: "border-amber-400/30 hover:border-amber-400/60",
+      badge: "RECOMMENDED",
+    },
+    {
+      name: "TREASURY",
+      price: "$10.00",
+      unit: "per audit",
+      description: "Capital deployment stress-test",
+      features: ["Unlimited memo length", "Exhaustive adversarial attack", "Multi-vector failure analysis", "Irys Datachain certificate", "Priority processing"],
+      accent: "border-red-400/30 hover:border-red-400/60",
+      badge: null,
+    },
+  ];
+
+  return (
+    <section id="pricing" className="py-16 sm:py-24 px-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="font-mono text-xs text-zinc-600 mb-2">// PRICING_MODE: x402 USDC on Base Mainnet</div>
+        <h2 className="font-mono text-2xl sm:text-3xl font-bold text-white mb-2">Execution Zones</h2>
+        <p className="font-mono text-sm text-zinc-500 mb-8">Pay per audit. No subscriptions. USDC on Base Mainnet via x402 protocol.</p>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {tiers.map((tier) => (
+            <div key={tier.name} className={`border bg-black p-6 transition-colors ${tier.accent}`}>
+              {tier.badge && (
+                <div className="font-mono text-[10px] text-amber-400 mb-3 tracking-wider">{tier.badge}</div>
+              )}
+              <div className="font-mono text-xs text-zinc-500 mb-1">{tier.name}</div>
+              <div className="font-mono text-3xl font-bold text-white mb-1">{tier.price}</div>
+              <div className="font-mono text-[10px] text-zinc-600 mb-4">{tier.unit}</div>
+              <p className="font-mono text-xs text-zinc-400 mb-4">{tier.description}</p>
+              <div className="space-y-2">
+                {tier.features.map((f) => (
+                  <div key={f} className="flex items-start gap-2 font-mono text-xs text-zinc-500">
+                    <span className="text-green-400 mt-0.5">→</span>{f}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Certificate + Architecture ──────────────────────────────────────
+
+function CertificateSection() {
+  const sampleCert = {
+    audit_id: "fe1f14d0-73ac-4467-ac33-d76bf3fdce21",
+    timestamp: "2026-02-25T00:58:33.760Z",
+    tier: "micro",
+    verdict: "PASS",
+    risk_score: 0,
+    flags: [],
+    cryptographic_hash: "0e4576dd63709edd70573146b5e7255e79295cfe3eb18e517f03ab2e27d2850d",
+    provenance_provider: "IRYS_DATACHAIN",
+    irys_tx_id: "71oNMzL4hgLoXo7SNEsgPSJ8oCETs15jKwioke3V2rSH",
+  };
+
+  return (
+    <section className="py-16 sm:py-24 px-4 bg-zinc-950">
+      <div className="max-w-3xl mx-auto">
+        <div className="font-mono text-xs text-zinc-600 mb-2">// OUTPUT: ProofOfLogic Certificate</div>
+        <h2 className="font-mono text-2xl sm:text-3xl font-bold text-white mb-2">Immutable Certificates</h2>
+        <p className="font-mono text-sm text-zinc-500 mb-8">Every audit produces a permanent, publicly verifiable certificate on Irys Datachain. No expiration. No authentication required to verify.</p>
+
+        <div className="border border-zinc-800 bg-black p-6 mb-6">
+          <pre className="font-mono text-xs text-zinc-400 overflow-x-auto leading-relaxed">
+            {JSON.stringify(sampleCert, null, 2)}
+          </pre>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[
+            { icon: Shield, label: "Venice AI", sub: "Zero retention" },
+            { icon: Zap, label: "Base USDC", sub: "x402 payments" },
+            { icon: Database, label: "Irys Datachain", sub: "Permanent storage" },
+            { icon: Lock, label: "Phala TEE", sub: "Hardware enclave" },
+          ].map((item) => (
+            <div key={item.label} className="border border-zinc-800 bg-black p-4">
+              <item.icon size={16} className="text-green-400 mb-2" />
+              <div className="font-mono text-xs text-white font-bold">{item.label}</div>
+              <div className="font-mono text-[10px] text-zinc-600">{item.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Footer ──────────────────────────────────────────────────────────
+
+function Footer() {
+  return (
+    <footer className="py-8 px-4 border-t border-zinc-800">
+      <div className="max-w-3xl mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <div className="font-mono text-sm font-bold text-white">DJZS<span className="text-green-400">.ai</span></div>
+            <div className="font-mono text-[10px] text-zinc-600 mt-1">The Adversarial Logic Layer for the A2A Economy</div>
+          </div>
+          <div className="flex gap-4 font-mono text-xs">
+            <a href="https://x.com/djzs_ai" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-green-400 transition-colors">X</a>
+            <a href="https://github.com/UsernameDAOEth/djzs-AI" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-green-400 transition-colors">GitHub</a>
+            <a href="https://warpcast.com/dj-z-s.eth" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-green-400 transition-colors">Farcaster</a>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-4 font-mono text-[10px] text-zinc-700 mb-4">
+          <Link href="/docs" className="hover:text-zinc-400">Docs</Link>
+          <Link href="/demo" className="hover:text-zinc-400">Live Audit</Link>
+          <Link href="/terms" className="hover:text-zinc-400">Terms</Link>
+          <Link href="/privacy" className="hover:text-zinc-400">Privacy</Link>
+          <Link href="/security" className="hover:text-zinc-400">Security</Link>
+        </div>
+
+        <div className="font-mono text-[10px] text-zinc-800 pt-4 border-t border-zinc-900">
+          djzsx.eth | Base Mainnet | No agent acts without audit. © 2026
+        </div>
       </div>
     </footer>
   );
 }
 
-export default function Home() {
-  const [bootDone, setBootDone] = useState(false);
+// ─── Home Page ───────────────────────────────────────────────────────
 
+export default function Home() {
   return (
-    <>
+    <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap');
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: ${C.bg}; }
-        ::-webkit-scrollbar-thumb { background: ${C.border}; border-radius: 3px; }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+        ::selection { background: rgba(74, 222, 128, 0.3); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; }
+        @keyframes scan-bar { 0% { width: 0%; } 100% { width: 100%; } }
       `}</style>
 
+      {/* Scan lines overlay */}
       <div
-        style={{
-          minHeight: "100vh",
-          backgroundColor: C.bg,
-          color: C.text,
-          fontFamily: MONO,
-          padding: "0 clamp(16px, 4vw, 48px)",
-          maxWidth: 1400,
-          margin: "0 auto",
-        }}
-      >
-        <Nav />
-        {!bootDone && <BootSequence onComplete={() => setBootDone(true)} />}
-        <Hero bootDone={bootDone} />
-        <LFTaxonomy />
-        <InteractiveDemo />
-        <Pricing />
+        className="pointer-events-none fixed inset-0 z-50 opacity-[0.03]"
+        style={{ background: "repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 2px)" }}
+      />
+
+      <Header />
+      <main>
+        <Hero />
+        <TaxonomySection />
+        <DemoSection />
+        <PricingSection />
         <CertificateSection />
-        <Footer />
-      </div>
-    </>
+      </main>
+      <Footer />
+    </div>
   );
 }

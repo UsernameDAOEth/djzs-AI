@@ -1,4 +1,13 @@
-import { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
+
+/**
+ * TorusLogo v2 — Live Canvas 2D torus matched to djzs.ai brand palette
+ * 
+ * Colors: #F37E20 (orange), #2E8B8B (teal), #FFB84D (gold), #0F1118 (bg)
+ * Front faces → orange/gold, back faces → teal/purple, warm center glow
+ * 
+ * Drop-in for: home.tsx, demo.tsx, chat.tsx, docs.tsx
+ */
 
 interface TorusLogoProps {
   size?: 'sm' | 'md';
@@ -6,11 +15,11 @@ interface TorusLogoProps {
   'data-testid'?: string;
 }
 
-export function TorusLogo({
+export const TorusLogo: React.FC<TorusLogoProps> = ({
   size = 'md',
   className = '',
   'data-testid': testId,
-}: TorusLogoProps) {
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
   const hoveredRef = useRef(false);
@@ -31,6 +40,7 @@ export function TorusLogo({
     const cy = h / 2;
     const speed = hoveredRef.current ? 0.06 : 0.025;
 
+    // Brand background fade
     ctx.fillStyle = 'rgba(15, 17, 24, 0.12)';
     ctx.fillRect(0, 0, w, h);
 
@@ -57,6 +67,7 @@ export function TorusLogo({
         let alpha = 0.15 + depth * 0.7;
         const pointSize = Math.max(0.8, 1.2 * scale);
 
+        // Depth-based color: front=orange/gold, back=teal/purple
         let cr, cg, cb;
         if (depth > 0.6) {
           const mix = (depth - 0.6) / 0.4;
@@ -83,6 +94,7 @@ export function TorusLogo({
       }
     }
 
+    // Warm center glow
     const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 1.3);
     g1.addColorStop(0, 'rgba(255, 220, 180, 0.18)');
     g1.addColorStop(0.3, 'rgba(243, 126, 32, 0.08)');
@@ -90,6 +102,7 @@ export function TorusLogo({
     ctx.fillStyle = g1;
     ctx.fillRect(0, 0, w, h);
 
+    // Zero-point dot
     const dotAlpha = 0.4 + Math.sin(t * 3) * 0.2;
     ctx.beginPath();
     ctx.arc(cx, cy, 1.5, 0, Math.PI * 2);
@@ -130,6 +143,6 @@ export function TorusLogo({
       onMouseLeave={() => { hoveredRef.current = false; }}
     />
   );
-}
+};
 
 export default TorusLogo;

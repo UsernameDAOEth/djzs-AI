@@ -1,418 +1,661 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "wouter";
+import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
-import { C, MONO, Nav, GlowDot, TerminalFooter } from "@/lib/terminal-theme";
-import { LOGIC_FAILURE_TAXONOMY, MAX_RISK_SCORE, SCHEMA_VERSION } from "@shared/audit-schema";
+import { useTheme } from "@/lib/theme";
+import { TorusLogo } from "@/components/TorusLogo";
+import {
+  ArrowLeft, ArrowRight, Play, Terminal, ShieldCheck, ShieldAlert,
+  AlertTriangle, CheckCircle2, Upload, Database, ExternalLink,
+  ChevronDown, ChevronUp, Sun, Moon, FlaskConical, BookOpen, Menu, X, Lock
+} from "lucide-react";
 
-const LF_TAXONOMY = LOGIC_FAILURE_TAXONOMY as Record<string, { name: string; category: string; weight: number; severity: string; description: string }>;
-
-const ALL_CODES = Object.keys(LF_TAXONOMY);
-const MAX_SCORE = MAX_RISK_SCORE;
-const PASS_THRESHOLD = 60;
-const SCHEMA_VERSION_LABEL = SCHEMA_VERSION;
-
-interface ScenarioFlag {
-  present: boolean;
-  evidence: string | null;
-}
-
-const SCENARIOS: Record<string, { label: string; desc: string; memo: string; flags: Record<string, ScenarioFlag> }> = {
-  fomo_momentum: {
+const DEMO_SCENARIOS = [
+  {
+    key: "fomo",
     label: "FOMO Momentum Buy",
-    desc: "Social-driven pump chase with no verified data",
-    memo: "Rebalance the USDC/ETH liquidity position on Uniswap V3 when the price moves outside the \u00b15% range from the 7-day TWAP. If ETH drops below $1,800, withdraw all liquidity to USDC and halt. Max position size: 2% of treasury.",
-    flags: {
-      "DJZS-S01": { present: false, evidence: null },
-      "DJZS-S02": { present: false, evidence: null },
-      "DJZS-S03": { present: false, evidence: null },
-      "DJZS-E01": { present: true,  evidence: "TWAP source not cryptographically verified" },
-      "DJZS-E02": { present: false, evidence: null },
-      "DJZS-I01": { present: true,  evidence: "Social-driven pump chase with no verified data anchor" },
-      "DJZS-I02": { present: false, evidence: null },
-      "DJZS-I03": { present: true,  evidence: "Position sizing references unverified treasury balance" },
-      "DJZS-X01": { present: true,  evidence: "No explicit stop-loss mechanism for ETH price collapse" },
-      "DJZS-X02": { present: false, evidence: null },
-      "DJZS-T01": { present: false, evidence: null },
-    }
+    description: "Social-driven pump chase with no verified data",
+    memo: "EXECUTE IMMEDIATE BUY: 500 SOL of $SHILL. 1-minute volume is spiking and Crypto Twitter implies a tier-1 exchange listing today. Cannot miss this pump.",
   },
-  hallucinated: {
+  {
+    key: "hallucination",
     label: "Hallucinated Data",
-    desc: "References a protocol and audit that don't exist",
-    memo: "Deploy 40% of reserves into the new LRT vault cited by the Ethereum Foundation Q3 report, targeting 8.2% APY with auto-compounding.",
-    flags: {
-      "DJZS-S01": { present: true,  evidence: "Strategy references non-existent EF Q3 report as basis" },
-      "DJZS-S02": { present: true,  evidence: "Yield assumption layered on fabricated upstream source" },
-      "DJZS-S03": { present: true,  evidence: "LRT vault contract address unresolvable" },
-      "DJZS-E01": { present: true,  evidence: "Ethereum Foundation report does not exist" },
-      "DJZS-E02": { present: true,  evidence: "8.2% APY stated as fact without any market data" },
-      "DJZS-I01": { present: false, evidence: null },
-      "DJZS-I02": { present: true,  evidence: "Auto-compound target misaligned with capital preservation" },
-      "DJZS-I03": { present: true,  evidence: "40% allocation figure has no risk model backing" },
-      "DJZS-X01": { present: true,  evidence: "No withdrawal circuit breaker defined" },
-      "DJZS-X02": { present: false, evidence: null },
-      "DJZS-T01": { present: true,  evidence: "Report reference is temporally impossible" },
-    }
+    description: "References a protocol and audit that don't exist",
+    memo: "Routing 50k USDC into Yield Protocol V4 based on their latest audit report from yesterday.",
   },
-  clean: {
+  {
+    key: "valid",
     label: "Clean Strategy",
-    desc: "Well-structured rebalance with verified parameters",
-    memo: "Rebalance stablecoin allocation: 60% USDC, 30% DAI, 10% FRAX. Trigger: if any asset depegs >0.5% for >1hr per Chainlink oracle. Max slippage 0.3%. Halt if gas >50 gwei.",
-    flags: {
-      "DJZS-S01": { present: false, evidence: null },
-      "DJZS-S02": { present: false, evidence: null },
-      "DJZS-S03": { present: false, evidence: null },
-      "DJZS-E01": { present: false, evidence: null },
-      "DJZS-E02": { present: false, evidence: null },
-      "DJZS-I01": { present: false, evidence: null },
-      "DJZS-I02": { present: false, evidence: null },
-      "DJZS-I03": { present: false, evidence: null },
-      "DJZS-X01": { present: false, evidence: null },
-      "DJZS-X02": { present: false, evidence: null },
-      "DJZS-T01": { present: true,  evidence: "Chainlink heartbeat interval may exceed 1hr threshold" },
-    }
+    description: "Well-structured DCA with verified parameters",
+    memo: "Strategy Memo: Rebalance DAO Treasury — Conservative Yield Allocation. Current treasury: $2.4M USDC across 3 wallets on Base Mainnet. Proposal: Allocate 12% ($288,000) to Aave V3 USDC lending pool on Base. Rationale: Aave V3 Base USDC supply APY has averaged 3.8% over the past 90 days (source: DefiLlama, verified March 10 2026). 12% allocation is within our 15% single-protocol concentration limit per governance vote GV-2026-003. Aave V3 on Base has $847M TVL with no exploit history since deployment. Remaining 88% stays in USDC across existing custody wallets. Falsifiability: This strategy is WRONG if Aave V3 TVL drops below $200M, USDC APY falls below 1.5%, or any security incident is disclosed. Risk assessment: Smart contract risk - Aave V3 audited by Trail of Bits, Certora, SigmaPrime. Bug bounty $250K via Immunefi. Liquidity risk - $847M TVL means $288K position is 0.034% of pool, instant withdrawal. Rate risk - If APY drops below 2%, auto-withdraw. Worst case: Full protocol exploit = $288K loss (12% of treasury). Treasury survives at $2.1M. Operations unaffected. Execution: Single transaction via treasury multisig (3-of-5 signers). No leverage, no derivatives, no bridging. Stop-loss: Auto-withdraw if TVL drops below $200M. Timeline: Execute within 48 hours of governance approval. No urgency.",
   },
-  race: {
+  {
+    key: "edge",
     label: "Race Condition Edge Case",
-    desc: "Reasonable strategy with hidden temporal risk",
-    memo: "Execute market buy of 5 ETH when funding rate flips negative on Binance perps, then immediately open a 2x long on Aave. Close both if combined PnL hits -3%.",
-    flags: {
-      "DJZS-S01": { present: false, evidence: null },
-      "DJZS-S02": { present: false, evidence: null },
-      "DJZS-S03": { present: false, evidence: null },
-      "DJZS-E01": { present: true,  evidence: "Binance funding rate is CEX data without on-chain proof" },
-      "DJZS-E02": { present: false, evidence: null },
-      "DJZS-I01": { present: false, evidence: null },
-      "DJZS-I02": { present: false, evidence: null },
-      "DJZS-I03": { present: false, evidence: null },
-      "DJZS-X01": { present: false, evidence: null },
-      "DJZS-X02": { present: true,  evidence: "Spot buy and Aave long have no atomicity guarantee" },
-      "DJZS-T01": { present: true,  evidence: "Funding rate snapshot may be stale by execution time" },
-    }
+    description: "Reasonable strategy with hidden temporal risk",
+    memo: "Arbitrage opportunity: ETH is $2,845 on DEX-A and $2,860 on DEX-B. Executing simultaneous buy/sell across both venues. Expected profit: 0.53% after gas. Slippage tolerance: 0.1%.",
   },
-  custom: {
-    label: "Custom Scenario",
-    desc: "Write your own strategy memo",
-    memo: "",
-    flags: {
-      "DJZS-S01": { present: false, evidence: null },
-      "DJZS-S02": { present: false, evidence: null },
-      "DJZS-S03": { present: false, evidence: null },
-      "DJZS-E01": { present: false, evidence: null },
-      "DJZS-E02": { present: false, evidence: null },
-      "DJZS-I01": { present: false, evidence: null },
-      "DJZS-I02": { present: false, evidence: null },
-      "DJZS-I03": { present: false, evidence: null },
-      "DJZS-X01": { present: false, evidence: null },
-      "DJZS-X02": { present: false, evidence: null },
-      "DJZS-T01": { present: false, evidence: null },
-    }
-  }
-};
+];
 
-function demoComputeVerdict(flags: Record<string, ScenarioFlag>) {
-  const risk_score = Object.entries(flags)
-    .filter(([_, v]) => v.present)
-    .reduce((sum, [code]) => sum + (LF_TAXONOMY[code]?.weight || 0), 0);
-  const failure_flags = ALL_CODES.filter((code) => flags[code]?.present).sort();
-  const booleanOnly: Record<string, boolean> = {};
-  for (const code of ALL_CODES) booleanOnly[code] = flags[code]?.present ?? false;
-  const logic_hash = fnv(JSON.stringify(booleanOnly) + "|" + risk_score);
-  const weights_hash = fnv(JSON.stringify(Object.fromEntries(Object.entries(LF_TAXONOMY).map(([k, v]) => [k, v.weight]))));
-  return {
-    audit_verdict: risk_score < PASS_THRESHOLD ? "PASS" as const : "FAIL" as const,
-    risk_score, max_possible: MAX_SCORE, pass_threshold: PASS_THRESHOLD,
-    failure_flags, logic_hash, weights_hash,
-    audit_schema_version: SCHEMA_VERSION_LABEL, threshold_block: 29847261,
-    detection_model: "venice/llama-3.3-70b@temp=0", scoring_engine: "typescript/pure-function",
-    anchor_target: "irys-datachain", settlement_chain: "base-mainnet",
-    timestamp: new Date().toISOString(),
-    audit_id: crypto.randomUUID?.() || "demo-" + Date.now(),
-  };
+interface AuditFlag {
+  code: string;
+  severity: string;
+  message?: string;
+  description?: string;
+  evidence?: string;
+  recommendation?: string;
 }
 
-function fnv(s: string) {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
-  return "0x" + (h >>> 0).toString(16).padStart(8, "0");
+interface AuditResult {
+  audit_id: string;
+  timestamp: string;
+  tier: string;
+  verdict: "PASS" | "FAIL";
+  risk_score: number;
+  primary_bias_detected: string;
+  flags: AuditFlag[];
+  logic_flaws: { flaw_type: string; severity: string; explanation: string }[];
+  structural_recommendations: string[];
+  cryptographic_hash: string;
+  provenance_provider: string;
+  irys_tx_id: string | null;
+  irys_url: string | null;
+  irys_error?: string;
+  trust_score_tx_hash?: string;
+  trust_score_error?: string;
+  nft_tx_hash?: string;
+  nft_token_id?: number;
+  nft_mint_available?: boolean;
 }
 
-const SEV: Record<string, { bg: string; border: string; label: string }> = {
-  CRITICAL: { bg: `${C.red}1a`, border: C.red, label: C.red },
-  HIGH:     { bg: `${C.amber}14`, border: C.amber, label: C.amber },
-  MEDIUM:   { bg: "rgba(234,179,8,0.06)", border: "#eab308", label: "#eab308" },
-  LOW:      { bg: `${C.green}0f`, border: C.green, label: C.green },
-};
-const CAT: Record<string, string> = { Structural: C.red, Epistemic: "#a78bfa", Incentive: C.amber, Execution: "#ec4899", Temporal: "#06b6d4" };
+const PIPELINE_STEPS = [
+  { id: "signature", label: "Signature", icon: Lock, description: "Verifying request signature" },
+  { id: "hash-check", label: "Hash Check", icon: ShieldAlert, description: "Validating payload integrity" },
+  { id: "auditing", label: "Auditing", icon: FlaskConical, description: "Adversarial analysis in TEE" },
+  { id: "uploading", label: "Irys Upload", icon: Upload, description: "Certificate stored on Datachain" },
+  { id: "settlement", label: "Settlement", icon: Database, description: "On-chain settlement on Base" },
+  { id: "complete", label: "Complete", icon: CheckCircle2, description: "ProofOfLogic certificate ready" },
+];
 
-function Gauge({ score, verdict }: { score: number; verdict: string }) {
-  const [a, setA] = useState(0);
-  const p = Math.min(score / MAX_SCORE, 1);
-  useEffect(() => { setA(0); const t = setTimeout(() => setA(p), 60); return () => clearTimeout(t); }, [score, p]);
-  const r = 58, c = 2 * Math.PI * r, o = c - a * c;
-  const color = verdict === "PASS" ? C.green : score >= 120 ? C.red : C.amber;
+const TIER_OPTIONS = [
+  { value: "micro", label: "Micro-Zone", price: "$2.50", description: "Binary risk scoring" },
+  { value: "founder", label: "Founder Zone", price: "$5.00", description: "Strategic diligence" },
+  { value: "treasury", label: "Treasury Zone", price: "$50.00", description: "Exhaustive stress-test" },
+];
+
+function RiskScoreGauge({ score }: { score: number }) {
+  const color = score >= 70 ? "#ef4444" : score >= 40 ? "#f59e0b" : "#22c55e";
+  const circumference = 2 * Math.PI * 45;
+  const offset = circumference - (score / 100) * circumference;
+
   return (
-    <div style={{ position: "relative", width: 148, height: 148, flexShrink: 0 }} data-testid="gauge-risk-score">
-      <svg width="148" height="148" viewBox="0 0 148 148">
-        <circle cx="74" cy="74" r={r} fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="7" />
-        <circle cx="74" cy="74" r={r} fill="none" stroke={color} strokeWidth="7"
-          strokeLinecap="round" strokeDasharray={c} strokeDashoffset={o}
-          transform="rotate(-90 74 74)"
-          style={{ transition: "stroke-dashoffset 1s cubic-bezier(0.16,1,0.3,1), stroke 0.3s" }} />
+    <div className="relative w-28 h-28 flex-shrink-0">
+      <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-muted/30" />
+        <motion.circle
+          cx="50" cy="50" r="45" fill="none" stroke={color} strokeWidth="6"
+          strokeLinecap="round" strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+        />
       </svg>
-      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontFamily: MONO, fontSize: 34, fontWeight: 700, color, lineHeight: 1 }} data-testid="text-risk-score-value">{score}</span>
-        <span style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, marginTop: 2 }}>RISK / {MAX_SCORE}</span>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-2xl font-bold font-mono" style={{ color }} data-testid="text-risk-score-value">{score}</span>
+        <span className="text-[10px] text-muted-foreground font-mono">/ 100</span>
       </div>
     </div>
   );
 }
 
-function Steps({ step }: { step: string }) {
-  const ss = [
-    { k: "sig", l: "Signature", d: "Request sig verified" },
-    { k: "hash", l: "Hash Check", d: "Payload integrity" },
-    { k: "audit", l: "Auditing", d: "Adversarial analysis in TEE" },
-    { k: "irys", l: "Irys Upload", d: "Certificate \u2192 Datachain" },
-    { k: "settle", l: "Settlement", d: "On-chain on Base" },
-    { k: "done", l: "Complete", d: "ProofOfLogic ready" },
-  ];
-  const idx = ss.findIndex(s => s.k === step);
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", padding: "0 2px" }} data-testid="pipeline-steps">
-      {ss.map((s, i) => {
-        const done = i < idx, act = i === idx;
-        const cl = done ? C.green : act ? "#4ade80" : C.textMuted;
-        return (
-          <div key={s.k} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1 }} data-testid={`step-icon-${s.k}`}>
-            <div style={{ width: 26, height: 26, borderRadius: "50%", border: `2px solid ${cl}`, background: done ? `${C.green}1f` : act ? "rgba(74,222,128,0.06)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {done ? <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6l2.5 2.5 4.5-4.5" stroke={C.green} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                : <div style={{ width: 5, height: 5, borderRadius: "50%", background: act ? "#4ade80" : C.textMuted }} />}
-            </div>
-            <span style={{ fontFamily: MONO, fontSize: 8.5, fontWeight: 600, color: done || act ? C.text : C.textMuted, marginTop: 5, textAlign: "center" }}>{s.l}</span>
-            <span style={{ fontFamily: MONO, fontSize: 7, color: C.textMuted, marginTop: 1, textAlign: "center", maxWidth: 80 }}>{s.d}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
+  const [expanded, setExpanded] = useState(false);
+  const severityColor = flag.severity === "CRITICAL" ? "text-red-500 dark:text-red-400 border-red-500/30 bg-red-500/10" :
+    flag.severity === "HIGH" ? "text-orange-500 dark:text-orange-400 border-orange-500/30 bg-orange-500/10" :
+    "text-yellow-500 dark:text-yellow-400 border-yellow-500/30 bg-yellow-500/10";
 
-function Flag({ code, data, flag, open, toggle }: { code: string; data: { name: string; category: string; weight: number; severity: string; description: string }; flag: ScenarioFlag; open: boolean; toggle: () => void }) {
-  const sv = SEV[data.severity];
   return (
-    <div style={{ background: sv.bg, borderLeft: `3px solid ${sv.border}`, border: `1px solid ${sv.border}18`, borderRadius: 4, overflow: "hidden" }} data-testid={`card-flag-${code.toLowerCase()}`}>
-      <button onClick={toggle} style={{ width: "100%", display: "flex", alignItems: "center", gap: 6, padding: "9px 10px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }} data-testid={`button-expand-flag-${code.toLowerCase()}`}>
-        <span style={{ fontFamily: MONO, fontSize: 8.5, fontWeight: 700, color: sv.label, background: `${sv.label}15`, padding: "2px 5px", borderRadius: 2, letterSpacing: "0.05em", flexShrink: 0 }}>{data.severity}</span>
-        <span style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 600, color: C.text, flexShrink: 0 }}>{code}</span>
-        <span style={{ fontFamily: MONO, fontSize: 9.5, color: C.textDim, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.name}</span>
-        <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: sv.label, flexShrink: 0, minWidth: 28, textAlign: "right" }}>+{data.weight}</span>
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.15s", flexShrink: 0 }}>
-          <path d="M2.75 4.25l2.75 2.75 2.75-2.75" stroke={C.textMuted} strokeWidth="1.4" strokeLinecap="round"/>
-        </svg>
-      </button>
-      {open && (
-        <div style={{ padding: "0 10px 9px" }}>
-          <div style={{ display: "flex", gap: 6, marginBottom: 5, alignItems: "center" }}>
-            <span style={{ fontFamily: MONO, fontSize: 8, letterSpacing: "0.06em", color: CAT[data.category], background: `${CAT[data.category]}12`, padding: "1px 5px", borderRadius: 2 }}>{data.category.toUpperCase()}</span>
-            <span style={{ fontFamily: MONO, fontSize: 8, color: C.textMuted }}>Weight: {data.weight} / {MAX_SCORE}</span>
-          </div>
-          <p style={{ fontFamily: MONO, fontSize: 9.5, color: C.textDim, margin: "0 0 5px", lineHeight: 1.5 }}>{data.description}</p>
-          {flag.evidence && (
-            <div style={{ background: "rgba(0,0,0,0.35)", borderRadius: 3, padding: "5px 7px", borderLeft: `2px solid ${sv.border}33` }}>
-              <span style={{ fontFamily: MONO, fontSize: 7.5, color: C.textMuted, letterSpacing: "0.08em", display: "block", marginBottom: 2 }}>EVIDENCE (human review only — not hashed)</span>
-              <span style={{ fontFamily: MONO, fontSize: 9, color: C.text, lineHeight: 1.4 }}>{flag.evidence}</span>
-            </div>
-          )}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+      className="border border-border dark:border-gray-800 rounded-lg overflow-hidden bg-card dark:bg-[#111]"
+      data-testid={`card-flag-${flag.code.toLowerCase()}`}
+    >
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/50 dark:hover:bg-white/5 transition-colors"
+        data-testid={`button-expand-flag-${flag.code.toLowerCase()}`}
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded border ${severityColor}`} data-testid={`badge-flag-severity-${index}`}>
+            {flag.severity}
+          </span>
+          <span className="font-mono text-sm text-foreground/80 font-semibold" data-testid={`text-flag-code-${index}`}>{flag.code}</span>
+          <span className="text-sm text-muted-foreground truncate hidden sm:inline">{(flag.message || flag.description || "").split("—")[0]}</span>
         </div>
-      )}
-    </div>
+        {expanded ? <ChevronUp size={16} className="text-muted-foreground flex-shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground flex-shrink-0" />}
+      </button>
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 space-y-3 border-t border-border dark:border-gray-800">
+              <div className="pt-3">
+                <div className="text-xs font-mono text-muted-foreground mb-1">MESSAGE</div>
+                <p className="text-sm text-foreground/80">{flag.message || flag.description}</p>
+              </div>
+              {flag.evidence && (
+                <div>
+                  <div className="text-xs font-mono text-muted-foreground mb-1">EVIDENCE</div>
+                  <p className="text-sm text-foreground/70 italic">{flag.evidence}</p>
+                </div>
+              )}
+              {flag.recommendation && (
+                <div>
+                  <div className="text-xs font-mono text-muted-foreground mb-1">RECOMMENDATION</div>
+                  <p className="text-sm text-teal-600 dark:text-teal-400">{flag.recommendation}</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
 export default function Demo() {
-  const [scenario, setScenario] = useState("fomo_momentum");
-  const [expanded, setExpanded] = useState(new Set<string>());
-  const [showMeta, setShowMeta] = useState(false);
-  const [running, setRunning] = useState(false);
-  const [pStep, setPStep] = useState("done");
-  const [result, setResult] = useState<ReturnType<typeof demoComputeVerdict> | null>(null);
+  const { theme, toggleTheme } = useTheme();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [memo, setMemo] = useState("");
   const [tier, setTier] = useState("micro");
-  const [customMemo, setCustomMemo] = useState("");
+  const [running, setRunning] = useState(false);
+  const [currentStep, setCurrentStep] = useState(-1);
+  const [result, setResult] = useState<AuditResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
-  const sc = SCENARIOS[scenario];
-  const activeMemo = scenario === "custom" ? customMemo : sc.memo;
-  const verdict = result || demoComputeVerdict(sc.flags);
-  const failed = Object.entries(sc.flags).filter(([_, v]) => v.present).sort((a, b) => (LF_TAXONOMY[b[0]]?.weight || 0) - (LF_TAXONOMY[a[0]]?.weight || 0));
+  const loadScenario = (key: string) => {
+    const scenario = DEMO_SCENARIOS.find(s => s.key === key);
+    if (!scenario) return;
+    abortRef.current?.abort();
+    setMemo(scenario.memo);
+    setResult(null);
+    setError(null);
+    setCurrentStep(-1);
+    setRunning(false);
+  };
 
-  function toggle(code: string) { setExpanded(prev => { const n = new Set(prev); n.has(code) ? n.delete(code) : n.add(code); return n; }); }
-  function run() {
-    setRunning(true); setResult(null); setExpanded(new Set());
-    (["sig","hash","audit","irys","settle","done"] as const).forEach((s, i) => {
-      setTimeout(() => { setPStep(s); if (s === "done") { setResult(demoComputeVerdict(SCENARIOS[scenario].flags)); setRunning(false); } }, i * 450);
-    });
-  }
-  function pick(key: string) { setScenario(key); setResult(null); setExpanded(new Set()); setPStep("done"); }
+  const runAudit = useCallback(async () => {
+    if (!memo.trim() || running) return;
+    abortRef.current?.abort();
+    setRunning(true);
+    setResult(null);
+    setError(null);
+    setCurrentStep(0);
 
-  const tiers = [{ key: "micro", label: "Micro-Zone", price: "$0.10" }, { key: "founder", label: "Founder Zone", price: "$1.00" }, { key: "treasury", label: "Treasury Zone", price: "$10.00" }];
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    const stepTimers = [600, 600];
+    for (const delay of stepTimers) {
+      await new Promise(r => setTimeout(r, delay));
+      if (controller.signal.aborted) return;
+      setCurrentStep(prev => prev + 1);
+    }
+
+    try {
+      const auditType = tier === "treasury" ? "treasury" : tier === "founder" ? "founder_drift" : "general";
+      const response = await fetch("/api/audit/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          strategy_memo: memo,
+          audit_type: auditType,
+          tier,
+        }),
+        signal: controller.signal,
+      });
+
+      if (controller.signal.aborted) return;
+      setCurrentStep(3);
+      await new Promise(r => setTimeout(r, 400));
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => null);
+        throw new Error(errData?.error || `Server returned ${response.status}`);
+      }
+
+      const data: AuditResult = await response.json();
+
+      if (controller.signal.aborted) return;
+      setCurrentStep(4);
+      await new Promise(r => setTimeout(r, 400));
+      setCurrentStep(5);
+      await new Promise(r => setTimeout(r, 300));
+
+      setResult(data);
+    } catch (err: any) {
+      if (err.name === "AbortError") return;
+      setError(err.message || "Audit request failed");
+      setCurrentStep(-1);
+    } finally {
+      setRunning(false);
+      abortRef.current = null;
+    }
+  }, [memo, tier, running]);
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
 
   return (
-    <div style={{ background: C.bg, color: C.text, fontFamily: MONO, fontSize: 14, lineHeight: 1.75, minHeight: "100vh" }}>
+    <div className="min-h-screen text-foreground bg-background">
       <Helmet>
-        <title>Live Demo | DJZS Protocol — ProofOfLogic Certificate Engine</title>
-        <meta name="description" content="Try the DJZS Zero-Trust Oracle live. Select a scenario, run the audit pipeline, and see the full ProofOfLogic certificate with 200-point risk scoring on the DJZS-LF-v1.0 taxonomy." />
-        <meta property="og:title" content="DJZS Live Demo — ProofOfLogic Certificate Engine" />
-        <meta property="og:description" content="See the full DJZS audit pipeline in action. 200-point risk scale, 11 failure codes, deterministic scoring." />
-        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+        <title>Live Demo | DJZS Protocol — Audit-to-Certificate Pipeline</title>
+        <meta name="description" content="Try the DJZS Zero-Trust Oracle live. Paste a reasoning memo, run an audit, and see the full pipeline: signature, hash check, audit, Irys upload, and on-chain settlement." />
+        <meta property="og:title" content="DJZS Live Demo — Audit-to-Certificate Pipeline" />
+        <meta property="og:description" content="See the full DJZS audit pipeline in action. Paste a memo, select a tier, and watch the ProofOfLogic certificate get generated." />
       </Helmet>
 
-      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
-        <Nav />
-
-        <div style={{ padding: "24px 0 8px" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "4px 12px", border: `1px solid ${C.green}33`, background: C.greenGlow, borderRadius: 2, marginBottom: 16 }}>
-            <GlowDot color={C.green} size={6} />
-            <span style={{ fontFamily: MONO, fontSize: 11, color: C.green, letterSpacing: "0.1em", textTransform: "uppercase" }}>Live Demo — ProofOfLogic Engine</span>
-          </div>
-          <h1 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 700, color: C.white, marginBottom: 8 }} data-testid="text-demo-page-title">
-            Audit-to-Certificate Pipeline
-          </h1>
-          <p style={{ fontSize: 13, color: C.textDim, maxWidth: 760, marginBottom: 24 }}>
-            Select a scenario, run the audit pipeline, and see the full ProofOfLogic certificate with 200-point risk scoring.
-          </p>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.15fr", gap: 14 }} className="demo-grid">
-          <style>{`.demo-grid { grid-template-columns: 1fr 1.15fr !important; } @media (max-width: 768px) { .demo-grid { grid-template-columns: 1fr !important; } }`}</style>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4, padding: 12 }}>
-              <div style={{ fontSize: 10, fontWeight: 600, color: C.green, letterSpacing: "0.06em", marginBottom: 8, display: "flex", alignItems: "center", gap: 5 }}>
-                <span style={{ opacity: 0.4 }}>{"\u203A"}_</span> Agent Payload Injector
-              </div>
-              <div style={{ fontSize: 7.5, color: C.textMuted, letterSpacing: "0.1em", marginBottom: 6 }} data-testid="label-demo-scenarios">PRELOADED SCENARIOS</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                {Object.entries(SCENARIOS).map(([key, s]) => (
-                  <button key={key} onClick={() => pick(key)} style={{ background: scenario === key ? `${C.green}0d` : "rgba(255,255,255,0.015)", border: `1px solid ${scenario === key ? `${C.green}40` : C.border}`, borderRadius: 4, padding: "7px 9px", cursor: "pointer", textAlign: "left", transition: "all 0.12s" }} data-testid={`button-scenario-${key}`}>
-                    <div style={{ fontSize: 10.5, fontWeight: 600, color: scenario === key ? C.text : C.textDim, fontFamily: MONO }}>{s.label}</div>
-                    <div style={{ fontSize: 8.5, color: C.textMuted, marginTop: 1, fontFamily: MONO }}>{s.desc}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4, padding: 12 }}>
-              <div style={{ fontSize: 7.5, color: C.textMuted, letterSpacing: "0.1em", marginBottom: 5, fontFamily: MONO }} data-testid="label-demo-memo">"strategy_memo":</div>
-              {scenario === "custom" ? (
-                <textarea
-                  value={customMemo}
-                  onChange={(e) => setCustomMemo(e.target.value)}
-                  placeholder="Enter your strategy memo here..."
-                  style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 3, padding: 9, fontSize: 10, color: C.text, lineHeight: 1.65, fontFamily: MONO, width: "100%", minHeight: 80, resize: "vertical", outline: "none" }}
-                  data-testid="textarea-demo-memo"
-                />
-              ) : (
-                <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 3, padding: 9, fontSize: 10, color: C.text, lineHeight: 1.65, fontFamily: MONO }} data-testid="textarea-demo-memo">{activeMemo}</div>
-              )}
-            </div>
-
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4, padding: 12 }}>
-              <div style={{ fontSize: 7.5, color: C.textMuted, letterSpacing: "0.1em", marginBottom: 6, display: "flex", alignItems: "center", gap: 6, fontFamily: MONO }}>AUDIT TIER <span style={{ fontSize: 7, color: C.amber, background: `${C.amber}14`, padding: "1px 4px", borderRadius: 2 }} data-testid="badge-demo-pricing">DEMO PRICING</span></div>
-              <div style={{ display: "flex", gap: 6 }} data-testid="tier-selector">
-                {tiers.map(t => (
-                  <button key={t.key} onClick={() => setTier(t.key)} style={{ flex: 1, padding: "8px 0", borderRadius: 4, cursor: "pointer", background: tier === t.key ? `${C.green}14` : "transparent", border: `1px solid ${tier === t.key ? `${C.green}40` : C.border}`, textAlign: "center" }} data-testid={`button-tier-${t.key}`}>
-                    <div style={{ fontSize: 9.5, fontWeight: 600, color: tier === t.key ? C.green : C.textDim, fontFamily: MONO }}>{t.label}</div>
-                    <div style={{ fontSize: 8.5, color: C.textMuted, marginTop: 1, fontFamily: MONO }}>{t.price}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <button onClick={run} disabled={running} style={{ background: running ? C.surface : C.green, border: running ? `1px solid ${C.border}` : `1px solid ${C.green}`, borderRadius: 4, padding: "11px 0", cursor: running ? "default" : "pointer", fontSize: 11.5, fontWeight: 700, color: running ? C.textMuted : C.bg, fontFamily: MONO, letterSpacing: "0.04em", width: "100%" }} data-testid="button-run-audit">
-              {running ? "\u27F3 AUDITING..." : "\u25B7 Run DJZS Audit"}
+      <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-border bg-background/90" style={{ boxShadow: '0 1px 20px rgba(0,0,0,0.08)' }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <Link href="/">
+            <span className="flex items-center gap-2.5" data-testid="link-demo-home-logo">
+              <TorusLogo />
+              <span className="text-lg sm:text-xl font-bold tracking-tighter text-foreground">DJZS<span className="text-purple-500">.ai</span></span>
+            </span>
+          </Link>
+          <div className="flex items-center gap-3 sm:gap-5">
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+              <Link href="/" className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" data-testid="link-demo-header-home">
+                <ArrowLeft size={15} />
+                Home
+              </Link>
+              <Link href="/docs" className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" data-testid="link-demo-header-docs">
+                <BookOpen size={15} className="text-teal-400 group-hover:text-teal-300 transition-colors" />
+                Documents
+              </Link>
+            </nav>
+            <button onClick={toggleTheme} className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-muted" data-testid="button-demo-theme-toggle" aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-muted" data-testid="button-demo-mobile-menu" aria-label="Menu">
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
+        </div>
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div key="mobile-menu" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="md:hidden border-t border-border overflow-hidden bg-background/98">
+              <nav className="flex flex-col px-4 py-3 gap-1">
+                <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground" onClick={() => setMobileMenuOpen(false)} data-testid="link-demo-mobile-home">
+                  <ArrowLeft size={16} />Home
+                </Link>
+                <Link href="/docs" className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground" onClick={() => setMobileMenuOpen(false)} data-testid="link-demo-mobile-docs">
+                  <BookOpen size={16} className="text-teal-400" />Documents
+                </Link>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4, padding: "12px 8px" }}>
-              <div style={{ fontSize: 10, fontWeight: 600, color: C.green, letterSpacing: "0.06em", marginBottom: 10, display: "flex", alignItems: "center", gap: 5, fontFamily: MONO }}>
-                <span style={{ opacity: 0.4 }}>{"\u25C9"}</span> Pipeline Progress
-              </div>
-              <Steps step={pStep} />
-            </div>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 sm:mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-mono mb-4" style={{ border: '1px solid rgba(243,126,32,0.3)', background: 'rgba(243,126,32,0.08)', color: '#F37E20' }}>
+            <FlaskConical size={16} />
+            <span>Live Demo — Real Audit Engine</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3 text-foreground" data-testid="text-demo-page-title">
+            Audit-to-Certificate Pipeline
+          </h1>
+          <p className="text-muted-foreground text-base sm:text-lg max-w-2xl" data-testid="text-demo-page-subtitle">
+            Paste a reasoning memo, select a scenario, and watch the real Oracle execute: adversarial analysis via Venice AI, Irys Datachain upload, and on-chain trust score settlement.
+          </p>
+        </motion.div>
 
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4, padding: 12 }}>
-              <div style={{ fontSize: 10, fontWeight: 600, color: C.green, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 5, fontFamily: MONO }} data-testid="text-demo-result-title">
-                <span style={{ opacity: 0.4 }}>{"\u203A"}_</span> ProofOfLogic Certificate
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
-                <Gauge score={verdict.risk_score} verdict={verdict.audit_verdict} />
-                <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                  <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: "0.04em", color: verdict.audit_verdict === "PASS" ? C.green : C.red, background: verdict.audit_verdict === "PASS" ? `${C.green}1a` : `${C.red}1a`, border: `1px solid ${verdict.audit_verdict === "PASS" ? `${C.green}40` : `${C.red}40`}`, padding: "2px 7px", borderRadius: 3, fontFamily: MONO }} data-testid="badge-result-verdict">
-                      {verdict.audit_verdict === "PASS" ? "\u2713" : "\u26A0"} VERDICT: {verdict.audit_verdict}
-                    </span>
-                    <span style={{ fontSize: 9.5, color: C.textDim, background: C.surface, border: `1px solid ${C.border}`, padding: "2px 7px", borderRadius: 3, fontFamily: MONO }} data-testid="text-result-tier">TIER: {tier.toUpperCase()}</span>
-                    <span style={{ fontSize: 9.5, color: C.textMuted, background: C.surface, border: `1px solid ${C.border}`, padding: "2px 7px", borderRadius: 3, fontFamily: MONO }}>THR: {verdict.pass_threshold}</span>
-                  </div>
-                  <div style={{ fontSize: 8, color: C.textMuted, lineHeight: 1.6, fontFamily: MONO }}>
-                    <span data-testid="text-result-audit-id">ID: {verdict.audit_id?.slice(0, 28)}...</span><br />
-                    <span data-testid="text-result-timestamp">TIME: {new Date(verdict.timestamp).toLocaleString()}</span><br />
-                    BLOCK: #{verdict.threshold_block}
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="rounded-xl border border-border dark:border-gray-800 bg-card dark:bg-[#111] overflow-hidden">
+              <div className="px-5 py-4 border-b border-border dark:border-gray-800 bg-muted dark:bg-[#0d0d0d]">
+                <div className="flex items-center gap-2">
+                  <Terminal size={18} className="text-cyan-500 dark:text-cyan-400" />
+                  <h2 className="font-semibold text-foreground text-sm" data-testid="text-demo-input-title">Agent Payload Injector</h2>
                 </div>
               </div>
 
-              <button onClick={() => setShowMeta(!showMeta)} style={{ width: "100%", background: `${C.green}08`, border: `1px solid ${C.border}`, borderRadius: 4, padding: "7px 9px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }} data-testid="button-toggle-provenance">
-                <span style={{ fontSize: 8, color: C.green, letterSpacing: "0.1em", fontFamily: MONO }}>AUDIT PROVENANCE</span>
-                <div style={{ flex: 1 }} />
-                <svg width="9" height="9" viewBox="0 0 9 9" fill="none" style={{ transform: showMeta ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>
-                  <path d="M2 3.5l2.5 2.5L7 3.5" stroke={C.textMuted} strokeWidth="1.3" strokeLinecap="round"/>
-                </svg>
-              </button>
-              {showMeta && (
-                <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 3, padding: 8, fontFamily: MONO, fontSize: 8, lineHeight: 1.6, color: C.textMuted, marginBottom: 10 }}>
-                  {[
-                    ["Schema", verdict.audit_schema_version],
-                    ["Model", verdict.detection_model],
-                    ["Engine", verdict.scoring_engine],
-                    ["Hash", verdict.logic_hash],
-                    ["Weights", verdict.weights_hash],
-                    ["Anchor", verdict.anchor_target],
-                    ["Chain", verdict.settlement_chain],
-                    ["Max", `${verdict.max_possible}`],
-                    ["Threshold", `${verdict.pass_threshold}`],
-                  ].map(([k, v]) => (
-                    <div key={k}><span style={{ color: C.textMuted }}>{k}:</span> <span style={{ color: C.text }}>{v}</span></div>
-                  ))}
-                </div>
-              )}
-
-              {failed.length > 0 && (
-                <>
-                  <div style={{ fontSize: 8, color: C.textMuted, letterSpacing: "0.08em", marginBottom: 4, fontFamily: MONO }} data-testid="label-result-flags">FAILURE FLAGS ({failed.length})</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                    {failed.map(([code, flag]) => {
-                      const data = LF_TAXONOMY[code];
-                      if (!data) return null;
-                      return <Flag key={code} code={code} data={data} flag={flag} open={expanded.has(code)} toggle={() => toggle(code)} />;
-                    })}
+              <div className="p-5 space-y-5">
+                <div>
+                  <label className="text-xs font-mono text-muted-foreground mb-2 block" data-testid="label-demo-scenarios">PRELOADED SCENARIOS</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
+                    {DEMO_SCENARIOS.map((scenario) => (
+                      <button
+                        key={scenario.key}
+                        onClick={() => loadScenario(scenario.key)}
+                        className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all text-sm ${
+                          memo === scenario.memo
+                            ? "border-purple-500 bg-purple-500/10 text-purple-600 dark:text-purple-300"
+                            : "border-border dark:border-gray-800 hover:border-purple-500/30 text-muted-foreground hover:text-foreground"
+                        }`}
+                        data-testid={`button-scenario-${scenario.key}`}
+                      >
+                        <div className="font-medium">{scenario.label}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{scenario.description}</div>
+                      </button>
+                    ))}
                   </div>
-                </>
-              )}
-              {failed.length === 0 && (
-                <div style={{ background: `${C.green}0d`, border: `1px solid ${C.green}33`, borderRadius: 4, padding: "10px 12px", fontSize: 10, color: C.green, fontFamily: MONO, textAlign: "center" }} data-testid="text-no-flags">
-                  ✓ No failure flags detected — strategy passes all checks
                 </div>
-              )}
-            </div>
+
+                <div>
+                  <label className="text-xs font-mono text-muted-foreground mb-2 block" data-testid="label-demo-memo">"strategy_memo":</label>
+                  <textarea
+                    value={memo}
+                    onChange={(e) => setMemo(e.target.value)}
+                    placeholder="Paste your reasoning memo here or select a scenario above..."
+                    className="w-full p-4 rounded-lg bg-background dark:bg-black border border-border dark:border-gray-800 font-mono text-sm text-foreground/80 h-36 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-all placeholder:text-muted-foreground/40"
+                    data-testid="textarea-demo-memo"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-mono text-muted-foreground mb-2 block" data-testid="label-demo-tier">AUDIT TIER</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {TIER_OPTIONS.map((t) => (
+                      <button
+                        key={t.value}
+                        onClick={() => setTier(t.value)}
+                        className={`px-3 py-2.5 rounded-lg border text-center transition-all ${
+                          tier === t.value
+                            ? "border-[#F37E20] bg-[#F37E20]/10 text-[#F37E20]"
+                            : "border-border dark:border-gray-800 text-muted-foreground hover:border-[#F37E20]/30"
+                        }`}
+                        data-testid={`button-tier-${t.value}`}
+                      >
+                        <div className="text-xs font-bold">{t.label}</div>
+                        <div className="text-[10px] mt-0.5 opacity-70">{t.price}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={runAudit}
+                  disabled={!memo.trim() || running}
+                  className="w-full flex items-center justify-center gap-2 py-4 rounded-lg font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: '#F37E20', boxShadow: memo.trim() && !running ? '0 4px 20px rgba(243,126,32,0.3)' : 'none' }}
+                  data-testid="button-run-audit"
+                >
+                  {running ? (
+                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
+                      <Terminal size={20} />
+                    </motion.div>
+                  ) : (
+                    <Play size={20} />
+                  )}
+                  <span>{running ? "ORACLE SCANNING — may take up to 90s..." : "Run DJZS Audit"}</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="lg:col-span-3 space-y-6">
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="rounded-xl border border-border dark:border-gray-800 bg-card dark:bg-[#111] overflow-hidden">
+              <div className="px-5 py-4 border-b border-border dark:border-gray-800 bg-muted dark:bg-[#0d0d0d]">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={18} className="text-green-500 dark:text-green-400" />
+                  <h2 className="font-semibold text-foreground text-sm" data-testid="text-demo-pipeline-title">Pipeline Progress</h2>
+                </div>
+              </div>
+
+              <div className="p-5">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:justify-between">
+                  {PIPELINE_STEPS.map((step, i) => {
+                    const StepIcon = step.icon;
+                    const isActive = i === currentStep;
+                    const isComplete = i < currentStep || (i === PIPELINE_STEPS.length - 1 && result !== null);
+                    const isPending = i > currentStep && !result;
+
+                    return (
+                      <div key={step.id} className="flex sm:flex-col items-center gap-2 sm:gap-1 sm:flex-1 relative">
+                        {i > 0 && (
+                          <div className="hidden sm:block absolute -left-1/2 top-[14px] w-full h-[2px] bg-border dark:bg-gray-800 -z-10">
+                            {isComplete && (
+                              <motion.div
+                                className="h-full bg-green-500"
+                                initial={{ width: "0%" }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: 0.3 }}
+                              />
+                            )}
+                          </div>
+                        )}
+                        <div
+                          className={`w-7 h-7 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
+                            isComplete ? "bg-green-500/20 text-green-500 dark:text-green-400 border border-green-500/30" :
+                            isActive ? "bg-[#F37E20]/20 text-[#F37E20] border border-[#F37E20]/30 animate-pulse" :
+                            "bg-muted dark:bg-gray-900 text-muted-foreground border border-border dark:border-gray-800"
+                          }`}
+                          data-testid={`step-icon-${step.id}`}
+                        >
+                          {isComplete ? <CheckCircle2 size={14} /> : <StepIcon size={14} />}
+                        </div>
+                        <div className="sm:text-center">
+                          <div className={`text-[11px] font-mono font-medium ${
+                            isComplete ? "text-green-600 dark:text-green-400" :
+                            isActive ? "text-[#F37E20]" :
+                            "text-muted-foreground"
+                          }`} data-testid={`step-label-${step.id}`}>{step.label}</div>
+                          <div className="text-[10px] text-muted-foreground/60 hidden sm:block">{step.description}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+
+            <AnimatePresence mode="wait">
+              {error ? (
+                <motion.div
+                  key="error"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="rounded-xl border border-red-500/30 bg-red-500/5 p-6"
+                  data-testid="demo-error-container"
+                >
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle size={20} className="text-red-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-sm font-bold text-red-500 mb-1">Audit Failed</div>
+                      <p className="text-sm text-foreground/70">{error}</p>
+                      <p className="text-xs text-muted-foreground mt-2">The Oracle may be temporarily unavailable. Try again in a few seconds.</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : result ? (
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="rounded-xl border border-border dark:border-gray-800 bg-card dark:bg-[#111] overflow-hidden"
+                  data-testid="demo-result-container"
+                >
+                  <div className="px-5 py-4 border-b border-border dark:border-gray-800 bg-muted dark:bg-[#0d0d0d]">
+                    <div className="flex items-center gap-2">
+                      <Terminal size={18} className="text-purple-500 dark:text-purple-400" />
+                      <h2 className="font-semibold text-foreground text-sm" data-testid="text-demo-result-title">ProofOfLogic Certificate</h2>
+                    </div>
+                  </div>
+
+                  <div className="p-5 sm:p-6 space-y-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                      <RiskScoreGauge score={result.risk_score} />
+                      <div className="space-y-3 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {result.verdict === "FAIL" ? (
+                            <span className="px-3 py-1.5 bg-red-500/20 text-red-500 dark:text-red-400 rounded-lg border border-red-500/30 flex items-center text-sm font-bold" data-testid="badge-result-verdict">
+                              <AlertTriangle size={16} className="mr-1.5" /> VERDICT: FAIL
+                            </span>
+                          ) : (
+                            <span className="px-3 py-1.5 bg-green-500/20 text-green-600 dark:text-green-400 rounded-lg border border-green-500/30 flex items-center text-sm font-bold" data-testid="badge-result-verdict">
+                              <ShieldCheck size={16} className="mr-1.5" /> VERDICT: PASS
+                            </span>
+                          )}
+                          <span className="px-3 py-1.5 bg-muted dark:bg-gray-900 text-muted-foreground rounded-lg border border-border dark:border-gray-800 text-xs font-mono" data-testid="text-result-tier">
+                            TIER: {result.tier.toUpperCase()}
+                          </span>
+                          <span className="px-2.5 py-1 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-md border border-cyan-500/20 text-[10px] font-mono font-bold" data-testid="badge-live-audit">
+                            LIVE
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted-foreground font-mono space-y-1">
+                          <div data-testid="text-result-audit-id">ID: {result.audit_id}</div>
+                          <div data-testid="text-result-timestamp">TIME: {new Date(result.timestamp).toLocaleString()}</div>
+                          {result.primary_bias_detected && result.primary_bias_detected !== "None" && (
+                            <div data-testid="text-result-bias">BIAS: <span className="text-[#F37E20]">{result.primary_bias_detected}</span></div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {result.flags && result.flags.length > 0 && (
+                      <div>
+                        <div className="text-xs font-mono text-muted-foreground mb-3" data-testid="label-result-flags">FAILURE CODES ({result.flags.length})</div>
+                        <div className="space-y-2">
+                          {result.flags.map((flag, i) => (
+                            <FlagCard key={i} flag={flag} index={i} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.structural_recommendations && result.structural_recommendations.length > 0 && (
+                      <div>
+                        <div className="text-xs font-mono text-muted-foreground mb-2" data-testid="label-result-recommendations">RECOMMENDATIONS</div>
+                        <ul className="space-y-1.5">
+                          {result.structural_recommendations.map((rec, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-foreground/70">
+                              <ArrowRight size={14} className="mt-0.5 text-teal-500 dark:text-teal-400 flex-shrink-0" />
+                              <span data-testid={`text-recommendation-${i}`}>{rec}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="border-t border-border dark:border-gray-800 pt-4 space-y-3">
+                      <div className="text-xs font-mono text-muted-foreground" data-testid="label-result-provenance">ON-CHAIN PROVENANCE</div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {result.irys_url ? (
+                          <a
+                            href={result.irys_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-3 rounded-lg border border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 transition-colors group"
+                            data-testid="link-result-irys"
+                          >
+                            <Database size={16} className="text-purple-500 dark:text-purple-400" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-mono font-bold text-purple-600 dark:text-purple-300">Irys Certificate</div>
+                              <div className="text-[10px] font-mono text-muted-foreground truncate">{result.irys_tx_id}</div>
+                            </div>
+                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-purple-400 transition-colors flex-shrink-0" />
+                          </a>
+                        ) : (
+                          <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-border bg-muted/30">
+                            <Database size={16} className="text-muted-foreground" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-mono font-bold text-muted-foreground">Irys Certificate</div>
+                              <div className="text-[10px] font-mono text-muted-foreground/60">{result.irys_error || "Not configured in this environment"}</div>
+                            </div>
+                          </div>
+                        )}
+                        {result.trust_score_tx_hash ? (
+                          <a
+                            href={`https://basescan.org/tx/${result.trust_score_tx_hash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/10 transition-colors group"
+                            data-testid="link-result-basescan"
+                          >
+                            <ShieldCheck size={16} className="text-cyan-500 dark:text-cyan-400" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-300">BaseScan TX</div>
+                              <div className="text-[10px] font-mono text-muted-foreground truncate">{result.trust_score_tx_hash}</div>
+                            </div>
+                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-cyan-400 transition-colors flex-shrink-0" />
+                          </a>
+                        ) : (
+                          <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-border bg-muted/30">
+                            <ShieldCheck size={16} className="text-muted-foreground" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-mono font-bold text-muted-foreground">Trust Score TX</div>
+                              <div className="text-[10px] font-mono text-muted-foreground/60">{result.trust_score_error || "Contract not configured in this environment"}</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      {/* Simulated ProofOfLogic NFT */}
+                      {result.verdict === "PASS" && (
+                        <div className="mt-3">
+                          <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-green-500/30 bg-green-500/5">
+                            <ShieldCheck size={16} className="text-green-500 dark:text-green-400" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-mono font-bold text-green-600 dark:text-green-300">
+                                ProofOfLogic NFT
+                                <span className="ml-2 text-[10px] font-normal px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">SIMULATED</span>
+                              </div>
+                              <div className="text-[10px] font-mono text-muted-foreground">Full certificate stored on-chain as ERC-721 on Base Mainnet</div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="text-[10px] font-mono text-muted-foreground/60 break-all" data-testid="text-result-hash">
+                        SHA-256: {result.cryptographic_hash}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : !running ? (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="rounded-xl border border-dashed border-border dark:border-gray-800 bg-card/50 dark:bg-[#111]/50 p-12 flex flex-col items-center justify-center text-center"
+                  data-testid="demo-empty-state"
+                >
+                  <ShieldAlert size={48} className="text-muted-foreground/30 mb-4" />
+                  <p className="text-muted-foreground font-mono text-sm mb-1">No audit running</p>
+                  <p className="text-muted-foreground/60 text-xs">Select a scenario or paste a memo, then click "Run DJZS Audit"</p>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
         </div>
+      </main>
 
-        <div style={{ padding: "48px 0" }}>
-          <TerminalFooter />
+      <footer className="border-t border-border py-8 bg-card dark:bg-black font-mono mt-12">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col items-center space-y-3">
+          <div className="flex gap-6">
+            <Link href="/" className="text-sm text-muted-foreground hover:text-[#F37E20] transition-colors" data-testid="link-demo-footer-home">Home</Link>
+            <Link href="/docs" className="text-sm text-muted-foreground hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" data-testid="link-demo-footer-docs">Documentation</Link>
+          </div>
+          <p className="text-xs text-muted-foreground/60" data-testid="text-demo-footer-tagline">
+            &copy; 2026 DJZS Protocol. The A2A Economy Tollbooth.
+          </p>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
