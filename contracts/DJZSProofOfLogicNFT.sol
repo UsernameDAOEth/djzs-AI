@@ -56,6 +56,7 @@ contract DJZSProofOfLogicNFT is ERC721, Ownable {
     error AlreadyMinted(string irysTxId);
     error NotAuthorizedMinter();
     error EmptyField();
+    error VerdictNotPass();
 
     modifier onlyMinter() {
         if (!authorizedMinters[msg.sender] && msg.sender != owner()) {
@@ -112,6 +113,7 @@ contract DJZSProofOfLogicNFT is ERC721, Ownable {
         if (bytes(irysTxId).length == 0) revert EmptyField();
         if (bytes(auditId).length == 0) revert EmptyField();
         if (bytes(certificateJson).length == 0) revert EmptyField();
+        if (keccak256(bytes(verdict)) != keccak256(bytes("PASS"))) revert VerdictNotPass();
         if (irysToToken[irysTxId] != 0) revert AlreadyMinted(irysTxId);
 
         tokenId = ++_nextTokenId;

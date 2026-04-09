@@ -156,16 +156,28 @@ export async function mintProofOfLogicNft(input: NftMintInput): Promise<NftMintR
 
     console.log(`[NftMinter] ProofOfLogic NFT tx: ${txHash}`);
 
-    // Parse tokenId from receipt
     let tokenId: number | null = null;
     try {
       const publicClient = getNftPublicClient();
       const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash as `0x${string}` });
       for (const log of receipt.logs) {
-        if (log.address.toLowerCase() === contractAddress.toLowerCase() && log.topics.length >= 2) {
-          tokenId = Number(BigInt(log.topics[1] as string));
-          break;
+        if (log.address.toLowerCase() === contractAddress.toLowerCase()) {
+          try {
+            const { decodeEventLog } = await import("viem");
+            const decoded = decodeEventLog({
+              abi: proofOfLogicNftAbi,
+              data: log.data,
+              topics: log.topics,
+            });
+            if (decoded.eventName === "ProofMinted" && decoded.args) {
+              tokenId = Number((decoded.args as any).tokenId);
+              break;
+            }
+          } catch (_) {}
         }
+      }
+      if (tokenId === null) {
+        tokenId = await getTokenByIrys(input.irysTxId) || null;
       }
     } catch (logError) {
       console.warn("[NftMinter] Could not parse tokenId from receipt:", logError);

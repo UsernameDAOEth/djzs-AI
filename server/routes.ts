@@ -791,6 +791,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ─── Micro-tier NFT Mint Endpoint ──────────────────────────────────
   // After a Micro PASS, the client calls this to mint the NFT.
   // Server relays the mint (treasury pays gas).
+  const mintRateLimit = new Map<string, number>();
   app.post("/api/audit/mint-nft", async (req: any, res) => {
     try {
       if (!process.env.NFT_CONTRACT_ADDRESS) {
@@ -800,6 +801,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { irys_tx_id, wallet_address } = req.body;
       if (!irys_tx_id || !wallet_address) {
         return res.status(400).json({ error: "irys_tx_id and wallet_address required" });
+      }
+
+      if (typeof irys_tx_id !== "string" || irys_tx_id.length < 10 || irys_tx_id.length > 100) {
+        return res.status(400).json({ error: "Invalid irys_tx_id format" });
+      }
+      if (typeof wallet_address !== "string" || !/^0x[a-fA-F0-9]{40}$/.test(wallet_address)) {
+        return res.status(400).json({ error: "Invalid wallet_address format" });
+      }
+
+      const rateLimitKey = `${wallet_address.toLowerCase()}`;
+      const now = Date.now();
+      const lastMint = mintRateLimit.get(rateLimitKey) || 0;
+      if (now - lastMint < 30000) {
+        return res.status(429).json({ error: "Rate limit: one mint request per 30 seconds per wallet", retry_after_ms: 30000 - (now - lastMint) });
+      }
+      mintRateLimit.set(rateLimitKey, now);
+      for (const [key, ts] of mintRateLimit) {
+        if (now - ts > 300000) mintRateLimit.delete(key);
       }
 
       // Fetch the certificate from Irys to verify it's a real PASS

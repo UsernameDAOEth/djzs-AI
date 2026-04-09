@@ -121,8 +121,21 @@ Preferred communication style: Simple, everyday language.
   - `DJZSEscrowLock.sol` — USDC escrow with AuditPending/Settled lifecycle
   - `DJZSStaking.sol` — agent staking with time lock and slashing
   - `DJZSAgentRegistry.sol` — on-chain agent registry with metadata
-  - Deployment: `hardhat.config.cjs` + `scripts/deploy.cjs` for Base Mainnet
+  - `DJZSProofOfLogicNFT.sol` — ERC-721 NFT with on-chain SVG in Terminal Brutalism style, stores full ProofOfLogic certificate + Irys link
+  - Deployment: `hardhat.config.cjs` + `scripts/deploy.cjs` for Base Mainnet; `scripts/deploy-proof-of-logic.cjs` for NFT contract
   - Documentation: `CONTRACTS.md` with full interface reference
+- **ProofOfLogic NFT Minting** (`server/nftMinter.ts`):
+  - `mintProofOfLogicNft(input)` — mints ERC-721 NFT on Base Mainnet with full certificate stored on-chain
+  - `buildNftMintInput(audit, irys, tier, recipient)` — constructs mint input from audit result
+  - `getTokenByIrys(irysTxId)` — checks if NFT already minted for a given Irys TX
+  - `getRawCertificate(tokenId)` / `getTotalMinted()` — read helpers
+  - Founder/Treasury tiers: auto-mint on PASS verdict (treasury pays gas)
+  - Micro tier: returns `nft_mint_available: true` in response; user triggers via `POST /api/audit/mint-nft`
+  - FAIL verdicts never mint
+  - Requires `NFT_CONTRACT_ADDRESS`, `SETTLEMENT_PRIVATE_KEY`, `BASE_RPC_URL` env vars
+- **TorusLogo Component** (`client/src/components/TorusLogo.tsx`):
+  - Canvas 2D animated torus with brand colors (orange #F37E20, teal #2E8B8B)
+  - Used by chat.tsx and demo.tsx for header branding
 - **Escrow Contract Integration** (`server/escrow-contract.ts`):
   - ABI for DJZS Escrow Contract: `AuditPending` event, `settleEscrow` function, `getEscrow` view function
   - `readAuditPendingEvent(txHash)` — reads tx receipt, decodes `AuditPending` event, returns escrow metadata + on-chain `executionTraceHash`
