@@ -622,9 +622,9 @@ function Footer() {
             <div className="font-mono text-[10px] text-zinc-600 mt-1">The Adversarial Logic Layer for the A2A Economy</div>
           </div>
           <div className="flex gap-4 font-mono text-xs">
-            <a href="https://x.com/djzs_ai" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-green-400 transition-colors">X</a>
-            <a href="https://github.com/UsernameDAOEth/djzs-AI" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-green-400 transition-colors">GitHub</a>
-            <a href="https://warpcast.com/dj-z-s.eth" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-green-400 transition-colors">Farcaster</a>
+            <a href="https://x.com/Djzs_ai" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-green-400 transition-colors">X</a>
+            <a href="https://github.com/UsernameDAOEth" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-green-400 transition-colors">GitHub</a>
+            <a href="https://farcaster.xyz/djzs" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-green-400 transition-colors">Farcaster</a>
           </div>
         </div>
 
