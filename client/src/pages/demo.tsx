@@ -78,9 +78,9 @@ const PIPELINE_STEPS = [
 ];
 
 const TIER_OPTIONS = [
-  { value: "micro", label: "Micro-Zone", price: "$2.50", description: "Binary risk scoring" },
-  { value: "founder", label: "Founder Zone", price: "$5.00", description: "Strategic diligence" },
-  { value: "treasury", label: "Treasury Zone", price: "$50.00", description: "Exhaustive stress-test" },
+  { value: "micro", label: "Micro-Zone", price: "$0.10", description: "Binary risk scoring" },
+  { value: "founder", label: "Founder Zone", price: "$1.00", description: "Strategic diligence" },
+  { value: "treasury", label: "Treasury Zone", price: "$10.00", description: "Exhaustive stress-test" },
 ];
 
 function RiskScoreGauge({ score }: { score: number }) {

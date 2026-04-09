@@ -19,7 +19,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend
 - **Technology Stack**: React 18 with TypeScript and Vite.
-- **UI/UX**: Landing page (`/`) uses "Terminal Brutalism" design — JetBrains Mono, inline styles, green-on-black (#0a0a0a) palette with amber/red accents. No Tailwind/shadcn on homepage. Other pages (`/demo`, `/chat`, `/docs`) still use Radix UI + Tailwind CSS with dark/light modes.
+- **UI/UX**: Landing page (`/`), x402 Console (`/chat`), docs (`/docs`), and dashboard pages all use "Terminal Brutalism" design — JetBrains Mono, inline styles via `client/src/lib/terminal-theme.tsx` (C palette + MONO font), green-on-black (#0a0a0a) with amber/red accents. Demo (`/demo`) still uses Radix UI + Tailwind CSS with dark/light modes.
 - **Routing**: Wouter for client-side navigation.
 - **State Management**: React hooks for local state, TanStack Query for server state.
 
@@ -101,6 +101,7 @@ Preferred communication style: Simple, everyday language.
   - 12-case deterministic test suite (`server/engine/__tests__/prediction-tests.ts`): 6 MUST_FAIL, 2 MUST_PASS, 4 EDGE cases. Validates hard-fail rules, guardrails, and scoring. Run via `npx tsx server/engine/__tests__/prediction-tests.ts` (requires VENICE_API_KEY or ANTHROPIC_API_KEY)
   - Polymarket CLOB proxy interceptor interface defined but not wired (future task)
   - Requires `ANTHROPIC_API_KEY` env var for Claude engine; Venice fallback uses existing `VENICE_API_KEY`
+- **Claude Audit Client** (`server/claude-client.ts`): `shouldUseClaude()` checks for `ANTHROPIC_API_KEY`, `getClaudeAuditClient()` returns a client that calls Claude Sonnet for adversarial LF detection. Intended for Treasury-tier upgrades.
 - **Scoring**: Deterministic — rule engine detects boolean flags via pattern matching, scoring is pure function of weights. Max score 200. FAIL threshold: risk_score ≥ 60 OR any CRITICAL flag. Pure-JS SHA-256 for browser compatibility.
 - **Adversarial Audit Module** (`server/adversarial-audit.ts`):
   - Full `ADVERSARIAL_AUDIT_PROMPT` with expanded DJZS-LF taxonomy, deterministic verdict rules, and risk score calculation (retained for reference/prompt engineering)
