@@ -265,7 +265,7 @@ export default function Demo() {
         <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </Helmet>
 
-      <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px" }}>
+      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
         <Nav />
 
         <div style={{ padding: "24px 0 8px" }}>
@@ -276,7 +276,7 @@ export default function Demo() {
           <h1 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 700, color: C.white, marginBottom: 8 }} data-testid="text-demo-page-title">
             Audit-to-Certificate Pipeline
           </h1>
-          <p style={{ fontSize: 13, color: C.textDim, maxWidth: 600, marginBottom: 24 }}>
+          <p style={{ fontSize: 13, color: C.textDim, maxWidth: 760, marginBottom: 24 }}>
             Select a scenario, run the audit pipeline, and see the full ProofOfLogic certificate with 200-point risk scoring.
           </p>
         </div>

@@ -38,7 +38,7 @@ export default function Guide() {
         <h1 style={{ fontSize: "clamp(28px, 5vw, 44px)", fontWeight: 700, lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 12, color: C.white }}>
           Using <span style={{ color: C.green }}>djzs-trust</span> with Claude
         </h1>
-        <p style={{ fontSize: 14, color: C.textDim, maxWidth: 520 }}>
+        <p style={{ fontSize: 14, color: C.textDim, maxWidth: 720 }}>
           How to query ProofOfLogic certificates and agent trust scores directly from your AI assistant.
         </p>
         <div style={{ marginTop: 24, display: "flex", gap: 24, alignItems: "center", fontSize: 12, color: C.textDim }}>

@@ -159,7 +159,7 @@ export function Nav({ rightSlot }: { rightSlot?: React.ReactNode } = {}) {
   );
 }
 
-export function TerminalPage({ children, maxWidth = 760 }: { children: React.ReactNode; maxWidth?: number }) {
+export function TerminalPage({ children, maxWidth = 1200 }: { children: React.ReactNode; maxWidth?: number }) {
   return (
     <div
       style={{

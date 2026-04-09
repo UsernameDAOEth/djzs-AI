@@ -55,7 +55,7 @@ export default function DashboardOverview() {
   }
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1400, margin: "0 auto" }}>
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
           <h1 style={{ fontFamily: MONO, fontSize: 22, fontWeight: 800, color: C.green }} data-testid="text-page-title">

@@ -114,7 +114,7 @@ export default function TestSuite() {
         <h1 style={{ fontSize: "clamp(28px, 5vw, 44px)", fontWeight: 700, lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 12, color: C.white }}>
           Test <span style={{ color: C.green }}>Audit Suite</span>
         </h1>
-        <p style={{ fontSize: 14, color: C.textDim, maxWidth: 520 }}>
+        <p style={{ fontSize: 14, color: C.textDim, maxWidth: 720 }}>
           Nine strategy memos exercising all {VALID_FAILURE_CODES.length} DJZS-LF failure codes across all three tiers. Submit each to the DJZS oracle at djzs.ai.
         </p>
         <div style={{ marginTop: 24, display: "flex", gap: 24, alignItems: "center", fontSize: 12, color: C.textDim }}>

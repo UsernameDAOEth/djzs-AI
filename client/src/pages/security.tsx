@@ -18,7 +18,7 @@ export default function Security() {
         <h1 style={{ fontSize: "clamp(28px, 5vw, 44px)", fontWeight: 700, lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 12, color: C.white }}>
           Security
         </h1>
-        <p style={{ fontSize: 14, color: C.textDim, maxWidth: 520 }}>
+        <p style={{ fontSize: 14, color: C.textDim, maxWidth: 720 }}>
           How DJ-Z-S.box protects your privacy and keeps you in control.
         </p>
       </header>

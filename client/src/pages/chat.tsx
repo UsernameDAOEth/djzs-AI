@@ -249,7 +249,7 @@ export default function Chat() {
         <meta property="og:description" content="Wallet-gated audit console. Pay with USDC on Base Mainnet via x402 protocol." />
       </Helmet>
 
-      <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px" }}>
+      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
         <Nav rightSlot={<div data-testid="wallet-connect-button"><ConnectButton chainStatus="icon" showBalance={false} /></div>} />
 
         <div style={{ padding: "24px 0 8px" }}>
@@ -260,7 +260,7 @@ export default function Chat() {
           <h1 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 700, color: C.white, marginBottom: 8 }} data-testid="text-chat-page-title">
             Audit-to-Certificate Pipeline
           </h1>
-          <p style={{ fontSize: 13, color: C.textDim, maxWidth: 600, marginBottom: 24 }} data-testid="text-chat-page-subtitle">
+          <p style={{ fontSize: 13, color: C.textDim, maxWidth: 760, marginBottom: 24 }} data-testid="text-chat-page-subtitle">
             Route your reasoning trace through the x402 Oracle. Real USDC payments on Base Mainnet.
           </p>
         </div>

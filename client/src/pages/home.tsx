@@ -189,7 +189,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
 
 function Hero({ bootDone }: { bootDone: boolean }) {
   return (
-    <section style={{ padding: "80px 0 60px", maxWidth: 800 }} data-testid="section-hero">
+    <section style={{ padding: "80px 0 60px", maxWidth: 1000 }} data-testid="section-hero">
       {!bootDone ? (
         <BootSequence onComplete={() => {}} />
       ) : (
@@ -230,7 +230,7 @@ function Hero({ bootDone }: { bootDone: boolean }) {
               color: C.textDim,
               lineHeight: 1.7,
               marginTop: 24,
-              maxWidth: 600,
+              maxWidth: 760,
             }}
             data-testid="text-hero-description"
           >
@@ -260,7 +260,7 @@ function LFTaxonomy() {
       <h2 style={{ fontFamily: MONO, fontSize: 24, color: C.white, margin: "0 0 8px", fontWeight: 600 }} data-testid="text-taxonomy-headline">
         11 codes. 5 categories. Zero vibes.
       </h2>
-      <p style={{ fontFamily: MONO, fontSize: 13, color: C.textDim, marginBottom: 32, maxWidth: 560 }}>
+      <p style={{ fontFamily: MONO, fontSize: 13, color: C.textDim, marginBottom: 32, maxWidth: 720 }}>
         Every audit evaluates the agent's reasoning against the full taxonomy.
         Flags are boolean. Scoring is deterministic TypeScript. The LLM detects — it never decides.
       </p>
@@ -768,7 +768,7 @@ function CertificateSection() {
       <h2 style={{ fontFamily: MONO, fontSize: 24, color: C.white, margin: "0 0 8px", fontWeight: 600 }} data-testid="text-certificate-headline">
         Immutable. Verifiable. On-chain.
       </h2>
-      <p style={{ fontFamily: MONO, fontSize: 13, color: C.textDim, marginBottom: 24, maxWidth: 560 }}>
+      <p style={{ fontFamily: MONO, fontSize: 13, color: C.textDim, marginBottom: 24, maxWidth: 720 }}>
         Every audit produces a certificate anchored to Irys Datachain. PASS verdicts mint a
         Proof-of-Logic NFT on Base Mainnet to the agent's wallet. FAIL verdicts don't mint —
         you don't reward bad logic.
@@ -939,8 +939,8 @@ export default function Home() {
           backgroundColor: C.bg,
           color: C.text,
           fontFamily: MONO,
-          padding: "0 clamp(16px, 4vw, 60px)",
-          maxWidth: 900,
+          padding: "0 clamp(16px, 4vw, 48px)",
+          maxWidth: 1400,
           margin: "0 auto",
         }}
       >

@@ -242,7 +242,7 @@ export default function Docs() {
   }
 
   return (
-    <TerminalPage maxWidth={960}>
+    <TerminalPage maxWidth={1400}>
 
       <div style={{ textAlign: "center", marginBottom: 48, paddingTop: 32 }}>
         <h1 style={{ fontFamily: MONO, fontSize: 28, fontWeight: 800, color: C.green, letterSpacing: "0.05em", marginBottom: 12 }}>

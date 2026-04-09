@@ -45,7 +45,7 @@ export function AuditLedgerView() {
   });
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1400, margin: "0 auto" }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={S.sectionTitle} data-testid="text-ledger-title">Audit Ledger</h1>
         <p style={S.subtitle}>Complete forensic log of all ProofOfLogic certificates.</p>
@@ -195,7 +195,7 @@ export function RiskParametersView() {
   ];
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1400, margin: "0 auto" }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={S.sectionTitle} data-testid="text-risk-title">Risk Parameters</h1>
         <p style={S.subtitle}>Aggregated risk intelligence from your audit history.</p>
@@ -315,7 +315,7 @@ export function APISettingsView() {
 }`;
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1400, margin: "0 auto" }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={S.sectionTitle} data-testid="text-settings-title">API Settings</h1>
         <p style={S.subtitle}>Endpoints, authentication, and integration details for the DJZS Protocol.</p>
