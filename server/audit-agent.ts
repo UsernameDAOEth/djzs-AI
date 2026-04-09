@@ -273,6 +273,7 @@ export async function executeAudit(
       const claudeResult = await claudeClient.audit(strategy_memo, tier);
       result = {
         ...claudeResult,
+        persona_used: selectedPersona,
         confidence: undefined,
         primary_bias_detected: undefined,
         logic_flaws: claudeResult.flags.map(f => f.code),
