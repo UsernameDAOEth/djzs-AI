@@ -206,3 +206,53 @@ BASE_RPC_URL=https://mainnet.base.org
 5. `DJZSProofOfLogicNFT` (no dependencies; authorize settlement wallet as minter post-deploy)
 
 After deployment, authorize the settlement wallet as a writer on `DJZSLogicTrustScore`, as the settlement agent on `DJZSEscrowLock`, and as a minter on `DJZSProofOfLogicNFT`.
+
+---
+
+## Base Sepolia Testnet
+
+The `base-sepolia` network is configured in `hardhat.config.cjs` for testnet deployment and integration testing. ChainId: `84532`, RPC: `https://sepolia.base.org`.
+
+### DJZSProofOfLogicNFT (Testnet)
+
+**Deployed Address**: Not yet deployed. Fund deployer `0xc2eCfe214071C2B77f90111f222E4a4D25ac3A98` with Sepolia ETH first.
+
+### Testnet Deployment Steps
+
+1. **Get testnet ETH** — Fund your deployer address via the [Coinbase Base Sepolia faucet](https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet).
+
+2. **Deploy the contract**:
+   ```bash
+   npx hardhat run scripts/deploy-proof-of-logic.cjs --network base-sepolia
+   ```
+   This will print the deployed address and authorize the settlement wallet as a minter.
+
+3. **Set the testnet address** — Add to your `.env`:
+   ```bash
+   NFT_CONTRACT_ADDRESS=0x<address from step 2>
+   ```
+
+4. **Run the test mint** to verify the contract works on-chain:
+   ```bash
+   npx hardhat run scripts/test-mint-sepolia.cjs --network base-sepolia
+   ```
+   This mints a test NFT, reads back the certificate, and decodes the tokenURI.
+
+5. **Integration testing** — With `NFT_CONTRACT_ADDRESS` set and `BASE_RPC_URL` pointing to `https://sepolia.base.org`, the server will auto-mint NFTs on Founder/Treasury PASS verdicts. The Micro-tier "Mint NFT" button will also work.
+
+### Required Environment Variables (Testnet)
+
+```bash
+DEPLOYER_MNEMONIC=...                          # 12-word mnemonic for deployment
+NFT_CONTRACT_ADDRESS=0x...                     # Set after deployment
+SETTLEMENT_PRIVATE_KEY=0x...                   # Server wallet (authorized minter)
+BASE_RPC_URL=https://sepolia.base.org          # Point to Sepolia for testing
+```
+
+### Switching Back to Mainnet
+
+To switch back to mainnet after testing, update:
+```bash
+BASE_RPC_URL=https://mainnet.base.org
+NFT_CONTRACT_ADDRESS=0x<mainnet address>
+```
