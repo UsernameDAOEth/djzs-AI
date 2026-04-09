@@ -189,15 +189,11 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
 
 function TypewriterHeadline({ text }: { text: string }) {
   const [displayed, setDisplayed] = useState("");
-  const [showCursor, setShowCursor] = useState(true);
   const indexRef = useRef(0);
-  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     indexRef.current = 0;
     setDisplayed("");
-    setShowCursor(true);
-    if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
 
     const interval = setInterval(() => {
       indexRef.current += 1;
@@ -205,14 +201,10 @@ function TypewriterHeadline({ text }: { text: string }) {
         setDisplayed(text.slice(0, indexRef.current));
       } else {
         clearInterval(interval);
-        fadeTimerRef.current = setTimeout(() => setShowCursor(false), 2000);
       }
     }, 80);
 
-    return () => {
-      clearInterval(interval);
-      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
-    };
+    return () => clearInterval(interval);
   }, [text]);
 
   return (
@@ -237,9 +229,7 @@ function TypewriterHeadline({ text }: { text: string }) {
           background: C.green,
           marginLeft: 2,
           verticalAlign: "baseline",
-          animation: showCursor ? "blink-cursor 0.7s step-end infinite" : "none",
-          opacity: showCursor ? 1 : 0,
-          transition: "opacity 0.3s",
+          animation: "blink-cursor 0.7s step-end infinite",
         }}
       />
     </h1>
