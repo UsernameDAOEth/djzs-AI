@@ -12,16 +12,6 @@
   animation: logo-pulse 2s infinite ease-in-out;
 }
 
-/* ===== Custom Cursor ===== */
-*, *::before, *::after {
-  cursor: url('/cursor-pen.png') 4 28, auto;
-}
-a, button, [role="button"], input[type="submit"], select, label[for] {
-  cursor: url('/cursor-pen.png') 4 28, pointer;
-}
-input, textarea, [contenteditable] {
-  cursor: url('/cursor-pen.png') 4 28, text;
-}
 
 /* ===== DJZS Design System ===== */
 :root {
