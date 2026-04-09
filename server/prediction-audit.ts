@@ -8,8 +8,13 @@ import type { ProofOfLogicCertificate } from "./audit-agent";
 
 type PredictionLFCode = "S01" | "S02" | "E01" | "E02" | "I01" | "I02" | "I03" | "X01" | "X02" | "T01";
 
-export type PredictionCertificate = Omit<ProofOfLogicCertificate, "verdict"> & {
+export type PredictionFlag = ProofOfLogicCertificate["flags"][number] & {
+  hard_fail?: boolean;
+};
+
+export type PredictionCertificate = Omit<ProofOfLogicCertificate, "verdict" | "flags"> & {
   verdict: "PASS" | "FAIL" | "INDETERMINATE";
+  flags: PredictionFlag[];
   hard_fail_rules: string[];
   verdict_source: "HARD_FAIL" | "SCORE";
 };
@@ -155,6 +160,16 @@ export async function executePredictionAudit(
 
   const hardFails = checkHardFails(validated, firedCodes);
 
+  if (hardFails.any_hard_fail) {
+    for (const flag of flags) {
+      const bareCode = flag.code.replace("DJZS-", "");
+      const matchingRule = PREDICTION_HARD_FAILS.find(r => r.lf_code === bareCode);
+      if (matchingRule && hardFails.triggered_rules.includes(matchingRule.id)) {
+        flag.hard_fail = true;
+      }
+    }
+  }
+
   let verdict: "PASS" | "FAIL";
   let verdictSource: PredictionCertificate["verdict_source"];
 
@@ -244,7 +259,7 @@ function scoreDetectionResult(
   result: LFDetectionResult,
   ctx: PredictionContext
 ): {
-  flags: ProofOfLogicCertificate["flags"];
+  flags: PredictionFlag[];
   riskScore: number;
   firedCodes: string[];
 } {
@@ -261,7 +276,7 @@ function scoreDetectionResult(
   applySourceSignalModifiers(result, ctx, fired);
 
   let totalPenalty = 0;
-  const flags: ProofOfLogicCertificate["flags"] = [];
+  const flags: PredictionFlag[] = [];
 
   for (const { code, evidence } of fired) {
     const weight = DJZS_WEIGHTS[code] || 0;

@@ -16,6 +16,7 @@ output.json
 pyproject.toml
 uv.lock
 attached_assets/
+prediction-test-report.json
 
 *.db3
 *.db3-shm

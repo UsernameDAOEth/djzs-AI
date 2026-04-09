@@ -355,7 +355,7 @@ function stripDJZSPrefix(code: string): string {
 
 async function runTests() {
   const allTests = [...MUST_FAIL, ...MUST_PASS, ...EDGE_CASES];
-  const engine = (process.env.DETECTION_ENGINE as "CLAUDE" | "VENICE") ?? "CLAUDE";
+  const engine = (process.env.DETECTION_ENGINE as "CLAUDE" | "VENICE") ?? "VENICE";
 
   const weightSum = Object.values(DJZS_WEIGHTS).reduce((a, b) => a + b, 0);
 
@@ -515,6 +515,25 @@ async function runTests() {
   console.log(`  SUM: ${weightSum}`);
   console.log(`  THRESHOLD: ${FAIL_THRESHOLD}`);
   console.log();
+
+  const report = {
+    timestamp: new Date().toISOString(),
+    engine,
+    fail_threshold: FAIL_THRESHOLD,
+    weight_table: DJZS_WEIGHTS,
+    weight_sum: weightSum,
+    hard_fail_rules: PREDICTION_HARD_FAILS.map(r => r.id),
+    total: results.length,
+    passed,
+    failed,
+    pass_rate: `${((passed / results.length) * 100).toFixed(1)}%`,
+    results,
+  };
+
+  const fs = await import("fs");
+  const reportPath = "./prediction-test-report.json";
+  fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+  console.log(`Report written to ${reportPath}`);
 
   if (failed > 0) process.exit(1);
 }
