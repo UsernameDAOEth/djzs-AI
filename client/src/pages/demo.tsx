@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
-import { C, MONO, GlowDot, Nav, TerminalFooter } from "@/lib/terminal-theme";
+import { C, MONO, Nav, TerminalFooter } from "@/lib/terminal-theme";
 import {
   ArrowRight, Play, Terminal, ShieldCheck, ShieldAlert,
   AlertTriangle, CheckCircle2, Upload, Database, ExternalLink,
@@ -129,7 +128,7 @@ function FlagCard({ flag, index }: { flag: AuditFlag; index: number }) {
             {flag.severity}
           </span>
           <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: C.text }} data-testid={`text-flag-code-${index}`}>{flag.code}</span>
-          <span className="hidden sm:inline" style={{ fontFamily: MONO, fontSize: 12, color: C.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{(flag.message || flag.description || "").split("—")[0]}</span>
+          <span style={{ fontFamily: MONO, fontSize: 12, color: C.textMuted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{(flag.message || flag.description || "").split("—")[0]}</span>
         </div>
         {expanded ? <ChevronUp size={16} style={{ color: C.textMuted, flexShrink: 0 }} /> : <ChevronDown size={16} style={{ color: C.textMuted, flexShrink: 0 }} />}
       </button>
@@ -278,7 +277,7 @@ export default function Demo() {
             </p>
           </motion.div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 24 }} className="lg:!grid-cols-[2fr_3fr]">
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 3fr", gap: 24 }}>
             {/* Left column: input */}
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} style={{ border: `1px solid ${C.border}`, background: C.surface, overflow: "hidden" }}>
@@ -454,7 +453,7 @@ export default function Demo() {
                           </div>
                           <div style={{ textAlign: "center" }}>
                             <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: labelColor }} data-testid={`step-label-${step.id}`}>{step.label}</div>
-                            <div className="hidden sm:block" style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted }}>{step.description}</div>
+                            <div style={{ fontFamily: MONO, fontSize: 9, color: C.textMuted }}>{step.description}</div>
                           </div>
                         </div>
                       );
@@ -559,7 +558,7 @@ export default function Demo() {
                       {/* Provenance */}
                       <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
                         <div style={{ fontFamily: MONO, fontSize: 10, color: C.textMuted, letterSpacing: "0.1em" }} data-testid="label-result-provenance">ON-CHAIN PROVENANCE</div>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }} className="sm:!grid-cols-2 max-sm:!grid-cols-1">
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                           {result.irys_url ? (
                             <a
                               href={result.irys_url}
