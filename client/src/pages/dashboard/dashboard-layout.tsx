@@ -39,10 +39,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <DashboardContext.Provider value={{ activeView, setActiveView }}>
+      <style>{`
+        .dash-sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 50; width: 256px; border-right: 1px solid ${C.border}; background: ${C.bg}; transform: translateX(-100%); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .dash-sidebar.open { transform: translateX(0); }
+        @media (min-width: 768px) { .dash-sidebar { position: relative; transform: translateX(0); } }
+        .dash-overlay { display: block; }
+        @media (min-width: 768px) { .dash-overlay { display: none; } }
+      `}</style>
       <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: MONO, display: "flex", overflow: "hidden" }}>
 
         {isSidebarOpen && (
           <div
+            className="dash-overlay"
             style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 40 }}
             onClick={() => setSidebarOpen(false)}
             data-testid="sidebar-overlay"
@@ -50,20 +58,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         )}
 
         <aside
-          style={{
-            position: "fixed",
-            top: 0,
-            bottom: 0,
-            left: 0,
-            zIndex: 50,
-            width: 256,
-            borderRight: `1px solid ${C.border}`,
-            background: C.bg,
-            transform: isSidebarOpen ? "translateX(0)" : "translateX(-100%)",
-            transition: "transform 0.3s",
-            display: "flex",
-            flexDirection: "column",
-          }}
+          className={`dash-sidebar${isSidebarOpen ? " open" : ""}`}
           data-testid="dashboard-sidebar"
         >
           <div style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 24px", borderBottom: `1px solid ${C.border}` }}>
