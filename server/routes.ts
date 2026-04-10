@@ -552,6 +552,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const hasCdpKeys = !!(process.env.CDP_API_KEY_ID && process.env.CDP_API_KEY_SECRET);
 
+  const AUDIT_ROUTE_PREFIXES = ["/api/audit/micro", "/api/audit/founder", "/api/audit/treasury", "/api/audit"];
+  const TX_HASH_RE = /^0x[a-fA-F0-9]{64}$/;
+  app.use((req: any, _res: any, next: any) => {
+    if (
+      req.method === "POST" &&
+      AUDIT_ROUTE_PREFIXES.some(p => req.path === p) &&
+      req.headers["x-payment-proof"]
+    ) {
+      const proof = String(req.headers["x-payment-proof"]);
+      if (TX_HASH_RE.test(proof)) {
+        req.directPaymentProof = proof;
+        console.log(`[payment] Direct USDC proof detected on ${req.path}: ${proof}`);
+      }
+    }
+    next();
+  });
+
   if (hasCdpKeys && TREASURY_WALLET) {
     try {
       const { paymentMiddleware, x402ResourceServer } = await import("@x402/express");
@@ -564,55 +581,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const resourceServer = new x402ResourceServer(facilitatorClient)
         .register(X402_NETWORK, new ExactEvmScheme());
 
-      app.use(
-        paymentMiddleware(
-          {
-            "POST /api/audit/micro": {
-              accepts: {
-                scheme: "exact",
-                price: "$0.10",
-                network: X402_NETWORK,
-                payTo: TREASURY_WALLET,
-              },
-              description: "DJZS Micro-Zone: High-frequency operational ledger and sanity check",
+      const x402Mw = paymentMiddleware(
+        {
+          "POST /api/audit/micro": {
+            accepts: {
+              scheme: "exact",
+              price: "$0.10",
+              network: X402_NETWORK,
+              payTo: TREASURY_WALLET,
             },
-            "POST /api/audit/founder": {
-              accepts: {
-                scheme: "exact",
-                price: "$1.00",
-                network: X402_NETWORK,
-                payTo: TREASURY_WALLET,
-              },
-              description: "DJZS Founder Zone: Strategic roadmap diligence and narrative drift detection",
-            },
-            "POST /api/audit/treasury": {
-              accepts: {
-                scheme: "exact",
-                price: "$10.00",
-                network: X402_NETWORK,
-                payTo: TREASURY_WALLET,
-              },
-              description: "DJZS Treasury Zone: Exhaustive adversarial stress-test for capital deployment",
-            },
-            "POST /api/audit": {
-              accepts: {
-                scheme: "exact",
-                price: "$0.10",
-                network: X402_NETWORK,
-                payTo: TREASURY_WALLET,
-              },
-              description: "DJZS Logic Audit (backward-compatible alias for Micro-Zone)",
-            },
+            description: "DJZS Micro-Zone: High-frequency operational ledger and sanity check",
           },
-          resourceServer,
-        ),
+          "POST /api/audit/founder": {
+            accepts: {
+              scheme: "exact",
+              price: "$1.00",
+              network: X402_NETWORK,
+              payTo: TREASURY_WALLET,
+            },
+            description: "DJZS Founder Zone: Strategic roadmap diligence and narrative drift detection",
+          },
+          "POST /api/audit/treasury": {
+            accepts: {
+              scheme: "exact",
+              price: "$10.00",
+              network: X402_NETWORK,
+              payTo: TREASURY_WALLET,
+            },
+            description: "DJZS Treasury Zone: Exhaustive adversarial stress-test for capital deployment",
+          },
+          "POST /api/audit": {
+            accepts: {
+              scheme: "exact",
+              price: "$0.10",
+              network: X402_NETWORK,
+              payTo: TREASURY_WALLET,
+            },
+            description: "DJZS Logic Audit (backward-compatible alias for Micro-Zone)",
+          },
+        },
+        resourceServer,
       );
+
+      app.use((req: any, res: any, next: any) => {
+        if (req.directPaymentProof) {
+          return next();
+        }
+        return x402Mw(req, res, next);
+      });
 
       x402Initialized = true;
       console.log(`x402 payment middleware initialized for 3 Zone tiers on Base Mainnet via Coinbase CDP`);
       console.log(`  Micro-Zone:    POST /api/audit/micro    ($0.10 USDC)`);
       console.log(`  Founder Zone:  POST /api/audit/founder  ($1.00 USDC)`);
       console.log(`  Treasury Zone: POST /api/audit/treasury ($10.00 USDC)`);
+      console.log(`  Direct USDC proof (x-payment-proof header) also accepted`);
     } catch (error) {
       console.warn("x402 middleware not initialized (non-blocking):", error instanceof Error ? error.message : error);
       console.warn("Audit endpoint will operate without payment gate");
@@ -626,7 +649,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   const x402PaymentGate = (req: any, res: any, next: any) => {
-    if (x402Initialized) return next();
+    if (x402Initialized && !req.directPaymentProof) return next();
 
     const paymentProof = req.headers['x-payment-proof'];
 
@@ -642,7 +665,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   const createVerifiedPaymentGate = (tier: AuditTier) => async (req: any, res: any, next: any) => {
-    if (x402Initialized) return next();
+    const txHash = req.headers['x-payment-proof'] as string | undefined;
+
+    if (x402Initialized && !txHash) return next();
+
+    if (x402Initialized && txHash) {
+      console.log(`[payment] Direct USDC proof bypassing x402 for ${TIER_CONFIG[tier].name}: ${txHash}`);
+    }
 
     if (!TREASURY_WALLET) {
       return res.status(503).json({
@@ -650,8 +679,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         code: "DJZS-AUTH-CONFIG",
       });
     }
-
-    const txHash = req.headers['x-payment-proof'] as string | undefined;
 
     if (!txHash) {
       return res.status(402).json({
