@@ -134,6 +134,7 @@ Preferred communication style: Simple, everyday language.
   - Founder/Treasury tiers: auto-mint on PASS verdict (treasury pays gas)
   - Micro tier: returns `nft_mint_available: true` in response; user triggers via `POST /api/audit/mint-nft`
   - FAIL verdicts never mint
+  - Deployed: `0xA91D750Cb2e1Bae30fe9dec744D27B8654c8393c` on Base Mainnet (verified on Basescan)
   - Requires `NFT_CONTRACT_ADDRESS`, `SETTLEMENT_PRIVATE_KEY`, `BASE_RPC_URL` env vars
 - **TorusLogo Component** (`client/src/components/TorusLogo.tsx`):
   - Canvas 2D animated torus with brand colors (orange #F37E20, teal #2E8B8B)

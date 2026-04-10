@@ -148,7 +148,7 @@ No parameters. Deployer becomes owner.
 
 **Purpose**: Fully on-chain ERC-721 NFT that stores the complete ProofOfLogic certificate. The NFT IS the certificate — not a pointer to it. On-chain SVG in Terminal Brutalism style. Minted only on PASS verdicts (enforced on-chain via keccak256 check).
 
-**Deployed Address**: Not yet deployed. Set `NFT_CONTRACT_ADDRESS` after deployment.
+**Deployed Address**: [`0xA91D750Cb2e1Bae30fe9dec744D27B8654c8393c`](https://basescan.org/address/0xA91D750Cb2e1Bae30fe9dec744D27B8654c8393c)
 
 ### Key Functions
 
