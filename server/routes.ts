@@ -667,7 +667,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const createVerifiedPaymentGate = (tier: AuditTier) => async (req: any, res: any, next: any) => {
     const txHash = req.headers['x-payment-proof'] as string | undefined;
 
-    if (x402Initialized && !txHash) return next();
+    if (x402Initialized && !txHash) {
+      console.log(`[payment] x402 protocol verified payment for ${TIER_CONFIG[tier].name}`);
+      return next();
+    }
 
     if (x402Initialized && txHash) {
       console.log(`[payment] Direct USDC proof bypassing x402 for ${TIER_CONFIG[tier].name}: ${txHash}`);
