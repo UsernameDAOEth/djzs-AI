@@ -10,6 +10,7 @@ import {
   AlertTriangle, CheckCircle2, Upload, Database, ExternalLink,
   ChevronDown, ChevronRight, Menu, X, Lock, Wallet, Coins
 } from "lucide-react";
+import { TIER_CONFIG, type AuditTier } from "@shared/audit-schema";
 
 // ─── Scenarios ───────────────────────────────────────────────────────
 
@@ -216,6 +217,12 @@ export default function Chat() {
 
   const runAudit = useCallback(async () => {
     if (!memo.trim() || running || !isConnected || !address) return;
+    const currentTierConfig = TIER_CONFIG[tier as AuditTier];
+    const currentMaxLen = currentTierConfig?.maxMemoLength ?? Infinity;
+    if (currentMaxLen !== Infinity && memo.length > currentMaxLen) {
+      setError(`Memo exceeds ${currentTierConfig.name} limit (${memo.length.toLocaleString()}/${currentMaxLen.toLocaleString()} chars). Shorten the memo or select a higher tier.`);
+      return;
+    }
     if (!treasuryWallet) {
       setError("Treasury wallet not configured. Cannot process payment.");
       return;
@@ -323,6 +330,9 @@ export default function Chat() {
   }, []);
 
   const selectedTier = TIER_OPTIONS.find(t => t.value === tier);
+  const tierConfig = TIER_CONFIG[tier as AuditTier];
+  const maxMemoLength = tierConfig?.maxMemoLength ?? Infinity;
+  const memoTooLong = maxMemoLength !== Infinity && memo.length > maxMemoLength;
 
   return (
     <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
@@ -411,9 +421,24 @@ export default function Chat() {
                     value={memo}
                     onChange={(e) => setMemo(e.target.value)}
                     placeholder="Paste your reasoning memo here or select a scenario above..."
-                    className="w-full p-3 bg-black border border-zinc-800 font-mono text-xs text-zinc-300 h-32 resize-none focus:outline-none focus:border-green-400/50 transition-colors placeholder:text-zinc-700"
+                    className={`w-full p-3 bg-black border font-mono text-xs text-zinc-300 h-32 resize-none focus:outline-none transition-colors placeholder:text-zinc-700 ${
+                      memoTooLong ? "border-red-400/50 focus:border-red-400/50" : "border-zinc-800 focus:border-green-400/50"
+                    }`}
                     data-testid="textarea-chat-memo"
                   />
+                  {memo.length > 0 && maxMemoLength !== Infinity && (
+                    <div className={`flex items-center justify-between mt-1 font-mono text-[10px] ${
+                      memoTooLong ? "text-red-400" : "text-zinc-600"
+                    }`} data-testid="text-memo-char-count">
+                      {memoTooLong && (
+                        <span className="flex items-center gap-1">
+                          <AlertTriangle size={10} />
+                          Exceeds {tierConfig.name} limit
+                        </span>
+                      )}
+                      <span className="ml-auto">{memo.length.toLocaleString()}/{maxMemoLength.toLocaleString()}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Tier */}
@@ -442,9 +467,9 @@ export default function Chat() {
                 {/* Run Button */}
                 <button
                   onClick={runAudit}
-                  disabled={!memo.trim() || running || !isConnected}
+                  disabled={!memo.trim() || running || !isConnected || memoTooLong}
                   className={`w-full flex items-center justify-center gap-2 py-3 font-mono text-xs font-bold transition-all ${
-                    !memo.trim() || running || !isConnected
+                    !memo.trim() || running || !isConnected || memoTooLong
                       ? "bg-zinc-800 text-zinc-600 cursor-not-allowed"
                       : "bg-green-400 text-black hover:bg-green-300"
                   }`}
@@ -454,11 +479,14 @@ export default function Chat() {
                     <Terminal size={16} className="animate-spin" />
                   ) : !isConnected ? (
                     <Wallet size={16} />
+                  ) : memoTooLong ? (
+                    <AlertTriangle size={16} />
                   ) : (
                     <Coins size={16} />
                   )}
                   <span>{
                     !isConnected ? "CONNECT WALLET TO AUDIT"
+                    : memoTooLong ? "MEMO EXCEEDS TIER LIMIT"
                     : running ? (currentStep === 0 ? "APPROVE USDC TRANSFER..." : "SCANNING — may take up to 90s...")
                     : `PAY ${selectedTier?.price} USDC & RUN AUDIT`
                   }</span>

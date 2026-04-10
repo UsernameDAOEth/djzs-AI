@@ -341,7 +341,7 @@ export const TIER_CONFIG = {
   micro: {
     name: "The Micro-Zone",
     price: "$0.10",
-    maxMemoLength: 1000,
+    maxMemoLength: 2000,
     description: "High-frequency operational ledger and sanity check. Binary risk scoring.",
     endpoint: "/api/audit/micro",
   },
