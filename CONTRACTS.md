@@ -215,7 +215,7 @@ The `base-sepolia` network is configured in `hardhat.config.cjs` for testnet dep
 
 ### DJZSProofOfLogicNFT (Testnet)
 
-**Deployed Address**: Not yet deployed. Fund deployer `0xc2eCfe214071C2B77f90111f222E4a4D25ac3A98` with Sepolia ETH first.
+**Deployed Address**: Testnet deployment not required — contract is live on Base Mainnet at [`0xA91D750Cb2e1Bae30fe9dec744D27B8654c8393c`](https://basescan.org/address/0xA91D750Cb2e1Bae30fe9dec744D27B8654c8393c).
 
 ### Testnet Deployment Steps
 
