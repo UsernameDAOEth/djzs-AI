@@ -21,6 +21,10 @@ prediction-test-report.json
 *.db3
 *.db3-shm
 *.db3-wal
+*.sqlite
+*.sqlite3
+taskManagement.db
+.env.deploy
 
 deploy-nft/
 deploy*.mjs
