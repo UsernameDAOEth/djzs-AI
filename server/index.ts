@@ -1,5 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { registerStreamRoutes } from "./stream-routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDefaultRooms } from "./storage";
 
@@ -14,7 +15,7 @@ declare module 'http' {
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Payment-Proof, X-Payment, X-Wallet-Address, X-Venice-Api-Key');
   
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
@@ -82,6 +83,7 @@ app.use((req, res, next) => {
   }
 
   const server = await registerRoutes(app);
+  registerStreamRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
