@@ -1,0 +1,84 @@
+{
+  "date": "2026-09-07",
+  "venue": {
+    "exchange": "coinbase",
+    "quote": "USD"
+  },
+  "prices": {
+    "BTC/USD": {
+      "ask": 79221.39,
+      "bid": 79221.38,
+      "change_24h_pct": -0.7623702273256129,
+      "exchange": "coinbase",
+      "high_24h": 80564.24,
+      "last": 79221.38,
+      "low_24h": 78666,
+      "pair": "BTC/USD",
+      "timestamp": 1788813167,
+      "volume_24h_base": 3376.8220965100004
+    }
+  },
+  "marks": [
+    {
+      "id": "N2-0903",
+      "type": "position",
+      "pair": "BTC/USD",
+      "side": "short",
+      "entry": 77900,
+      "last": 79221.38,
+      "ret": -0.01696251604621324,
+      "days": 5,
+      "horizon": null
+    },
+    {
+      "id": "N4-0903",
+      "type": "position",
+      "pair": "BTC/USD",
+      "side": "long",
+      "entry": 77900,
+      "last": 79221.38,
+      "ret": 0.01696251604621324,
+      "days": 5,
+      "horizon": "2026-09-10"
+    },
+    {
+      "id": "N3-0903",
+      "type": "stub",
+      "pair": "BTC/USD",
+      "level": 72000,
+      "op": "<",
+      "last": 79221.38,
+      "distance": -0.0911544333108058,
+      "hit": false,
+      "horizon": "2026-09-16"
+    },
+    {
+      "id": "N4-0903-stub",
+      "type": "stub",
+      "pair": "BTC/USD",
+      "level": 80000,
+      "op": ">",
+      "last": 79221.38,
+      "distance": 0.009828407432438003,
+      "hit": false,
+      "horizon": "2026-09-10"
+    },
+    {
+      "id": "REKTEMBER",
+      "type": "stub",
+      "pair": "BTC/USD",
+      "level": 78562.74,
+      "op": "<",
+      "last": 79221.38,
+      "distance": -0.008313917278391255,
+      "hit": false,
+      "horizon": "2026-09-30"
+    },
+    {
+      "id": "N5-0903",
+      "type": "stub",
+      "manual": true,
+      "note": "dominance not on the tape client yet — mark by hand"
+    }
+  ]
+}
